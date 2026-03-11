@@ -6,6 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.3.5] - 2026-03-11
+
+### Fixed
+- Voice extension: transcription no longer lost when pausing and resuming recording
+
 ## [2.3.4] - 2026-03-11
 
 ### Added
@@ -115,7 +120,8 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - License updated to MIT
 
-[Unreleased]: https://github.com/gsd-build/gsd-2/compare/v2.3.4...HEAD
+[Unreleased]: https://github.com/gsd-build/gsd-2/compare/v2.3.5...HEAD
+[2.3.5]: https://github.com/gsd-build/gsd-2/compare/v2.3.4...v2.3.5
 [2.3.4]: https://github.com/gsd-build/gsd-2/compare/v0.3.3...v2.3.4
 [0.3.3]: https://github.com/gsd-build/gsd-2/compare/v0.3.1...v0.3.3
 [0.3.1]: https://github.com/gsd-build/gsd-2/compare/v0.3.0...v0.3.1
