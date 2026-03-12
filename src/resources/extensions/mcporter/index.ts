@@ -64,6 +64,13 @@ const serverDetailCache = new Map<string, McpServerDetail>();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
+function escapeShellArg(arg: string): string {
+	if (process.platform === "win32") {
+		return `"${arg.replace(/"/g, '""')}"`;
+	}
+	return `'${arg.replace(/'/g, "'\\''")}'`;
+}
+
 async function runMcporter(
 	args: string[],
 	signal?: AbortSignal,
@@ -72,18 +79,17 @@ async function runMcporter(
 	// Cross-platform: use execFile on Windows to avoid quote handling issues
 	// On Windows, cmd.exe doesn't strip single quotes like Unix shells do
 	if (process.platform === "win32") {
-		// Use execFile directly - Windows doesn't need shell for PATH resolution here
 		const { stdout } = await execFileAsync("mcporter", args, {
 			timeout: timeoutMs,
 			maxBuffer: 1024 * 1024,
 			signal,
 			env: { ...process.env },
-			shell: true, // Enable shell for PATH resolution on Windows
+			shell: true,
 		});
 		return stdout;
 	}
 	// Use shell exec so PATH resolution works on Unix
-	const escaped = args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(" ");
+	const escaped = args.map((a) => escapeShellArg(a)).join(" ");
 	const { stdout } = await execAsync(`mcporter ${escaped}`, {
 		timeout: timeoutMs,
 		maxBuffer: 1024 * 1024,
