@@ -18,7 +18,7 @@ import type {
 
 import { deriveState, invalidateStateCache } from "./state.js";
 import type { BudgetEnforcementMode, GSDState } from "./types.js";
-import { loadFile, parseRoadmap, getManifestStatus, clearParseCache } from "./files.js";
+import { loadFile, parseRoadmap, getManifestStatus, resolveAllOverrides } from "./files.js";
 export { inlinePriorMilestoneSummary } from "./files.js";
 import { collectSecretsFromManifest } from "../get-secrets-from-user.js";
 import {
@@ -27,8 +27,8 @@ import {
   relMilestoneFile, relSliceFile, relSlicePath, relMilestonePath,
   milestonesDir,
   buildMilestoneFileName, buildSliceFileName, buildTaskFileName,
-  clearPathCache,
 } from "./paths.js";
+import { invalidateAllCaches } from "./cache.js";
 import { saveActivityLog } from "./activity-log.js";
 import { synthesizeCrashRecovery, getDeepDiagnostic } from "./session-forensics.js";
 import { writeLock, clearLock, readCrashLock, formatCrashInfo, isLockProcessAlive } from "./crash-recovery.js";
@@ -39,7 +39,7 @@ import {
   readUnitRuntimeRecord,
   writeUnitRuntimeRecord,
 } from "./unit-runtime.js";
-import { resolveAutoSupervisorConfig, resolveModelWithFallbacksForUnit, loadEffectiveGSDPreferences } from "./preferences.js";
+import { resolveAutoSupervisorConfig, resolveModelWithFallbacksForUnit, loadEffectiveGSDPreferences, resolveSkillDiscoveryMode } from "./preferences.js";
 import { sendDesktopNotification } from "./notifications.js";
 import type { GSDPreferences } from "./preferences.js";
 import {
@@ -68,8 +68,9 @@ import {
 } from "./metrics.js";
 import { join } from "node:path";
 import { sep as pathSep } from "node:path";
+import { homedir } from "node:os";
 import { readdirSync, readFileSync, existsSync, mkdirSync, writeFileSync, unlinkSync, statSync } from "node:fs";
-import { execSync, execFileSync } from "node:child_process";
+import { nativeIsRepo, nativeInit, nativeAddPaths, nativeCommit } from "./native-git-bridge.js";
 import {
   autoCommitCurrentBranch,
   captureIntegrationBranch,
@@ -80,7 +81,7 @@ import {
   parseSliceBranch,
   setActiveMilestoneId,
 } from "./worktree.js";
-import { GitServiceImpl, runGit } from "./git-service.js";
+import { GitServiceImpl } from "./git-service.js";
 import { getPriorSliceCompletionBlocker } from "./dispatch-guard.js";
 import { formatGitError } from "./git-self-heal.js";
 import {
@@ -107,20 +108,7 @@ import {
   buildLoopRemediationSteps,
   reconcileMergeState,
 } from "./auto-recovery.js";
-import {
-  buildResearchMilestonePrompt,
-  buildPlanMilestonePrompt,
-  buildResearchSlicePrompt,
-  buildPlanSlicePrompt,
-  buildExecuteTaskPrompt,
-  buildCompleteSlicePrompt,
-  buildCompleteMilestonePrompt,
-  buildReplanSlicePrompt,
-  buildRunUatPrompt,
-  buildReassessRoadmapPrompt,
-  checkNeedsReassessment,
-  checkNeedsRunUat,
-} from "./auto-prompts.js";
+import { resolveDispatch, resetRewriteCircuitBreaker } from "./auto-dispatch.js";
 import {
   type AutoDashboardData,
   updateProgressWidget as _updateProgressWidget,
@@ -168,6 +156,45 @@ const unitRecoveryCount = new Map<string, number>();
 
 /** Persisted completed-unit keys — survives restarts. Loaded from .gsd/completed-units.json. */
 const completedKeySet = new Set<string>();
+
+/** Resource sync timestamp captured at auto-mode start. If the managed-resources
+ *  manifest changes mid-session (e.g. /gsd:update or dev edit + copy-resources),
+ *  templates on disk may expect variables the in-memory code doesn't provide.
+ *  Detect this and stop gracefully instead of crashing. */
+let resourceSyncedAtOnStart: number | null = null;
+
+function readResourceSyncedAt(): number | null {
+  const agentDir = process.env.GSD_CODING_AGENT_DIR || join(homedir(), ".gsd", "agent");
+  const manifestPath = join(agentDir, "managed-resources.json");
+  try {
+    const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+    return typeof manifest?.syncedAt === "number" ? manifest.syncedAt : null;
+  } catch {
+    return null;
+  }
+}
+
+function checkResourcesStale(): string | null {
+  if (resourceSyncedAtOnStart === null) return null;
+  const current = readResourceSyncedAt();
+  if (current === null) return null;
+  if (current !== resourceSyncedAtOnStart) {
+    return "GSD resources were updated since this session started. Restart gsd to load the new code.";
+  }
+  return null;
+}
+
+/**
+ * Resolve whether auto-mode should use worktree isolation.
+ * Returns true for worktree mode (default), false for branch mode.
+ * Branch mode works directly in the project root — useful for repos
+ * with git submodules where worktrees don't work well (#531).
+ */
+function shouldUseWorktreeIsolation(): boolean {
+  const prefs = loadEffectiveGSDPreferences()?.preferences?.git;
+  if (prefs?.isolation === "branch") return false;
+  return true; // default: worktree
+}
 
 /** Crash recovery prompt — set by startAuto, consumed by first dispatchNextUnit */
 let pendingCrashRecovery: string | null = null;
@@ -266,6 +293,41 @@ export function isAutoPaused(): boolean {
   return paused;
 }
 
+/**
+ * Return the base path to use for the auto.lock file.
+ * Always uses the original project root (not the worktree) so that
+ * a second terminal can discover and stop a running auto-mode session.
+ */
+function lockBase(): string {
+  return originalBasePath || basePath;
+}
+
+/**
+ * Attempt to stop a running auto-mode session from a different process.
+ * Reads the lock file at the project root, checks if the PID is alive,
+ * and sends SIGTERM to gracefully stop it.
+ *
+ * Returns true if a remote session was found and signaled, false otherwise.
+ */
+export function stopAutoRemote(projectRoot: string): { found: boolean; pid?: number; error?: string } {
+  const lock = readCrashLock(projectRoot);
+  if (!lock) return { found: false };
+
+  if (!isLockProcessAlive(lock)) {
+    // Stale lock — clean it up
+    clearLock(projectRoot);
+    return { found: false };
+  }
+
+  // Send SIGTERM — the auto-mode process has a handler that clears the lock and exits
+  try {
+    process.kill(lock.pid, "SIGTERM");
+    return { found: true, pid: lock.pid };
+  } catch (err) {
+    return { found: false, error: (err as Error).message };
+  }
+}
+
 export function isStepMode(): boolean {
   return stepMode;
 }
@@ -325,6 +387,18 @@ function startDispatchGapWatchdog(ctx: ExtensionContext, pi: ExtensionAPI): void
         "error",
       );
       await stopAuto(ctx, pi);
+      return;
+    }
+
+    // If dispatchNextUnit returned normally but still didn't dispatch a unit
+    // (no sendMessage called → no timeout set), auto-mode is permanently
+    // stalled. Stop cleanly instead of leaving it active but idle (#537).
+    if (active && !unitTimeoutHandle && !wrapupWarningHandle) {
+      ctx.ui.notify(
+        "Auto-mode stalled — no dispatchable unit found after retry. Stopping. Run /gsd auto to restart.",
+        "warning",
+      );
+      await stopAuto(ctx, pi);
     }
   }, DISPATCH_GAP_TIMEOUT_MS);
 }
@@ -332,7 +406,7 @@ function startDispatchGapWatchdog(ctx: ExtensionContext, pi: ExtensionAPI): void
 export async function stopAuto(ctx?: ExtensionContext, pi?: ExtensionAPI): Promise<void> {
   if (!active && !paused) return;
   clearUnitTimeout();
-  if (basePath) clearLock(basePath);
+  if (lockBase()) clearLock(lockBase());
   clearSkillSnapshot();
   _dispatching = false;
   _skipDepth = 0;
@@ -415,7 +489,7 @@ export async function stopAuto(ctx?: ExtensionContext, pi?: ExtensionAPI): Promi
 export async function pauseAuto(ctx?: ExtensionContext, _pi?: ExtensionAPI): Promise<void> {
   if (!active) return;
   clearUnitTimeout();
-  if (basePath) clearLock(basePath);
+  if (lockBase()) clearLock(lockBase());
 
   // Remove SIGTERM handler registered at auto-mode start
   deregisterSigtermHandler();
@@ -464,7 +538,8 @@ export async function startAuto(
 
     // ── Auto-worktree: re-enter worktree on resume if not already inside ──
     // Skip if already inside a worktree (manual /worktree) to prevent nesting.
-    if (currentMilestoneId && originalBasePath && !isInAutoWorktree(basePath) && !detectWorktreeName(basePath) && !detectWorktreeName(originalBasePath)) {
+    // Skip entirely in branch isolation mode (#531).
+    if (currentMilestoneId && shouldUseWorktreeIsolation() && originalBasePath && !isInAutoWorktree(basePath) && !detectWorktreeName(basePath) && !detectWorktreeName(originalBasePath)) {
       try {
         const existingWtPath = getAutoWorktreePath(originalBasePath, currentMilestoneId);
         if (existingWtPath) {
@@ -487,8 +562,8 @@ export async function startAuto(
       }
     }
 
-    // Re-register SIGTERM handler for the resumed session
-    registerSigtermHandler(basePath);
+    // Re-register SIGTERM handler for the resumed session (use original base for lock)
+    registerSigtermHandler(lockBase());
 
     ctx.ui.setStatus("gsd-auto", stepMode ? "next" : "auto");
     ctx.ui.setFooter(hideFooter);
@@ -505,34 +580,33 @@ export async function startAuto(
     } catch { /* non-fatal */ }
     // Self-heal: clear stale runtime records where artifacts already exist
     await selfHealRuntimeRecords(base, ctx, completedKeySet);
-    invalidateStateCache();
-    clearParseCache();
-    clearPathCache();
+    invalidateAllCaches();
     await dispatchNextUnit(ctx, pi);
     return;
   }
 
   // Ensure git repo exists — GSD needs it for worktree isolation
-  try {
-    execSync("git rev-parse --git-dir", { cwd: base, stdio: "pipe" });
-  } catch {
+  if (!nativeIsRepo(base)) {
     const mainBranch = loadEffectiveGSDPreferences()?.preferences?.git?.main_branch || "main";
-    execFileSync("git", ["init", "-b", mainBranch], { cwd: base, stdio: "pipe" });
+    nativeInit(base, mainBranch);
   }
 
   // Ensure .gitignore has baseline patterns
-  ensureGitignore(base);
+  const commitDocs = loadEffectiveGSDPreferences()?.preferences?.git?.commit_docs;
+  ensureGitignore(base, { commitDocs });
   untrackRuntimeFiles(base);
 
   // Bootstrap .gsd/ if it doesn't exist
   const gsdDir = join(base, ".gsd");
   if (!existsSync(gsdDir)) {
     mkdirSync(join(gsdDir, "milestones"), { recursive: true });
-    try {
-      execSync("git add -A .gsd .gitignore && git commit -m 'chore: init gsd'", {
-        cwd: base, stdio: "pipe",
-      });
-    } catch { /* nothing to commit */ }
+    // Only commit .gsd/ init when commit_docs is not explicitly false
+    if (commitDocs !== false) {
+      try {
+        nativeAddPaths(base, [".gsd", ".gitignore"]);
+        nativeCommit(base, "chore: init gsd");
+      } catch { /* nothing to commit */ }
+    }
   }
 
   // Initialize GitServiceImpl — basePath is set and git repo confirmed
@@ -608,6 +682,7 @@ export async function startAuto(
   resetHookState();
   restoreHookState(base);
   autoStartTime = Date.now();
+  resourceSyncedAtOnStart = readResourceSyncedAt();
   completedUnits = [];
   currentUnit = null;
   currentMilestoneId = state.activeMilestone?.id ?? null;
@@ -622,7 +697,7 @@ export async function startAuto(
   // of the repo's default (main/master). Idempotent when the branch is the
   // same; updates the record when started from a different branch (#300).
   if (currentMilestoneId) {
-    captureIntegrationBranch(base, currentMilestoneId);
+    captureIntegrationBranch(base, currentMilestoneId, { commitDocs });
     setActiveMilestoneId(base, currentMilestoneId);
   }
 
@@ -643,7 +718,7 @@ export async function startAuto(
     return p.endsWith(worktreesSuffix);
   };
 
-  if (currentMilestoneId && !detectWorktreeName(base) && !isUnderGsdWorktrees(base)) {
+  if (currentMilestoneId && shouldUseWorktreeIsolation() && !detectWorktreeName(base) && !isUnderGsdWorktrees(base)) {
     try {
       const existingWtPath = getAutoWorktreePath(base, currentMilestoneId);
       if (existingWtPath) {
@@ -659,8 +734,8 @@ export async function startAuto(
         gitService = new GitServiceImpl(basePath, loadEffectiveGSDPreferences()?.preferences?.git ?? {});
         ctx.ui.notify(`Created auto-worktree at ${wtPath}`, "info");
       }
-      // Re-register SIGTERM handler with the new basePath
-      registerSigtermHandler(basePath);
+      // Re-register SIGTERM handler with the original basePath (lock lives there)
+      registerSigtermHandler(originalBasePath);
     } catch (err) {
       // Worktree creation is non-fatal — continue in the project root.
       ctx.ui.notify(
@@ -776,11 +851,9 @@ export async function handleAgentEnd(
   // Unit completed — clear its timeout
   clearUnitTimeout();
 
-  // Invalidate deriveState() cache — the unit just completed and may have
+  // Invalidate all caches — the unit just completed and may have
   // written planning files (task summaries, roadmap checkboxes, etc.)
-  invalidateStateCache();
-  clearParseCache();
-  clearPathCache();
+  invalidateAllCaches();
 
   // Small delay to let files settle (git commits, file writes)
   await new Promise(r => setTimeout(r, 500));
@@ -817,6 +890,17 @@ export async function handleAgentEnd(
       autoCommitCurrentBranch(basePath, currentUnit.type, currentUnit.id);
     } catch {
       // Non-fatal
+    }
+
+    // ── Rewrite-docs completion: resolve overrides and reset circuit breaker ──
+    if (currentUnit.type === "rewrite-docs") {
+      try {
+        await resolveAllOverrides(basePath);
+        resetRewriteCircuitBreaker();
+        ctx.ui.notify("Override(s) resolved — rewrite-docs completed.", "info");
+      } catch {
+        // Non-fatal — verifyExpectedArtifact will catch unresolved overrides
+      }
     }
 
     // ── Path A fix: verify artifact and persist completion before re-entering dispatch ──
@@ -907,7 +991,7 @@ export async function handleAgentEnd(
         return;
       }
       const sessionFile = ctx.sessionManager.getSessionFile();
-      writeLock(basePath, hookUnit.unitType, hookUnit.unitId, completedUnits.length, sessionFile);
+      writeLock(lockBase(), hookUnit.unitType, hookUnit.unitId, completedUnits.length, sessionFile);
       // Persist hook state so cycle counts survive crashes
       persistHookState(basePath);
 
@@ -1133,11 +1217,22 @@ async function dispatchNextUnit(
     await new Promise(r => setTimeout(r, 200));
   }
 
-  // Clear stale directory listing cache so deriveState sees fresh disk state (#431)
-  clearPathCache();
-  // Clear parsed roadmap/plan cache — doctor may have re-populated it with
+  // Resource version guard: detect mid-session resource updates.
+  // Templates are read from disk on each dispatch but extension code is loaded
+  // once at startup. If resources were re-synced (e.g. /gsd:update, npm update,
+  // or dev copy-resources), templates may expect variables the in-memory code
+  // doesn't provide. Stop gracefully instead of crashing.
+  const staleMsg = checkResourcesStale();
+  if (staleMsg) {
+    await stopAuto(ctx, pi);
+    ctx.ui.notify(staleMsg, "error");
+    return;
+  }
+
+  // Clear all caches so deriveState sees fresh disk state (#431).
+  // Parse cache is also cleared — doctor may have re-populated it with
   // stale data between handleAgentEnd and this dispatch call (Path B fix).
-  clearParseCache();
+  invalidateAllCaches();
 
   let state = await deriveState(basePath);
   let mid = state.activeMilestone?.id;
@@ -1155,7 +1250,7 @@ async function dispatchNextUnit(
     unitRecoveryCount.clear();
     unitLifetimeDispatches.clear();
     // Capture integration branch for the new milestone and update git service
-    captureIntegrationBranch(originalBasePath || basePath, mid);
+    captureIntegrationBranch(originalBasePath || basePath, mid, { commitDocs: loadEffectiveGSDPreferences()?.preferences?.git?.commit_docs });
   }
   if (mid) {
     currentMilestoneId = mid;
@@ -1184,9 +1279,7 @@ async function dispatchNextUnit(
 
   // ── Mid-merge safety check: detect leftover merge state from a prior session ──
   if (reconcileMergeState(basePath, ctx)) {
-    invalidateStateCache();
-    clearParseCache();
-    clearPathCache();
+    invalidateAllCaches();
     state = await deriveState(basePath);
     mid = state.activeMilestone?.id;
     midTitle = state.activeMilestone?.title;
@@ -1224,6 +1317,7 @@ async function dispatchNextUnit(
     if (currentMilestoneId && isInAutoWorktree(basePath) && originalBasePath) {
       try {
         const roadmapPath = resolveMilestoneFile(originalBasePath, currentMilestoneId, "ROADMAP");
+        if (!roadmapPath) throw new Error(`Cannot resolve ROADMAP file for milestone ${currentMilestoneId}`);
         const roadmapContent = readFileSync(roadmapPath, "utf-8");
         const mergeResult = mergeMilestoneToMain(originalBasePath, currentMilestoneId, roadmapContent);
         basePath = originalBasePath;
@@ -1309,7 +1403,7 @@ async function dispatchNextUnit(
   const contextThreshold = prefs?.context_pause_threshold ?? 0; // 0 = disabled by default
   if (contextThreshold > 0 && cmdCtx) {
     const contextUsage = cmdCtx.getContextUsage();
-    if (contextUsage && contextUsage.percent >= contextThreshold) {
+    if (contextUsage && contextUsage.percent !== null && contextUsage.percent >= contextThreshold) {
       const msg = `Context window at ${contextUsage.percent}% (threshold: ${contextThreshold}%). Pausing to prevent truncated output.`;
       ctx.ui.notify(`${msg} Run /gsd auto to continue (will start fresh session).`, "warning");
       sendDesktopNotification("GSD", `Context ${contextUsage.percent}% — paused`, "warning", "attention");
@@ -1347,143 +1441,33 @@ async function dispatchNextUnit(
 
   await runSecretsGate();
 
-  const needsRunUat = await checkNeedsRunUat(basePath, mid, state, prefs);
-  // Flag: for human/mixed UAT, pause auto-mode after the prompt is sent so the user
-  // can perform the UAT manually. On next resume, result file will exist → skip.
-  let pauseAfterUatDispatch = false;
+  // ── Dispatch table: resolve phase → unit type + prompt ──
+  const dispatchResult = await resolveDispatch({
+    basePath, mid, midTitle: midTitle!, state, prefs,
+  });
 
-  // ── Phase-first dispatch: complete-slice MUST run before reassessment ──
-  // If the current phase is "summarizing", complete-slice is responsible for
-  // complete-slice must run before reassessment.
-  if (state.phase === "summarizing") {
-    const sid = state.activeSlice!.id;
-    const sTitle = state.activeSlice!.title;
-    unitType = "complete-slice";
-    unitId = `${mid}/${sid}`;
-    prompt = await buildCompleteSlicePrompt(mid, midTitle!, sid, sTitle, basePath);
-  } else {
-    // ── Adaptive Replanning: check if last completed slice needs reassessment ──
-    // Computed here (after summarizing guard) so complete-slice always runs first.
-    const needsReassess = await checkNeedsReassessment(basePath, mid, state);
-    if (needsRunUat) {
-      const { sliceId, uatType } = needsRunUat;
-      unitType = "run-uat";
-      unitId = `${mid}/${sliceId}`;
-      const uatFile = resolveSliceFile(basePath, mid, sliceId, "UAT")!;
-      const uatContent = await loadFile(uatFile);
-      prompt = await buildRunUatPrompt(
-        mid, sliceId, relSliceFile(basePath, mid, sliceId, "UAT"), uatContent ?? "", basePath,
-      );
-      // For non-artifact-driven UAT types, pause after the prompt is dispatched.
-      // The agent receives the prompt, writes S0x-UAT-RESULT.md surfacing the UAT,
-      // then auto-mode pauses for human execution. On resume, result file exists → skip.
-      if (uatType !== "artifact-driven") {
-        pauseAfterUatDispatch = true;
-      }
-    } else if (needsReassess) {
-      unitType = "reassess-roadmap";
-      unitId = `${mid}/${needsReassess.sliceId}`;
-      prompt = await buildReassessRoadmapPrompt(mid, midTitle!, needsReassess.sliceId, basePath);
-    } else if (state.phase === "needs-discussion") {
-      // Draft milestone — pause auto-mode and notify user.
-      // This milestone has a CONTEXT-DRAFT.md from a prior multi-milestone discussion
-      // where the user chose "Needs own discussion". Auto-mode cannot proceed because
-      // the draft is seed material, not a finalized context — planning requires a
-      // dedicated discussion first.
-      await stopAuto(ctx, pi);
-      ctx.ui.notify(
-        `${mid}: ${midTitle} has draft context from a prior discussion — needs its own discussion before planning.\nRun /gsd to discuss.`,
-        "warning",
-      );
-      return;
-
-    } else if (state.phase === "pre-planning") {
-      // Need roadmap — check if context exists
-      const contextFile = resolveMilestoneFile(basePath, mid, "CONTEXT");
-      const hasContext = !!(contextFile && await loadFile(contextFile));
-
-      if (!hasContext) {
-        await stopAuto(ctx, pi);
-        ctx.ui.notify("No context or roadmap yet. Run /gsd to discuss first.", "warning");
-        return;
-      }
-
-      // Research before roadmap if no research exists
-      const researchFile = resolveMilestoneFile(basePath, mid, "RESEARCH");
-      const hasResearch = !!researchFile;
-
-      if (!hasResearch) {
-        unitType = "research-milestone";
-        unitId = mid;
-        prompt = await buildResearchMilestonePrompt(mid, midTitle!, basePath);
-      } else {
-        unitType = "plan-milestone";
-        unitId = mid;
-        prompt = await buildPlanMilestonePrompt(mid, midTitle!, basePath);
-      }
-
-    } else if (state.phase === "planning") {
-      // Slice needs planning — but research first if no research exists
-      const sid = state.activeSlice!.id;
-      const sTitle = state.activeSlice!.title;
-      const researchFile = resolveSliceFile(basePath, mid, sid, "RESEARCH");
-      const hasResearch = !!researchFile;
-
-      if (!hasResearch) {
-        // Skip slice research for S01 when milestone research already exists —
-        // the milestone research already covers the same ground for the first slice.
-        const milestoneResearchFile = resolveMilestoneFile(basePath, mid, "RESEARCH");
-        const hasMilestoneResearch = !!milestoneResearchFile;
-        if (hasMilestoneResearch && sid === "S01") {
-          unitType = "plan-slice";
-          unitId = `${mid}/${sid}`;
-          prompt = await buildPlanSlicePrompt(mid, midTitle!, sid, sTitle, basePath);
-        } else {
-          unitType = "research-slice";
-          unitId = `${mid}/${sid}`;
-          prompt = await buildResearchSlicePrompt(mid, midTitle!, sid, sTitle, basePath);
-        }
-      } else {
-        unitType = "plan-slice";
-        unitId = `${mid}/${sid}`;
-        prompt = await buildPlanSlicePrompt(mid, midTitle!, sid, sTitle, basePath);
-      }
-
-    } else if (state.phase === "replanning-slice") {
-      // Blocker discovered — replan the slice before continuing
-      const sid = state.activeSlice!.id;
-      const sTitle = state.activeSlice!.title;
-      unitType = "replan-slice";
-      unitId = `${mid}/${sid}`;
-      prompt = await buildReplanSlicePrompt(mid, midTitle!, sid, sTitle, basePath);
-
-    } else if (state.phase === "executing" && state.activeTask) {
-      // Execute next task
-      const sid = state.activeSlice!.id;
-      const sTitle = state.activeSlice!.title;
-      const tid = state.activeTask.id;
-      const tTitle = state.activeTask.title;
-      unitType = "execute-task";
-      unitId = `${mid}/${sid}/${tid}`;
-      prompt = await buildExecuteTaskPrompt(mid, sid, sTitle, tid, tTitle, basePath);
-
-    } else if (state.phase === "completing-milestone") {
-      // All slices done — complete the milestone
-      unitType = "complete-milestone";
-      unitId = mid;
-      prompt = await buildCompleteMilestonePrompt(mid, midTitle!, basePath);
-
-    } else {
-      if (currentUnit) {
-        const modelId = ctx.model?.id ?? "unknown";
-        snapshotUnitMetrics(ctx, currentUnit.type, currentUnit.id, currentUnit.startedAt, modelId);
-        saveActivityLog(ctx, basePath, currentUnit.type, currentUnit.id);
-      }
-      await stopAuto(ctx, pi);
-      ctx.ui.notify(`Unhandled phase "${state.phase}" — run /gsd doctor to diagnose.`, "info");
-      return;
+  if (dispatchResult.action === "stop") {
+    if (currentUnit) {
+      const modelId = ctx.model?.id ?? "unknown";
+      snapshotUnitMetrics(ctx, currentUnit.type, currentUnit.id, currentUnit.startedAt, modelId);
+      saveActivityLog(ctx, basePath, currentUnit.type, currentUnit.id);
     }
+    await stopAuto(ctx, pi);
+    ctx.ui.notify(dispatchResult.reason, dispatchResult.level);
+    return;
   }
+
+  if (dispatchResult.action !== "dispatch") {
+    // skip action — yield and re-dispatch
+    await new Promise(r => setImmediate(r));
+    await dispatchNextUnit(ctx, pi);
+    return;
+  }
+
+  unitType = dispatchResult.unitType;
+  unitId = dispatchResult.unitId;
+  prompt = dispatchResult.prompt;
+  let pauseAfterUatDispatch = dispatchResult.pauseAfterDispatch ?? false;
 
   // ── Pre-dispatch hooks: modify, skip, or replace the unit before dispatch ──
   const preDispatchResult = runPreDispatchHooks(unitType, unitId, prompt, basePath);
@@ -1805,15 +1789,15 @@ async function dispatchNextUnit(
     return;
   }
 
-  // NOTE: Slice merge happens AFTER the complete-slice unit finishes,
-  // not here at dispatch time. See the merge logic at the top of
-  // dispatchNextUnit where we check if the previous unit was complete-slice.
+  // Branchless architecture: all work commits sequentially on the milestone
+  // branch — no per-slice branches or slice-level merges. Milestone merge
+  // happens when phase === "complete" (see mergeMilestoneToMain above).
 
   // Write lock AFTER newSession so we capture the session file path.
   // Pi appends entries incrementally via appendFileSync, so on crash the
   // session file survives with every tool call up to the crash point.
   const sessionFile = ctx.sessionManager.getSessionFile();
-  writeLock(basePath, unitType, unitId, completedUnits.length, sessionFile);
+  writeLock(lockBase(), unitType, unitId, completedUnits.length, sessionFile);
 
   // On crash recovery, prepend the full recovery briefing
   // On retry (stuck detection), prepend deep diagnostic from last attempt
