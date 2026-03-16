@@ -3,6 +3,8 @@
  */
 
 import { createRequire } from "node:module";
+import { existsSync } from "node:fs";
+import { sep } from "node:path";
 
 // ── Windows VT Input Restoration ────────────────────────────────────────────
 // Child processes (esp. Git Bash / MSYS2) can strip the ENABLE_VIRTUAL_TERMINAL_INPUT
@@ -52,4 +54,18 @@ export function formatTokenCount(count: number): string {
 	if (count < 1000000) return `${Math.round(count / 1000)}k`;
 	if (count < 10000000) return `${(count / 1000000).toFixed(1)}M`;
 	return `${Math.round(count / 1000000)}M`;
+}
+
+export function resolveBgShellPersistenceCwd(
+	cachedCwd: string,
+	liveCwd = process.cwd(),
+	pathExists: (path: string) => boolean = existsSync,
+): string {
+	const worktreeMarker = `${sep}.gsd${sep}worktrees${sep}`;
+	const cachedIsAutoWorktree = cachedCwd.includes(worktreeMarker);
+	if (!cachedIsAutoWorktree) return cachedCwd;
+	if (cachedCwd === liveCwd && pathExists(cachedCwd)) return cachedCwd;
+	if (!pathExists(cachedCwd)) return liveCwd;
+	if (liveCwd !== cachedCwd) return liveCwd;
+	return cachedCwd;
 }

@@ -64,7 +64,7 @@ import {
 } from "./output-formatter.js";
 import { waitForReady } from "./readiness-detector.js";
 import { queryShellEnv, sendAndWait, runOnSession } from "./interaction.js";
-import { formatUptime, formatTokenCount } from "./utilities.js";
+import { formatUptime, formatTokenCount, resolveBgShellPersistenceCwd } from "./utilities.js";
 import { BgManagerOverlay } from "./overlay.js";
 
 // ── Re-exports for consumers ───────────────────────────────────────────────
@@ -80,6 +80,14 @@ export { BgManagerOverlay } from "./overlay.js";
 
 export default function (pi: ExtensionAPI) {
 	let latestCtx: ExtensionContext | null = null;
+
+	function syncLatestCtxCwd(): void {
+		if (!latestCtx) return;
+		const syncedCwd = resolveBgShellPersistenceCwd(latestCtx.cwd);
+		if (syncedCwd !== latestCtx.cwd) {
+			latestCtx = { ...latestCtx, cwd: syncedCwd };
+		}
+	}
 
 	// Clean up on session shutdown
 	pi.on("session_shutdown", async () => {
@@ -1519,6 +1527,7 @@ export default function (pi: ExtensionAPI) {
 		refreshWidget();
 		// Persist manifest periodically
 		if (latestCtx) {
+			syncLatestCtxCwd();
 			persistManifest(latestCtx.cwd);
 		}
 	}, 2000);
@@ -1567,7 +1576,10 @@ export default function (pi: ExtensionAPI) {
 	// Clean up on shutdown
 	pi.on("session_shutdown", async () => {
 		clearInterval(maintenanceInterval);
-		if (latestCtx) persistManifest(latestCtx.cwd);
+		if (latestCtx) {
+			syncLatestCtxCwd();
+			persistManifest(latestCtx.cwd);
+		}
 		cleanupAll();
 	});
 }
