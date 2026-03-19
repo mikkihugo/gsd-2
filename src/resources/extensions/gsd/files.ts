@@ -590,7 +590,8 @@ export async function loadFile(path: string): Promise<string | null> {
   try {
     return await fs.readFile(path, 'utf-8');
   } catch (err: unknown) {
-    if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === 'ENOENT' || code === 'EISDIR') return null;
     throw err;
   }
 }
