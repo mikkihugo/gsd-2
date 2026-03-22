@@ -256,12 +256,12 @@ describe("Resolver routing", () => {
     assert.equal(result.engine.engineId, "dev");
   });
 
-  test("resolveEngine throws for unknown activeEngineId", async () => {
+  test("resolveEngine throws for unknown activeEngineId without activeRunDir", async () => {
     const { resolveEngine } = await import("../engine-resolver.ts");
     assert.throws(
       () => resolveEngine({ activeEngineId: "unknown" }),
-      /Unknown engine/,
-      "should throw for unknown engine ID",
+      /requires activeRunDir/,
+      "should throw when activeRunDir is missing for non-dev engine",
     );
   });
 });

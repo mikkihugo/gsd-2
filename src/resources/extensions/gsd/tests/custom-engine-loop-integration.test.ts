@@ -16,6 +16,8 @@ import { autoLoop, resolveAgentEnd, _resetPendingResolve } from "../auto-loop.js
 import type { LoopDeps } from "../auto/loop-deps.js";
 import type { SessionLockStatus } from "../session-lock.js";
 import { writeGraph, readGraph, type WorkflowGraph, type GraphStep } from "../graph.ts";
+import { writeFileSync } from "node:fs";
+import { stringify } from "yaml";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -50,6 +52,23 @@ function makeGraph(steps: GraphStep[], name = "test-wf"): WorkflowGraph {
     steps,
     metadata: { name, createdAt: "2026-01-01T00:00:00.000Z" },
   };
+}
+
+/** Write a minimal DEFINITION.yaml that matches the graph steps (needed by resolveDispatch since S06). */
+function writeDefinition(runDir: string, steps: GraphStep[], name = "test-wf"): void {
+  const def = {
+    version: 1,
+    name,
+    description: `Test workflow: ${name}`,
+    steps: steps.map((s) => ({
+      id: s.id,
+      name: s.title ?? s.id,
+      prompt: s.prompt ?? `Do ${s.id}`,
+      produces: `${s.id}/output.md`,
+      ...(s.dependsOn?.length ? { requires: s.dependsOn } : {}),
+    })),
+  };
+  writeFileSync(join(runDir, "DEFINITION.yaml"), stringify(def));
 }
 
 function makeMockCtx() {
@@ -231,6 +250,7 @@ describe("Custom engine loop integration", () => {
       makeStep({ id: "step-c", dependsOn: ["step-b"] }),
     ], "integ-test");
     writeGraph(runDir, graph);
+    writeDefinition(runDir, graph.steps, "integ-test");
 
     const ctx = makeMockCtx();
     const pi = makeMockPi();
@@ -312,6 +332,7 @@ describe("Custom engine loop integration", () => {
       makeStep({ id: "step-a", status: "complete" }),
     ], "already-done");
     writeGraph(runDir, graph);
+    writeDefinition(runDir, graph.steps, "already-done");
 
     const ctx = makeMockCtx();
     const pi = makeMockPi();
@@ -346,6 +367,7 @@ describe("Custom engine loop integration", () => {
     const runDir = makeTmpDir();
     const graph = makeGraph([makeStep({ id: "only" })], "single");
     writeGraph(runDir, graph);
+    writeDefinition(runDir, graph.steps, "single");
 
     const ctx = makeMockCtx();
     const pi = makeMockPi();
@@ -405,6 +427,7 @@ describe("Custom engine loop integration", () => {
       makeStep({ id: "step-b", dependsOn: ["step-a"] }),
     ], "dep-order");
     writeGraph(runDir, graph);
+    writeDefinition(runDir, graph.steps, "dep-order");
 
     const ctx = makeMockCtx();
     const pi = makeMockPi();
@@ -466,6 +489,7 @@ describe("Custom engine loop integration", () => {
       makeStep({ id: "step-b", dependsOn: ["step-a"] }),
     ], "failure-test");
     writeGraph(runDir, graph);
+    writeDefinition(runDir, graph.steps, "failure-test");
 
     const ctx = makeMockCtx();
     const pi = makeMockPi();

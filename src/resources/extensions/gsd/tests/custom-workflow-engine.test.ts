@@ -300,8 +300,14 @@ describe("CustomWorkflowEngine.getDisplayMetadata", () => {
 
 describe("CustomExecutionPolicy", () => {
   it("verify returns continue", async () => {
-    const policy = new CustomExecutionPolicy("/tmp/run");
-    const result = await policy.verify("custom-step", "wf/step-1", { basePath: "/tmp" });
+    // verify() reads DEFINITION.yaml from runDir to find step's verify policy
+    const runDir = makeTmpDir();
+    writeFileSync(join(runDir, "DEFINITION.yaml"), stringify({
+      version: 1, name: "wf", description: "test",
+      steps: [{ id: "step-1", name: "Step 1", prompt: "do it", produces: "step-1/output.md" }],
+    }));
+    const policy = new CustomExecutionPolicy(runDir);
+    const result = await policy.verify("custom-step", "wf/step-1", { basePath: runDir });
     assert.equal(result, "continue");
   });
 
