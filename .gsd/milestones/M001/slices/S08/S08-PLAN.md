@@ -19,10 +19,11 @@
 - `node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/bundled-workflow-defs.test.ts` — all tests pass
 - `test -f src/resources/skills/create-workflow/SKILL.md` — skill entry point exists
 - `find src/resources/skills/create-workflow -type f | wc -l` returns >= 10 (SKILL.md + 2 workflows + 3 references + 1 scaffold + 3 examples)
+- `node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types -e "import {validateDefinition} from './src/resources/extensions/gsd/definition-loader.ts'; import {parse} from 'yaml'; import {readFileSync} from 'fs'; const y = parse(readFileSync('src/resources/skills/create-workflow/templates/workflow-definition.yaml','utf-8')); const r = validateDefinition(y); if(!r.valid){console.error('FAIL:',r.errors);process.exit(1)} console.log('scaffold valid')"` — scaffold template passes validation
 
 ## Tasks
 
-- [ ] **T01: Create the create-workflow skill with references and workflows** `est:25m`
+- [x] **T01: Create the create-workflow skill with references and workflows** `est:25m`
   - Why: The skill is the primary deliverable — it's what users invoke via `/skill create-workflow` or what `/gsd workflow new` points to. The reference files encode the complete V1 schema knowledge that the skill needs to guide definition authoring.
   - Files: `src/resources/skills/create-workflow/SKILL.md`, `src/resources/skills/create-workflow/workflows/create-from-scratch.md`, `src/resources/skills/create-workflow/workflows/create-from-template.md`, `src/resources/skills/create-workflow/references/yaml-schema-v1.md`, `src/resources/skills/create-workflow/references/verification-policies.md`, `src/resources/skills/create-workflow/references/feature-patterns.md`, `src/resources/skills/create-workflow/templates/workflow-definition.yaml`
   - Do: Create the full router-pattern skill. SKILL.md has YAML frontmatter (`name: create-workflow`), `<essential_principles>` with V1 schema basics, `<routing>` for intent detection, and `<reference_index>`. Workflow files guide the conversational flow. Reference files extract schema facts from `definition-loader.ts`. The blank scaffold template has all fields with comments.
@@ -35,6 +36,15 @@
   - Do: Write 3 YAML definitions exercising different features. `blog-post-pipeline` — 3 linear steps with `context_from`, `content-heuristic` verify, `params` (topic, audience). `code-audit` — 3 steps with `iterate` on inventory, `shell-command` verify. `release-checklist` — 4 steps with diamond dependency, `human-review` verify. The test file uses `node:test` + `node:assert/strict`, reads each YAML via `readFileSync`, parses with `yaml.parse()`, and asserts `validateDefinition()` returns `{ valid: true }`.
   - Verify: `node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types --test src/resources/extensions/gsd/tests/bundled-workflow-defs.test.ts`
   - Done when: All 3 YAML files pass `validateDefinition()` with zero errors; test file runs green
+
+## Observability / Diagnostics
+
+- **Skill file structure**: `find src/resources/skills/create-workflow -type f` reveals every file the skill provides — agents use this to verify completeness.
+- **Schema accuracy**: The bundled example YAMLs are validated by `validateDefinition()` from `definition-loader.ts` — any schema drift surfaces as test failures with specific error strings in the `errors[]` array.
+- **Validation error messages**: `validateDefinition()` returns `{ valid: boolean; errors: string[] }` — errors contain field names and step IDs for precise diagnosis.
+- **Diagnostic verification**: Running `node --import ./src/resources/extensions/gsd/tests/resolve-ts.mjs --experimental-strip-types -e "import {validateDefinition} from './src/resources/extensions/gsd/definition-loader.ts'; import {parse} from 'yaml'; import {readFileSync} from 'fs'; const y = parse(readFileSync('src/resources/skills/create-workflow/templates/workflow-definition.yaml','utf-8')); console.log(JSON.stringify(validateDefinition(y)))"` surfaces scaffold validity.
+- **Failure path**: If a bundled YAML example is malformed, the test outputs the exact `errors[]` array from `validateDefinition()` — no silent failures.
+- **Redaction**: No secrets or credentials in skill files — all content is static instructional text and YAML examples.
 
 ## Files Likely Touched
 

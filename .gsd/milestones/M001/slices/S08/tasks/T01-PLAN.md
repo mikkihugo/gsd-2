@@ -49,6 +49,13 @@ All schema facts must be extracted from the actual `definition-loader.ts` source
 - `! grep -qP '^#{1,6} ' src/resources/skills/create-workflow/SKILL.md` — no markdown headings in body (after frontmatter)
 - All 7 files exist and are non-empty: `for f in SKILL.md workflows/create-from-scratch.md workflows/create-from-template.md references/yaml-schema-v1.md references/verification-policies.md references/feature-patterns.md templates/workflow-definition.yaml; do test -s "src/resources/skills/create-workflow/$f" || echo "MISSING: $f"; done`
 
+## Observability Impact
+
+- **New inspection surface**: `find src/resources/skills/create-workflow -type f` shows all skill files — agents verify completeness by counting (≥7 for T01 files, ≥10 total after T02).
+- **Scaffold validation**: The blank `workflow-definition.yaml` scaffold is itself a valid V1 definition that passes `validateDefinition()` — future agents can test this as a smoke check for schema accuracy.
+- **Failure visibility**: If reference files document a schema field incorrectly, the bundled examples (T02) that rely on those docs will fail validation with specific error strings — creating a feedback loop between docs and code.
+- **No runtime signals**: This task produces static files (Markdown + YAML) — no logs, metrics, or runtime state to monitor.
+
 ## Inputs
 
 - `src/resources/extensions/gsd/definition-loader.ts` — V1 schema validation logic to extract accurate schema facts from
