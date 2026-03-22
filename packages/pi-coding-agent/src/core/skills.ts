@@ -2,10 +2,21 @@ import { existsSync, readdirSync, readFileSync, realpathSync, statSync } from "f
 import ignore from "ignore";
 import { homedir } from "os";
 import { basename, dirname, isAbsolute, join, relative, resolve, sep } from "path";
-import { CONFIG_DIR_NAME, getAgentDir } from "../config.js";
 import { parseFrontmatter } from "../utils/frontmatter.js";
 import { toPosixPath } from "../utils/path-display.js";
 import type { ResourceDiagnostic } from "./diagnostics.js";
+
+/**
+ * The standard ecosystem skills directory used by skills.sh and the
+ * Agent Skills standard.  All agents share this location for globally
+ * installed skills.
+ */
+export const ECOSYSTEM_SKILLS_DIR = join(homedir(), ".agents", "skills");
+
+/**
+ * The standard project-level skills directory (`.agents/skills/` relative to cwd).
+ */
+export const ECOSYSTEM_PROJECT_SKILLS_DIR = ".agents";
 
 /** Max name length per spec */
 const MAX_NAME_LENGTH = 64;
@@ -331,7 +342,7 @@ function escapeXml(str: string): string {
 export interface LoadSkillsOptions {
 	/** Working directory for project-local skills. Default: process.cwd() */
 	cwd?: string;
-	/** Agent config directory for global skills. Default: ~/.pi/agent */
+	/** @deprecated Skills now use ~/.agents/skills/ exclusively. This option is ignored. */
 	agentDir?: string;
 	/** Explicit skill paths (files or directories) */
 	skillPaths?: string[];
@@ -357,10 +368,7 @@ function resolveSkillPath(p: string, cwd: string): string {
  * Returns skills and any validation diagnostics.
  */
 export function loadSkills(options: LoadSkillsOptions = {}): LoadSkillsResult {
-	const { cwd = process.cwd(), agentDir, skillPaths = [], includeDefaults = true } = options;
-
-	// Resolve agentDir - if not provided, use default from config
-	const resolvedAgentDir = agentDir ?? getAgentDir();
+	const { cwd = process.cwd(), skillPaths = [], includeDefaults = true } = options;
 
 	const skillMap = new Map<string, Skill>();
 	const realPathSet = new Set<string>();
@@ -404,12 +412,14 @@ export function loadSkills(options: LoadSkillsOptions = {}): LoadSkillsResult {
 	}
 
 	if (includeDefaults) {
-		addSkills(loadSkillsFromDirInternal(join(resolvedAgentDir, "skills"), "user", true));
-		addSkills(loadSkillsFromDirInternal(resolve(cwd, CONFIG_DIR_NAME, "skills"), "project", true));
+		// Primary: ~/.agents/skills/ — the industry-standard skills.sh location
+		addSkills(loadSkillsFromDirInternal(ECOSYSTEM_SKILLS_DIR, "user", true));
+		// Primary project: .agents/skills/ — standard project-level location
+		addSkills(loadSkillsFromDirInternal(resolve(cwd, ECOSYSTEM_PROJECT_SKILLS_DIR, "skills"), "project", true));
 	}
 
-	const userSkillsDir = join(resolvedAgentDir, "skills");
-	const projectSkillsDir = resolve(cwd, CONFIG_DIR_NAME, "skills");
+	const userSkillsDir = ECOSYSTEM_SKILLS_DIR;
+	const projectSkillsDir = resolve(cwd, ECOSYSTEM_PROJECT_SKILLS_DIR, "skills");
 
 	const isUnderPath = (target: string, root: string): boolean => {
 		const normalizedRoot = resolve(root);

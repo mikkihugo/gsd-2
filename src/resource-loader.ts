@@ -390,7 +390,9 @@ export function initResources(agentDir: string): void {
 
   syncResourceDir(bundledExtensionsDir, join(agentDir, 'extensions'))
   syncResourceDir(join(resourcesDir, 'agents'), join(agentDir, 'agents'))
-  syncResourceDir(join(resourcesDir, 'skills'), join(agentDir, 'skills'))
+  // Skills are no longer force-synced here. Users install skills via the
+  // skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ which
+  // is the industry-standard Agent Skills ecosystem directory.
 
   // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GSD_WORKFLOW_PATH
   // env var is not set (e.g. fork/dev builds, alternative entry points).

@@ -8,7 +8,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join } from "node:path";
-import { getAgentDir } from "@gsd/pi-coding-agent";
 import { statSync } from "node:fs";
 
 import type {
@@ -25,12 +24,12 @@ export type { GSDSkillRule, SkillDiscoveryMode, SkillResolution, SkillResolution
 
 /**
  * Known skill directories, in priority order.
- * User skills (~/.gsd/agent/skills/) take precedence over project skills.
+ * Global skills (~/.agents/skills/) take precedence over project skills.
  */
 export function getSkillSearchDirs(cwd: string): Array<{ dir: string; method: SkillResolution["method"] }> {
   return [
-    { dir: join(getAgentDir(), "skills"), method: "user-skill" },
-    { dir: join(cwd, ".pi", "agent", "skills"), method: "project-skill" },
+    { dir: join(homedir(), ".agents", "skills"), method: "user-skill" },
+    { dir: join(cwd, ".agents", "skills"), method: "project-skill" },
   ];
 }
 
