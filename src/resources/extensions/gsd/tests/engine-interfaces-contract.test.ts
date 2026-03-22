@@ -178,21 +178,34 @@ describe("ExecutionPolicy interface shape", () => {
 // ── Resolver stub behavior ──────────────────────────────────────────────────
 
 describe("Resolver stub behavior", () => {
-  test("resolveEngine throws for null activeEngineId", async () => {
+  test("resolveEngine returns dev engine for null activeEngineId", async () => {
     const { resolveEngine } = await import("../engine-resolver.ts");
-    assert.throws(
-      () => resolveEngine({ activeEngineId: null }),
-      /No engines registered/,
-      "resolveEngine should throw with 'No engines registered' for null",
+    const result = resolveEngine({ activeEngineId: null });
+    assert.ok(result.engine, "should return engine for null");
+    assert.equal(
+      result.engine.engineId,
+      "dev",
+      "engine.engineId should be 'dev' for null activeEngineId",
     );
   });
 
-  test("resolveEngine throws for non-null activeEngineId", async () => {
+  test("resolveEngine returns dev engine for 'dev' activeEngineId", async () => {
+    const { resolveEngine } = await import("../engine-resolver.ts");
+    const result = resolveEngine({ activeEngineId: "dev" });
+    assert.ok(result.engine, "should return engine for 'dev'");
+    assert.equal(
+      result.engine.engineId,
+      "dev",
+      "engine.engineId should be 'dev'",
+    );
+  });
+
+  test("resolveEngine throws for unknown activeEngineId", async () => {
     const { resolveEngine } = await import("../engine-resolver.ts");
     assert.throws(
-      () => resolveEngine({ activeEngineId: "dev" }),
-      /No engines registered/,
-      "resolveEngine should throw with 'No engines registered' for any engine ID",
+      () => resolveEngine({ activeEngineId: "custom-xyz" }),
+      /Unknown engine/,
+      "resolveEngine should throw for unknown engine IDs",
     );
   });
 

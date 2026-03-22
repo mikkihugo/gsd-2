@@ -69,6 +69,13 @@ The S01 contract test file (`engine-interfaces-contract.test.ts`) has two tests 
 - `src/resources/extensions/gsd/auto.ts` — T01 output: `setActiveEngineId`/`getActiveEngineId` exports
 - `src/resources/extensions/gsd/tests/engine-interfaces-contract.test.ts` — S01 test file to update
 
+## Observability Impact
+
+- **Test coverage signals**: Contract test file adds ~15 named tests that exercise every public surface of the dev engine wrapper layer — test names are descriptive enough to serve as a functional spec when read via `--test` reporter output.
+- **Regression gate**: Full suite run (`*.test.ts`) is the R017 gate — a future agent can re-run this single glob to verify zero regressions after any change to engine-related files.
+- **Failure visibility**: Each test uses `assert.throws` with regex matchers on error messages, so failure output includes both the expected pattern and the actual error — no silent swallowing.
+- **Resolver behavior change**: The updated S01 contract tests document the new resolver semantics (returns engine instead of throwing for null/"dev") — a future agent reading the test file sees the current contract, not the stale S01 stub contract.
+
 ## Expected Output
 
 - `src/resources/extensions/gsd/tests/dev-engine-wrapper.test.ts` — new file: comprehensive contract test suite
