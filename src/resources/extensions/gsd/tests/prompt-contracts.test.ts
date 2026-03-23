@@ -176,3 +176,19 @@ test("reassess-roadmap prompt forbids roadmap-only manual edits when tool path e
   const prompt = readPrompt("reassess-roadmap");
   assert.match(prompt, /Do \*\*not\*\* bypass state with manual roadmap-only edits/i);
 });
+
+// ─── Prompt migration: replan-slice → gsd_replan_slice ────────────────
+
+test("replan-slice prompt names gsd_replan_slice as canonical tool", () => {
+  const prompt = readPrompt("replan-slice");
+  assert.match(prompt, /gsd_replan_slice/);
+  assert.match(prompt, /canonical write path/i);
+});
+
+// ─── Prompt migration: reassess-roadmap → gsd_reassess_roadmap ───────
+
+test("reassess-roadmap prompt names gsd_reassess_roadmap as canonical tool", () => {
+  const prompt = readPrompt("reassess-roadmap");
+  assert.match(prompt, /gsd_reassess_roadmap/);
+  assert.match(prompt, /canonical write path/i);
+});

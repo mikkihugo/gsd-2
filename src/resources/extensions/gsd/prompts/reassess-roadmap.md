@@ -50,14 +50,15 @@ If all criteria have at least one remaining owning slice, the coverage check pas
 
 **If the roadmap is still good:**
 
-Write `{{assessmentPath}}` with a brief confirmation that roadmap coverage still holds after {{completedSliceId}}. If requirements exist, explicitly note whether requirement coverage remains sound.
+Write `{{assessmentPath}}` with a brief confirmation that roadmap coverage still holds after {{completedSliceId}}. If requirements exist, explicitly note whether requirement coverage remains sound. If `gsd_reassess_roadmap` is available, use it with `verdict: "roadmap-confirmed"`, an empty `sliceChanges` object, and the assessment text — the tool writes the assessment to the DB and renders ASSESSMENT.md.
 
 **If changes are needed:**
 
-1. Rewrite the remaining (unchecked) slices in `{{roadmapPath}}` only through the DB-backed planning path when that tool is available. Do **not** bypass state with manual roadmap-only edits. Keep completed slices exactly as they are (`[x]`). Update the boundary map for changed slices. Update the proof strategy if risks changed. Update requirement coverage if ownership or scope changed.
-2. Write `{{assessmentPath}}` explaining what changed and why — keep it brief and concrete.
-3. If `.gsd/REQUIREMENTS.md` exists and requirement ownership or status changed, update it.
-4. {{commitInstruction}}
+1. **Canonical write path — use `gsd_reassess_roadmap`:** If the `gsd_reassess_roadmap` tool is available, use it to persist the assessment and apply roadmap changes. Pass: `milestoneId`, `completedSliceId`, `verdict` (e.g. "roadmap-adjusted"), `assessment` (text explaining the decision), and `sliceChanges` with `modified` (array of sliceId, title, risk, depends, demo), `added` (same shape), `removed` (array of slice ID strings). The tool structurally enforces preservation of completed slices, writes the assessment to the DB, re-renders ROADMAP.md, and renders ASSESSMENT.md. Skip step 2 if this tool succeeds.
+2. **Degraded fallback — direct file writes:** If the `gsd_reassess_roadmap` tool is not available, rewrite the remaining (unchecked) slices in `{{roadmapPath}}` directly. Do **not** bypass state with manual roadmap-only edits when `gsd_reassess_roadmap` is available. Keep completed slices exactly as they are (`[x]`). Update the boundary map for changed slices. Update the proof strategy if risks changed. Update requirement coverage if ownership or scope changed.
+3. Write `{{assessmentPath}}` explaining what changed and why — keep it brief and concrete.
+4. If `.gsd/REQUIREMENTS.md` exists and requirement ownership or status changed, update it.
+5. {{commitInstruction}}
 
 **You MUST write the file `{{assessmentPath}}` before finishing.**
 
