@@ -149,6 +149,8 @@ const SCHEMA_VERSION = 10;
 
 function initSchema(db: DbAdapter, fileBacked: boolean): void {
   if (fileBacked) db.exec("PRAGMA journal_mode=WAL");
+  if (fileBacked) db.exec("PRAGMA busy_timeout = 5000");
+  db.exec("PRAGMA foreign_keys = ON");
 
   db.exec("BEGIN");
   try {
@@ -267,7 +269,7 @@ function initSchema(db: DbAdapter, fileBacked: boolean): void {
         proof_level TEXT NOT NULL DEFAULT '',
         integration_closure TEXT NOT NULL DEFAULT '',
         observability_impact TEXT NOT NULL DEFAULT '',
-        sequence INTEGER DEFAULT 0,
+        sequence INTEGER DEFAULT 0, -- DEAD CODE: no tool exposes sequence — always 0
         replan_triggered_at TEXT DEFAULT NULL,
         PRIMARY KEY (milestone_id, id),
         FOREIGN KEY (milestone_id) REFERENCES milestones(id)
@@ -299,7 +301,7 @@ function initSchema(db: DbAdapter, fileBacked: boolean): void {
         inputs TEXT NOT NULL DEFAULT '[]',
         expected_output TEXT NOT NULL DEFAULT '[]',
         observability_impact TEXT NOT NULL DEFAULT '',
-        sequence INTEGER DEFAULT 0,
+        sequence INTEGER DEFAULT 0, -- DEAD CODE: no tool exposes sequence — always 0
         PRIMARY KEY (milestone_id, slice_id, id),
         FOREIGN KEY (milestone_id, slice_id) REFERENCES slices(milestone_id, id)
       )
