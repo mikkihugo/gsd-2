@@ -6,6 +6,7 @@ import {
 	type Api,
 	type AssistantMessageEventStream,
 	type Context,
+	getApiProvider,
 	getModels,
 	getProviders,
 	type KnownProvider,
@@ -635,11 +636,37 @@ export class ModelRegistry {
 					})
 				: rawStreamSimple;
 
+			// Guard: if there's already a handler registered for this API, wrap
+			// the new one so it only fires for models from this provider and
+			// delegates to the previous handler for all other providers. Without
+			// this, a custom provider using api:"anthropic-messages" would clobber
+			// the built-in Anthropic stream handler (#2536).
+			const existingProvider = getApiProvider(config.api as Api);
+			const scopedStream = existingProvider
+				? (model: Model<Api>, context: Context, options?: SimpleStreamOptions): AssistantMessageEventStream => {
+						if (model.provider === providerName) {
+							return streamSimple(model, context, options);
+						}
+						return existingProvider.streamSimple(model, context, options);
+					}
+				: streamSimple;
+
+			const newFullStream = (model: Model<Api>, context: Context, options?: SimpleStreamOptions) =>
+				scopedStream(model, context, options as SimpleStreamOptions);
+			const scopedFullStream = existingProvider
+				? (model: Model<Api>, context: Context, options?: Record<string, unknown>) => {
+						if (model.provider === providerName) {
+							return newFullStream(model, context, options as SimpleStreamOptions);
+						}
+						return existingProvider.stream(model, context, options);
+					}
+				: newFullStream;
+
 			registerApiProvider(
 				{
 					api: config.api,
-					stream: (model, context, options) => streamSimple(model, context, options as SimpleStreamOptions),
-					streamSimple,
+					stream: scopedFullStream as any,
+					streamSimple: scopedStream,
 				},
 				`provider:${providerName}`,
 			);
