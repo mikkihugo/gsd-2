@@ -995,3 +995,4 @@ describe('derive-state-db', async () => {
       cleanup(base);
     }
   });
+});
