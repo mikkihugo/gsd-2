@@ -246,6 +246,15 @@ export function readIntegrationBranch(basePath: string, milestoneId: string): st
 /** Regex matching GSD quick-task branches: gsd/quick/<num>-<slug> */
 export const QUICK_BRANCH_RE = /^gsd\/quick\//;
 
+/**
+ * Matches all GSD workflow-template branches: gsd/<templateId>/<slug>.
+ *
+ * Template IDs are lowercase alphanumeric with hyphens (e.g. hotfix, bugfix,
+ * small-feature, dep-upgrade). The negative lookahead excludes milestone
+ * branches (gsd/M001/... or gsd/M001-abc123/...) which use SLICE_BRANCH_RE.
+ */
+export const WORKFLOW_BRANCH_RE = /^gsd\/(?!M\d)[\w-]+\//;
+
 export function writeIntegrationBranch(
   basePath: string,
   milestoneId: string,
@@ -257,6 +266,10 @@ export function writeIntegrationBranch(
   // to their origin branch on completion. Recording one as the integration
   // target causes milestone merges to land on the wrong branch (#1293).
   if (QUICK_BRANCH_RE.test(branch)) return;
+  // Don't record workflow-template branches (hotfix, bugfix, spike, etc.) —
+  // same root cause as quick-task branches (#2498). All templates create
+  // gsd/<templateId>/<slug> branches that are ephemeral.
+  if (WORKFLOW_BRANCH_RE.test(branch)) return;
   // Validate
   if (!VALID_BRANCH_NAME.test(branch)) return;
   // Skip if already recorded with the same branch (idempotent across restarts).
