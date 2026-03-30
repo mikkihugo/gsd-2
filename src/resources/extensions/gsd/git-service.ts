@@ -610,19 +610,22 @@ export class GitServiceImpl {
       if (count === 0) return;
 
       // Guard: don't rewrite history that has been pushed to the remote.
-      // If the reset target is an ancestor of the remote tracking branch,
-      // those commits are published and must not be squashed.
+      // Check whether the newest snapshot commit (HEAD~1) is already
+      // reachable from the remote tracking branch. If it is, the snapshots
+      // have been pushed and must not be squashed via local history rewrite.
+      // (Checking resetTarget instead would false-positive when the remote
+      // is at the pre-snapshot base but the snapshots themselves are local.)
       const resetTarget = `HEAD~${count + 1}`;
       try {
         const branch = nativeGetCurrentBranch(this.basePath);
         if (branch) {
           const remoteBranch = `origin/${branch}`;
-          // merge-base --is-ancestor exits 0 if resetTarget is ancestor of remote
-          execFileSync("git", ["merge-base", "--is-ancestor", resetTarget, remoteBranch], {
+          // merge-base --is-ancestor exits 0 if HEAD~1 is ancestor of remote
+          execFileSync("git", ["merge-base", "--is-ancestor", "HEAD~1", remoteBranch], {
             cwd: this.basePath,
             stdio: ["ignore", "pipe", "pipe"],
           });
-          // If we get here, resetTarget IS an ancestor of remote — snapshots are pushed
+          // If we get here, newest snapshot IS reachable from remote — already pushed
           return;
         }
       } catch {
@@ -637,6 +640,12 @@ export class GitServiceImpl {
       }).trim();
 
       nativeResetSoft(this.basePath, resetTarget);
+
+      // Re-run smartStage so the same RUNTIME_EXCLUSION_PATHS apply.
+      // Snapshot commits used nativeAddTracked (git add -u) which stages
+      // ALL tracked modifications including .gsd/ state files. Without
+      // re-staging, those .gsd/ changes leak into the absorbed commit.
+      this.smartStage();
 
       try {
         nativeCommit(this.basePath, headMessage, { allowEmpty: false });
