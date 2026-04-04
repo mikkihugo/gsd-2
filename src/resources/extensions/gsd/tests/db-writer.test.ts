@@ -359,6 +359,47 @@ describe('db-writer', () => {
   });
 
   // ═══════════════════════════════════════════════════════════════════════════
+  // Parallel save race condition regression (#3326, #3339, #3459)
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  test('parallel saveDecisionToDb calls produce unique IDs', async () => {
+    const tmpDir = makeTmpDir();
+    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    openDatabase(dbPath);
+
+    try {
+      // Fire 5 saves concurrently — before the fix, all would get D001
+      const results = await Promise.all([
+        saveDecisionToDb({ scope: 'a', decision: 'd1', choice: 'c1', rationale: 'r1' }, tmpDir),
+        saveDecisionToDb({ scope: 'b', decision: 'd2', choice: 'c2', rationale: 'r2' }, tmpDir),
+        saveDecisionToDb({ scope: 'c', decision: 'd3', choice: 'c3', rationale: 'r3' }, tmpDir),
+        saveDecisionToDb({ scope: 'd', decision: 'd4', choice: 'c4', rationale: 'r4' }, tmpDir),
+        saveDecisionToDb({ scope: 'e', decision: 'd5', choice: 'c5', rationale: 'r5' }, tmpDir),
+      ]);
+
+      const ids = results.map((r) => r.id);
+      const uniqueIds = new Set(ids);
+
+      // All 5 IDs must be unique
+      assert.equal(uniqueIds.size, 5, `Expected 5 unique IDs, got ${uniqueIds.size}: ${ids.join(', ')}`);
+
+      // IDs should be D001-D005 (order may vary due to concurrency)
+      for (const id of ids) {
+        assert.match(id, /^D\d{3}$/, `ID ${id} should match D### pattern`);
+      }
+
+      // Verify all 5 exist in DB
+      for (const id of ids) {
+        const row = getDecisionById(id);
+        assert.ok(row, `Decision ${id} should exist in DB`);
+      }
+    } finally {
+      closeDatabase();
+      cleanupDir(tmpDir);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════════════════
   // updateRequirementInDb Tests
   // ═══════════════════════════════════════════════════════════════════════════
 
