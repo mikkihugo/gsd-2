@@ -78,10 +78,20 @@ import {
  * as ghosts, causing auto-mode to skip them entirely.
  */
 export function isGhostMilestone(basePath: string, mid: string): boolean {
-  // If the milestone has a DB row, it's a known milestone — not a ghost.
+  // If the milestone has a DB row, it's usually a known milestone — not a ghost.
+  // Exception: a "queued" row with no disk artifacts is a phantom from
+  // gsd_milestone_generate_id that was never planned (#3645).
   if (isDbAvailable()) {
     const dbRow = getMilestone(mid);
-    if (dbRow) return false;
+    if (dbRow) {
+      if (dbRow.status === 'queued') {
+        const hasContent = resolveMilestoneFile(basePath, mid, "CONTEXT")
+          || resolveMilestoneFile(basePath, mid, "ROADMAP")
+          || resolveMilestoneFile(basePath, mid, "SUMMARY");
+        return !hasContent;
+      }
+      return false;
+    }
   }
 
   // If a worktree exists for this milestone, it was legitimately created.
