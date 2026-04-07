@@ -136,7 +136,7 @@ describe("isClosedStatus drives projection checkbox logic", () => {
 // the underscored format that Wave 5's extractEntityKey handles directly.
 
 describe("extractEntityKey recognizes underscored cmds", () => {
-  const base: WorkflowEvent = { params: {}, ts: "", hash: "", actor: "agent", session_id: "" };
+  const base: WorkflowEvent = { cmd: "", params: {}, ts: "", hash: "", actor: "agent", session_id: "" };
 
   test("complete_task → task entity", () => {
     const key = extractEntityKey({ ...base, cmd: "complete_task", params: { taskId: "T01" } });
