@@ -8,6 +8,7 @@ import { runEnvironmentChecks } from "../../doctor-environment.js";
 import { deriveState } from "../../state.js";
 import { handleCmux } from "../../commands-cmux.js";
 import { projectRoot } from "../context.js";
+import { formatShortcut } from "../../files.js";
 
 export function showHelp(ctx: ExtensionCommandContext): void {
   const lines = [
@@ -24,12 +25,12 @@ export function showHelp(ctx: ExtensionCommandContext): void {
     "  /gsd new-milestone  Create milestone from headless context (used by gsd headless)",
     "",
     "VISIBILITY",
-    "  /gsd status         Show progress dashboard  (Ctrl+Alt+G)",
+    `  /gsd status         Show progress dashboard  (${formatShortcut("Ctrl+Alt+G")})`,
     "  /gsd visualize      Interactive 10-tab TUI (progress, timeline, deps, metrics, health, agent, changes, knowledge, captures, export)",
     "  /gsd queue          Show queued/dispatched units and execution order",
     "  /gsd history        View execution history  [--cost] [--phase] [--model] [N]",
     "  /gsd changelog      Show categorized release notes  [version]",
-    "  /gsd notifications  View persistent notification history  [clear|tail|filter]  (Ctrl+Alt+N)",
+    `  /gsd notifications  View persistent notification history  [clear|tail|filter]  (${formatShortcut("Ctrl+Alt+N")})`,
     "",
     "COURSE CORRECTION",
     "  /gsd steer <desc>   Apply user override to active work",

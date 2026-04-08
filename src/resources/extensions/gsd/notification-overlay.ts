@@ -1,6 +1,6 @@
 // GSD Extension — Notification History Overlay
 // Scrollable panel showing all persisted notifications with severity filtering.
-// Toggled with Ctrl+Alt+N or opened from /gsd notifications.
+// Toggled with Ctrl+Alt+N (⌃⌥N on macOS) or opened from /gsd notifications.
 
 import type { Theme } from "@gsd/pi-coding-agent";
 import { truncateToWidth, visibleWidth, matchesKey, Key } from "@gsd/pi-tui";

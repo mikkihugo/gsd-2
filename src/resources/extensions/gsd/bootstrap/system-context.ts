@@ -15,7 +15,7 @@ import { hasSkillSnapshot, detectNewSkills, formatSkillsXml } from "../skill-dis
 import { getActiveAutoWorktreeContext } from "../auto-worktree.js";
 import { getActiveWorktreeName, getWorktreeOriginalCwd } from "../worktree-command.js";
 import { deriveState } from "../state.js";
-import { formatOverridesSection, loadActiveOverrides, loadFile, parseContinue, parseSummary } from "../files.js";
+import { formatOverridesSection, formatShortcut, loadActiveOverrides, loadFile, parseContinue, parseSummary } from "../files.js";
 import { toPosixPath } from "../../shared/mod.js";
 import { markCmuxPromptShown, shouldPromptToEnableCmux } from "../../cmux/index.js";
 
@@ -72,6 +72,8 @@ export async function buildBeforeAgentStartResult(
   const systemContent = loadPrompt("system", {
     bundledSkillsTable: buildBundledSkillsTable(),
     templatesDir: getTemplatesDir(),
+    shortcutDashboard: formatShortcut("Ctrl+Alt+G"),
+    shortcutShell: formatShortcut("Ctrl+Alt+B"),
   });
   const loadedPreferences = loadEffectiveGSDPreferences();
   if (shouldPromptToEnableCmux(loadedPreferences?.preferences)) {

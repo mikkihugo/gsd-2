@@ -131,8 +131,8 @@ Templates showing the expected format for each artifact type are in:
 - `/gsd status` - progress dashboard overlay
 - `/gsd queue` - queue future milestones (safe while auto-mode is running)
 - `/gsd quick <task>` - quick task with GSD guarantees (atomic commits, state tracking) but no milestone ceremony
-- `Ctrl+Alt+G` - toggle dashboard overlay
-- `Ctrl+Alt+B` - show shell processes
+- `{{shortcutDashboard}}` - toggle dashboard overlay
+- `{{shortcutShell}}` - show shell processes
 
 ## Execution Heuristics
 

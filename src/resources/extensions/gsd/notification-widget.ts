@@ -6,6 +6,7 @@
 import type { ExtensionContext } from "@gsd/pi-coding-agent";
 
 import { getUnreadCount, readNotifications } from "./notification-store.js";
+import { formatShortcut } from "./files.js";
 
 // ─── Pure rendering ──���────────────────────────���─────────────────────────
 
@@ -24,7 +25,7 @@ export function buildNotificationWidgetLines(): string[] {
     ? latest.message.slice(0, msgMax - 1) + "…"
     : latest.message;
 
-  return [`  ${icon} [${badge}]  ${truncated}  (Ctrl+Alt+N to view)`];
+  return [`  ${icon} [${badge}]  ${truncated}  (${formatShortcut("Ctrl+Alt+N")} to view)`];
 }
 
 // ─── Widget init ────────────────────────────────────────────────────────
