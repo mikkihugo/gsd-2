@@ -263,9 +263,9 @@ function extractPathFromAnnotation(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const backtickMatch = trimmed.match(/^`([^`]+)`(?:\s+[—–-]\s+.*)?$/);
+  const backtickMatch = trimmed.match(/^(`+)([^`]+)\1(?:(?:\s+[—–-]\s+.+)|(?:\s+\([^()]+\)))?$/);
   if (backtickMatch) {
-    return backtickMatch[1].trim();
+    return backtickMatch[2].trim();
   }
 
   const annotatedMatch = trimmed.match(/^(.+?)\s+[—–-]\s+.+$/);
