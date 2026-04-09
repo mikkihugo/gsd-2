@@ -71,11 +71,13 @@ test("execute-task prompt references gsd_complete_task tool", () => {
   assert.match(prompt, /gsd_complete_task/);
 });
 
-test("execute-task prompt instructs writing task summary before tool call", () => {
+test("execute-task prompt uses gsd_complete_task as canonical summary write path", () => {
   const prompt = readPrompt("execute-task");
-  // The prompt instructs writing the summary file AND calling the tool
   assert.match(prompt, /\{\{taskSummaryPath\}\}/);
   assert.match(prompt, /gsd_complete_task/);
+  assert.match(prompt, /DB-backed tool is the canonical write path/i);
+  assert.match(prompt, /Do \*\*not\*\* manually write `?\{\{taskSummaryPath\}\}`?/i);
+  assert.doesNotMatch(prompt, /^\d+\.\s+Write `?\{\{taskSummaryPath\}\}`?\s*$/m);
 });
 
 test("execute-task prompt does not instruct LLM to toggle checkboxes manually", () => {
