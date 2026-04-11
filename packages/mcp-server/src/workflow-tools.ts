@@ -326,6 +326,7 @@ function getWriteGateModuleCandidates(): string[] {
 
   candidates.push(
     new URL("../../../src/resources/extensions/gsd/bootstrap/write-gate.js", import.meta.url).href,
+    new URL("../../../dist/resources/extensions/gsd/bootstrap/write-gate.js", import.meta.url).href,
     new URL("../../../src/resources/extensions/gsd/bootstrap/write-gate.ts", import.meta.url).href,
   );
 
@@ -336,8 +337,39 @@ function toFileUrl(modulePath: string): string {
   return pathToFileURL(resolve(modulePath)).href;
 }
 
+/** @internal — exported for testing only */
+export function _buildImportCandidates(relativePath: string): string[] {
+  // Build candidate paths: try the given path first, then swap src/<->dist/
+  // and try .ts extension. This handles both dev (tsx from src/) and prod
+  // (compiled from dist/) execution contexts.
+  const candidates: string[] = [relativePath];
+  const swapped = relativePath.includes("/src/")
+    ? relativePath.replace("/src/", "/dist/")
+    : relativePath.includes("/dist/")
+      ? relativePath.replace("/dist/", "/src/")
+      : null;
+  if (swapped) candidates.push(swapped);
+  // Also try .ts variants for dev-mode tsx execution
+  if (relativePath.endsWith(".js")) {
+    candidates.push(relativePath.replace(/\.js$/, ".ts"));
+    if (swapped) candidates.push(swapped.replace(/\.js$/, ".ts"));
+  }
+  return candidates;
+}
+
 async function importLocalModule<T>(relativePath: string): Promise<T> {
-  return import(new URL(relativePath, import.meta.url).href) as Promise<T>;
+  const candidates = _buildImportCandidates(relativePath)
+    .map((p) => new URL(p, import.meta.url).href);
+
+  let lastErr: unknown;
+  for (const candidate of candidates) {
+    try {
+      return await import(candidate) as T;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  throw lastErr;
 }
 
 function getWorkflowExecutorModuleCandidates(env: NodeJS.ProcessEnv = process.env): string[] {
@@ -352,6 +384,7 @@ function getWorkflowExecutorModuleCandidates(env: NodeJS.ProcessEnv = process.en
 
   candidates.push(
     new URL("../../../src/resources/extensions/gsd/tools/workflow-tool-executors.js", import.meta.url).href,
+    new URL("../../../dist/resources/extensions/gsd/tools/workflow-tool-executors.js", import.meta.url).href,
     new URL("../../../src/resources/extensions/gsd/tools/workflow-tool-executors.ts", import.meta.url).href,
   );
 
