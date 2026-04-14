@@ -1,14 +1,14 @@
 /**
  * GSD Command — /gsd pr-branch
  *
- * Creates a clean PR branch by cherry-picking only commits that
- * touch non-.gsd/ files. Useful for upstream PRs where .gsd/
- * planning artifacts should not be included.
+ * Creates a clean PR branch by cherry-picking commits while stripping
+ * any changes to .gsd/, .planning/, and PLAN.md paths. Useful for
+ * upstream PRs where planning artifacts should not be included.
  */
 
 import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 import {
   nativeGetCurrentBranch,
@@ -16,20 +16,52 @@ import {
   nativeBranchExists,
 } from "./native-git-bridge.js";
 
-function git(basePath: string, args: string): string {
-  return execSync(`git ${args}`, { cwd: basePath, encoding: "utf-8" }).trim();
+const EXCLUDED_PATHS = [".gsd", ".planning", "PLAN.md"] as const;
+
+function git(basePath: string, args: readonly string[]): string {
+  return execFileSync("git", args, { cwd: basePath, encoding: "utf-8" }).trim();
+}
+
+function gitAllowFail(basePath: string, args: readonly string[]): void {
+  try {
+    execFileSync("git", args, { cwd: basePath, encoding: "utf-8", stdio: "pipe" });
+  } catch {
+    // ignored — caller opts into non-fatal behavior
+  }
+}
+
+function hasStagedChanges(basePath: string): boolean {
+  try {
+    execFileSync("git", ["diff", "--cached", "--quiet"], {
+      cwd: basePath,
+      stdio: "pipe",
+    });
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function isValidBranchName(name: string): boolean {
+  try {
+    execFileSync("git", ["check-ref-format", "--branch", name], { stdio: "pipe" });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function getCodeOnlyCommits(basePath: string, base: string, head: string): string[] {
-  // Get commits that have changes outside .gsd/ and .planning/
   try {
-    const allCommits = git(basePath, `log --format=%H ${base}..${head}`).split("\n").filter(Boolean);
+    const allCommits = git(basePath, ["log", "--format=%H", `${base}..${head}`])
+      .split("\n")
+      .filter(Boolean);
     const codeCommits: string[] = [];
 
     for (const sha of allCommits) {
-      // Get files changed in this commit
-      const files = git(basePath, `diff-tree --no-commit-id --name-only -r ${sha}`).split("\n").filter(Boolean);
-      // Check if any files are outside .gsd/ and .planning/
+      const files = git(basePath, ["diff-tree", "--no-commit-id", "--name-only", "-r", sha])
+        .split("\n")
+        .filter(Boolean);
       const hasCodeChanges = files.some(
         (f) => !f.startsWith(".gsd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
       );
@@ -38,9 +70,55 @@ function getCodeOnlyCommits(basePath: string, base: string, head: string): strin
       }
     }
 
-    return codeCommits.reverse(); // Chronological order for cherry-picking
+    return codeCommits.reverse(); // chronological for cherry-picking
   } catch {
     return [];
+  }
+}
+
+/**
+ * Cherry-pick a commit while stripping excluded paths from the resulting
+ * commit. Returns true if a commit was produced, false if nothing remained
+ * after filtering.
+ */
+function cherryPickFiltered(basePath: string, sha: string): boolean {
+  git(basePath, ["cherry-pick", "--no-commit", "--allow-empty", sha]);
+
+  // Unstage any excluded paths introduced by the cherry-pick.
+  gitAllowFail(basePath, ["reset", "HEAD", "--", ...EXCLUDED_PATHS]);
+
+  // Restore worktree state for excluded paths from HEAD (if tracked),
+  // then remove any newly introduced untracked files under those paths.
+  gitAllowFail(basePath, ["checkout", "HEAD", "--", ...EXCLUDED_PATHS]);
+  gitAllowFail(basePath, ["clean", "-fdq", "--", ...EXCLUDED_PATHS]);
+
+  if (!hasStagedChanges(basePath)) {
+    // Nothing remained after filtering — discard worktree residue and skip.
+    git(basePath, ["reset", "--hard", "HEAD"]);
+    return false;
+  }
+
+  git(basePath, ["commit", "-C", sha]);
+  return true;
+}
+
+function assertNoExcludedPaths(basePath: string, base: string): void {
+  const files = git(basePath, [
+    "diff",
+    "--name-only",
+    `${base}..HEAD`,
+  ])
+    .split("\n")
+    .filter(Boolean);
+  const leaked = files.filter(
+    (f) => f.startsWith(".gsd/") || f.startsWith(".planning/") || f === "PLAN.md",
+  );
+  if (leaked.length > 0) {
+    throw new Error(
+      `PR branch still contains excluded paths: ${leaked.slice(0, 5).join(", ")}${
+        leaked.length > 5 ? ` (+${leaked.length - 5} more)` : ""
+      }`,
+    );
   }
 }
 
@@ -58,13 +136,13 @@ export async function handlePrBranch(
   // Determine base ref (prefer upstream/main if available)
   let baseRef: string;
   try {
-    git(basePath, "rev-parse --verify upstream/main");
+    git(basePath, ["rev-parse", "--verify", "upstream/main"]);
     baseRef = "upstream/main";
   } catch {
     baseRef = mainBranch;
   }
 
-  // Find code-only commits
+  // Find commits with code changes
   const commits = getCodeOnlyCommits(basePath, baseRef, "HEAD");
 
   if (commits.length === 0) {
@@ -75,14 +153,32 @@ export async function handlePrBranch(
   if (dryRun) {
     const lines = [`Would create PR branch with ${commits.length} commits (filtering .gsd/ paths):\n`];
     for (const sha of commits) {
-      const msg = git(basePath, `log --format=%s -1 ${sha}`);
+      const msg = git(basePath, ["log", "--format=%s", "-1", sha]);
       lines.push(`  ${sha.slice(0, 8)} ${msg}`);
     }
     ctx.ui.notify(lines.join("\n"), "info");
     return;
   }
 
-  const prBranch = nameMatch?.[1] ?? `pr/${currentBranch}`;
+  const requestedName = nameMatch?.[1];
+  if (requestedName && !isValidBranchName(requestedName)) {
+    ctx.ui.notify(
+      `Invalid branch name: ${requestedName}. Must satisfy git check-ref-format.`,
+      "error",
+    );
+    return;
+  }
+
+  const defaultName = `pr/${currentBranch}`;
+  const prBranch = requestedName ?? defaultName;
+
+  if (!isValidBranchName(prBranch)) {
+    ctx.ui.notify(
+      `Derived branch name is invalid: ${prBranch}. Use --name to override.`,
+      "error",
+    );
+    return;
+  }
 
   if (nativeBranchExists(basePath, prBranch)) {
     ctx.ui.notify(
@@ -94,42 +190,44 @@ export async function handlePrBranch(
 
   try {
     // Create clean branch from base
-    git(basePath, `checkout -b ${prBranch} ${baseRef}`);
+    git(basePath, ["checkout", "-b", prBranch, baseRef]);
 
-    // Cherry-pick each code commit
+    // Cherry-pick with path filter
     let picked = 0;
+    let skipped = 0;
     for (const sha of commits) {
       try {
-        git(basePath, `cherry-pick ${sha}`);
-        picked++;
-      } catch {
-        // If cherry-pick fails (conflict), abort and report
-        try {
-          git(basePath, "cherry-pick --abort");
-        } catch {
-          // already aborted
+        if (cherryPickFiltered(basePath, sha)) {
+          picked++;
+        } else {
+          skipped++;
         }
+      } catch (pickErr) {
+        gitAllowFail(basePath, ["cherry-pick", "--abort"]);
+        gitAllowFail(basePath, ["reset", "--hard", "HEAD"]);
+        const detail = pickErr instanceof Error ? pickErr.message : String(pickErr);
         ctx.ui.notify(
-          `Cherry-pick conflict at ${sha.slice(0, 8)}. Picked ${picked}/${commits.length} commits. Resolve manually.`,
+          `Cherry-pick conflict at ${sha.slice(0, 8)}. Picked ${picked}/${commits.length} commits. Resolve manually.\n${detail}`,
           "warning",
         );
-        // Switch back to original branch
-        git(basePath, `checkout ${currentBranch}`);
+        git(basePath, ["checkout", currentBranch]);
         return;
       }
     }
 
+    // Post-condition: no excluded paths should appear in the PR branch diff.
+    assertNoExcludedPaths(basePath, baseRef);
+
+    const skippedMsg = skipped > 0 ? ` (${skipped} skipped — contained only planning artifacts)` : "";
     ctx.ui.notify(
-      `Created ${prBranch} with ${picked} commits (no .gsd/ artifacts).\nSwitch back: git checkout ${currentBranch}`,
+      `Created ${prBranch} with ${picked} commits${skippedMsg} (no .gsd/ artifacts).\nSwitch back: git checkout ${currentBranch}`,
       "success",
     );
   } catch (err) {
     // Restore original branch on failure
-    try {
-      git(basePath, `checkout ${currentBranch}`);
-    } catch {
-      // best effort
-    }
+    gitAllowFail(basePath, ["cherry-pick", "--abort"]);
+    gitAllowFail(basePath, ["reset", "--hard", "HEAD"]);
+    gitAllowFail(basePath, ["checkout", currentBranch]);
     const msg = err instanceof Error ? err.message : String(err);
     ctx.ui.notify(`Failed to create PR branch: ${msg}`, "error");
   }

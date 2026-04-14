@@ -7,18 +7,26 @@
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
 
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 
 import { deriveState } from "./state.js";
-import { gsdRoot } from "./paths.js";
+import { resolveMilestoneFile, resolveSlicePath, resolveSliceFile } from "./paths.js";
 import { getLedger, getProjectTotals, aggregateByModel, formatCost, formatTokenCount, loadLedgerFromDisk } from "./metrics.js";
 import { nativeGetCurrentBranch, nativeDetectMainBranch } from "./native-git-bridge.js";
 import { formatDuration } from "../shared/format-utils.js";
 
-function git(basePath: string, args: string): string {
-  return execSync(`git ${args}`, { cwd: basePath, encoding: "utf-8" }).trim();
+function git(basePath: string, args: readonly string[]): string {
+  return execFileSync("git", args, { cwd: basePath, encoding: "utf-8" }).trim();
+}
+
+function isValidRefName(name: string): boolean {
+  try {
+    execFileSync("git", ["check-ref-format", "--branch", name], { stdio: "pipe" });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 interface PRContent {
@@ -26,22 +34,44 @@ interface PRContent {
   body: string;
 }
 
-function collectSliceSummaries(basePath: string, milestoneId: string): string[] {
-  const summaries: string[] = [];
-  const milestoneDir = join(gsdRoot(basePath), "milestones", milestoneId);
-  if (!existsSync(milestoneDir)) return summaries;
+function listSliceIds(basePath: string, milestoneId: string): string[] {
+  // Slices live at <milestoneDir>/slices/<sliceId>/ with canonical S\d+ IDs.
+  // Use resolveSlicePath with a probe to find the real slices directory root.
+  const probe = resolveSlicePath(basePath, milestoneId, "S01");
+  let slicesDir: string | null = null;
+  if (probe) {
+    // probe looks like <milestoneDir>/slices/S01 — parent is slices dir.
+    slicesDir = probe.replace(/[\\/][^\\/]+$/, "");
+  } else {
+    // Fall back to scanning the milestones roadmap file's sibling slices dir.
+    const roadmap = resolveMilestoneFile(basePath, milestoneId, "ROADMAP");
+    if (roadmap) {
+      slicesDir = roadmap.replace(/[\\/][^\\/]+$/, "") + "/slices";
+    }
+  }
+  if (!slicesDir || !existsSync(slicesDir)) return [];
 
   try {
-    for (const entry of readdirSync(milestoneDir, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const summaryPath = join(milestoneDir, entry.name, "SUMMARY.md");
-      if (existsSync(summaryPath)) {
-        const content = readFileSync(summaryPath, "utf-8").trim();
-        if (content) summaries.push(`### ${entry.name}\n${content}`);
-      }
-    }
+    return readdirSync(slicesDir, { withFileTypes: true })
+      .filter((e) => e.isDirectory() && /^S\d+$/.test(e.name))
+      .map((e) => e.name)
+      .sort();
   } catch {
-    // non-fatal
+    return [];
+  }
+}
+
+function collectSliceSummaries(basePath: string, milestoneId: string): string[] {
+  const summaries: string[] = [];
+  for (const sliceId of listSliceIds(basePath, milestoneId)) {
+    const summaryPath = resolveSliceFile(basePath, milestoneId, sliceId, "SUMMARY");
+    if (!summaryPath || !existsSync(summaryPath)) continue;
+    try {
+      const content = readFileSync(summaryPath, "utf-8").trim();
+      if (content) summaries.push(`### ${sliceId}\n${content}`);
+    } catch {
+      // non-fatal
+    }
   }
   return summaries;
 }
@@ -66,14 +96,18 @@ function generatePRContent(basePath: string, milestoneId: string, milestoneTitle
   }
 
   // Roadmap status
-  const roadmapPath = join(gsdRoot(basePath), "milestones", milestoneId, "ROADMAP.md");
-  if (existsSync(roadmapPath)) {
-    const roadmap = readFileSync(roadmapPath, "utf-8");
-    const checkboxLines = roadmap.split("\n").filter((l) => /^\s*-\s*\[[ x]\]/.test(l));
-    if (checkboxLines.length > 0) {
-      sections.push("## Roadmap\n");
-      sections.push(checkboxLines.join("\n"));
-      sections.push("");
+  const roadmapPath = resolveMilestoneFile(basePath, milestoneId, "ROADMAP");
+  if (roadmapPath && existsSync(roadmapPath)) {
+    try {
+      const roadmap = readFileSync(roadmapPath, "utf-8");
+      const checkboxLines = roadmap.split("\n").filter((l) => /^\s*-\s*\[[ x]\]/.test(l));
+      if (checkboxLines.length > 0) {
+        sections.push("## Roadmap\n");
+        sections.push(checkboxLines.join("\n"));
+        sections.push("");
+      }
+    } catch {
+      // non-fatal
     }
   }
 
@@ -124,6 +158,11 @@ export async function handleShip(
   const baseMatch = args.match(/--base\s+(\S+)/);
   const base = baseMatch?.[1] ?? nativeDetectMainBranch(basePath);
 
+  if (!isValidRefName(base)) {
+    ctx.ui.notify(`Invalid base branch name: ${base}`, "error");
+    return;
+  }
+
   // 1. Validate milestone state
   const state = await deriveState(basePath);
   if (!state.activeMilestone) {
@@ -154,22 +193,23 @@ export async function handleShip(
 
   // 5. Check git state
   const currentBranch = nativeGetCurrentBranch(basePath);
+  if (!isValidRefName(currentBranch)) {
+    ctx.ui.notify(`Current branch name is invalid for git: ${currentBranch}`, "error");
+    return;
+  }
   if (currentBranch === base) {
     ctx.ui.notify(`You're on ${base} — create a feature branch first.`, "warning");
     return;
   }
 
-  // 6. Push and create PR
+  // 6. Push and create PR (all argv-safe, no shell interpolation)
   try {
-    // Push current branch to origin
-    git(basePath, `push -u origin ${currentBranch}`);
+    git(basePath, ["push", "-u", "origin", currentBranch]);
 
-    // Create PR via gh
-    const draftFlag = draft ? "--draft" : "";
-    const prUrl = execSync(
-      `gh pr create --base ${base} --title ${JSON.stringify(title)} --body ${JSON.stringify(body)} ${draftFlag}`,
-      { cwd: basePath, encoding: "utf-8" },
-    ).trim();
+    const ghArgs = ["pr", "create", "--base", base, "--title", title, "--body", body];
+    if (draft) ghArgs.push("--draft");
+
+    const prUrl = execFileSync("gh", ghArgs, { cwd: basePath, encoding: "utf-8" }).trim();
 
     ctx.ui.notify(`PR created: ${prUrl}`, "success");
   } catch (err) {

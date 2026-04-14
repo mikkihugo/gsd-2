@@ -11,7 +11,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { deriveState } from "./state.js";
-import { gsdRoot } from "./paths.js";
+import { gsdRoot, resolveSliceFile } from "./paths.js";
 import { loadPrompt } from "./prompt-loader.js";
 
 function findLastCompletedSlice(basePath: string, milestoneId: string): string | null {
@@ -35,8 +35,8 @@ function findLastCompletedSlice(basePath: string, milestoneId: string): string |
 }
 
 function readSliceSummary(basePath: string, milestoneId: string, sliceId: string): { title: string; content: string } {
-  const summaryPath = join(gsdRoot(basePath), "milestones", milestoneId, sliceId, "SUMMARY.md");
-  if (existsSync(summaryPath)) {
+  const summaryPath = resolveSliceFile(basePath, milestoneId, sliceId, "SUMMARY");
+  if (summaryPath && existsSync(summaryPath)) {
     const content = readFileSync(summaryPath, "utf-8");
     const titleMatch = content.match(/^#\s+(.+)/m);
     return { title: titleMatch?.[1] ?? sliceId, content };
