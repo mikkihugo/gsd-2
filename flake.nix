@@ -1,5 +1,5 @@
 {
-  description = "Minimal runtime shell for gsd-2";
+  description = "Development and build environment for singularity-forge";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
@@ -30,12 +30,16 @@
           shellHook = ''
             export GSD_SOURCE_DIR="${toString ./.}"
             export PATH="$GSD_SOURCE_DIR/bin:$PATH"
+            export RUST_BACKTRACE=1
 
-            echo "gsd-2 runtime shell"
-            echo "  bun : $(command -v bun)"
+            echo "singularity-forge development shell"
+            echo "  bun  : $(command -v bun)"
             echo "  cargo: $(command -v cargo)"
-            echo "  node: $(command -v node)"
+            echo "  node : $(command -v node)"
             echo "  rustc: $(command -v rustc)"
+            echo ""
+            echo "Build native addon:"
+            echo "  bun run --filter @sf-run/native build:native"
           '';
         };
       });
