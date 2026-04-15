@@ -324,7 +324,7 @@ function hasMissingWorkspaceScopes(hoisted: string, internal: string): boolean {
   if (!existsSync(internal)) return false
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
-      if (entry.isDirectory() && entry.name.startsWith('@gsd') &&
+      if (entry.isDirectory() && entry.name.startsWith('@sf-run') &&
           !existsSync(join(hoisted, entry.name))) {
         return true
       }
