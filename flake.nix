@@ -18,8 +18,13 @@
           packages = with pkgs; [
             bash
             bun
+            cargo
+            clippy
             git
             nodejs_24
+            rust-analyzer
+            rustc
+            rustfmt
           ];
 
           shellHook = ''
@@ -28,7 +33,9 @@
 
             echo "gsd-2 runtime shell"
             echo "  bun : $(command -v bun)"
+            echo "  cargo: $(command -v cargo)"
             echo "  node: $(command -v node)"
+            echo "  rustc: $(command -v rustc)"
           '';
         };
       });

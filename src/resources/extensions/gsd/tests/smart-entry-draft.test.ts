@@ -76,7 +76,7 @@ const guidedFlowSource = readFileSync(
 
 assert(
   guidedFlowSource.includes('state.phase === "needs-discussion"'),
-  "guided-flow.ts should have 'needs-discussion' phase check in showSmartEntry",
+  "guided-flow.ts should have 'needs-discussion' phase check in showWorkflowEntry",
 );
 
 // Check the branch has draft-aware menu options

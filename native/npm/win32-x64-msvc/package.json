@@ -8,9 +8,9 @@
   "cpu": [
     "x64"
   ],
-  "main": "gsd_engine.node",
+  "main": "forge_engine.node",
   "files": [
-    "gsd_engine.node"
+    "forge_engine.node"
   ],
   "license": "MIT",
   "repository": {

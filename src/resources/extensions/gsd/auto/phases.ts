@@ -48,7 +48,7 @@ import { withTimeout, FINALIZE_PRE_TIMEOUT_MS, FINALIZE_POST_TIMEOUT_MS } from "
 import { getEligibleSlices } from "../slice-parallel-eligibility.js";
 import { startSliceParallel } from "../slice-parallel-orchestrator.js";
 import { isDbAvailable, getMilestoneSlices } from "../gsd-db.js";
-import { ensurePlanV2Graph } from "../uok/plan-v2.js";
+import { ensurePlanV2Graph as ensurePlanningFlowGraph } from "../uok/plan-v2.js";
 import { resolveUokFlags } from "../uok/flags.js";
 import { UokGateRunner } from "../uok/gate-runner.js";
 import { resetEvidence } from "../safety/evidence-collector.js";
@@ -84,15 +84,15 @@ export function _resolveDispatchGuardBasePath(
   return s.originalBasePath || s.basePath;
 }
 
-const PLAN_V2_GATE_PHASES: ReadonlySet<Phase> = new Set([
+const PLANNING_FLOW_GATE_PHASES: ReadonlySet<Phase> = new Set([
   "executing",
   "summarizing",
   "validating-milestone",
   "completing-milestone",
 ]);
 
-function shouldRunPlanV2Gate(phase: Phase): boolean {
-  return PLAN_V2_GATE_PHASES.has(phase);
+function shouldRunPlanningFlowGate(phase: Phase): boolean {
+  return PLANNING_FLOW_GATE_PHASES.has(phase);
 }
 
 function shouldSkipArtifactVerification(unitType: string): boolean {
@@ -404,29 +404,30 @@ export async function runPreDispatch(
 
   // Derive state
   let state = await deps.deriveState(s.basePath);
-  if (prefs?.uok?.plan_v2?.enabled && shouldRunPlanV2Gate(state.phase)) {
-    const compiled = ensurePlanV2Graph(s.basePath, state);
+  const planningFlowEnabled = prefs?.uok?.planning_flow?.enabled === true || prefs?.uok?.plan_v2?.enabled === true;
+  if (planningFlowEnabled && shouldRunPlanningFlowGate(state.phase)) {
+    const compiled = ensurePlanningFlowGraph(s.basePath, state);
     if (!compiled.ok) {
-      const reason = compiled.reason ?? "Plan v2 compilation failed";
+      const reason = compiled.reason ?? "Planning flow compilation failed";
       await runPreDispatchGate({
-        gateId: "plan-v2-gate",
+        gateId: "planning-flow-gate",
         gateType: "policy",
         outcome: "manual-attention",
         failureClass: "manual-attention",
-        rationale: "plan v2 compile gate failed",
+        rationale: "planning flow compile gate failed",
         findings: reason,
         milestoneId: state.activeMilestone?.id ?? undefined,
       });
       ctx.ui.notify(`Plan gate failed-closed: ${reason}`, "error");
       await deps.pauseAuto(ctx, pi);
-      return { action: "break", reason: "plan-v2-gate-failed" };
+      return { action: "break", reason: "planning-flow-gate-failed" };
     }
     await runPreDispatchGate({
-      gateId: "plan-v2-gate",
+      gateId: "planning-flow-gate",
       gateType: "policy",
       outcome: "pass",
       failureClass: "none",
-      rationale: "plan v2 compile gate passed",
+      rationale: "planning flow compile gate passed",
       milestoneId: state.activeMilestone?.id ?? undefined,
     });
   }

@@ -267,8 +267,8 @@ export async function handleWorkflowCommand(trimmed: string, ctx: ExtensionComma
       try { unlinkSync(headlessContextPath); } catch { /* non-fatal */ }
       await showHeadlessMilestoneCreation(ctx, pi, basePath, seedContext);
     } else {
-      const { showSmartEntry } = await import("../../guided-flow.js");
-      await showSmartEntry(ctx, pi, basePath);
+      const { showWorkflowEntry } = await import("../../guided-flow.js");
+      await showWorkflowEntry(ctx, pi, basePath);
     }
     return true;
   }

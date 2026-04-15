@@ -400,11 +400,27 @@ function mergePreferences(base: GSDPreferences, override: GSDPreferences): GSDPr
           gitops: (base.uok?.gitops || override.uok?.gitops)
             ? { ...(base.uok?.gitops ?? {}), ...(override.uok?.gitops ?? {}) }
             : undefined,
-          audit_unified: (base.uok?.audit_unified || override.uok?.audit_unified)
-            ? { ...(base.uok?.audit_unified ?? {}), ...(override.uok?.audit_unified ?? {}) }
+          audit_envelope: (
+            base.uok?.audit_envelope
+            || base.uok?.audit_unified
+            || override.uok?.audit_envelope
+            || override.uok?.audit_unified
+          )
+            ? {
+                ...(base.uok?.audit_envelope ?? base.uok?.audit_unified ?? {}),
+                ...(override.uok?.audit_envelope ?? override.uok?.audit_unified ?? {}),
+              }
             : undefined,
-          plan_v2: (base.uok?.plan_v2 || override.uok?.plan_v2)
-            ? { ...(base.uok?.plan_v2 ?? {}), ...(override.uok?.plan_v2 ?? {}) }
+          planning_flow: (
+            base.uok?.planning_flow
+            || base.uok?.plan_v2
+            || override.uok?.planning_flow
+            || override.uok?.plan_v2
+          )
+            ? {
+                ...(base.uok?.planning_flow ?? base.uok?.plan_v2 ?? {}),
+                ...(override.uok?.planning_flow ?? override.uok?.plan_v2 ?? {}),
+              }
             : undefined,
         }
       : undefined,

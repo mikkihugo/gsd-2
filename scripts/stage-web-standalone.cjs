@@ -43,7 +43,7 @@ function overlayNodePty(targetRoot) {
 }
 
 if (!existsSync(standaloneAppRoot)) {
-  console.error('[gsd] Web standalone build not found at web/.next/standalone/web. Run `npm --prefix web run build` first.')
+  console.error('[forge] Web standalone build not found at web/.next/standalone/web. Run `npm --prefix web run build` first.')
   process.exit(1)
 }
 
@@ -67,7 +67,7 @@ if (existsSync(publicRoot)) {
 
 const hydratedTargets = overlayNodePty(distStandaloneRoot)
 
-console.log(`[gsd] Staged web standalone host at ${distStandaloneRoot}`)
+console.log(`[forge] Staged web standalone host at ${distStandaloneRoot}`)
 if (hydratedTargets.length > 0) {
-  console.log(`[gsd] Hydrated node-pty native assets in ${hydratedTargets.length} location(s).`)
+  console.log(`[forge] Hydrated node-pty native assets in ${hydratedTargets.length} location(s).`)
 }

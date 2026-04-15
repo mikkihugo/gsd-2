@@ -1,13 +1,13 @@
-// GSD Extension — Unified Rule Registry
+// GSD Extension — Rule Registry
 //
-// Holds all dispatch rules and hooks as a flat list of UnifiedRule objects.
+// Holds all dispatch rules and hooks as a flat list of RegistryRule objects.
 // Provides evaluation methods for each phase (dispatch, post-unit, pre-dispatch)
 // and encapsulates mutable hook state as instance fields.
 //
 // A module-level singleton accessor allows existing code to migrate incrementally.
 
 import { logWarning } from "./workflow-logger.js";
-import type { UnifiedRule, RulePhase } from "./rule-types.js";
+import type { RegistryRule, RulePhase } from "./rule-types.js";
 import type { DispatchAction, DispatchContext, DispatchRule } from "./auto-dispatch.js";
 import type {
   PostUnitHookConfig,
@@ -39,10 +39,10 @@ export function resolveHookArtifactPath(basePath: string, unitId: string, artifa
 // ─── Dispatch Rule Conversion ──────────────────────────────────────────────
 
 /**
- * Convert an array of DispatchRule objects to UnifiedRule[] format.
+ * Convert an array of DispatchRule objects to RegistryRule[] format.
  * Preserves exact array order — dispatch is order-dependent (first-match-wins).
  */
-export function convertDispatchRules(rules: DispatchRule[]): UnifiedRule[] {
+export function convertDispatchRules(rules: DispatchRule[]): RegistryRule[] {
   return rules.map((rule) => ({
     name: rule.name,
     when: "dispatch" as const,
@@ -59,7 +59,7 @@ const HOOK_STATE_FILE = "hook-state.json";
 
 export class RuleRegistry {
   /** Static dispatch rules provided at construction time. */
-  private readonly dispatchRules: UnifiedRule[];
+  private readonly dispatchRules: RegistryRule[];
 
   // ── Mutable hook state (encapsulated, not module-level) ──────────────
 
@@ -73,7 +73,7 @@ export class RuleRegistry {
   retryPending: boolean = false;
   retryTrigger: { unitType: string; unitId: string; retryArtifact: string } | null = null;
 
-  constructor(dispatchRules: UnifiedRule[]) {
+  constructor(dispatchRules: RegistryRule[]) {
     this.dispatchRules = dispatchRules;
   }
 
@@ -83,8 +83,8 @@ export class RuleRegistry {
    * Returns all rules: static dispatch rules + dynamically loaded hook rules.
    * Hook rules are loaded fresh from preferences on each call (not cached).
    */
-  listRules(): UnifiedRule[] {
-    const rules: UnifiedRule[] = [...this.dispatchRules];
+  listRules(): RegistryRule[] {
+    const rules: RegistryRule[] = [...this.dispatchRules];
 
     // Convert post-unit hooks to unified rules
     const postHooks = resolvePostUnitHooks();
@@ -575,7 +575,7 @@ export function setRegistry(r: RuleRegistry): void {
 }
 
 /** Create and set the singleton registry with the given dispatch rules. */
-export function initRegistry(dispatchRules: UnifiedRule[]): RuleRegistry {
+export function initRegistry(dispatchRules: RegistryRule[]): RuleRegistry {
   const registry = new RuleRegistry(dispatchRules);
   setRegistry(registry);
   return registry;

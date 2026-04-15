@@ -231,9 +231,17 @@ export interface UokPreferences {
     turn_action?: UokTurnActionMode;
     turn_push?: boolean;
   };
+  audit_envelope?: {
+    enabled?: boolean;
+  };
+  /** @deprecated Use `audit_envelope` instead. */
   audit_unified?: {
     enabled?: boolean;
   };
+  planning_flow?: {
+    enabled?: boolean;
+  };
+  /** @deprecated Use `planning_flow` instead. */
   plan_v2?: {
     enabled?: boolean;
   };
@@ -289,7 +297,7 @@ export interface GSDPreferences {
   post_unit_hooks?: PostUnitHookConfig[];
   pre_dispatch_hooks?: PreDispatchHookConfig[];
   dynamic_routing?: DynamicRoutingConfig;
-  /** Unified Orchestration Kernel controls (all flags default off). */
+  /** Orchestration kernel controls (all flags default off). */
   uok?: UokPreferences;
   /** Per-model capability overrides. Deep-merged with built-in profiles for capability-aware routing (ADR-004). */
   modelOverrides?: Record<string, { capabilities?: Partial<ModelCapabilities> }>;

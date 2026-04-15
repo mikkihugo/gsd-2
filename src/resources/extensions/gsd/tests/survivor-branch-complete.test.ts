@@ -76,13 +76,13 @@ const { assertTrue, assertEq, report } = createTestContext();
   // Simulate the decision logic after the fix:
   // if (hasSurvivorBranch && state.phase === "complete") -> finalize
   // if (hasSurvivorBranch && state.phase === "needs-discussion") -> discuss
-  // if (!hasSurvivorBranch && state.phase === "complete") -> showSmartEntry
+  // if (!hasSurvivorBranch && state.phase === "complete") -> showWorkflowEntry
 
   const scenarios = [
     { hasSurvivorBranch: true, phase: "complete", expected: "finalize" },
     { hasSurvivorBranch: true, phase: "needs-discussion", expected: "discuss" },
     { hasSurvivorBranch: true, phase: "pre-planning", expected: "continue" },
-    { hasSurvivorBranch: false, phase: "complete", expected: "showSmartEntry" },
+    { hasSurvivorBranch: false, phase: "complete", expected: "showWorkflowEntry" },
   ];
 
   for (const { hasSurvivorBranch, phase, expected } of scenarios) {
@@ -92,7 +92,7 @@ const { assertTrue, assertEq, report } = createTestContext();
     } else if (hasSurvivorBranch && phase === "needs-discussion") {
       result = "discuss";
     } else if (!hasSurvivorBranch && (!phase || phase === "complete")) {
-      result = "showSmartEntry";
+      result = "showWorkflowEntry";
     } else {
       result = "continue";
     }

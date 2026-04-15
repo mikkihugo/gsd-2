@@ -1,5 +1,5 @@
 [package]
-name = "gsd-engine"
+name = "forge-engine"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -13,8 +13,8 @@ test = false
 doctest = false
 
 [dependencies]
-gsd-ast = { path = "../ast" }
-gsd-grep = { path = "../grep" }
+forge-ast = { path = "../ast" }
+forge-grep = { path = "../grep" }
 arboard = "3"
 dashmap = "6"
 globset = "0.4"

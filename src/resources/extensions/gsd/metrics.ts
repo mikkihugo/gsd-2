@@ -20,7 +20,7 @@ import { getAndClearSkills } from "./skill-telemetry.js";
 import { loadJsonFile, loadJsonFileOrNull, saveJsonFile } from "./json-persistence.js";
 import { parseUnitId } from "./unit-id.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
-import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
+import { isAuditEnvelopeEnabled } from "./uok/audit-toggle.js";
 import { getDatabase } from "./gsd-db.js";
 
 // Re-export from shared — import directly from format-utils to avoid pulling
@@ -296,7 +296,7 @@ export function snapshotUnitMetrics(
   // Background outcome recording for Bayesian learning
   recordUnitOutcome(unit).catch(() => { /* fire-and-forget */ });
 
-  if (isUnifiedAuditEnabled()) {
+  if (isAuditEnvelopeEnabled()) {
     emitUokAuditEvent(
       basePath,
       buildAuditEnvelope({

@@ -53,9 +53,9 @@ uok:
     enabled: false
     turn_action: status-only
     turn_push: false
-  audit_unified:
+  audit_envelope:
     enabled: false
-  plan_v2:
+  planning_flow:
     enabled: false
 auto_visualize:
 auto_report:

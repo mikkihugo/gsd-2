@@ -489,8 +489,8 @@ export async function bootstrapAutoSession(
     // Route to the interactive discussion handler instead of falling through to
     // auto-mode, which would immediately stop with "needs discussion".
     if (hasSurvivorBranch && state.phase === "needs-discussion") {
-      const { showSmartEntry } = await import("./guided-flow.js");
-      await showSmartEntry(ctx, pi, base, { step: requestedStepMode });
+      const { showWorkflowEntry } = await import("./guided-flow.js");
+      await showWorkflowEntry(ctx, pi, base, { step: requestedStepMode });
 
       invalidateAllCaches();
       const postState = await deriveState(base);
@@ -547,8 +547,8 @@ export async function bootstrapAutoSession(
           return releaseLockAndReturn();
         }
 
-        const { showSmartEntry } = await import("./guided-flow.js");
-        await showSmartEntry(ctx, pi, base, { step: requestedStepMode });
+        const { showWorkflowEntry } = await import("./guided-flow.js");
+        await showWorkflowEntry(ctx, pi, base, { step: requestedStepMode });
 
         invalidateAllCaches();
         const postState = await deriveState(base);
@@ -589,8 +589,8 @@ export async function bootstrapAutoSession(
         const contextFile = resolveMilestoneFile(base, mid, "CONTEXT");
         const hasContext = !!(contextFile && (await loadFile(contextFile)));
         if (!hasContext) {
-          const { showSmartEntry } = await import("./guided-flow.js");
-          await showSmartEntry(ctx, pi, base, { step: requestedStepMode });
+          const { showWorkflowEntry } = await import("./guided-flow.js");
+          await showWorkflowEntry(ctx, pi, base, { step: requestedStepMode });
 
           invalidateAllCaches();
           const postState = await deriveState(base);
@@ -608,8 +608,8 @@ export async function bootstrapAutoSession(
 
       // Active milestone has CONTEXT-DRAFT but no full context — needs discussion
       if (state.phase === "needs-discussion") {
-        const { showSmartEntry } = await import("./guided-flow.js");
-        await showSmartEntry(ctx, pi, base, { step: requestedStepMode });
+        const { showWorkflowEntry } = await import("./guided-flow.js");
+        await showWorkflowEntry(ctx, pi, base, { step: requestedStepMode });
 
         invalidateAllCaches();
         const postState = await deriveState(base);
@@ -630,8 +630,8 @@ export async function bootstrapAutoSession(
 
     // Unreachable safety check
     if (!state.activeMilestone) {
-      const { showSmartEntry } = await import("./guided-flow.js");
-      await showSmartEntry(ctx, pi, base, { step: requestedStepMode });
+      const { showWorkflowEntry } = await import("./guided-flow.js");
+      await showWorkflowEntry(ctx, pi, base, { step: requestedStepMode });
       return releaseLockAndReturn();
     }
 

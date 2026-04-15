@@ -261,7 +261,7 @@ export async function showProjectInit(
   }
 
   // Write initial STATE.md so it exists before the first /gsd invocation.
-  // The explicit /gsd init path (ops.ts) returns without entering showSmartEntry(),
+  // The explicit /gsd init path (ops.ts) returns without entering showWorkflowEntry(),
   // which would otherwise generate STATE.md at guided-flow.ts:1358.
   try {
     const { deriveState } = await import("./state.js");

@@ -6,7 +6,7 @@
  *
  *   1. The survivor branch check included needs-discussion, so a branch
  *      created by a prior failed bootstrap caused hasSurvivorBranch = true,
- *      skipping all showSmartEntry calls.
+ *      skipping all showWorkflowEntry calls.
  *
  *   2. No needs-discussion handler existed in the !hasSurvivorBranch block,
  *      so the phase fell through to auto-mode which immediately stopped
@@ -118,12 +118,12 @@ describe("auto-start-needs-discussion (#1726)", () => {
     const source = readAutoStartSource();
 
     // After the pre-planning handler, there should be a needs-discussion handler
-    // that calls showSmartEntry
+    // that calls showWorkflowEntry
     const needsDiscussionHandler = source.match(
-      /if\s*\(state\.phase\s*===\s*"needs-discussion"\)\s*\{[^}]*showSmartEntry/s,
+      /if\s*\(state\.phase\s*===\s*"needs-discussion"\)\s*\{[^}]*showWorkflowEntry/s,
     );
     assert.ok(!!needsDiscussionHandler,
-      "needs-discussion handler calling showSmartEntry must exist in !hasSurvivorBranch block");
+      "needs-discussion handler calling showWorkflowEntry must exist in !hasSurvivorBranch block");
   });
 
   test("4. needs-discussion handler has abort path", () => {
@@ -133,7 +133,7 @@ describe("auto-start-needs-discussion (#1726)", () => {
     // if discussion didn't promote the draft
     assert.ok(
       source.includes('postState.phase !== "needs-discussion"'),
-      "needs-discussion handler must check if phase advanced after showSmartEntry",
+      "needs-discussion handler must check if phase advanced after showWorkflowEntry",
     );
     assert.ok(
       source.includes("milestone draft was not promoted"),
@@ -157,12 +157,12 @@ describe("auto-start-needs-discussion (#1726)", () => {
     }
   });
 
-  test("6. No infinite loop: needs-discussion always routes to showSmartEntry", () => {
+  test("6. No infinite loop: needs-discussion always routes to showWorkflowEntry", () => {
     const source = readAutoStartSource();
 
     // Verify needs-discussion does NOT appear in auto-dispatch trigger conditions
     // within auto-start.ts. The only place needs-discussion should appear is in
-    // the showSmartEntry routing block.
+    // the showWorkflowEntry routing block.
     const survivorSection = source.match(
       /\/\/ Milestone branch recovery.*?let hasSurvivorBranch = false;[\s\S]*?if\s*\([^)]*state\.phase[^)]*\)\s*\{/,
     );
@@ -187,16 +187,16 @@ describe("auto-start-needs-discussion (#1726)", () => {
     }
   });
 
-  test("7. Survivor branch + needs-discussion routes to showSmartEntry", () => {
+  test("7. Survivor branch + needs-discussion routes to showWorkflowEntry", () => {
     const source = readAutoStartSource();
 
     // When hasSurvivorBranch is true AND phase is needs-discussion, the code
-    // must route to showSmartEntry instead of falling through to auto-mode.
+    // must route to showWorkflowEntry instead of falling through to auto-mode.
     const survivorNeedsDiscussion = source.match(
-      /if\s*\(hasSurvivorBranch\s*&&\s*state\.phase\s*===\s*"needs-discussion"\)\s*\{[^}]*showSmartEntry/s,
+      /if\s*\(hasSurvivorBranch\s*&&\s*state\.phase\s*===\s*"needs-discussion"\)\s*\{[^}]*showWorkflowEntry/s,
     );
     assert.ok(!!survivorNeedsDiscussion,
-      "hasSurvivorBranch && needs-discussion must route to showSmartEntry");
+      "hasSurvivorBranch && needs-discussion must route to showWorkflowEntry");
 
     // Verify the handler checks if the discussion succeeded
     const handlerBlock = source.match(

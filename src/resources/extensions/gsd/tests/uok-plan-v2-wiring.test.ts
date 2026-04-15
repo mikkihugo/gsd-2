@@ -88,17 +88,17 @@ test.afterEach(() => {
   tempDirs.clear();
 });
 
-test("guided flow enforces plan-v2 gate before execution-oriented dispatch", () => {
+test("guided flow enforces planning-flow gate before execution-oriented dispatch", () => {
   const source = readFileSync(join(gsdDir, "guided-flow.ts"), "utf-8");
   assert.ok(
-    source.includes("needsPlanV2Gate") &&
-    source.includes("ensurePlanV2Graph") &&
+    source.includes("needsPlanningFlowGate") &&
+    source.includes("ensurePlanningFlowGraph") &&
     source.includes("Plan gate failed-closed"),
-    "guided flow should fail-closed when plan-v2 graph compilation fails",
+    "guided flow should fail-closed when planning-flow graph compilation fails",
   );
 });
 
-test("plan-v2 gate fails closed for execution phase when finalized context is missing", () => {
+test("planning-flow gate fails closed for execution phase when finalized context is missing", () => {
   const basePath = createBasePath();
   seedGraphRows();
 
@@ -109,7 +109,7 @@ test("plan-v2 gate fails closed for execution phase when finalized context is mi
   assert.match(compiled.reason ?? "", /CONTEXT\.md/i);
 });
 
-test("plan-v2 compiler writes pipeline metadata for clarify/research/draft stages", () => {
+test("planning-flow compiler writes pipeline metadata for clarify/research/draft stages", () => {
   const basePath = createBasePath();
   seedGraphRows();
 

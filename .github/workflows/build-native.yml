@@ -77,8 +77,8 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir -p artifacts
-          cp native/target/${{ matrix.target }}/release/libgsd_engine.dylib artifacts/gsd_engine.node 2>/dev/null || \
-          cp native/target/${{ matrix.target }}/release/libgsd_engine.so artifacts/gsd_engine.node 2>/dev/null || \
+          cp native/target/${{ matrix.target }}/release/libforge_engine.dylib artifacts/forge_engine.node 2>/dev/null || \
+          cp native/target/${{ matrix.target }}/release/libforge_engine.so artifacts/forge_engine.node 2>/dev/null || \
           { echo "::error::No library found for ${{ matrix.platform }}"; exit 1; }
           ls -la artifacts/
 
@@ -86,13 +86,13 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir artifacts
-          copy native\target\${{ matrix.target }}\release\gsd_engine.dll artifacts\gsd_engine.node
+          copy native\target\${{ matrix.target }}\release\forge_engine.dll artifacts\forge_engine.node
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: native-${{ matrix.platform }}
-          path: artifacts/gsd_engine.node
+          path: artifacts/forge_engine.node
           if-no-files-found: error
 
   publish:
@@ -118,7 +118,7 @@ jobs:
       - name: Copy binaries to platform packages
         run: |
           for platform in darwin-arm64 darwin-x64 linux-x64-gnu linux-arm64-gnu win32-x64-msvc; do
-            cp "artifacts/native-${platform}/gsd_engine.node" "native/npm/${platform}/gsd_engine.node"
+            cp "artifacts/native-${platform}/forge_engine.node" "native/npm/${platform}/forge_engine.node"
             echo "Copied binary for ${platform}"
             ls -la "native/npm/${platform}/"
           done

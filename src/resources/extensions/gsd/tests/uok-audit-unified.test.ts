@@ -7,7 +7,7 @@ import { emitJournalEvent } from "../journal.ts";
 import { saveActivityLog } from "../activity-log.ts";
 import { initMetrics, resetMetrics, snapshotUnitMetrics } from "../metrics.ts";
 import { setLogBasePath, logWarning } from "../workflow-logger.ts";
-import { setUnifiedAuditEnabled } from "../uok/audit-toggle.ts";
+import { setAuditEnvelopeEnabled } from "../uok/audit-toggle.ts";
 
 function readAuditEvents(basePath: string): Array<Record<string, unknown>> {
   const file = join(basePath, ".gsd", "audit", "events.jsonl");
@@ -27,9 +27,9 @@ function makeMockContext(entries: unknown[]): any {
   };
 }
 
-test("unified audit plane bridges journal/activity/metrics/workflow logger into audit envelope log", () => {
+test("audit envelope bridges journal/activity/metrics/workflow logger into audit event log", () => {
   const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-"));
-  setUnifiedAuditEnabled(true);
+  setAuditEnvelopeEnabled(true);
   try {
     emitJournalEvent(basePath, {
       ts: new Date().toISOString(),
@@ -77,15 +77,15 @@ test("unified audit plane bridges journal/activity/metrics/workflow logger into 
     assert.ok(types.has("unit-metrics-snapshot"));
     assert.ok(types.has("workflow-log-warn"));
   } finally {
-    setUnifiedAuditEnabled(false);
+    setAuditEnvelopeEnabled(false);
     resetMetrics();
     rmSync(basePath, { recursive: true, force: true });
   }
 });
 
-test("unified audit bridge is disabled when toggle is off", () => {
+test("audit envelope bridge is disabled when toggle is off", () => {
   const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-off-"));
-  setUnifiedAuditEnabled(false);
+  setAuditEnvelopeEnabled(false);
   try {
     emitJournalEvent(basePath, {
       ts: new Date().toISOString(),

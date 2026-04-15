@@ -4,8 +4,8 @@
  * Locates and loads the compiled Rust N-API addon (`.node` file).
  * Resolution order:
  *   1. @singularity-forge/engine-{platform} npm optional dependency (production install)
- *   2. native/addon/gsd_engine.{platform}.node (local release build)
- *   3. native/addon/gsd_engine.dev.node (local debug build)
+ *   2. native/addon/forge_engine.{platform}.node (local release build)
+ *   3. native/addon/forge_engine.dev.node (local debug build)
  */
 
 import * as path from "node:path";
@@ -44,8 +44,8 @@ function loadNative(): Record<string, unknown> {
     }
   }
 
-  // 2. Try local release build (native/addon/gsd_engine.{platform}.node)
-  const releasePath = path.join(addonDir, `gsd_engine.${platformTag}.node`);
+  // 2. Try local release build (native/addon/forge_engine.{platform}.node)
+  const releasePath = path.join(addonDir, `forge_engine.${platformTag}.node`);
   try {
     _loadedSuccessfully = true; return _require(releasePath) as Record<string, unknown>;
   } catch (err) {
@@ -53,8 +53,8 @@ function loadNative(): Record<string, unknown> {
     errors.push(`${releasePath}: ${message}`);
   }
 
-  // 3. Try local dev build (native/addon/gsd_engine.dev.node)
-  const devPath = path.join(addonDir, "gsd_engine.dev.node");
+  // 3. Try local dev build (native/addon/forge_engine.dev.node)
+  const devPath = path.join(addonDir, "forge_engine.dev.node");
   try {
     _loadedSuccessfully = true; return _require(devPath) as Record<string, unknown>;
   } catch (err) {
@@ -70,7 +70,7 @@ function loadNative(): Record<string, unknown> {
   // entire import chain at startup (#1223). Consumers with JS fallbacks
   // (parseRoadmap, parsePlan, fuzzyFind, etc.) catch these and degrade gracefully.
   process.stderr.write(
-    `[gsd] Native addon not available for ${platformTag}. Falling back to JS implementations (slower).\n` +
+    `[forge] Native addon not available for ${platformTag}. Falling back to JS implementations (slower).\n` +
       `  Supported native platforms: ${supportedPlatforms.join(", ")}\n`,
   );
   return new Proxy({} as Record<string, unknown>, {

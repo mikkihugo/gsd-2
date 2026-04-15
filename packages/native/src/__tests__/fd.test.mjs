@@ -13,8 +13,8 @@ const require = createRequire(import.meta.url);
 const addonDir = path.resolve(__dirname, "..", "..", "..", "..", "native", "addon");
 const platformTag = `${process.platform}-${process.arch}`;
 const candidates = [
-  path.join(addonDir, `gsd_engine.${platformTag}.node`),
-  path.join(addonDir, "gsd_engine.dev.node"),
+  path.join(addonDir, `forge_engine.${platformTag}.node`),
+  path.join(addonDir, "forge_engine.dev.node"),
 ];
 
 let native;

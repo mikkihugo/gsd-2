@@ -20,7 +20,7 @@ const child = spawn(
 )
 
 child.on('error', (error) => {
-  console.error(`[gsd] Failed to launch local dev CLI: ${error instanceof Error ? error.message : String(error)}`)
+  console.error(`[forge] Failed to launch local dev CLI: ${error instanceof Error ? error.message : String(error)}`)
   process.exit(1)
 })
 

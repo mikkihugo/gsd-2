@@ -76,7 +76,7 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     // The original #3696 fix replaced "throw err" with a log-and-continue.
     // The secondary fix replaces that with writeCrashLog + process.exit(1).
     assert.ok(
-      !registerExtSrc.includes('process.stderr.write(`[gsd] uncaught extension error (non-fatal)'),
+      !registerExtSrc.includes('process.stderr.write(`[forge] uncaught extension error (non-fatal)'),
       '_gsdEpipeGuard should NOT log errors as non-fatal and continue',
     );
     assert.match(

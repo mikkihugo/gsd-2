@@ -22,11 +22,11 @@ export function handleRecoverableExtensionProcessError(err: Error): boolean {
   if ((err as NodeJS.ErrnoException).code === "ENOENT") {
     const syscall = (err as NodeJS.ErrnoException).syscall;
     if (syscall?.startsWith("spawn")) {
-      process.stderr.write(`[gsd] spawn ENOENT: ${(err as any).path ?? "unknown"} — command not found\n`);
+      process.stderr.write(`[forge] spawn ENOENT: ${(err as any).path ?? "unknown"} — command not found\n`);
       return true;
     }
     if (syscall === "uv_cwd") {
-      process.stderr.write(`[gsd] ENOENT (${syscall}): ${err.message}\n`);
+      process.stderr.write(`[forge] ENOENT (${syscall}): ${err.message}\n`);
       return true;
     }
   }

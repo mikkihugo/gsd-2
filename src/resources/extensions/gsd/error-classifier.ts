@@ -1,5 +1,5 @@
 /**
- * Unified error classifier for provider/network/server errors.
+ * Error classifier for provider/network/server failures.
  *
  * Consolidates patterns from:
  *  - isTransientNetworkError()  in preferences-models.ts

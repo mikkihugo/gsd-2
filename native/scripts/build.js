@@ -27,7 +27,7 @@ const profile = isDev ? "debug" : "release";
 const cargoArgs = ["build"];
 if (!isDev) cargoArgs.push("--release");
 
-console.log(`Building gsd-engine (${profile})...`);
+console.log(`Building forge-engine (${profile})...`);
 
 try {
   execSync(`cargo ${cargoArgs.join(" ")}`, {
@@ -52,9 +52,9 @@ const targetDir = path.join(cargoTargetRoot, profile);
 const platformTag = `${process.platform}-${process.arch}`;
 
 const libraryNames = {
-  darwin: "libgsd_engine.dylib",
-  linux: "libgsd_engine.so",
-  win32: "gsd_engine.dll",
+  darwin: "libforge_engine.dylib",
+  linux: "libforge_engine.so",
+  win32: "forge_engine.dll",
 };
 
 const libName = libraryNames[process.platform];
@@ -72,8 +72,8 @@ if (!fs.existsSync(sourcePath)) {
 fs.mkdirSync(addonDir, { recursive: true });
 
 const destFilename = isDev
-  ? "gsd_engine.dev.node"
-  : `gsd_engine.${platformTag}.node`;
+  ? "forge_engine.dev.node"
+  : `forge_engine.${platformTag}.node`;
 const destPath = path.join(addonDir, destFilename);
 
 fs.copyFileSync(sourcePath, destPath);

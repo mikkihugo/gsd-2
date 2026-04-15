@@ -16,8 +16,8 @@ test("uok preferences validate nested flags and turn_action", () => {
         turn_action: "status-only",
         turn_push: false,
       },
-      audit_unified: { enabled: true },
-      plan_v2: { enabled: true },
+      audit_envelope: { enabled: true },
+      planning_flow: { enabled: true },
     },
   };
 
@@ -26,7 +26,7 @@ test("uok preferences validate nested flags and turn_action", () => {
   assert.equal(result.preferences.uok?.enabled, true);
   assert.equal(result.preferences.uok?.legacy_fallback?.enabled, false);
   assert.equal(result.preferences.uok?.gitops?.turn_action, "status-only");
-  assert.equal(result.preferences.uok?.plan_v2?.enabled, true);
+  assert.equal(result.preferences.uok?.planning_flow?.enabled, true);
 });
 
 test("uok preferences reject invalid turn_action", () => {
@@ -39,4 +39,28 @@ test("uok preferences reject invalid turn_action", () => {
   } as never);
 
   assert.ok(result.errors.some((e) => e.includes("uok.gitops.turn_action")));
+});
+
+test("uok preferences accept deprecated plan_v2 alias", () => {
+  const result = validatePreferences({
+    uok: {
+      plan_v2: {
+        enabled: true,
+      },
+    },
+  } as never);
+
+  assert.equal(result.preferences.uok?.planning_flow?.enabled, true);
+});
+
+test("uok preferences accept deprecated audit_unified alias", () => {
+  const result = validatePreferences({
+    uok: {
+      audit_unified: {
+        enabled: true,
+      },
+    },
+  } as never);
+
+  assert.equal(result.preferences.uok?.audit_envelope?.enabled, true);
 });

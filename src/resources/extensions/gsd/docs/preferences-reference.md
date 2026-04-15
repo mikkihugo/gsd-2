@@ -193,7 +193,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `hooks`: boolean — enable routing hooks. Default: `true`.
   - `capability_routing`: boolean — enable capability-profile scoring for model selection within a tier. Requires `enabled: true`. Default: `false`.
 
-- `uok`: Unified Orchestration Kernel controls. Keys:
+- `uok`: orchestration kernel controls. Keys:
   - `enabled`: boolean — enable kernel wrappers and contract observers. Default: `true`.
   - `legacy_fallback.enabled`: boolean — emergency release fallback that forces legacy orchestration behavior even when `uok.enabled` is `true`. Default: `false`.
     - Runtime override: set `GSD_UOK_FORCE_LEGACY=1` (or `GSD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
@@ -203,8 +203,8 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `gitops.enabled`: boolean — persist turn-level git transaction records.
   - `gitops.turn_action`: `"commit"` | `"snapshot"` | `"status-only"` — turn transaction mode.
   - `gitops.turn_push`: boolean — whether turn transactions should include push intent metadata.
-  - `audit_unified.enabled`: boolean — dual-write unified audit envelope events.
-  - `plan_v2.enabled`: boolean — enable bounded clarify/research/draft/compile planning flow.
+  - `audit_envelope.enabled`: boolean — dual-write audit envelope events.
+  - `planning_flow.enabled`: boolean — enable bounded clarify/research/draft/compile planning flow.
 
 - `context_management`: configures context hygiene for auto-mode sessions. Keys:
   - `observation_masking`: boolean — mask old tool results to reduce context bloat. Default: `true`.

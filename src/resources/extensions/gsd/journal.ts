@@ -16,7 +16,7 @@ import { appendFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { gsdRoot } from "./paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
-import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
+import { isAuditEnvelopeEnabled } from "./uok/audit-toggle.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -93,7 +93,7 @@ export function emitJournalEvent(basePath: string, entry: JournalEntry): void {
     // Silent failure — journal must never break auto-mode
   }
 
-  if (!isUnifiedAuditEnabled()) return;
+  if (!isAuditEnvelopeEnabled()) return;
   try {
     const causedBy = entry.causedBy
       ? `${entry.causedBy.flowId}:${entry.causedBy.seq}`

@@ -1,6 +1,6 @@
-// GSD Extension — Unified Rule Type Definitions
+// GSD Extension — Rule Type Definitions
 //
-// Every dispatch rule and hook is expressed as a `UnifiedRule` with a
+// Every dispatch rule and hook is expressed as a `RegistryRule` with a
 // consistent when/where/then shape. This file defines the type system;
 // the `RuleRegistry` class in rule-registry.ts holds instances at runtime.
 
@@ -36,13 +36,13 @@ export interface RuleLifecycle {
   idempotency_key?: string;
 }
 
-// ─── Unified Rule ───────────────────────────────────────────────────────────
+// ─── Registry Rule ───────────────────────────────────────────────────────────
 
 /**
  * A single entry in the rule registry. Dispatch rules, post-unit hooks,
  * and pre-dispatch hooks all share this shape.
  */
-export interface UnifiedRule {
+export interface RegistryRule {
   /** Stable human-readable identifier (existing names preserved per D005). */
   name: string;
   /** Which phase/event this rule responds to. */

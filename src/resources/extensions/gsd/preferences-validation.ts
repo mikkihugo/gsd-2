@@ -186,8 +186,10 @@ export function validatePreferences(preferences: GSDPreferences): {
       }
 
       const parseEnabledBlock = (
-        key: "legacy_fallback" | "gates" | "model_policy" | "execution_graph" | "audit_unified" | "plan_v2",
+        key: "legacy_fallback" | "gates" | "model_policy" | "execution_graph" | "audit_envelope" | "audit_unified" | "planning_flow" | "plan_v2",
+        targetKey?: "legacy_fallback" | "gates" | "model_policy" | "execution_graph" | "audit_envelope" | "planning_flow",
       ): void => {
+        const normalizedTargetKey = targetKey ?? (key === "plan_v2" ? "planning_flow" : key);
         const value = raw[key];
         if (value === undefined) return;
         if (typeof value !== "object" || value === null) {
@@ -205,7 +207,7 @@ export function validatePreferences(preferences: GSDPreferences): {
           warnings.push(`unknown uok.${key} key "${unk}" — ignored`);
         }
         if (Object.keys(parsed).length > 0) {
-          valid[key] = parsed;
+          valid[normalizedTargetKey] = parsed;
         }
       };
 
@@ -213,8 +215,16 @@ export function validatePreferences(preferences: GSDPreferences): {
       parseEnabledBlock("gates");
       parseEnabledBlock("model_policy");
       parseEnabledBlock("execution_graph");
-      parseEnabledBlock("audit_unified");
-      parseEnabledBlock("plan_v2");
+      parseEnabledBlock("audit_envelope");
+      if (raw.audit_unified !== undefined && raw.audit_envelope === undefined) {
+        warnings.push("uok.audit_unified is deprecated; use uok.audit_envelope");
+        parseEnabledBlock("audit_unified", "audit_envelope");
+      }
+      parseEnabledBlock("planning_flow");
+      if (raw.plan_v2 !== undefined && raw.planning_flow === undefined) {
+        warnings.push("uok.plan_v2 is deprecated; use uok.planning_flow");
+        parseEnabledBlock("plan_v2", "planning_flow");
+      }
 
       if (raw.gitops !== undefined) {
         if (typeof raw.gitops !== "object" || raw.gitops === null) {
@@ -257,7 +267,9 @@ export function validatePreferences(preferences: GSDPreferences): {
         "model_policy",
         "execution_graph",
         "gitops",
+        "audit_envelope",
         "audit_unified",
+        "planning_flow",
         "plan_v2",
       ]);
       for (const key of Object.keys(raw)) {

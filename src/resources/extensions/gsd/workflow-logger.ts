@@ -21,7 +21,7 @@ import { join } from "node:path";
 
 import { appendNotification } from "./notification-store.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
-import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
+import { isAuditEnvelopeEnabled } from "./uok/audit-toggle.js";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -277,7 +277,7 @@ function _push(
     _buffer.shift();
   }
 
-  if (_auditBasePath && isUnifiedAuditEnabled()) {
+  if (_auditBasePath && isAuditEnvelopeEnabled()) {
     try {
       emitUokAuditEvent(
         _auditBasePath,

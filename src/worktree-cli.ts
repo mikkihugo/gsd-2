@@ -302,10 +302,10 @@ async function handleStatusBanner(basePath: string): Promise<void> {
 
   const names = withChanges.map(w => chalk.cyan(w.name)).join(', ')
   process.stderr.write(
-    chalk.dim('[gsd] ') +
+    chalk.dim('[forge] ') +
     chalk.yellow(`${withChanges.length} worktree${withChanges.length === 1 ? '' : 's'} with unmerged changes: `) +
     names + '\n' +
-    chalk.dim('[gsd] ') +
+    chalk.dim('[forge] ') +
     chalk.dim('Resume: gsd -w <name>  |  Merge: gsd worktree merge <name>  |  List: gsd worktree list\n\n'),
   )
 }
@@ -378,7 +378,7 @@ async function createAndEnter(ext: ExtensionModules, basePath: string, name: str
 
     const hookError = ext.runWorktreePostCreateHook(basePath, info.path)
     if (hookError) {
-      process.stderr.write(chalk.yellow(`[gsd] ${hookError}\n`))
+      process.stderr.write(chalk.yellow(`[forge] ${hookError}\n`))
     }
 
     process.chdir(info.path)
@@ -389,7 +389,7 @@ async function createAndEnter(ext: ExtensionModules, basePath: string, name: str
     process.stderr.write(chalk.dim(`  branch ${info.branch}\n\n`))
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    process.stderr.write(chalk.red(`[gsd] Failed to create worktree: ${msg}\n`))
+    process.stderr.write(chalk.red(`[forge] Failed to create worktree: ${msg}\n`))
     process.exit(1)
   }
 }

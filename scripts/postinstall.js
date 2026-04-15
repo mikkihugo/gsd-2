@@ -36,7 +36,7 @@ function run(cmd) {
 }
 
 function logWarn(message) {
-  process.stderr.write(`[gsd] postinstall: ${message}\n`)
+  process.stderr.write(`[forge] postinstall: ${message}\n`)
 }
 
 function resolveAssetName() {

@@ -1,5 +1,5 @@
 [package]
-name = "gsd-grep"
+name = "forge-grep"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

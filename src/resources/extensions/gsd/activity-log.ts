@@ -17,7 +17,7 @@ const SEQ_PREFIX_RE = /^(\d+)-/;
 import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 import { gsdRoot } from "./paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
-import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
+import { isAuditEnvelopeEnabled } from "./uok/audit-toggle.js";
 
 interface ActivityLogState {
   nextSeq: number;
@@ -135,7 +135,7 @@ export function saveActivityLog(
     state.nextSeq += 1;
     state.lastSnapshotKeyByUnit.set(unitKey, key);
 
-    if (isUnifiedAuditEnabled()) {
+    if (isAuditEnvelopeEnabled()) {
       emitUokAuditEvent(
         basePath,
         buildAuditEnvelope({

@@ -1,6 +1,6 @@
 // GSD Extension — Rule Registry Tests
 //
-// Tests the RuleRegistry class, UnifiedRule types, singleton accessors,
+// Tests the RuleRegistry class, RegistryRule types, singleton accessors,
 // and evaluation methods using mock rules.
 
 import assert from 'node:assert/strict';
@@ -14,14 +14,14 @@ import {
   convertDispatchRules,
   getOrCreateRegistry,
 } from "../rule-registry.ts";
-import type { UnifiedRule } from "../rule-types.ts";
+import type { RegistryRule } from "../rule-types.ts";
 import type { DispatchAction, DispatchContext } from "../auto-dispatch.ts";
 import { DISPATCH_RULES, getDispatchRuleNames } from "../auto-dispatch.ts";
 import type { GSDState } from "../types.ts";
 
 // ─── Mock Rule Factories ──────────────────────────────────────────────────
 
-function mockDispatchRule(name: string, matchPhase: string): UnifiedRule {
+function mockDispatchRule(name: string, matchPhase: string): RegistryRule {
   return {
     name,
     when: "dispatch",
@@ -69,7 +69,7 @@ describe("RuleRegistry", () => {
   });
 
   test("construct with dispatch rules, listRules returns them", () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("rule-a", "planning"),
       mockDispatchRule("rule-b", "executing"),
       mockDispatchRule("rule-c", "complete"),
@@ -86,7 +86,7 @@ describe("RuleRegistry", () => {
   });
 
   test("listRules returns correct fields on each rule", () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("check-fields", "planning"),
     ];
     const registry = new RuleRegistry(rules);
@@ -102,7 +102,7 @@ describe("RuleRegistry", () => {
   });
 
   test("evaluateDispatch returns first matching rule", async () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("rule-planning", "planning"),
       mockDispatchRule("rule-executing", "executing"),
       mockDispatchRule("rule-complete", "complete"),
@@ -119,7 +119,7 @@ describe("RuleRegistry", () => {
   });
 
   test("evaluateDispatch returns stop when no rule matches", async () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("only-planning", "planning"),
     ];
     const registry = new RuleRegistry(rules);
@@ -133,7 +133,7 @@ describe("RuleRegistry", () => {
   });
 
   test("evaluateDispatch works with async where predicate", async () => {
-    const asyncRule: UnifiedRule = {
+    const asyncRule: RegistryRule = {
       name: "async-rule",
       when: "dispatch",
       evaluation: "first-match",
@@ -227,7 +227,7 @@ describe("RuleRegistry", () => {
 
   test("evaluateDispatch respects rule order (first match wins)", async () => {
     // Both rules match "planning" but rule-first should win
-    const ruleFirst: UnifiedRule = {
+    const ruleFirst: RegistryRule = {
       name: "rule-first",
       when: "dispatch",
       evaluation: "first-match",
@@ -239,7 +239,7 @@ describe("RuleRegistry", () => {
       },
       then: () => {},
     };
-    const ruleSecond: UnifiedRule = {
+    const ruleSecond: RegistryRule = {
       name: "rule-second",
       when: "dispatch",
       evaluation: "first-match",
@@ -264,7 +264,7 @@ describe("RuleRegistry", () => {
 
   // ── Dispatch rule conversion tests ─────────────────────────────────
 
-  test("convertDispatchRules produces correct count of UnifiedRule objects", () => {
+  test("convertDispatchRules produces correct count of RegistryRule objects", () => {
     const converted = convertDispatchRules(DISPATCH_RULES);
     assert.deepStrictEqual(converted.length, DISPATCH_RULES.length, `convertDispatchRules produces ${DISPATCH_RULES.length} rules`);
   });
@@ -386,7 +386,7 @@ describe("RuleRegistry", () => {
   // ── matchedRule provenance (S02 journal support) ───────────────────
 
   test("evaluateDispatch result includes matchedRule on dispatch match", async () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("my-planning-rule", "planning"),
     ];
     const registry = new RuleRegistry(rules);
@@ -398,7 +398,7 @@ describe("RuleRegistry", () => {
   });
 
   test("evaluateDispatch result includes matchedRule '<no-match>' on fallback stop", async () => {
-    const rules: UnifiedRule[] = [
+    const rules: RegistryRule[] = [
       mockDispatchRule("only-planning", "planning"),
     ];
     const registry = new RuleRegistry(rules);

@@ -10,8 +10,8 @@ export interface UokFlags {
   gitops: boolean;
   gitopsTurnAction: "commit" | "snapshot" | "status-only";
   gitopsTurnPush: boolean;
-  auditUnified: boolean;
-  planV2: boolean;
+  auditEnvelope: boolean;
+  planningFlow: boolean;
 }
 
 function envForcesLegacyFallback(): boolean {
@@ -34,8 +34,8 @@ export function resolveUokFlags(prefs: GSDPreferences | undefined): UokFlags {
     gitops: uok?.gitops?.enabled === true,
     gitopsTurnAction: uok?.gitops?.turn_action ?? "status-only",
     gitopsTurnPush: uok?.gitops?.turn_push === true,
-    auditUnified: uok?.audit_unified?.enabled === true,
-    planV2: uok?.plan_v2?.enabled === true,
+    auditEnvelope: uok?.audit_envelope?.enabled === true || uok?.audit_unified?.enabled === true,
+    planningFlow: uok?.planning_flow?.enabled === true || uok?.plan_v2?.enabled === true,
   };
 }
 

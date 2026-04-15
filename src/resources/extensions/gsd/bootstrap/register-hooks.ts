@@ -44,7 +44,7 @@ export function registerHooks(pi: ExtensionAPI): void {
       const sid = ctx.sessionManager?.getSessionId?.() ?? "";
       const sfile = ctx.sessionManager?.getSessionFile?.() ?? "";
       if (sid) {
-        process.stderr.write(`[gsd] session ${sid.slice(0, 8)} · ${sfile}\n`);
+        process.stderr.write(`[forge] session ${sid.slice(0, 8)} · ${sfile}\n`);
       }
     } catch {
       /* non-fatal */

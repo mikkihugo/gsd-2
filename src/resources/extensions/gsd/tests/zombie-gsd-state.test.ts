@@ -8,7 +8,7 @@ const { assertTrue, assertMatch, assertNoMatch, report } = createTestContext();
 // ─── #2942: Zombie .gsd state skips init wizard ─────────────────────────────
 //
 // A partially initialized .gsd/ (symlink exists but no PREFERENCES.md or
-// milestones/) causes the init wizard gate in showSmartEntry to be skipped,
+// milestones/) causes the init wizard gate in showWorkflowEntry to be skipped,
 // resulting in an uninitialized project session.
 
 console.log("\n=== #2942: zombie .gsd state must not skip init wizard ===");
@@ -20,11 +20,11 @@ const guidedFlowSrc = readFileSync(
   "utf-8",
 );
 
-// Find the showSmartEntry function
-const smartEntryIdx = guidedFlowSrc.indexOf("export async function showSmartEntry(");
-assertTrue(smartEntryIdx >= 0, "guided-flow.ts defines showSmartEntry");
+// Find the showWorkflowEntry function
+const smartEntryIdx = guidedFlowSrc.indexOf("export async function showWorkflowEntry(");
+assertTrue(smartEntryIdx >= 0, "guided-flow.ts defines showWorkflowEntry");
 
-// Extract the region between showSmartEntry and the first showProjectInit call
+// Extract the region between showWorkflowEntry and the first showProjectInit call
 // This is where the init wizard gate lives.
 const afterSmartEntry = smartEntryIdx >= 0 ? guidedFlowSrc.slice(smartEntryIdx, smartEntryIdx + 3000) : "";
 

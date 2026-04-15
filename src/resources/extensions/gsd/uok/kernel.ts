@@ -6,7 +6,7 @@ import type { AutoSession } from "../auto/session.js";
 import type { LoopDeps } from "../auto/loop-deps.js";
 import { gsdRoot } from "../paths.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./audit.js";
-import { setUnifiedAuditEnabled } from "./audit-toggle.js";
+import { setAuditEnvelopeEnabled } from "./audit-toggle.js";
 import { resolveUokFlags } from "./flags.js";
 import { createTurnObserver } from "./loop-adapter.js";
 
@@ -45,7 +45,7 @@ export async function runAutoLoopWithUok(args: RunAutoLoopWithUokArgs): Promise<
   const { ctx, pi, s, deps, runLegacyLoop } = args;
   const prefs = deps.loadEffectiveGSDPreferences()?.preferences;
   const flags = resolveUokFlags(prefs);
-  setUnifiedAuditEnabled(flags.auditUnified);
+  setAuditEnvelopeEnabled(flags.auditEnvelope);
 
   writeParityEvent(s.basePath, {
     ts: new Date().toISOString(),
@@ -54,7 +54,7 @@ export async function runAutoLoopWithUok(args: RunAutoLoopWithUokArgs): Promise<
     phase: "enter",
   });
 
-  if (flags.auditUnified) {
+  if (flags.auditEnvelope) {
     emitUokAuditEvent(
       s.basePath,
       buildAuditEnvelope({
@@ -76,7 +76,7 @@ export async function runAutoLoopWithUok(args: RunAutoLoopWithUokArgs): Promise<
           basePath: s.basePath,
           gitAction: flags.gitopsTurnAction,
           gitPush: flags.gitopsTurnPush,
-          enableAudit: flags.auditUnified,
+          enableAudit: flags.auditEnvelope,
           enableGitops: flags.gitops,
         }),
       }

@@ -1,8 +1,9 @@
 /**
- * GSD Guided Flow — Smart Entry Wizard
+ * GSD Guided Flow — Workflow Entry Wizard
  *
- * One function: showSmartEntry(). Reads state from disk, shows a contextual
- * wizard via showNextAction(), and dispatches through GSD-WORKFLOW.md.
+ * Primary entrypoints: `showWorkflowEntry()` and the legacy `showSmartEntry()`
+ * export. Reads state from disk, shows a contextual wizard via
+ * `showNextAction()`, and dispatches through GSD-WORKFLOW.md.
  * No execution state, no hooks, no tools — the LLM does the rest.
  */
 
@@ -38,7 +39,7 @@ import { isInheritedRepo } from "./repo-identity.js";
 import { ensureGitignore, ensurePreferences, untrackRuntimeFiles } from "./gitignore.js";
 import { loadEffectiveGSDPreferences } from "./preferences.js";
 import { resolveUokFlags } from "./uok/flags.js";
-import { ensurePlanV2Graph } from "./uok/plan-v2.js";
+import { ensurePlanV2Graph as ensurePlanningFlowGraph } from "./uok/plan-v2.js";
 import { detectProjectState } from "./detection.js";
 import { showProjectInit, offerMigration } from "./init-wizard.js";
 import { validateDirectory } from "./validate-directory.js";
@@ -86,24 +87,24 @@ function nextMilestoneIdReserved(existingIds: string[], uniqueEnabled: boolean):
   return id;
 }
 
-function needsPlanV2Gate(state: GSDState): boolean {
+function needsPlanningFlowGate(state: GSDState): boolean {
   return state.phase === "executing"
     || state.phase === "summarizing"
     || state.phase === "validating-milestone"
     || state.phase === "completing-milestone";
 }
 
-function runPlanV2Gate(
+function runPlanningFlowGate(
   ctx: ExtensionContext,
   basePath: string,
   state: GSDState,
 ): boolean {
   const prefs = loadEffectiveGSDPreferences()?.preferences;
   const uokFlags = resolveUokFlags(prefs);
-  if (!uokFlags.planV2 || !needsPlanV2Gate(state)) return true;
-  const compiled = ensurePlanV2Graph(basePath, state);
+  if (!uokFlags.planningFlow || !needsPlanningFlowGate(state)) return true;
+  const compiled = ensurePlanningFlowGraph(basePath, state);
   if (!compiled.ok) {
-    const reason = compiled.reason ?? "plan-v2 compilation failed";
+    const reason = compiled.reason ?? "planning-flow compilation failed";
     ctx.ui.notify(
       `Plan gate failed-closed: ${reason}. Complete plan/discuss artifacts before execution.`,
       "error",
@@ -1079,16 +1080,16 @@ async function dispatchDiscussForMilestone(
   await dispatchWorkflow(pi, prompt, "gsd-discuss", ctx, "discuss-milestone");
 }
 
-// ─── Smart Entry Point ────────────────────────────────────────────────────────
+// ─── Workflow Entry Point ─────────────────────────────────────────────────────
 
 /**
- * The one wizard. Reads state, shows contextual options, dispatches into the workflow doc.
+ * The workflow entry wizard. Reads state, shows contextual options, and dispatches into the workflow doc.
  */
 /**
  * Self-heal: scan runtime records and clear stale ones left behind when
  * auto-mode crashed mid-unit. auto.ts has its own selfHealRuntimeRecords()
  * but guided-flow (manual /gsd mode) never called it — meaning stale records
- * persisted until the next /gsd auto run.  This ensures the wizard always
+ * persisted until the next /gsd auto run. This ensures the workflow entry
  * starts from a clean state regardless of how the previous session ended.
  */
 function selfHealRuntimeRecords(basePath: string, ctx: ExtensionContext): { cleared: number } {
@@ -1224,7 +1225,7 @@ async function handleMilestoneActions(
   return false;
 }
 
-export async function showSmartEntry(
+export async function showWorkflowEntry(
   ctx: ExtensionCommandContext,
   pi: ExtensionAPI,
   basePath: string,
@@ -1350,7 +1351,7 @@ export async function showSmartEntry(
     logWarning("guided", `STATE.md rebuild failed: ${(err as Error).message}`);
   }
 
-  if (!runPlanV2Gate(ctx, basePath, state)) return;
+  if (!runPlanningFlowGate(ctx, basePath, state)) return;
 
   if (!state.activeMilestone?.id) {
     // Guard: if a discuss session is already in flight, don't re-inject the prompt.
@@ -1642,7 +1643,7 @@ export async function showSmartEntry(
         });
         if (confirmed) {
           discardMilestone(basePath, milestoneId);
-          return showSmartEntry(ctx, pi, basePath, options);
+          return showWorkflowEntry(ctx, pi, basePath, options);
         }
       }
     } else {
@@ -1680,7 +1681,7 @@ export async function showSmartEntry(
         await fireStatusViaCommand(ctx);
       } else if (choice === "milestone_actions") {
         const acted = await handleMilestoneActions(ctx, pi, basePath, milestoneId, milestoneTitle, options);
-        if (acted) return showSmartEntry(ctx, pi, basePath, options);
+        if (acted) return showWorkflowEntry(ctx, pi, basePath, options);
       }
     }
     return;
@@ -1780,7 +1781,7 @@ export async function showSmartEntry(
       await fireStatusViaCommand(ctx);
     } else if (choice === "milestone_actions") {
       const acted = await handleMilestoneActions(ctx, pi, basePath, milestoneId, milestoneTitle, options);
-      if (acted) return showSmartEntry(ctx, pi, basePath, options);
+      if (acted) return showWorkflowEntry(ctx, pi, basePath, options);
     }
     return;
   }
@@ -1835,7 +1836,7 @@ export async function showSmartEntry(
       await fireStatusViaCommand(ctx);
     } else if (choice === "milestone_actions") {
       const acted = await handleMilestoneActions(ctx, pi, basePath, milestoneId, milestoneTitle, options);
-      if (acted) return showSmartEntry(ctx, pi, basePath, options);
+      if (acted) return showWorkflowEntry(ctx, pi, basePath, options);
     }
     return;
   }
@@ -1926,7 +1927,7 @@ export async function showSmartEntry(
       await fireStatusViaCommand(ctx);
     } else if (choice === "milestone_actions") {
       const acted = await handleMilestoneActions(ctx, pi, basePath, milestoneId, milestoneTitle, options);
-      if (acted) return showSmartEntry(ctx, pi, basePath, options);
+      if (acted) return showWorkflowEntry(ctx, pi, basePath, options);
     }
     return;
   }
@@ -1935,3 +1936,5 @@ export async function showSmartEntry(
   const { fireStatusViaCommand } = await import("./commands.js");
   await fireStatusViaCommand(ctx);
 }
+
+export const showSmartEntry = showWorkflowEntry;

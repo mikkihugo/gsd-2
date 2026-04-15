@@ -681,7 +681,7 @@ if (!cliFlags.worktree && !isPrintMode) {
 // which handles non-interactive output gracefully.
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'auto' && !process.stdout.isTTY) {
-  process.stderr.write('[gsd] stdout is not a terminal — running auto-mode in headless mode.\n')
+  process.stderr.write('[forge] stdout is not a terminal — running auto-mode in headless mode.\n')
   await runHeadlessFromAuto(cliFlags.messages.slice(1))
 }
 

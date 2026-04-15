@@ -1,4 +1,4 @@
-// GSD Extension — Unified Cache Invalidation
+// GSD Extension — Cache Invalidation
 //
 // Three module-scoped caches exist across the GSD extension:
 //   1. State cache (state.ts)  — memoized deriveState() result
