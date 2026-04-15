@@ -22,7 +22,7 @@ mod ps;
 mod task;
 mod text;
 mod ttsr;
-mod gsd_parser;
+mod forge_parser;
 mod image;
 mod truncate;
 mod json_parse;
