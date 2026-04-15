@@ -24,7 +24,7 @@ describe("notification-store", () => {
   let tmp: string;
 
   beforeEach(() => {
-    tmp = mkdtempSync(join(tmpdir(), "gsd-notif-test-"));
+    tmp = mkdtempSync(join(tmpdir(), "sf-notif-test-"));
     mkdirSync(join(tmp, ".gsd"), { recursive: true });
     _resetNotificationStore();
   });
@@ -220,7 +220,7 @@ describe("notification-store", () => {
   });
 
   test("reinit switches to new project path", () => {
-    const tmp2 = mkdtempSync(join(tmpdir(), "gsd-notif-test2-"));
+    const tmp2 = mkdtempSync(join(tmpdir(), "sf-notif-test2-"));
     mkdirSync(join(tmp2, ".gsd"), { recursive: true });
 
     initNotificationStore(tmp);

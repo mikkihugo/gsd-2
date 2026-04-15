@@ -41,7 +41,7 @@ function createFile(base: string, relPath: string, content: string): void {
 }
 
 function initTempRepo(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-parallel-scope-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-parallel-scope-"));
   gitRun(["init", "-b", "main"], dir);
   gitRun(["config", "user.name", "Test"], dir);
   gitRun(["config", "user.email", "test@test.com"], dir);

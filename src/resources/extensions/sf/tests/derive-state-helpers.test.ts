@@ -27,7 +27,7 @@ import {
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-helpers-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-helpers-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }

@@ -8,13 +8,13 @@ SF 支持三种隔离模式，通过 `git.isolation` 偏好设置：
 
 | 模式 | 工作目录 | 分支 | 适用场景 |
 |------|----------|------|----------|
-| `worktree`（默认） | `.gsd/worktrees/<MID>/` | `milestone/<MID>` | 大多数项目，milestones 之间文件完全隔离 |
+| `worktree`（默认） | `.sf/worktrees/<MID>/` | `milestone/<MID>` | 大多数项目，milestones 之间文件完全隔离 |
 | `branch` | 项目根目录 | `milestone/<MID>` | 子模块较多、worktree 表现不佳的仓库 |
 | `none` | 项目根目录 | 当前分支（不建 milestone 分支） | 热重载工作流中，文件隔离会破坏开发工具的场景 |
 
 ### `worktree` 模式（默认）
 
-每个 milestone 都会在 `.gsd/worktrees/<MID>/` 下拥有自己的 git worktree，对应一个 `milestone/<MID>` 分支。所有执行都发生在该 worktree 中。完成后，worktree 会被 squash merge 回主分支，形成一个干净的提交，然后清理对应 worktree 和分支。
+每个 milestone 都会在 `.sf/worktrees/<MID>/` 下拥有自己的 git worktree，对应一个 `milestone/<MID>` 分支。所有执行都发生在该 worktree 中。完成后，worktree 会被 squash merge 回主分支，形成一个干净的提交，然后清理对应 worktree 和分支。
 
 这提供了完整的文件隔离，某个 milestone 的变更不会干扰你的主工作副本。
 
@@ -95,8 +95,8 @@ SF-Task: M001/S01/T02
 
 自动模式会自动创建并管理 worktrees：
 
-1. milestone 启动时，在 `.gsd/worktrees/<MID>/` 创建 worktree，并切到 `milestone/<MID>` 分支
-2. 将 `.gsd/milestones/` 下的规划产物复制到该 worktree
+1. milestone 启动时，在 `.sf/worktrees/<MID>/` 创建 worktree，并切到 `milestone/<MID>` 分支
+2. 将 `.sf/milestones/` 下的规划产物复制到该 worktree
 3. 所有执行都发生在 worktree 内部
 4. milestone 完成后，把该 worktree squash merge 回集成分支
 5. 删除 worktree 和对应分支
@@ -148,7 +148,7 @@ git:
   pre_merge_check: false      # 合并前校验
   commit_type: feat           # 覆盖提交类型前缀
   main_branch: main           # 主分支名称
-  commit_docs: true           # 将 .gsd/ 提交到 git
+  commit_docs: true           # 将 .sf/ 提交到 git
   isolation: worktree         # "worktree"、"branch" 或 "none"
   auto_pr: false              # milestone 完成时自动创建 PR
   pr_target_branch: develop   # PR 目标分支（默认 main）
@@ -169,7 +169,7 @@ git:
 
 ### `commit_docs: false`
 
-当设置为 `false` 时，SF 会把 `.gsd/` 添加到 `.gitignore`，所有规划产物只保留在本地。适合只有部分成员使用 SF 的团队，或者公司要求仓库保持干净的场景。
+当设置为 `false` 时，SF 会把 `.sf/` 添加到 `.gitignore`，所有规划产物只保留在本地。适合只有部分成员使用 SF 的团队，或者公司要求仓库保持干净的场景。
 
 ## 自愈能力
 
@@ -179,7 +179,7 @@ SF 内置了对常见 git 问题的自动恢复：
 - **过期锁文件**：移除崩溃进程残留的 `index.lock`
 - **孤儿 worktree**：检测并提供清理废弃 worktree 的选项（仅 worktree 模式）
 
-可通过 `/gsd doctor` 手动检查 git 健康状态。
+可通过 `/sf doctor` 手动检查 git 健康状态。
 
 ## 原生 Git 操作
 

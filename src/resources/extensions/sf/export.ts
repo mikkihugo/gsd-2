@@ -123,13 +123,13 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
       const { basename: bn } = await import("node:path");
       const data = await loadVisualizerData(basePath);
       const projName = basename(basePath);
-      const gsdVersion = process.env.SF_VERSION ?? "0.0.0";
+      const sfVersion = process.env.SF_VERSION ?? "0.0.0";
       const doneMilestones = data.milestones.filter(m => m.status === "complete").length;
 
       const htmlOpts = {
         projectName: projName,
         projectPath: basePath,
-        gsdVersion,
+        sfVersion,
         indexRelPath: "index.html",
       };
 
@@ -171,7 +171,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
             kind: ms.status === "complete" ? "milestone" : "manual",
             projectName: projName,
             projectPath: basePath,
-            gsdVersion,
+            sfVersion,
             totalCost: data.totals?.cost ?? 0,
             totalTokens: data.totals?.tokens.total ?? 0,
             totalDuration: data.totals?.duration ?? 0,
@@ -202,7 +202,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
           kind: "manual",
           projectName: projName,
           projectPath: basePath,
-          gsdVersion,
+          sfVersion,
           totalCost: data.totals?.cost ?? 0,
           totalTokens: data.totals?.tokens.total ?? 0,
           totalDuration: data.totals?.duration ?? 0,

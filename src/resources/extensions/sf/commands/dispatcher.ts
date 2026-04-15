@@ -1,13 +1,13 @@
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
-import { GSDNoProjectError } from "./context.js";
+import { SFNoProjectError } from "./context.js";
 import { handleAutoCommand } from "./handlers/auto.js";
 import { handleCoreCommand } from "./handlers/core.js";
 import { handleOpsCommand } from "./handlers/ops.js";
 import { handleParallelCommand } from "./handlers/parallel.js";
 import { handleWorkflowCommand } from "./handlers/workflow.js";
 
-export async function handleGSDCommand(
+export async function handleSFCommand(
   args: string,
   ctx: ExtensionCommandContext,
   pi: ExtensionAPI,
@@ -29,7 +29,7 @@ export async function handleGSDCommand(
       }
     }
   } catch (err) {
-    if (err instanceof GSDNoProjectError) {
+    if (err instanceof SFNoProjectError) {
       ctx.ui.notify(
         `${err.message} \`cd\` into a project directory first.`,
         "warning",
@@ -39,5 +39,5 @@ export async function handleGSDCommand(
     throw err;
   }
 
-  ctx.ui.notify(`Unknown: /gsd ${trimmed}. Run /gsd help for available commands.`, "warning");
+  ctx.ui.notify(`Unknown: /sf ${trimmed}. Run /sf help for available commands.`, "warning");
 }

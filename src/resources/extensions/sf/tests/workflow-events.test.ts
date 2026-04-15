@@ -15,7 +15,7 @@ import {
 } from '../workflow-events.ts';
 
 function tempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-events-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'sf-events-'));
 }
 
 function cleanupDir(dirPath: string): void {

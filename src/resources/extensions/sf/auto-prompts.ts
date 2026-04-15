@@ -18,7 +18,7 @@ import {
 } from "./paths.js";
 import { resolveSkillDiscoveryMode, resolveInlineLevel, loadEffectiveSFPreferences, resolveAllSkillReferences } from "./preferences.js";
 import { parseRoadmap } from "./parsers-legacy.js";
-import type { GSDState, InlineLevel } from "./types.js";
+import type { SFState, InlineLevel } from "./types.js";
 import type { SFPreferences } from "./preferences.js";
 import { getLoadedSkills, type Skill } from "@sf-run/pi-coding-agent";
 import { join, basename } from "node:path";
@@ -867,7 +867,7 @@ export async function getDependencyTaskSummaryPaths(
  * - All slices are complete (milestone done — no point reassessing)
  */
 export async function checkNeedsReassessment(
-  base: string, mid: string, state: GSDState,
+  base: string, mid: string, state: SFState,
 ): Promise<{ sliceId: string } | null> {
   // DB primary path — fall through to file-based when DB has no data for this milestone
   try {
@@ -923,7 +923,7 @@ export async function checkNeedsReassessment(
  * - UAT result file already exists (idempotent — already ran)
  */
 export async function checkNeedsRunUat(
-  base: string, mid: string, state: GSDState, prefs: SFPreferences | undefined,
+  base: string, mid: string, state: SFState, prefs: SFPreferences | undefined,
 ): Promise<{ sliceId: string; uatType: UatType } | null> {
   // DB primary path — fall through to file-based when DB has no data for this milestone
   try {
@@ -2074,7 +2074,7 @@ export async function buildParallelResearchSlicesPrompt(
     subagentSections.push([
       `### ${slice.id}: ${slice.title}`,
       "",
-      `Use this as the prompt for a \`subagent\` call${modelSuffix} (agent: \`gsd-executor\` or the default agent):`,
+      `Use this as the prompt for a \`subagent\` call${modelSuffix} (agent: \`sf-executor\` or the default agent):`,
       "",
       "```",
       slicePrompt,

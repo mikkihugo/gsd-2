@@ -95,7 +95,7 @@ COMPACTION_RESERVE_TOKENS = contextWindow * (1 - COMPACTION_THRESHOLD_PERCENT)
 ## 5. Context File Deduplication and Trim
 
 **Current state** (`packages/pi-coding-agent/src/core/resource-loader.ts`, lines 84–109):
-- Searches from `~/.gsd/agent/` → ancestor dirs → cwd
+- Searches from `~/.sf/agent/` → ancestor dirs → cwd
 - Deduplicates by *file path* but not by *content*
 - Entire file content concatenated verbatim into system prompt — no trimming, no summarization
 
@@ -178,7 +178,7 @@ interface CostCheckpointEvent {
 }
 ```
 
-SF extension could consume these events to surface per-milestone cost in `/gsd stats` and flag milestones that are disproportionately expensive — enabling budget-aware planning.
+SF extension could consume these events to surface per-milestone cost in `/sf stats` and flag milestones that are disproportionately expensive — enabling budget-aware planning.
 
 ---
 

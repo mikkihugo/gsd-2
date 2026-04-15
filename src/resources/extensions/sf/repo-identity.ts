@@ -113,7 +113,7 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  * cross-project state leaks (#1639).
  *
  * When the git root already has a project `.gsd`, the directory is a
- * legitimate subdirectory of an existing SF project — `cd src/ && /gsd`
+ * legitimate subdirectory of an existing SF project — `cd src/ && /sf`
  * should still load the parent project's milestones.
  */
 export function isInheritedRepo(basePath: string): boolean {

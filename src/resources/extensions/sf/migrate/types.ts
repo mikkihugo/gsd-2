@@ -260,16 +260,16 @@ export interface PlanningPhaseFile {
 // Mirror SF-2 runtime shapes so deriveState() works on migrated output.
 // ═══════════════════════════════════════════════════════════════════════════
 
-export interface GSDProject {
-  milestones: GSDMilestone[];
+export interface SFProject {
+  milestones: SFMilestone[];
   /** Raw PROJECT.md text (pass through from old format) */
   projectContent: string;
-  requirements: GSDRequirement[];
+  requirements: SFRequirement[];
   /** Empty or pass-through from old project key decisions */
   decisionsContent: string;
 }
 
-export interface GSDMilestone {
+export interface SFMilestone {
   /** e.g. "M001", "M002" */
   id: string;
   /** From old milestone section title or roadmap H1 */
@@ -278,14 +278,14 @@ export interface GSDMilestone {
   vision: string;
   /** Empty [] if none found */
   successCriteria: string[];
-  slices: GSDSlice[];
+  slices: SFSlice[];
   /** Consolidated research blob, null if no research */
   research: string | null;
   /** Empty [] — old format has no boundary map equivalent */
-  boundaryMap: GSDBoundaryEntry[];
+  boundaryMap: SFBoundaryEntry[];
 }
 
-export interface GSDSlice {
+export interface SFSlice {
   /** e.g. "S01", "S02" */
   id: string;
   /** Titlecased from phase slug */
@@ -300,14 +300,14 @@ export interface GSDSlice {
   demo: string;
   /** Same as demo or phase slug */
   goal: string;
-  tasks: GSDTask[];
+  tasks: SFTask[];
   /** Per-phase research content, null if none */
   research: string | null;
   /** Only populated if done */
-  summary: GSDSliceSummaryData | null;
+  summary: SFSliceSummaryData | null;
 }
 
-export interface GSDTask {
+export interface SFTask {
   /** e.g. "T01", "T02" */
   id: string;
   /** From plan frontmatter or phase slug + plan number */
@@ -323,10 +323,10 @@ export interface GSDTask {
   /** From plan frontmatter must_haves.truths */
   mustHaves: string[];
   /** Only populated if done */
-  summary: GSDTaskSummaryData | null;
+  summary: SFTaskSummaryData | null;
 }
 
-export interface GSDRequirement {
+export interface SFRequirement {
   /** e.g. "R001" */
   id: string;
   title: string;
@@ -341,7 +341,7 @@ export interface GSDRequirement {
   primarySlice: string;
 }
 
-export interface GSDSliceSummaryData {
+export interface SFSliceSummaryData {
   /** From last plan summary's completed field */
   completedAt: string;
   provides: string[];
@@ -353,7 +353,7 @@ export interface GSDSliceSummaryData {
   whatHappened: string;
 }
 
-export interface GSDTaskSummaryData {
+export interface SFTaskSummaryData {
   completedAt: string;
   provides: string[];
   keyFiles: string[];
@@ -362,7 +362,7 @@ export interface GSDTaskSummaryData {
   whatHappened: string;
 }
 
-export interface GSDBoundaryEntry {
+export interface SFBoundaryEntry {
   fromSlice: string;
   toSlice: string;
   produces: string;

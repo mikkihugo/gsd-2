@@ -75,14 +75,14 @@ The `budget` profile + dynamic routing provides maximum cost savings.
 
 ## Adaptive Learning
 
-SF tracks routing outcomes in `.gsd/routing-history.json`. If a tier's failure rate exceeds 20% for a given task type, future classifications are bumped up.
+SF tracks routing outcomes in `.sf/routing-history.json`. If a tier's failure rate exceeds 20% for a given task type, future classifications are bumped up.
 
-Use `/gsd rate` to submit feedback:
+Use `/sf rate` to submit feedback:
 
 ```
-/gsd rate over    # too powerful — use cheaper next time
-/gsd rate ok      # just right
-/gsd rate under   # too weak — use stronger next time
+/sf rate over    # too powerful — use cheaper next time
+/sf rate ok      # just right
+/sf rate under   # too weak — use stronger next time
 ```
 
 Feedback is weighted 2x compared to automatic outcomes.

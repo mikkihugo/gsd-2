@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import type { GSDState, Phase } from "../types.js";
+import type { SFState, Phase } from "../types.js";
 import { sfRoot, resolveMilestoneFile, resolveSliceFile } from "../paths.js";
 import { isDbAvailable, getMilestoneSlices, getSliceTasks, type SliceRow } from "../sf-db.js";
 import type { UokGraphNode } from "./contracts.js";
@@ -52,7 +52,7 @@ function isExecutionEntryPhase(phase: Phase): boolean {
   return EXECUTION_ENTRY_PHASES.has(phase);
 }
 
-export function compileUnitGraphFromState(basePath: string, state: GSDState): PlanV2CompileResult {
+export function compileUnitGraphFromState(basePath: string, state: SFState): PlanV2CompileResult {
   const mid = state.activeMilestone?.id;
   if (!mid) return { ok: false, reason: "no active milestone" };
   if (!isDbAvailable()) return { ok: false, reason: "database not available" };
@@ -146,7 +146,7 @@ export function compileUnitGraphFromState(basePath: string, state: GSDState): Pl
   };
 }
 
-export function ensurePlanV2Graph(basePath: string, state: GSDState): PlanV2CompileResult {
+export function ensurePlanV2Graph(basePath: string, state: SFState): PlanV2CompileResult {
   const compiled = compileUnitGraphFromState(basePath, state);
   if (!compiled.ok) return compiled;
   if ((compiled.nodeCount ?? 0) <= 0) {

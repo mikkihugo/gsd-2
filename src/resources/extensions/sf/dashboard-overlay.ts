@@ -4,7 +4,7 @@
  * Full-screen overlay showing auto-mode progress: milestone/slice/task
  * breakdown, current unit, completed units, timing, and activity log.
  * Toggled with Ctrl+Alt+G (⌃⌥G on macOS), Ctrl+Shift+G fallback,
- * or opened from /gsd status.
+ * or opened from /sf status.
  */
 
 import type { Theme } from "@sf-run/pi-coding-agent";
@@ -49,7 +49,7 @@ function unitLabel(type: string): string {
 }
 
 
-export class GSDDashboardOverlay {
+export class SFDashboardOverlay {
   private tui: { requestRender: () => void };
   private theme: Theme;
   private onClose: () => void;
@@ -354,7 +354,7 @@ export class GSDDashboardOverlay {
       )));
       lines.push(blank());
     } else if (this.dashData.paused) {
-      lines.push(row(th.fg("dim", "/gsd auto to resume")));
+      lines.push(row(th.fg("dim", "/sf auto to resume")));
       lines.push(blank());
     } else if (isRemote) {
       const rs = this.dashData.remoteSession!;
@@ -364,7 +364,7 @@ export class GSDDashboardOverlay {
       lines.push(row(th.fg("text", `Remote session: ${unitDisplay}`)));
       lines.push(blank());
     } else {
-      lines.push(row(th.fg("dim", "No unit running · /gsd auto to start")));
+      lines.push(row(th.fg("dim", "No unit running · /sf auto to start")));
       lines.push(blank());
     }
 

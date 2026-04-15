@@ -26,7 +26,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-json-test-"));
+  return mkdtempSync(join(tmpdir(), "sf-json-test-"));
 }
 
 function cleanup(dir: string): void {

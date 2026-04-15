@@ -99,13 +99,13 @@ test("auto.ts buildLoopDeps wires rebuildState", () => {
 // ─── Functional test: completed-units.json reset ─────────────────────────────
 
 test("completed-units.json is cleared on milestone transition (functional)", () => {
-  const tempDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-cu-reset-")));
+  const tempDir = realpathSync(mkdtempSync(join(tmpdir(), "sf-cu-reset-")));
   try {
     // Create .gsd directory with a populated completed-units.json
-    const gsdDir = join(tempDir, ".gsd");
-    mkdirSync(gsdDir, { recursive: true });
+    const sfDir = join(tempDir, ".gsd");
+    mkdirSync(sfDir, { recursive: true });
 
-    const completedKeysPath = join(gsdDir, "completed-units.json");
+    const completedKeysPath = join(sfDir, "completed-units.json");
     const staleEntries = [
       "context-gather/M001",
       "roadmap-plan/M001",

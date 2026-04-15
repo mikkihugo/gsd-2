@@ -2,7 +2,7 @@
  * SF Parallel Monitor Overlay
  *
  * Full-screen TUI overlay showing real-time parallel worker progress.
- * Opened via `/gsd parallel watch`, Ctrl+Alt+P (⌃⌥P on macOS),
+ * Opened via `/sf parallel watch`, Ctrl+Alt+P (⌃⌥P on macOS),
  * or Ctrl+Shift+P fallback.
  * Reads the same data sources as `scripts/parallel-monitor.mjs` but
  * renders as a native pi-tui overlay with theme integration.
@@ -126,7 +126,7 @@ function discoverWorkers(basePath: string): string[] {
 }
 
 function querySliceProgress(basePath: string, mid: string): SliceProgress[] {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "gsd.db");
+  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
   if (!existsSync(dbPath)) return [];
 
   try {
@@ -166,7 +166,7 @@ function extractCostFromNdjson(basePath: string, mid: string): number {
 }
 
 function queryRecentCompletions(basePath: string, mid: string): string[] {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "gsd.db");
+  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
   if (!existsSync(dbPath)) return [];
   try {
     const sql = `SELECT id, slice_id, one_liner FROM tasks WHERE milestone_id='${mid}' AND status='complete' AND completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 5`;
@@ -400,7 +400,7 @@ export class ParallelMonitorOverlay {
     if (this.workers.length === 0) {
       lines.push("");
       lines.push(t.fg("warning", "  No parallel workers found."));
-      lines.push(t.fg("muted", "  Run /gsd parallel start to begin."));
+      lines.push(t.fg("muted", "  Run /sf parallel start to begin."));
     } else {
       for (const wk of this.workers) {
         lines.push("");

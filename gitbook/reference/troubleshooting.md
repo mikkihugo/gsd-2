@@ -1,11 +1,11 @@
 # Troubleshooting
 
-## `/gsd doctor`
+## `/sf doctor`
 
-The built-in diagnostic tool validates `.gsd/` integrity:
+The built-in diagnostic tool validates `.sf/` integrity:
 
 ```
-/gsd doctor
+/sf doctor
 ```
 
 It checks file structure, roadmap ↔ slice ↔ task consistency, completion state, git health, stale locks, and orphaned records.
@@ -16,15 +16,15 @@ It checks file structure, roadmap ↔ slice ↔ task consistency, completion sta
 
 The same unit dispatches repeatedly.
 
-**Fix:** Run `/gsd doctor` to repair state, then `/gsd auto`. If it persists, check that the expected artifact file exists on disk.
+**Fix:** Run `/sf doctor` to repair state, then `/sf auto`. If it persists, check that the expected artifact file exists on disk.
 
 ### Auto mode stops with "Loop detected"
 
 A unit failed to produce its expected artifact twice.
 
-**Fix:** Check the task plan for clarity. Refine it manually, then `/gsd auto`.
+**Fix:** Check the task plan for clarity. Refine it manually, then `/sf auto`.
 
-### `command not found: gsd` after install
+### `command not found: sf` after install
 
 npm's global bin directory isn't in `$PATH`.
 
@@ -39,7 +39,7 @@ source ~/.zshrc
 **Common causes:**
 - **Homebrew Node** — `/opt/homebrew/bin` missing from PATH
 - **Version manager (nvm, fnm, mise)** — global bin is version-specific
-- **oh-my-zsh** — `gitfast` plugin aliases `gsd` to `git svn dcommit`; check with `alias gsd`
+- **oh-my-zsh** — `gitfast` plugin aliases `sf` to `git svn dcommit`; check with `alias sf`
 
 ### Provider errors during auto mode
 
@@ -63,7 +63,7 @@ models:
 
 Auto mode pauses with "Budget ceiling reached."
 
-**Fix:** Increase `budget_ceiling` in preferences, or switch to `budget` token profile, then `/gsd auto`.
+**Fix:** Increase `budget_ceiling` in preferences, or switch to `budget` token profile, then `/sf auto`.
 
 ### Stale lock file
 
@@ -72,15 +72,15 @@ Auto mode won't start, says another session is running.
 **Fix:** SF auto-detects stale locks (dead PID = auto cleanup). If automatic recovery fails:
 
 ```bash
-rm -f .gsd/auto.lock
-rm -rf "$(dirname .gsd)/.gsd.lock"
+rm -f .sf/auto.lock
+rm -rf "$(dirname .sf)/.sf.lock"
 ```
 
 ### Git merge conflicts
 
-Worktree merge fails on `.gsd/` files.
+Worktree merge fails on `.sf/` files.
 
-**Fix:** `.gsd/` conflicts are auto-resolved. Code conflicts get an AI fix attempt; if that fails, resolve manually.
+**Fix:** `.sf/` conflicts are auto-resolved. Code conflicts get an AI fix attempt; if that fails, resolve manually.
 
 ### Notifications not appearing on macOS
 
@@ -96,7 +96,7 @@ See [Notifications](../configuration/notifications.md) for details.
 
 ### No servers configured
 
-**Fix:** Add server to `.mcp.json` or `.gsd/mcp.json`, verify JSON is valid, run `mcp_servers(refresh=true)`.
+**Fix:** Add server to `.mcp.json` or `.sf/mcp.json`, verify JSON is valid, run `mcp_servers(refresh=true)`.
 
 ### Server discovery times out
 
@@ -111,32 +111,32 @@ See [Notifications](../configuration/notifications.md) for details.
 ### Reset auto mode state
 
 ```bash
-rm .gsd/auto.lock
-rm .gsd/completed-units.json
+rm .sf/auto.lock
+rm .sf/completed-units.json
 ```
 
-Then `/gsd auto` to restart from current state.
+Then `/sf auto` to restart from current state.
 
 ### Reset routing history
 
 ```bash
-rm .gsd/routing-history.json
+rm .sf/routing-history.json
 ```
 
 ### Full state rebuild
 
 ```
-/gsd doctor
+/sf doctor
 ```
 
 Rebuilds `STATE.md` from plan and roadmap files and fixes inconsistencies.
 
 ## Getting Help
 
-- **GitHub Issues:** [github.com/gsd-build/SF/issues](https://github.com/gsd-build/SF/issues)
-- **Dashboard:** `Ctrl+Alt+G` or `/gsd status`
-- **Forensics:** `/gsd forensics` for post-mortem analysis
-- **Session logs:** `.gsd/activity/` contains JSONL session dumps
+- **GitHub Issues:** [github.com/sf-build/SF/issues](https://github.com/sf-build/SF/issues)
+- **Dashboard:** `Ctrl+Alt+G` or `/sf status`
+- **Forensics:** `/sf forensics` for post-mortem analysis
+- **Session logs:** `.sf/activity/` contains JSONL session dumps
 
 ## Platform-Specific Issues
 
@@ -148,4 +148,4 @@ Rebuilds `STATE.md` from plan and roadmap files and fixes inconsistencies.
 
 - LSP ENOENT on MSYS2/Git Bash → Fixed in v2.29+, upgrade
 - EBUSY errors during builds → Close browser extension, or change output directory
-- Transient EBUSY/EPERM on `.gsd/` files → Retry; close file-locking tools if persistent
+- Transient EBUSY/EPERM on `.sf/` files → Retry; close file-locking tools if persistent

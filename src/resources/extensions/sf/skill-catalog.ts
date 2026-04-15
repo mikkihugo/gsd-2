@@ -642,7 +642,7 @@ export const SKILL_CATALOG: SkillPack[] = [
  * NOT shown directly to users during init (greenfield installs essentials
  * only and defers stack-specific skills).  These mappings are available for:
  *   1. The LLM to install skills after establishing a design
- *   2. The `/gsd skills` command (explicit user request)
+ *   2. The `/sf skills` command (explicit user request)
  *   3. Re-running brownfield detection after project files are created
  */
 export const GREENFIELD_STACKS: Array<{
@@ -960,7 +960,7 @@ export function isPackInstalled(pack: SkillPack): boolean {
  *   Installs essential packs only (find-skills, skill-creator, etc.).
  *   Stack-specific skills are deferred — once the LLM establishes a design
  *   and creates project files (package.json, firebase.json, etc.), brownfield
- *   detection will pick them up on the next `gsd init` or via auto-mode
+ *   detection will pick them up on the next `sf init` or via auto-mode
  *   skill discovery.
  *
  * Returns the list of installed pack labels.
@@ -1024,7 +1024,7 @@ export async function runSkillInstallStep(
           description: "Install skills later with npx skills add",
         },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /sf init when ready.",
     });
 
     if (choice === "install") {
@@ -1069,7 +1069,7 @@ export async function runSkillInstallStep(
           description: "Install skills later with npx skills add",
         },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /sf init when ready.",
     });
 
     if (choice === "install") {

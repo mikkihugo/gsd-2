@@ -3,7 +3,7 @@
 // Pure TypeScript, zero Pi dependencies.
 
 import type {
-  GSDState,
+  SFState,
   ActiveRef,
   Roadmap,
   RoadmapSliceEntry,
@@ -145,7 +145,7 @@ export function isValidationTerminal(validationContent: string): boolean {
 
 interface StateCache {
   basePath: string;
-  result: GSDState;
+  result: SFState;
   timestamp: number;
 }
 
@@ -183,7 +183,7 @@ export async function getActiveMilestoneId(basePath: string): Promise<string | n
   if (isDbAvailable()) {
     const allMilestones = getAllMilestones();
     if (allMilestones.length > 0) {
-      // Respect queue-order.json so /gsd queue reordering is honored (#2556).
+      // Respect queue-order.json so /sf queue reordering is honored (#2556).
       // Without this, the DB path uses lexicographic sort while the dispatch
       // guard uses queue order — causing a deadlock.
       const customOrder = loadQueueOrder(basePath);
@@ -229,7 +229,7 @@ export async function getActiveMilestoneId(basePath: string): Promise<string | n
  * Falls back to filesystem parsing for unmigrated projects or when DB
  * has zero milestones (e.g. first run before migration).
  */
-export async function deriveState(basePath: string): Promise<GSDState> {
+export async function deriveState(basePath: string): Promise<SFState> {
   // Return cached result if within the TTL window for the same basePath
   if (
     _stateCache &&
@@ -240,7 +240,7 @@ export async function deriveState(basePath: string): Promise<GSDState> {
   }
 
   const stopTimer = debugTime("derive-state-impl");
-  let result: GSDState;
+  let result: SFState;
 
   // Dual-path: try DB-backed derivation first when hierarchy tables are populated
   if (isDbAvailable()) {
@@ -321,7 +321,7 @@ const isStatusDone = isClosedStatus;
  * are still checked on the filesystem since they aren't in DB tables.
  * Requirements also stay file-based via parseRequirementCounts().
  *
- * Must produce field-identical GSDState to _deriveStateImpl() for the same project.
+ * Must produce field-identical SFState to _deriveStateImpl() for the same project.
  */
 function reconcileDiskToDb(basePath: string): MilestoneRow[] {
   let allMilestones = getAllMilestones();
@@ -537,7 +537,7 @@ function handleNoActiveMilestone(
   registry: MilestoneRegistryEntry[],
   requirements: any,
   milestoneProgress: { done: number, total: number }
-): GSDState {
+): SFState {
   const pendingEntries = registry.filter(e => e.status === 'pending');
   const parkedEntries = registry.filter(e => e.status === 'parked');
 
@@ -563,7 +563,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+      nextAction: `All remaining milestones are parked (${parkedIds}). Run /sf unpark <id> or create a new milestone.`,
       registry, requirements,
       progress: { milestones: milestoneProgress },
     };
@@ -574,7 +574,7 @@ function handleNoActiveMilestone(
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning',
       recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /sf to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -604,7 +604,7 @@ async function handleAllSlicesDone(
   requirements: any,
   milestoneProgress: { done: number, total: number },
   sliceProgress: { done: number, total: number }
-): Promise<GSDState> {
+): Promise<SFState> {
   const validationFile = resolveMilestoneFile(basePath, activeMilestone.id, "VALIDATION");
   const validationContent = validationFile ? await loadFile(validationFile) : null;
   const validationTerminal = validationContent ? isValidationTerminal(validationContent) : false;
@@ -774,7 +774,7 @@ async function checkInterruptedWork(basePath: string, milestoneId: string, slice
     !!(sDir && await loadFile(join(sDir, "continue.md")));
 }
 
-export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
+export async function deriveStateFromDb(basePath: string): Promise<SFState> {
   const requirements = parseRequirementCounts(await loadFile(resolveSfRootFile(basePath, "REQUIREMENTS")));
 
   let allMilestones = reconcileDiskToDb(basePath);
@@ -794,7 +794,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
     return {
       activeMilestone: null, activeSlice: null, activeTask: null,
       phase: 'pre-planning', recentDecisions: [], blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /sf to create one.',
       registry: [], requirements,
       progress: { milestones: { done: 0, total: 0 } },
     };
@@ -1000,7 +1000,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
 // LEGACY: Filesystem-based state derivation for unmigrated projects.
 // DB-backed projects use deriveStateFromDb() above. Target: extract to
 // state-legacy.ts when all projects are DB-backed.
-export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
+export async function _deriveStateImpl(basePath: string): Promise<SFState> {
   const diskIds = findMilestoneIds(basePath);
   const customOrder = loadQueueOrder(basePath);
   const milestoneIds = sortByQueueOrder(diskIds, customOrder);
@@ -1022,15 +1022,15 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
   // in one call and build an in-memory content map keyed by absolute path.
   // This eliminates O(N) individual fs.readFile calls during traversal.
   const fileContentCache = new Map<string, string>();
-  const gsdDir = sfRoot(basePath);
+  const sfDir = sfRoot(basePath);
 
   // Filesystem fallback: used when deriveStateFromDb() is not available
   // (pre-migration projects). The DB-backed path is preferred when available
   // — see deriveStateFromDb() above.
-  const batchFiles = nativeBatchParseGsdFiles(gsdDir);
+  const batchFiles = nativeBatchParseGsdFiles(sfDir);
   if (batchFiles) {
     for (const f of batchFiles) {
-      const absPath = resolve(gsdDir, f.path);
+      const absPath = resolve(sfDir, f.path);
       fileContentCache.set(absPath, f.rawContent);
     }
   }
@@ -1056,7 +1056,7 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
       phase: 'pre-planning',
       recentDecisions: [],
       blockers: [],
-      nextAction: 'No milestones found. Run /gsd to create one.',
+      nextAction: 'No milestones found. Run /sf to create one.',
       registry: [],
       requirements,
       progress: {
@@ -1295,7 +1295,7 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: `All remaining milestones are parked (${parkedIds}). Run /gsd unpark <id> or create a new milestone.`,
+        nextAction: `All remaining milestones are parked (${parkedIds}). Run /sf unpark <id> or create a new milestone.`,
         registry,
         requirements,
         progress: {
@@ -1312,7 +1312,7 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
         phase: 'pre-planning',
         recentDecisions: [],
         blockers: [],
-        nextAction: 'No milestones found. Run /gsd to create one.',
+        nextAction: 'No milestones found. Run /sf to create one.',
         registry: [],
         requirements,
         progress: {
@@ -1687,7 +1687,7 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
   }
 
   // ── REPLAN-TRIGGER detection: triage-initiated replan ──────────────────
-  // Manual `/gsd triage` writes REPLAN-TRIGGER.md when a capture is classified
+  // Manual `/sf triage` writes REPLAN-TRIGGER.md when a capture is classified
   // as "replan". Detect it here and transition to replanning-slice so the
   // dispatch loop picks it up (instead of silently advancing past it).
   if (!blockerTaskId) {

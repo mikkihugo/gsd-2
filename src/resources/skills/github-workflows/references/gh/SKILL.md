@@ -134,8 +134,8 @@ ISSUE_URL=$(gh issue create -R singularity-forge/sf-run \
 
 # Step 2: Set the issue type via GraphQL
 ISSUE_NUM=$(echo "$ISSUE_URL" | grep -oE '[0-9]+$')
-ISSUE_ID=$(gh api graphql -f query='{ repository(owner:"gsd-build",name:"gsd-2") { issue(number:'"$ISSUE_NUM"') { id } } }' --jq '.data.repository.issue.id')
-TYPE_ID=$(gh api graphql -f query='{ repository(owner:"gsd-build",name:"gsd-2") { issueTypes(first:20) { nodes { id name } } } }' --jq '.data.repository.issueTypes.nodes[] | select(.name=="Bug") | .id')
+ISSUE_ID=$(gh api graphql -f query='{ repository(owner:"sf-build",name:"sf-2") { issue(number:'"$ISSUE_NUM"') { id } } }' --jq '.data.repository.issue.id')
+TYPE_ID=$(gh api graphql -f query='{ repository(owner:"sf-build",name:"sf-2") { issueTypes(first:20) { nodes { id name } } } }' --jq '.data.repository.issueTypes.nodes[] | select(.name=="Bug") | .id')
 gh api graphql -f query='mutation { updateIssue(input:{id:"'"$ISSUE_ID"'",issueTypeId:"'"$TYPE_ID"'"}) { issue { number } } }'
 ```
 
@@ -158,13 +158,13 @@ See [labels.md](./references/labels.md) for the full taxonomy and color codes.
 
 ```bash
 # List projects
-gh project list --owner gsd-build
+gh project list --owner sf-build
 
 # Create project
-gh project create --owner gsd-build --title "gsd-2 Backlog"
+gh project create --owner sf-build --title "sf-2 Backlog"
 
 # Add issue to project
-gh project item-add 1 --owner gsd-build \
+gh project item-add 1 --owner sf-build \
   --url https://github.com/singularity-forge/sf-run/issues/42
 ```
 

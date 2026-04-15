@@ -7,7 +7,7 @@ SF supports multi-user workflows where several developers work on the same repos
 The simplest way: set team mode in your project preferences.
 
 ```yaml
-# .gsd/PREFERENCES.md (committed to git)
+# .sf/PREFERENCES.md (committed to git)
 ---
 version: 1
 mode: team
@@ -32,23 +32,23 @@ Share planning artifacts while keeping runtime files local:
 
 ```bash
 # Runtime files (per-developer, gitignore these)
-.gsd/auto.lock
-.gsd/completed-units.json
-.gsd/STATE.md
-.gsd/metrics.json
-.gsd/activity/
-.gsd/runtime/
-.gsd/worktrees/
-.gsd/milestones/**/continue.md
-.gsd/milestones/**/*-CONTINUE.md
+.sf/auto.lock
+.sf/completed-units.json
+.sf/STATE.md
+.sf/metrics.json
+.sf/activity/
+.sf/runtime/
+.sf/worktrees/
+.sf/milestones/**/continue.md
+.sf/milestones/**/*-CONTINUE.md
 ```
 
 **What gets shared** (committed to git):
-- `.gsd/PREFERENCES.md` — project preferences
-- `.gsd/PROJECT.md` — living project description
-- `.gsd/REQUIREMENTS.md` — requirement contract
-- `.gsd/DECISIONS.md` — architectural decisions
-- `.gsd/milestones/` — roadmaps, plans, summaries, research
+- `.sf/PREFERENCES.md` — project preferences
+- `.sf/PROJECT.md` — living project description
+- `.sf/REQUIREMENTS.md` — requirement contract
+- `.sf/DECISIONS.md` — architectural decisions
+- `.sf/milestones/` — roadmaps, plans, summaries, research
 
 **What stays local** (gitignored):
 - Lock files, metrics, state, activity logs, worktrees
@@ -56,11 +56,11 @@ Share planning artifacts while keeping runtime files local:
 ## Commit the Config
 
 ```bash
-git add .gsd/PREFERENCES.md
+git add .sf/PREFERENCES.md
 git commit -m "chore: enable SF team workflow"
 ```
 
-## Keeping `.gsd/` Local
+## Keeping `.sf/` Local
 
 For teams where only some members use SF:
 
@@ -69,13 +69,13 @@ git:
   commit_docs: false
 ```
 
-This gitignores `.gsd/` entirely. You get structured planning without affecting teammates.
+This gitignores `.sf/` entirely. You get structured planning without affecting teammates.
 
 ## Parallel Development
 
 Multiple developers can run auto mode simultaneously on different milestones. Each developer:
 
-- Gets their own worktree (`.gsd/worktrees/<MID>/`)
+- Gets their own worktree (`.sf/worktrees/<MID>/`)
 - Works on a unique `milestone/<MID>` branch
 - Squash-merges to main independently
 

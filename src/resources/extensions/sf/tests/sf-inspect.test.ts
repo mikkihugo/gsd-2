@@ -1,12 +1,12 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-// gsd-inspect — Tests for /gsd inspect output formatting
+// sf-inspect — Tests for /sf inspect output formatting
 //
 // Tests the pure formatInspectOutput function with known data.
 
 import { formatInspectOutput, type InspectData } from '../commands-inspect.ts';
 
-describe('gsd-inspect', () => {
+describe('sf-inspect', () => {
   test('full output formatting', () => {
     const data: InspectData = {
       schemaVersion: 2,

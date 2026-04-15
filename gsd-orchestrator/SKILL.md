@@ -1,19 +1,19 @@
 ---
-name: gsd-orchestrator
+name: sf-orchestrator
 description: >
   Build software products autonomously via SF headless mode. Handles the full
   lifecycle: write a spec, launch a build, poll for completion, handle blockers,
   track costs, and verify the result. Use when asked to "build something",
-  "create a project", "run gsd", "check build status", or any task that
+  "create a project", "run sf", "check build status", or any task that
   requires autonomous software development via subprocess.
 metadata:
   openclaw:
     requires:
-      bins: [gsd]
+      bins: [sf]
     install:
       kind: node
       package: sf-run
-      bins: [gsd]
+      bins: [sf]
 ---
 
 <objective>
@@ -27,7 +27,7 @@ SF headless is a subprocess you launch and monitor. Think of it like a junior de
 you hand a spec to:
 
 1. You write the spec (what to build)
-2. You launch the build (`gsd headless ... new-milestone --context spec.md --auto`)
+2. You launch the build (`sf headless ... new-milestone --context spec.md --auto`)
 3. You wait for it to finish (exit code tells you the outcome)
 4. You check the result (query state, inspect files, verify deliverables)
 5. If blocked, you intervene (steer, supply answers, or escalate)
@@ -37,12 +37,12 @@ You never write application code yourself — SF does that.
 </mental_model>
 
 <critical_rules>
-- **Flags before command.** `gsd headless [--flags] [command] [args]`. Flags after the command are ignored.
+- **Flags before command.** `sf headless [--flags] [command] [args]`. Flags after the command are ignored.
 - **Redirect stderr.** JSON output goes to stdout. Progress goes to stderr. Always `2>/dev/null` when parsing JSON.
 - **Check exit codes.** 0=success, 1=error, 10=blocked (needs you), 11=cancelled.
 - **Use `query` to poll.** Instant (~50ms), no LLM cost. Use it between steps, not `auto` for status.
 - **Budget awareness.** Track `cost.total` from query results. Set limits before launching long runs.
-- **One project directory per build.** Each SF project needs its own directory with a `.gsd/` folder.
+- **One project directory per build.** Each SF project needs its own directory with a `.sf/` folder.
 </critical_rules>
 
 <routing>
@@ -76,24 +76,24 @@ cat > spec.md << 'EOF'
 # Your Product Spec Here
 Build a ...
 EOF
-gsd headless --output-format json --context spec.md new-milestone --auto 2>/dev/null
+sf headless --output-format json --context spec.md new-milestone --auto 2>/dev/null
 ```
 
 **Check project state (instant, free):**
 ```bash
 cd /path/to/project
-gsd headless query | jq '{phase: .state.phase, progress: .state.progress, cost: .cost.total}'
+sf headless query | jq '{phase: .state.phase, progress: .state.progress, cost: .cost.total}'
 ```
 
 **Resume work on an existing project:**
 ```bash
 cd /path/to/project
-gsd headless --output-format json auto 2>/dev/null
+sf headless --output-format json auto 2>/dev/null
 ```
 
 **Run one step at a time:**
 ```bash
-RESULT=$(gsd headless --output-format json next 2>/dev/null)
+RESULT=$(sf headless --output-format json next 2>/dev/null)
 echo "$RESULT" | jq '{status: .status, phase: .phase, cost: .cost.total}'
 ```
 
@@ -103,15 +103,15 @@ echo "$RESULT" | jq '{status: .status, phase: .phase, cost: .cost.total}'
 | Code | Meaning | Your action |
 |------|---------|-------------|
 | `0`  | Success | Check deliverables, verify output, report completion |
-| `1`  | Error or timeout | Inspect stderr, check `.gsd/STATE.md`, retry or escalate |
+| `1`  | Error or timeout | Inspect stderr, check `.sf/STATE.md`, retry or escalate |
 | `10` | Blocked | Query state for blocker details, steer around it or escalate to human |
 | `11` | Cancelled | Process was interrupted — resume with `--resume <sessionId>` or restart |
 </exit_codes>
 
 <project_structure>
-SF creates and manages all state in `.gsd/`:
+SF creates and manages all state in `.sf/`:
 ```
-.gsd/
+.sf/
   PROJECT.md          # What this project is
   REQUIREMENTS.md     # Capability contract
   DECISIONS.md        # Architectural decisions (append-only)
@@ -156,7 +156,7 @@ State is derived from files on disk — checkboxes in ROADMAP.md and PLAN.md are
 Pre-supply answers and secrets for fully autonomous runs:
 
 ```bash
-gsd headless --answers answers.json --output-format json auto 2>/dev/null
+sf headless --answers answers.json --output-format json auto 2>/dev/null
 ```
 
 ```json
@@ -178,7 +178,7 @@ See `references/answer-injection.md` for the full mechanism.
 For real-time monitoring, use JSONL event streaming:
 
 ```bash
-gsd headless --json auto 2>/dev/null | while read -r line; do
+sf headless --json auto 2>/dev/null | while read -r line; do
   TYPE=$(echo "$line" | jq -r '.type')
   case "$TYPE" in
     tool_execution_start) echo "Tool: $(echo "$line" | jq -r '.toolName')" ;;

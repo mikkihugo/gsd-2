@@ -5,8 +5,8 @@ Workflow templates are pre-built patterns for common development tasks. Instead 
 ## Using Templates
 
 ```
-/gsd start              # pick from available templates
-/gsd start resume       # resume an in-progress workflow
+/sf start              # pick from available templates
+/sf start resume       # resume an in-progress workflow
 ```
 
 ## Available Templates
@@ -25,8 +25,8 @@ Workflow templates are pre-built patterns for common development tasks. Instead 
 ## Listing and Inspecting
 
 ```
-/gsd templates                    # list all available templates
-/gsd templates info <name>        # show details for a template
+/sf templates                    # list all available templates
+/sf templates info <name>        # show details for a template
 ```
 
 ## Custom Workflows
@@ -34,12 +34,12 @@ Workflow templates are pre-built patterns for common development tasks. Instead 
 Create your own workflow definitions:
 
 ```
-/gsd workflow new                  # create a new workflow YAML
-/gsd workflow run <name>           # start a workflow run
-/gsd workflow list                 # list active runs
-/gsd workflow validate <name>      # validate definition
-/gsd workflow pause                # pause running workflow
-/gsd workflow resume               # resume paused workflow
+/sf workflow new                  # create a new workflow YAML
+/sf workflow run <name>           # start a workflow run
+/sf workflow list                 # list active runs
+/sf workflow validate <name>      # validate definition
+/sf workflow pause                # pause running workflow
+/sf workflow resume               # resume paused workflow
 ```
 
 Custom workflows are defined in YAML and can specify phases, dependencies, and configuration for each step.

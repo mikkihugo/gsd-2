@@ -33,8 +33,8 @@ describe("isClosedStatus used by projections", () => {
 
 describe("upsertDecision preserves seq column", () => {
   test("seq is preserved when decision is re-upserted", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-upsert-test-"));
-    const dbPath = join(tmp, "gsd.db");
+    const tmp = mkdtempSync(join(tmpdir(), "sf-upsert-test-"));
+    const dbPath = join(tmp, "sf.db");
     try {
       openDatabase(dbPath);
       const adapter = _getAdapter();
@@ -86,7 +86,7 @@ describe("upsertDecision preserves seq column", () => {
 
 describe("WorkflowEvent v field", () => {
   test("appendEvent includes v:2 in output", async () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-event-v-test-"));
+    const tmp = mkdtempSync(join(tmpdir(), "sf-event-v-test-"));
     try {
       const { appendEvent } = await import("../workflow-events.js");
       appendEvent(tmp, {

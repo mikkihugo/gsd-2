@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-if (process.env.SF_LIVE_TESTS !== "1") {
+if ((process.env.SF_LIVE_TESTS || process.env.GSD_LIVE_TESTS) !== "1") {
   console.log("Skipping live tests (set SF_LIVE_TESTS=1 to enable)");
   process.exit(0);
 }

@@ -21,7 +21,7 @@ import {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-journal-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-journal-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }
@@ -122,7 +122,7 @@ describe("emitJournalEvent", () => {
 describe("emitJournalEvent — auto-creates parent directory", () => {
   let base: string;
   beforeEach(() => {
-    base = join(tmpdir(), `gsd-journal-test-${randomUUID()}`);
+    base = join(tmpdir(), `sf-journal-test-${randomUUID()}`);
     // Don't create .gsd/ — emitJournalEvent should handle it via mkdirSync recursive
   });
   afterEach(() => { cleanup(base); });
@@ -329,7 +329,7 @@ describe("queryJournal", () => {
 describe("queryJournal — nonexistent directory", () => {
   let base: string;
   beforeEach(() => {
-    base = join(tmpdir(), `gsd-journal-test-${randomUUID()}`);
+    base = join(tmpdir(), `sf-journal-test-${randomUUID()}`);
     // Don't create anything
   });
   afterEach(() => { cleanup(base); });

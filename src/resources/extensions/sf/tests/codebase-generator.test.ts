@@ -20,7 +20,7 @@ import {
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function makeTmpRepo(): string {
-  const base = join(tmpdir(), `gsd-codebase-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-codebase-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   execSync("git init", { cwd: base, stdio: "ignore" });
   return base;
@@ -77,7 +77,7 @@ test("parseCodebaseMap: recovers descriptions from collapsed-description comment
 
 ### src/components/
 - *(25 files: 25 .ts)*
-<!-- gsd:collapsed-descriptions
+<!-- sf:collapsed-descriptions
 - \`src/components/Foo.ts\` — The Foo component
 - \`src/components/Bar.ts\` — The Bar component
 -->
@@ -332,7 +332,7 @@ test("generateCodebaseMap: truncated=true when file count exceeds maxFiles", () 
 });
 
 test("generateCodebaseMap: returns empty map for non-git directory", () => {
-  const base = join(tmpdir(), `gsd-codebase-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-codebase-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   // No git init
   try {
@@ -370,7 +370,7 @@ test("generateCodebaseMap: collapsed directories preserve descriptions in hidden
     const result = generateCodebaseMap(base, undefined, descriptions);
 
     // The description should be in the hidden comment block
-    assert.ok(result.content.includes("<!-- gsd:collapsed-descriptions"));
+    assert.ok(result.content.includes("<!-- sf:collapsed-descriptions"));
     assert.ok(result.content.includes("`src/components/comp00.ts` — The first component"));
 
     // Re-parsing should recover the description
@@ -489,7 +489,7 @@ test("readCodebaseMap: returns null when file missing", () => {
 });
 
 test("writeCodebaseMap: creates .gsd/ directory if missing", () => {
-  const base = join(tmpdir(), `gsd-codebase-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-codebase-test-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   // Intentionally do NOT pre-create .gsd/
   try {

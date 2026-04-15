@@ -26,7 +26,7 @@ import { invalidateAllCaches } from "../cache.ts";
 
 function setupTestProject(): { tmpDir: string; dbPath: string } {
   const tmpDir = mkdtempSync(join(tmpdir(), "gate-dispatch-"));
-  const dbPath = join(tmpDir, ".gsd", "gsd.db");
+  const dbPath = join(tmpDir, ".gsd", "sf.db");
   mkdirSync(join(tmpDir, ".gsd"), { recursive: true });
   openDatabase(dbPath);
 

@@ -27,10 +27,10 @@ const dirListCache = new Map<string, string[]>();
 let nativeTreeCache: Map<string, GsdTreeEntry[]> | null = null;
 let nativeTreeBase: string | null = null;
 
-function getNativeTree(gsdDir: string): Map<string, GsdTreeEntry[]> | null {
-  if (nativeTreeCache && nativeTreeBase === gsdDir) return nativeTreeCache;
+function getNativeTree(sfDir: string): Map<string, GsdTreeEntry[]> | null {
+  if (nativeTreeCache && nativeTreeBase === sfDir) return nativeTreeCache;
 
-  const entries = nativeScanGsdTree(gsdDir);
+  const entries = nativeScanGsdTree(sfDir);
   if (!entries) return null;
 
   // Build a map of parent directory -> entries
@@ -44,17 +44,17 @@ function getNativeTree(gsdDir: string): Map<string, GsdTreeEntry[]> | null {
   }
 
   nativeTreeCache = tree;
-  nativeTreeBase = gsdDir;
+  nativeTreeBase = sfDir;
   return tree;
 }
 
 /**
  * Convert a native tree lookup into a relative key for the tree map.
- * Returns the relative path from the gsdDir, or null if the path isn't under gsdDir.
+ * Returns the relative path from the sfDir, or null if the path isn't under sfDir.
  */
-function nativeTreeKey(dirPath: string, gsdDir: string): string | null {
-  if (!dirPath.startsWith(gsdDir)) return null;
-  const rel = dirPath.slice(gsdDir.length).replace(/^\//, '');
+function nativeTreeKey(dirPath: string, sfDir: string): string | null {
+  if (!dirPath.startsWith(sfDir)) return null;
+  const rel = dirPath.slice(sfDir.length).replace(/^\//, '');
   return rel || '.';
 }
 
@@ -267,11 +267,11 @@ export const SF_ROOT_FILES = {
   CODEBASE: "CODEBASE.md",
 } as const;
 
-export const SF_ROOT_FILES = SF_ROOT_FILES;
+export const GSD_ROOT_FILES = SF_ROOT_FILES;
 
-export type GSDRootFileKey = keyof typeof SF_ROOT_FILES;
+export type SFRootFileKey = keyof typeof SF_ROOT_FILES;
 
-const LEGACY_SF_ROOT_FILES: Record<GSDRootFileKey, string> = {
+const LEGACY_SF_ROOT_FILES: Record<SFRootFileKey, string> = {
   PROJECT: "project.md",
   DECISIONS: "decisions.md",
   QUEUE: "queue.md",
@@ -311,7 +311,7 @@ export function sfRoot(basePath: string): string {
   return result;
 }
 
-export const sfRoot = sfRoot;
+export const gsdRoot = sfRoot;
 
 /**
  * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
@@ -408,7 +408,7 @@ export function resolveRuntimeFile(basePath: string): string {
   return join(sfRoot(basePath), "RUNTIME.md");
 }
 
-export function resolveSfRootFile(basePath: string, key: GSDRootFileKey): string {
+export function resolveSfRootFile(basePath: string, key: SFRootFileKey): string {
   const root = sfRoot(basePath);
   const canonical = join(root, SF_ROOT_FILES[key]);
   if (existsSync(canonical)) return canonical;
@@ -419,7 +419,7 @@ export function resolveSfRootFile(basePath: string, key: GSDRootFileKey): string
 
 export const resolveGsdRootFile = resolveSfRootFile;
 
-export function relSfRootFile(key: GSDRootFileKey): string {
+export function relSfRootFile(key: SFRootFileKey): string {
   return `.gsd/${SF_ROOT_FILES[key]}`;
 }
 

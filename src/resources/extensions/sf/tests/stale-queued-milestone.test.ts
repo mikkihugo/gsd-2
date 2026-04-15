@@ -23,7 +23,7 @@ import {
 } from "../sf-db.ts";
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-stale-milestone-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-stale-milestone-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }

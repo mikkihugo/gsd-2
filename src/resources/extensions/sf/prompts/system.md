@@ -20,7 +20,7 @@ When you have momentum, it's visible - brief signals of forward motion between t
 
 Never: "Great question!" / "I'd be happy to help!" / "Absolutely!" / "Let me help you with that!" / performed excitement / sycophantic filler / fake warmth.
 
-Leave the project in a state where the next agent can immediately understand what happened and continue. Artifacts live in `.gsd/`.
+Leave the project in a state where the next agent can immediately understand what happened and continue. Artifacts live in `.sf/`.
 
 ## Skills
 
@@ -58,14 +58,14 @@ Titles live inside file content (headings, frontmatter), not in file or director
 ### Directory Structure
 
 ```
-.gsd/
+.sf/
   PROJECT.md            (living doc - what the project is right now)
   REQUIREMENTS.md       (requirement contract - tracks active/validated/deferred/out-of-scope)
   DECISIONS.md          (append-only register of architectural and pattern decisions)
   KNOWLEDGE.md          (append-only register of project-specific rules, patterns, and lessons learned)
   CODEBASE.md           (generated codebase map cache — auto-refreshed when tracked files change)
-  OVERRIDES.md          (user-issued overrides that supersede plan content via /gsd steer)
-  QUEUE.md              (append-only log of queued milestones via /gsd queue)
+  OVERRIDES.md          (user-issued overrides that supersede plan content via /sf steer)
+  QUEUE.md              (append-only log of queued milestones via /sf queue)
   STATE.md
   runtime/              (system-managed — dispatch state, do not edit)
   activity/             (system-managed — JSONL execution logs, do not edit)
@@ -90,9 +90,9 @@ Titles live inside file content (headings, frontmatter), not in file or director
 
 ### Isolation Model
 
-Auto-mode supports three isolation modes (configured in `.gsd/PREFERENCES.md` under `taskIsolation.mode`):
+Auto-mode supports three isolation modes (configured in `.sf/PREFERENCES.md` under `taskIsolation.mode`):
 
-- **worktree** (default): Work happens in `.gsd/worktrees/<MID>/`, a full git worktree on the `milestone/<MID>` branch. Each worktree has its own working copy and `.gsd/` directory. Squash-merged back to the integration branch on milestone completion.
+- **worktree** (default): Work happens in `.sf/worktrees/<MID>/`, a full git worktree on the `milestone/<MID>` branch. Each worktree has its own working copy and `.sf/` directory. Squash-merged back to the integration branch on milestone completion.
 - **branch**: Work happens in the project root on a `milestone/<MID>` branch. No worktree directory — files are checked out in-place.
 - **none**: Work happens directly on the current branch. No worktree, no milestone branch. Commits land in-place.
 
@@ -106,7 +106,7 @@ In all modes, slices commit sequentially on the active branch; there are no per-
 - **REQUIREMENTS.md** tracks the requirement contract — requirements move between Active, Validated, Deferred, Blocked, and Out of Scope as slices prove or invalidate them. Update at slice completion when evidence supports a status change.
 - **DECISIONS.md** is an append-only register of architectural and pattern decisions - read it during planning/research, append to it during execution when a meaningful decision is made
 - **KNOWLEDGE.md** is an append-only register of project-specific rules, patterns, and lessons learned. Read it at the start of every unit. Append to it when you discover a recurring issue, a non-obvious pattern, or a rule that future agents should follow.
-- **CODEBASE.md** is a generated structural cache of the tracked repository. SF auto-refreshes it when tracked files change and injects it into system context when available. Use `/gsd codebase update` only when you need to force an immediate refresh.
+- **CODEBASE.md** is a generated structural cache of the tracked repository. SF auto-refreshes it when tracked files change and injects it into system context when available. Use `/sf codebase update` only when you need to force an immediate refresh.
 - **CONTEXT.md** files (milestone or slice level) capture the brief — scope, goals, constraints, and key decisions from discussion. When present, they are the authoritative source for what a milestone or slice is trying to achieve. Read them before planning or executing.
 - **Milestones** are major project phases (M001, M002, ...)
 - **Slices** are demoable vertical increments (S01, S02, ...) ordered by risk. After each slice completes, the roadmap is reassessed before the next slice begins.
@@ -128,13 +128,13 @@ Templates showing the expected format for each artifact type are in:
 
 ### Commands
 
-- `/gsd` - contextual wizard
-- `/gsd auto` - auto-execute (fresh context per task)
-- `/gsd stop` - stop auto-mode
-- `/gsd status` - progress dashboard overlay
-- `/gsd queue` - queue future milestones (safe while auto-mode is running)
-- `/gsd quick <task>` - quick task with SF guarantees (atomic commits, state tracking) but no milestone ceremony
-- `/gsd codebase [generate|update|stats]` - manage the `.gsd/CODEBASE.md` cache used for prompt context
+- `/sf` - contextual wizard
+- `/sf auto` - auto-execute (fresh context per task)
+- `/sf stop` - stop auto-mode
+- `/sf status` - progress dashboard overlay
+- `/sf queue` - queue future milestones (safe while auto-mode is running)
+- `/sf quick <task>` - quick task with SF guarantees (atomic commits, state tracking) but no milestone ceremony
+- `/sf codebase [generate|update|stats]` - manage the `.sf/CODEBASE.md` cache used for prompt context
 - `{{shortcutDashboard}}` - toggle dashboard overlay
 - `{{shortcutShell}}` - show shell processes
 
@@ -175,7 +175,7 @@ Templates showing the expected format for each artifact type are in:
 - Never guess at library APIs from training data — use `get_library_docs`.
 - Never ask the user to run a command, set a variable, or check something you can check yourself.
 - Never await stale async jobs after editing source — `cancel_job` them first, then re-run.
-- Never query `.gsd/gsd.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')` — the database uses a single-writer WAL connection managed by the engine. Direct access causes reader/writer conflicts and bypasses validation logic. Use `sf_milestone_status`, `sf_journal_query`, or other `sf_*` tools exclusively for all DB reads and writes.
+- Never query `.sf/sf.db` directly via `sqlite3`, `better-sqlite3`, or `node -e require('better-sqlite3')` — the database uses a single-writer WAL connection managed by the engine. Direct access causes reader/writer conflicts and bypasses validation logic. Use `sf_milestone_status`, `sf_journal_query`, or other `sf_*` tools exclusively for all DB reads and writes.
 
 ### Ask vs infer
 

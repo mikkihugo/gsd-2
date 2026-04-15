@@ -12,7 +12,7 @@
  *      so the phase fell through to auto-mode which immediately stopped
  *      with "needs its own discussion before planning."
  *
- * Together these created an infinite loop: /gsd creates worktree + branch,
+ * Together these created an infinite loop: /sf creates worktree + branch,
  * stops immediately, next run detects the branch and skips entry, auto-mode
  * dispatches needs-discussion → stop, repeat.
  *
@@ -36,7 +36,7 @@ import { invalidateAllCaches } from "../cache.ts";
 // ─── Fixture Helpers ─────────────────────────────────────────────────────────
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-needs-discussion-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-needs-discussion-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }

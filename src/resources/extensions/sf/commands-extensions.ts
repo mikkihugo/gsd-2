@@ -1,5 +1,5 @@
 /**
- * SF Extensions Command — /gsd extensions
+ * SF Extensions Command — /sf extensions
  *
  * Manage the extension registry: list, enable, disable, info.
  * Self-contained — no imports outside the extensions tree (extensions are loaded
@@ -139,7 +139,7 @@ export async function handleExtensions(args: string, ctx: ExtensionCommandContex
   }
 
   ctx.ui.notify(
-    `Unknown: /gsd extensions ${subCmd}. Usage: /gsd extensions [list|enable|disable|info]`,
+    `Unknown: /sf extensions ${subCmd}. Usage: /sf extensions [list|enable|disable|info]`,
     "warning",
   );
 }
@@ -181,7 +181,7 @@ function handleList(ctx: ExtensionCommandContext): void {
     );
 
     if (!enabled) {
-      lines.push(`  ↳ gsd extensions enable ${m.id}`);
+      lines.push(`  ↳ sf extensions enable ${m.id}`);
     }
   }
 
@@ -190,13 +190,13 @@ function handleList(ctx: ExtensionCommandContext): void {
 
 function handleEnable(id: string | undefined, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions enable <id>", "warning");
+    ctx.ui.notify("Usage: /sf extensions enable <id>", "warning");
     return;
   }
 
   const manifests = discoverManifests();
   if (!manifests.has(id)) {
-    ctx.ui.notify(`Extension "${id}" not found. Run /gsd extensions list to see available extensions.`, "warning");
+    ctx.ui.notify(`Extension "${id}" not found. Run /sf extensions list to see available extensions.`, "warning");
     return;
   }
 
@@ -220,7 +220,7 @@ function handleEnable(id: string | undefined, ctx: ExtensionCommandContext): voi
 
 function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions disable <id>", "warning");
+    ctx.ui.notify("Usage: /sf extensions disable <id>", "warning");
     return;
   }
 
@@ -228,7 +228,7 @@ function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCom
   const manifest = manifests.get(id) ?? null;
 
   if (!manifests.has(id)) {
-    ctx.ui.notify(`Extension "${id}" not found. Run /gsd extensions list to see available extensions.`, "warning");
+    ctx.ui.notify(`Extension "${id}" not found. Run /sf extensions list to see available extensions.`, "warning");
     return;
   }
 
@@ -263,7 +263,7 @@ function handleDisable(id: string | undefined, reason: string, ctx: ExtensionCom
 
 function handleInfo(id: string | undefined, ctx: ExtensionCommandContext): void {
   if (!id) {
-    ctx.ui.notify("Usage: /gsd extensions info <id>", "warning");
+    ctx.ui.notify("Usage: /sf extensions info <id>", "warning");
     return;
   }
 

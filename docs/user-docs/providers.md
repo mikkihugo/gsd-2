@@ -1,6 +1,6 @@
 # Provider Setup Guide
 
-Step-by-step setup instructions for every LLM provider SF supports. If you ran the onboarding wizard (`gsd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
+Step-by-step setup instructions for every LLM provider SF supports. If you ran the onboarding wizard (`sf config`) and picked a provider, you may already be configured — check with `/model` inside a session.
 
 ## Table of Contents
 
@@ -61,7 +61,7 @@ Built-in providers have models pre-registered in SF. You only need to supply cre
 export ANTHROPIC_API_KEY="sk-ant-..."
 ```
 
-Or run `gsd config` and paste your key when prompted.
+Or run `sf config` and paste your key when prompted.
 
 **Get a key:** [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys)
 
@@ -73,7 +73,7 @@ If you have a Claude Pro or Max subscription, you can authenticate through Anthr
 # Install Claude Code CLI (see https://docs.anthropic.com/en/docs/claude-code)
 claude
 # Sign in when prompted, then start SF
-gsd
+sf
 ```
 
 SF detects your local Claude Code installation and uses it as the authenticated Anthropic surface. This is the TOS-compliant path for subscription users — SF never handles your subscription credentials directly.
@@ -91,10 +91,10 @@ When SF detects a Claude Code model during startup, it automatically writes a `.
 You can also trigger this manually from inside a SF session:
 
 ```bash
-/gsd mcp init
+/sf mcp init
 ```
 
-This writes (or updates) the `gsd-workflow` entry in your project's `.mcp.json`. Claude Code discovers this file automatically on its next session start.
+This writes (or updates) the `sf-workflow` entry in your project's `.mcp.json`. Claude Code discovers this file automatically on its next session start.
 
 **Manual setup:**
 
@@ -103,24 +103,24 @@ If you prefer to configure it yourself, add SF to your project's `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "sf": {
       "command": "npx",
-      "args": ["gsd-mcp-server"],
+      "args": ["sf-mcp-server"],
       "env": {
-        "SF_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/sf"
       }
     }
   }
 }
 ```
 
-Or if `gsd-mcp-server` is installed globally:
+Or if `sf-mcp-server` is installed globally:
 
 ```json
 {
   "mcpServers": {
-    "gsd": {
-      "command": "gsd-mcp-server"
+    "sf": {
+      "command": "sf-mcp-server"
     }
   }
 }
@@ -137,7 +137,7 @@ The MCP server provides SF's full workflow tool surface — milestone planning, 
 From inside a SF session, check that the MCP server is reachable:
 
 ```bash
-/gsd mcp status
+/sf mcp status
 ```
 
 ### OpenAI
@@ -146,7 +146,7 @@ From inside a SF session, check that the MCP server is reachable:
 export OPENAI_API_KEY="sk-..."
 ```
 
-Or run `gsd config` and choose "Paste an API key" then "OpenAI".
+Or run `sf config` and choose "Paste an API key" then "OpenAI".
 
 **Get a key:** [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 
@@ -172,7 +172,7 @@ Go to [openrouter.ai/keys](https://openrouter.ai/keys) and create a key.
 export OPENROUTER_API_KEY="sk-or-..."
 ```
 
-Or run `gsd config`, choose "Paste an API key", then "OpenRouter".
+Or run `sf config`, choose "Paste an API key", then "OpenRouter".
 
 **Step 3 — Switch to an OpenRouter model:**
 
@@ -180,7 +180,7 @@ Inside a SF session, type `/model` and select an OpenRouter model. Models are pr
 
 **Optional — Add custom OpenRouter models via `models.json`:**
 
-If you want models not in the built-in list, add them to `~/.gsd/agent/models.json`:
+If you want models not in the built-in list, add them to `~/.sf/agent/models.json`:
 
 ```json
 {
@@ -258,7 +258,7 @@ export MISTRAL_API_KEY="..."
 Uses OAuth — sign in through the browser:
 
 ```bash
-gsd config
+sf config
 # Choose "Sign in with your browser" → "GitHub Copilot"
 ```
 
@@ -306,7 +306,7 @@ export AZURE_OPENAI_API_KEY="..."
 
 Local providers run on your machine. They require a `models.json` configuration file because SF needs to know the endpoint URL and which models are available.
 
-**Config file location:** `~/.gsd/agent/models.json`
+**Config file location:** `~/.sf/agent/models.json`
 
 The file reloads each time you open `/model` — no restart needed.
 
@@ -329,7 +329,7 @@ ollama pull llama3.1:8b
 ollama pull qwen2.5-coder:7b
 ```
 
-**Step 3 — Create `~/.gsd/agent/models.json`:**
+**Step 3 — Create `~/.sf/agent/models.json`:**
 
 ```json
 {
@@ -372,7 +372,7 @@ Download from [lmstudio.ai](https://lmstudio.ai).
 
 In LM Studio, go to the "Local Server" tab, load a model, and click "Start Server". The default port is 1234.
 
-**Step 3 — Create `~/.gsd/agent/models.json`:**
+**Step 3 — Create `~/.sf/agent/models.json`:**
 
 ```json
 {
@@ -465,12 +465,12 @@ Any server that implements the OpenAI Chat Completions API can work with SF. Thi
 **Quickest path — use the onboarding wizard:**
 
 ```bash
-gsd config
+sf config
 # Choose "Paste an API key" → "Custom (OpenAI-compatible)"
 # Enter: base URL, API key, model ID
 ```
 
-This writes `~/.gsd/agent/models.json` for you automatically.
+This writes `~/.sf/agent/models.json` for you automatically.
 
 **Manual setup:**
 
@@ -540,7 +540,7 @@ For the full reference on `compat` fields, `modelOverrides`, value resolution, a
 
 **Cause:** The key is set in your shell but not visible to SF.
 
-**Fix:** Make sure the environment variable is exported in the same terminal where you run `gsd`. Or use `gsd config` to save the key to `~/.gsd/agent/auth.json` so it persists across sessions.
+**Fix:** Make sure the environment variable is exported in the same terminal where you run `sf`. Or use `sf config` to save the key to `~/.sf/agent/auth.json` so it persists across sessions.
 
 ### OpenRouter models not appearing in `/model`
 
@@ -550,7 +550,7 @@ For the full reference on `compat` fields, `modelOverrides`, value resolution, a
 
 ```bash
 export OPENROUTER_API_KEY="sk-or-..."
-gsd
+sf
 ```
 
 ### Ollama returns empty responses
@@ -630,7 +630,7 @@ After configuring a provider:
 
 1. **Launch SF:**
    ```bash
-   gsd
+   sf
    ```
 
 2. **Check available models:**
@@ -647,7 +647,7 @@ After configuring a provider:
 
 If the model doesn't appear, check:
 - The environment variable is set in the current shell
-- `models.json` is valid JSON (use `cat ~/.gsd/agent/models.json | python3 -m json.tool`)
+- `models.json` is valid JSON (use `cat ~/.sf/agent/models.json | python3 -m json.tool`)
 - The server is running (for local providers)
 
-For additional help, see [Troubleshooting](./troubleshooting.md) or run `/gsd doctor` inside a session.
+For additional help, see [Troubleshooting](./troubleshooting.md) or run `/sf doctor` inside a session.

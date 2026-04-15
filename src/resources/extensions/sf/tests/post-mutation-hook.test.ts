@@ -13,7 +13,7 @@ import { readEvents } from '../workflow-events.ts';
 import { readManifest } from '../workflow-manifest.ts';
 
 function tempDir(): string {
-  return fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-post-hook-'));
+  return fs.mkdtempSync(path.join(os.tmpdir(), 'sf-post-hook-'));
 }
 
 function cleanupDir(dirPath: string): void {

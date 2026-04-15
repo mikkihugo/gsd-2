@@ -12,18 +12,18 @@ import {
   insertTask,
   openDatabase,
 } from "../sf-db.ts";
-import type { GSDState, Phase } from "../types.ts";
+import type { SFState, Phase } from "../types.ts";
 import { ensurePlanV2Graph } from "../uok/plan-v2.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 const MILESTONE_ID = "M001";
 const SLICE_ID = "S01";
 const TASK_ID = "T01";
 const tempDirs = new Set<string>();
 
 function createBasePath(): string {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-planv2-"));
+  const basePath = mkdtempSync(join(tmpdir(), "sf-uok-planv2-"));
   mkdirSync(join(basePath, ".gsd", "milestones", MILESTONE_ID), { recursive: true });
   tempDirs.add(basePath);
   return basePath;
@@ -61,7 +61,7 @@ function seedGraphRows(): void {
   });
 }
 
-function buildState(phase: Phase): GSDState {
+function buildState(phase: Phase): SFState {
   return {
     phase,
     activeMilestone: { id: MILESTONE_ID, title: "Milestone" },
@@ -89,7 +89,7 @@ test.afterEach(() => {
 });
 
 test("guided flow enforces planning-flow gate before execution-oriented dispatch", () => {
-  const source = readFileSync(join(gsdDir, "guided-flow.ts"), "utf-8");
+  const source = readFileSync(join(sfDir, "guided-flow.ts"), "utf-8");
   assert.ok(
     source.includes("needsPlanningFlowGate") &&
     source.includes("ensurePlanningFlowGraph") &&

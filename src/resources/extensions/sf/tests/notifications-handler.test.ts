@@ -14,7 +14,7 @@ import {
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-notifications-handler-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-notifications-handler-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   mkdirSync(join(dir, ".gsd"), { recursive: true });
@@ -86,5 +86,5 @@ test("notifications tail caps inline output and hints to open overlay", async (t
 
   assert.equal(notices.length, 1);
   assert.match(notices[0].message, /Last 40 notification\(s\):/);
-  assert.match(notices[0].message, /\.\.\. and \d+ more \(open \/gsd notifications to browse all\)/);
+  assert.match(notices[0].message, /\.\.\. and \d+ more \(open \/sf notifications to browse all\)/);
 });

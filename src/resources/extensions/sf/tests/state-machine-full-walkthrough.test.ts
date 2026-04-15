@@ -33,7 +33,7 @@ import { clearPathCache } from "../paths.ts";
 const tempDirs: string[] = [];
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-walkthrough-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-walkthrough-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   tempDirs.push(base);
   return base;
@@ -419,7 +419,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Phase 6: evaluating-gates", () => {
     test("DB path: pending quality gates → evaluating-gates", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       // Set up milestone + slice + task in DB
@@ -445,7 +445,7 @@ describe("state-machine-full-walkthrough", () => {
 
     test("DB path: no pending gates → NOT evaluating-gates", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -840,7 +840,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Reconciliation", () => {
     test("DB: task with SUMMARY on disk but DB says pending → reconciliation fixes status (#2514)", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -920,7 +920,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Cross-validation: DB vs filesystem", () => {
     test("executing scenario produces same phase on both paths", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -946,7 +946,7 @@ describe("state-machine-full-walkthrough", () => {
 
     test("summarizing scenario produces same phase on both paths", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1041,7 +1041,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Recovery: DB has slice but no task rows (partial migration)", () => {
     test("DB tasks empty but PLAN on disk has tasks → reconciles to executing", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1064,7 +1064,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Failure: partial SUMMARY reconciliation", () => {
     test("only one task has SUMMARY, other still pending → executing next task", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1139,7 +1139,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Failure: DB/filesystem divergence", () => {
     test("DB says slice complete, no milestone VALIDATION → validating-milestone", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1156,7 +1156,7 @@ describe("state-machine-full-walkthrough", () => {
 
     test("DB says task complete but SUMMARY missing → no crash, advances to next", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1176,7 +1176,7 @@ describe("state-machine-full-walkthrough", () => {
 
     test("milestone in DB but directory missing from disk → no crash", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1233,7 +1233,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Failure: missing task plan files in DB path", () => {
     test("DB has tasks but no T##-PLAN.md files → planning phase", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1412,7 +1412,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Failure at executing: DB has task but wrong status string", () => {
     test("task with unexpected status string → not treated as closed", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });
@@ -1569,7 +1569,7 @@ describe("state-machine-full-walkthrough", () => {
   describe("Failure: multiple reconciliation in single derivation", () => {
     test("DB has 3 stale tasks, all with SUMMARY on disk → all reconciled in one pass", async () => {
       const base = createFixtureBase();
-      const dbPath = join(base, ".gsd", "gsd.db");
+      const dbPath = join(base, ".gsd", "sf.db");
       openDatabase(dbPath);
 
       insertMilestone({ id: "M001", title: "M001: Test", status: "active" });

@@ -1,6 +1,6 @@
 # Custom Models
 
-Add custom providers and models (Ollama, vLLM, LM Studio, proxies) via `~/.gsd/agent/models.json`.
+Add custom providers and models (Ollama, vLLM, LM Studio, proxies) via `~/.sf/agent/models.json`.
 
 ## Table of Contents
 
@@ -143,7 +143,7 @@ Shell operators (`;`, `|`, `&`, `` ` ``, `$`, `>`, `<`) are also blocked in comm
 
 **Customizing the allowlist:**
 
-If you use a credential tool not on the default list, override it in global settings (`~/.gsd/agent/settings.json`):
+If you use a credential tool not on the default list, override it in global settings (`~/.sf/agent/settings.json`):
 
 ```json
 {
@@ -159,7 +159,7 @@ Alternatively, set the `SF_ALLOWED_COMMAND_PREFIXES` environment variable (comma
 export SF_ALLOWED_COMMAND_PREFIXES="pass,op,sops,doppler"
 ```
 
-> **Note:** This setting is global-only. Project-level settings.json (`<project>/.gsd/settings.json`) cannot override the command allowlist — this prevents a cloned repo from escalating command execution privileges.
+> **Note:** This setting is global-only. Project-level settings.json (`<project>/.sf/settings.json`) cannot override the command allowlist — this prevents a cloned repo from escalating command execution privileges.
 
 ### Custom Headers
 

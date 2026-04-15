@@ -1,5 +1,5 @@
 /**
- * gsd-learning: bayesian-blender
+ * sf-learning: bayesian-blender
  *
  * Blends benchmark priors with observed per-(unit_type, model) outcomes
  * into a single ranked score. Uses Beta-Bernoulli shrinkage:

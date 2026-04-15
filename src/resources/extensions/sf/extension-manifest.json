@@ -1,5 +1,5 @@
 {
-  "id": "gsd",
+  "id": "sf",
   "name": "SF Workflow",
   "version": "1.0.0",
   "description": "Core SF workflow engine — milestone planning, execution, and tracking",
@@ -11,7 +11,7 @@
       "sf_decision_save", "sf_summary_save",
       "sf_requirement_update", "sf_milestone_generate_id"
     ],
-    "commands": ["gsd", "kill", "worktree", "exit"],
+    "commands": ["sf", "kill", "worktree", "exit"],
     "hooks": [
       "session_start",
       "session_switch",

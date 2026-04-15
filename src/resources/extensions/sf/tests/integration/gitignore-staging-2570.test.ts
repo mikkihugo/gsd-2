@@ -32,7 +32,7 @@ function git(dir: string, ...args: string[]): string {
 }
 
 function makeTempRepo(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-staging-2570-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-staging-2570-"));
   git(dir, "init");
   git(dir, "config", "user.email", "test@test.com");
   git(dir, "config", "user.name", "Test");

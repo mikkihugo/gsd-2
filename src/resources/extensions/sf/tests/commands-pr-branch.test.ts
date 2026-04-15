@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-// Test the filtering logic used by /gsd pr-branch.
+// Test the filtering logic used by /sf pr-branch.
 // Full integration requires git operations, so we test the path filtering.
 
 test("pr-branch: identifies .gsd/ paths", () => {

@@ -82,7 +82,7 @@ export function unparkMilestone(basePath: string, milestoneId: string): boolean 
   const dbThinksParked = isDbAvailable() && getMilestone(milestoneId)?.status === "parked";
 
   // Recover the reverse desync too: DB can still say "parked" even when the
-  // PARKED marker was lost on disk, and /gsd unpark should repair that state.
+  // PARKED marker was lost on disk, and /sf unpark should repair that state.
   if (!hadParkedFile && !dbThinksParked) return false;
 
   if (hadParkedFile) {

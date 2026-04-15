@@ -20,7 +20,7 @@ import { detectProjectState } from "../detection.ts";
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-init-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-init-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;
@@ -70,7 +70,7 @@ test("init-wizard: existing .gsd/ with milestones skips init", (t) => {
     mkdirSync(join(dir, ".gsd", "milestones", "M002"), { recursive: true });
 
     const detection = detectProjectState(dir);
-    assert.equal(detection.state, "v2-gsd");
+    assert.equal(detection.state, "v2-sf");
     assert.ok(detection.v2);
     assert.equal(detection.v2!.milestoneCount, 2);
   } finally {
@@ -78,13 +78,13 @@ test("init-wizard: existing .gsd/ with milestones skips init", (t) => {
   }
 });
 
-test("init-wizard: empty .gsd/ (no milestones) returns v2-gsd-empty", (t) => {
-  const dir = makeTempDir("empty-gsd");
+test("init-wizard: empty .gsd/ (no milestones) returns v2-sf-empty", (t) => {
+  const dir = makeTempDir("empty-sf");
   try {
     mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
 
     const detection = detectProjectState(dir);
-    assert.equal(detection.state, "v2-gsd-empty");
+    assert.equal(detection.state, "v2-sf-empty");
     assert.ok(detection.v2);
     assert.equal(detection.v2!.milestoneCount, 0);
   } finally {
@@ -186,7 +186,7 @@ test("init-wizard: v1 with both .planning/ and .gsd/ prioritizes v2", (t) => {
 
     const detection = detectProjectState(dir);
     // v2 should take priority
-    assert.equal(detection.state, "v2-gsd");
+    assert.equal(detection.state, "v2-sf");
     // But v1 info should still be available for migration reference
     assert.ok(detection.v1);
   } finally {

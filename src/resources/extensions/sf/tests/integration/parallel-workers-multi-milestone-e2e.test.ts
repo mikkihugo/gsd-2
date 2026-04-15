@@ -47,7 +47,7 @@ import {
 // ─── Fixture helpers ──────────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-e2e-parallel-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-e2e-parallel-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }

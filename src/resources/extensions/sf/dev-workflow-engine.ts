@@ -14,7 +14,7 @@ import type {
   ReconcileResult,
   DisplayMetadata,
 } from "./engine-types.js";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 import type { DispatchAction, DispatchContext } from "./auto-dispatch.js";
 
 import { deriveState } from "./state.js";
@@ -57,14 +57,14 @@ export class DevWorkflowEngine implements WorkflowEngine {
   readonly engineId = "dev" as const;
 
   async deriveState(basePath: string): Promise<EngineState> {
-    const gsd: GSDState = await deriveState(basePath);
+    const sf: SFState = await deriveState(basePath);
     return {
-      phase: gsd.phase,
-      currentMilestoneId: gsd.activeMilestone?.id ?? null,
-      activeSliceId: gsd.activeSlice?.id ?? null,
-      activeTaskId: gsd.activeTask?.id ?? null,
-      isComplete: gsd.phase === "complete",
-      raw: gsd,
+      phase: sf.phase,
+      currentMilestoneId: sf.activeMilestone?.id ?? null,
+      activeSliceId: sf.activeSlice?.id ?? null,
+      activeTaskId: sf.activeTask?.id ?? null,
+      isComplete: sf.phase === "complete",
+      raw: sf,
     };
   }
 
@@ -72,9 +72,9 @@ export class DevWorkflowEngine implements WorkflowEngine {
     state: EngineState,
     context: { basePath: string },
   ): Promise<EngineDispatchAction> {
-    const gsd = state.raw as GSDState;
-    const mid = gsd.activeMilestone?.id ?? "";
-    const midTitle = gsd.activeMilestone?.title ?? "";
+    const sf = state.raw as SFState;
+    const mid = sf.activeMilestone?.id ?? "";
+    const midTitle = sf.activeMilestone?.title ?? "";
     const loaded = loadEffectiveSFPreferences();
     const prefs = loaded?.preferences ?? undefined;
 
@@ -82,7 +82,7 @@ export class DevWorkflowEngine implements WorkflowEngine {
       basePath: context.basePath,
       mid,
       midTitle,
-      state: gsd,
+      state: sf,
       prefs,
     };
 

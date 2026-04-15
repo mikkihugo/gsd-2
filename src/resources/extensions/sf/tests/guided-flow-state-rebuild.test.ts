@@ -25,7 +25,7 @@ import {
 } from "../sf-db.ts";
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-guided-state-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-guided-state-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }
@@ -84,7 +84,7 @@ describe("guided-flow STATE.md rebuild (#3475)", () => {
     assert.ok(!rebuilt.includes("M008"), "Rebuilt STATE.md should NOT reference stale M008");
   });
 
-  test("buildStateMarkdown produces correct active milestone from GSDState", async () => {
+  test("buildStateMarkdown produces correct active milestone from SFState", async () => {
     base = createFixtureBase();
     openDatabase(":memory:");
 

@@ -11,7 +11,7 @@ import { tmpdir } from "node:os";
 import { readFrozenDefinition } from "../definition-io.ts";
 
 function createTmpDir(): string {
-  return realpathSync(mkdtempSync(join(tmpdir(), "gsd-defio-test-")));
+  return realpathSync(mkdtempSync(join(tmpdir(), "sf-defio-test-")));
 }
 
 describe("readFrozenDefinition", () => {

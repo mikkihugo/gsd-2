@@ -16,12 +16,12 @@ test("#3370: cleanupAfterLoopExit preserves paused auto badge after provider pau
 
   const cleanupBody = autoSource.slice(cleanupIdx, dispatchIdx);
   const pausedGuardIdx = cleanupBody.indexOf("if (!s.paused) {");
-  const clearStatusIdx = cleanupBody.indexOf('ctx.ui.setStatus("gsd-auto", undefined);');
+  const clearStatusIdx = cleanupBody.indexOf('ctx.ui.setStatus("sf-auto", undefined);');
 
   assert.ok(pausedGuardIdx > -1, "loop-exit cleanup must guard UI clearing when auto is paused");
   assert.ok(clearStatusIdx > pausedGuardIdx, "status clearing must live behind the paused guard");
   assert.ok(
-    autoSource.includes('ctx?.ui.setStatus("gsd-auto", "paused");'),
+    autoSource.includes('ctx?.ui.setStatus("sf-auto", "paused");'),
     "pauseAuto must still set the paused badge for transient provider pauses",
   );
 });

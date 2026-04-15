@@ -72,7 +72,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-live-validation-"));
+  return mkdtempSync(join(tmpdir(), "sf-live-validation-"));
 }
 
 /**
@@ -85,8 +85,8 @@ function makeTempDir(): string {
  */
 function createFullFixture(): string {
   const base = makeTempDir();
-  const gsdDir = join(base, ".gsd");
-  const m001Dir = join(gsdDir, "milestones", "M001");
+  const sfDir = join(base, ".gsd");
+  const m001Dir = join(sfDir, "milestones", "M001");
   const s01Dir = join(m001Dir, "slices", "S01");
   const s01Tasks = join(s01Dir, "tasks");
   const s02Dir = join(m001Dir, "slices", "S02");
@@ -180,7 +180,7 @@ function createFullFixture(): string {
 
   // REQUIREMENTS.md
   writeFileSync(
-    join(gsdDir, "REQUIREMENTS.md"),
+    join(sfDir, "REQUIREMENTS.md"),
     [
       "# Requirements",
       "",
@@ -194,7 +194,7 @@ function createFullFixture(): string {
 
   // DECISIONS.md
   writeFileSync(
-    join(gsdDir, "DECISIONS.md"),
+    join(sfDir, "DECISIONS.md"),
     [
       "# Decisions",
       "",
@@ -318,7 +318,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 3: full fixture with ROADMAP+PLAN derives planning or executing", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       invalidateStateCache();
       const state = await deriveState(base);
       // Without DB migration, filesystem path is used — should be planning or executing
@@ -330,7 +330,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 4: complete T01 in S01 — handler succeeds, DB reflects completion", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       // Seed DB with hierarchy
       insertMilestone({ id: "M001", title: "Live Validation", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First Feature", status: "in_progress" });
@@ -357,7 +357,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 5: complete T02 in S01 — both tasks now done", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Live Validation", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First Feature", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", title: "Implementation", status: "complete" });
@@ -374,7 +374,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 6: complete slice S01 — all tasks done, slice closes", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Live Validation", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First Feature", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", title: "Impl", status: "complete" });
@@ -394,7 +394,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 7: complete S02 task + slice — both slices done", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Live Validation", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
       insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "in_progress" });
@@ -417,7 +417,7 @@ describe("state-machine-live-validation", () => {
 
     test("step 8: complete milestone M001 — full lifecycle done", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Live Validation", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
       insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
@@ -445,7 +445,7 @@ describe("state-machine-live-validation", () => {
   describe("completion guards — edge cases", () => {
     test("cannot complete task with empty taskId", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       const result = await handleCompleteTask(makeTaskParams("", "S01", "M001") as any, base);
       assert.ok("error" in result);
       assert.match((result as any).error, /taskId is required/);
@@ -453,7 +453,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete task in closed milestone", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Done", status: "complete" });
       insertSlice({ id: "S01", milestoneId: "M001" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -465,7 +465,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete task in closed slice", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -477,7 +477,7 @@ describe("state-machine-live-validation", () => {
 
     test("double task completion returns error (H5-related)", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -489,7 +489,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete slice with zero tasks — vacuous truth guard", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       // No tasks inserted
@@ -501,7 +501,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete slice with incomplete tasks", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -514,7 +514,7 @@ describe("state-machine-live-validation", () => {
 
     test("double slice completion returns error", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -526,7 +526,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete milestone with zero slices", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
 
       const result = await handleCompleteMilestone(makeMilestoneParams("M001") as any, base);
@@ -536,7 +536,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete milestone with incomplete slices", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertSlice({ id: "S02", milestoneId: "M001", status: "in_progress" });
@@ -550,7 +550,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete milestone with incomplete tasks in complete slice (deep check)", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       // Slice marked complete but task is still pending — simulates inconsistent state
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
@@ -563,7 +563,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot complete milestone without verificationPassed=true", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -577,7 +577,7 @@ describe("state-machine-live-validation", () => {
 
     test("double milestone completion returns error", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Done", status: "complete" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -595,7 +595,7 @@ describe("state-machine-live-validation", () => {
   describe("reopen operations", () => {
     test("reopen task: resets completed task to pending", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -612,7 +612,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot reopen task that is not complete", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -627,7 +627,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot reopen task in closed slice — must reopen slice first", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -642,7 +642,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot reopen task in closed milestone", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Done", status: "complete" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -657,7 +657,7 @@ describe("state-machine-live-validation", () => {
 
     test("reopen slice: resets slice to in_progress and all tasks to pending", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -681,7 +681,7 @@ describe("state-machine-live-validation", () => {
 
     test("cannot reopen slice in closed milestone", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Done", status: "complete" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "complete" });
 
@@ -697,7 +697,7 @@ describe("state-machine-live-validation", () => {
       // This test documents the H5 finding: there is no handleReopenMilestone function.
       // A completed milestone can only be undone via direct DB manipulation.
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Done", status: "complete" });
 
       const milestone = getMilestone("M001");
@@ -717,7 +717,7 @@ describe("state-machine-live-validation", () => {
   describe("phantom parent auto-creation (H6)", () => {
     test("completing task for non-existent milestone/slice auto-creates them", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       // No milestone or slice pre-inserted — handler will auto-create
 
       const result = await handleCompleteTask(makeTaskParams("T01", "S99", "M099") as any, base);
@@ -735,7 +735,7 @@ describe("state-machine-live-validation", () => {
 
     test("completing slice for non-existent milestone auto-creates it", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       // Insert task to satisfy completion guard
       insertMilestone({ id: "M099" });
       insertSlice({ id: "S99", milestoneId: "M099" });
@@ -753,7 +753,7 @@ describe("state-machine-live-validation", () => {
   describe("state derivation with live DB", () => {
     test("deriveStateFromDb reflects task completion immediately", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -780,7 +780,7 @@ describe("state-machine-live-validation", () => {
 
     test("deriveStateFromDb reflects slice completion → next slice or validating", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
       insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "in_progress" });
@@ -796,7 +796,7 @@ describe("state-machine-live-validation", () => {
 
     test("deriveStateFromDb with all slices done → validating-milestone", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
       insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
@@ -810,12 +810,12 @@ describe("state-machine-live-validation", () => {
 
     test("ghost milestone is skipped by deriveState", async () => {
       base = makeTempDir();
-      const gsdDir = join(base, ".gsd", "milestones");
+      const sfDir = join(base, ".gsd", "milestones");
       // M001 is ghost — empty dir
-      mkdirSync(join(gsdDir, "M001"), { recursive: true });
+      mkdirSync(join(sfDir, "M001"), { recursive: true });
       // M002 has content
-      mkdirSync(join(gsdDir, "M002"), { recursive: true });
-      writeFileSync(join(gsdDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
+      mkdirSync(join(sfDir, "M002"), { recursive: true });
+      writeFileSync(join(sfDir, "M002", "M002-CONTEXT-DRAFT.md"), "# Draft\nContent.\n");
 
       assert.ok(isGhostMilestone(base, "M001"), "M001 should be ghost");
       assert.ok(!isGhostMilestone(base, "M002"), "M002 should not be ghost");
@@ -833,7 +833,7 @@ describe("state-machine-live-validation", () => {
   describe("event log integrity across operations", () => {
     test("full operation sequence produces correct event log", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -874,7 +874,7 @@ describe("state-machine-live-validation", () => {
 
     test("reopen operations produce events", async () => {
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -902,7 +902,7 @@ describe("state-machine-live-validation", () => {
       // post-mutation hook runs, preventing the reconciler from auto-correcting
       // the task back to "complete".
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -932,7 +932,7 @@ describe("state-machine-live-validation", () => {
       // M12 fix: reopen-slice now deletes all SUMMARY.md and UAT.md artifacts
       // from disk, preventing reconciler interference.
       base = createFullFixture();
-      openDatabase(join(base, ".gsd", "gsd.db"));
+      openDatabase(join(base, ".gsd", "sf.db"));
       insertMilestone({ id: "M001", title: "Active", status: "active" });
       insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
       insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });

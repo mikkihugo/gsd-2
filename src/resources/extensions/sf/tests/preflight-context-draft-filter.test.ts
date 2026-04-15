@@ -27,21 +27,21 @@ import { resolveMilestoneFile } from "../paths.ts";
 
 describe("pre-flight CONTEXT-DRAFT filter (#2473)", () => {
   let tmpBase: string;
-  let gsd: string;
+  let sf: string;
 
   beforeEach(() => {
-    tmpBase = mkdtempSync(join(tmpdir(), "gsd-preflight-draft-"));
-    gsd = join(tmpBase, ".gsd");
+    tmpBase = mkdtempSync(join(tmpdir(), "sf-preflight-draft-"));
+    sf = join(tmpBase, ".gsd");
 
     // Create milestone directories with CONTEXT-DRAFT files
     for (const id of ["M001", "M002", "M003"]) {
-      const msDir = join(gsd, "milestones", id);
+      const msDir = join(sf, "milestones", id);
       mkdirSync(msDir, { recursive: true });
       writeFileSync(join(msDir, `${id}-CONTEXT-DRAFT.md`), `# ${id}: Draft\n`);
     }
 
     // Open DB and insert milestones with different statuses
-    const dbPath = join(gsd, "gsd.db");
+    const dbPath = join(sf, "sf.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001", title: "Complete milestone", status: "complete" });
     insertMilestone({ id: "M002", title: "Active milestone", status: "active" });

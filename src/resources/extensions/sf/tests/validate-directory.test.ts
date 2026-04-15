@@ -20,7 +20,7 @@ const isWindows = platform() === "win32";
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-validate-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-validate-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;

@@ -1,4 +1,4 @@
-// Structural invariant: sf-db.ts is the single writer for .gsd/gsd.db.
+// Structural invariant: sf-db.ts is the single writer for .gsd/sf.db.
 //
 // No file under src/resources/extensions/sf/ may issue raw write SQL
 // (INSERT/UPDATE/DELETE/REPLACE) or raw transaction control (BEGIN/COMMIT/
@@ -22,14 +22,14 @@ import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 
-const gsdDir = join(process.cwd(), "src/resources/extensions/sf");
+const sfDir = join(process.cwd(), "src/resources/extensions/sf");
 
 const ALLOWLIST = new Set([
   "sf-db.ts",
   "unit-ownership.ts",
 ]);
 
-/** Walk the gsd extension dir and return all .ts files outside tests/. */
+/** Walk the sf extension dir and return all .ts files outside tests/. */
 function walkTsFiles(root: string): string[] {
   const out: string[] = [];
   const stack: string[] = [root];
@@ -76,13 +76,13 @@ const PREPARE_WRITE_RE = /\.prepare\s*\(\s*[`'"][^`'"]*\b(INSERT|UPDATE|DELETE|R
 const EXEC_WRITE_RE = /\.exec\s*\(\s*[`'"][^`'"]*\b(INSERT|UPDATE|DELETE|REPLACE|BEGIN|COMMIT|ROLLBACK)\b/i;
 
 test("no module outside sf-db.ts issues raw write SQL against the engine DB", () => {
-  const files = walkTsFiles(gsdDir);
-  assert.ok(files.length >= 20, `Expected at least 20 .ts files under gsd/, found ${files.length}`);
+  const files = walkTsFiles(sfDir);
+  assert.ok(files.length >= 20, `Expected at least 20 .ts files under sf/, found ${files.length}`);
 
   const violations: Violation[] = [];
 
   for (const abs of files) {
-    const rel = relative(gsdDir, abs);
+    const rel = relative(sfDir, abs);
     const base = rel.split("/").pop()!;
     if (ALLOWLIST.has(base)) continue;
 
@@ -166,13 +166,13 @@ test("sf-db.ts exports the expected single-writer wrappers", async () => {
   }
 });
 
-test("the invariant test touches every .ts module under gsd/ (sanity check)", () => {
-  const files = walkTsFiles(gsdDir);
+test("the invariant test touches every .ts module under sf/ (sanity check)", () => {
+  const files = walkTsFiles(sfDir);
   // Rough sanity: ensure we're not accidentally walking an empty tree
   assert.ok(files.length >= 30, `Expected to scan at least 30 .ts files, scanned ${files.length}`);
 
   // Spot-check a couple of known files that must be included
-  const rels = files.map((f) => relative(gsdDir, f));
+  const rels = files.map((f) => relative(sfDir, f));
   assert.ok(rels.includes("sf-db.ts"), "walker must include sf-db.ts");
   assert.ok(rels.includes("memory-store.ts"), "walker must include memory-store.ts");
   assert.ok(rels.includes("workflow-manifest.ts"), "walker must include workflow-manifest.ts");

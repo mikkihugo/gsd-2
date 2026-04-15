@@ -1,5 +1,5 @@
 /**
- * gsdroot-worktree-detection.test.ts — Regression test for #2594.
+ * sfroot-worktree-detection.test.ts — Regression test for #2594.
  *
  * sfRoot() must return the worktree's own .gsd directory when the basePath
  * is inside a .gsd/worktrees/<name>/ structure, not walk up to the project
@@ -30,7 +30,7 @@ describe("sfRoot() worktree detection (#2594)", () => {
     _clearGsdRootCache();
     // Create a temporary project with a git repo to simulate real conditions.
     // realpathSync handles macOS /tmp -> /private/tmp.
-    projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "gsdroot-wt-")));
+    projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "sfroot-wt-")));
     projectGsd = join(projectRoot, ".gsd");
     mkdirSync(projectGsd, { recursive: true });
 
@@ -124,18 +124,18 @@ describe("sfRoot() worktree detection (#2594)", () => {
     }
 
     // The real git worktree exists at worktreeBase but has NO .gsd/ subdir yet
-    const gsdResult = sfRoot(worktreeBase);
+    const sfResult = sfRoot(worktreeBase);
     const expected = join(worktreeBase, ".gsd");
 
     assert.notEqual(
-      gsdResult,
+      sfResult,
       projectGsd,
       "sfRoot() must NOT escape to project root .gsd from inside a git worktree",
     );
     assert.equal(
-      gsdResult,
+      sfResult,
       expected,
-      `Expected worktree-local .gsd (${expected}), got ${gsdResult}`,
+      `Expected worktree-local .gsd (${expected}), got ${sfResult}`,
     );
 
     // Cleanup worktree

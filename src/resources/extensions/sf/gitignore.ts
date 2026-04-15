@@ -35,7 +35,7 @@ const SF_RUNTIME_PATTERNS = [
   ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
   ".gsd/state-manifest.json",
   ".gsd/STATE.md",
-  ".gsd/gsd.db*",
+  ".gsd/sf.db*",
   ".gsd/journal/",
   ".gsd/doctor-history.jsonl",
   ".gsd/event-log.jsonl",
@@ -203,8 +203,8 @@ export function ensureGitignore(
 
   // Determine which patterns to apply. If .gsd/ has tracked files,
   // exclude the ".gsd" pattern to prevent deleting tracked state.
-  const gsdIsTracked = hasGitTrackedGsdFiles(basePath);
-  const patternsToApply = gsdIsTracked
+  const sfIsTracked = hasGitTrackedGsdFiles(basePath);
+  const patternsToApply = sfIsTracked
     ? BASELINE_PATTERNS.filter((p) => p !== ".gsd")
     : BASELINE_PATTERNS;
 

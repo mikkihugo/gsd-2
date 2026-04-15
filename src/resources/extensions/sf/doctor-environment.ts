@@ -554,7 +554,7 @@ export function runEnvironmentChecks(basePath: string): EnvironmentCheckResult[]
 
 /**
  * Run environment checks with git remote check included.
- * Use this for explicit /gsd doctor invocations, not pre-dispatch gates.
+ * Use this for explicit /sf doctor invocations, not pre-dispatch gates.
  */
 export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResult[] {
   const results = runEnvironmentChecks(basePath);
@@ -567,7 +567,7 @@ export function runFullEnvironmentChecks(basePath: string): EnvironmentCheckResu
 
 /**
  * Run slow opt-in checks (build and/or test).
- * These are never run on the pre-dispatch gate — only on explicit /gsd doctor --build/--test.
+ * These are never run on the pre-dispatch gate — only on explicit /sf doctor --build/--test.
  */
 export function runSlowEnvironmentChecks(
   basePath: string,

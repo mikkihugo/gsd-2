@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-// gsd-recover.test.ts — Tests for the `gsd recover` recovery logic.
+// sf-recover.test.ts — Tests for the `sf recover` recovery logic.
 // Verifies: populate DB → clear hierarchy → recover from markdown → state matches.
 
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
@@ -27,7 +27,7 @@ import { deriveStateFromDb, invalidateStateCache } from '../state.ts';
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-recover-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-recover-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -133,7 +133,7 @@ milestone: M001
 Setup is complete.
 `;
 
-// ─── Recovery helpers (mirrors gsd recover handler logic) ─────────────────
+// ─── Recovery helpers (mirrors sf recover handler logic) ─────────────────
 
 function clearHierarchyTables(): void {
   const db = _getAdapter()!;
@@ -146,7 +146,7 @@ function clearHierarchyTables(): void {
 
 // ─── Tests ────────────────────────────────────────────────────────────────
 
-describe('gsd-recover', async () => {
+describe('sf-recover', async () => {
   test('full round-trip (populate, clear, recover, verify)', async () => {
     const base = createFixtureBase();
     try {

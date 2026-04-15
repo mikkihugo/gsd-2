@@ -114,7 +114,7 @@ export async function handleChangelog(
   let releases: GitHubRelease[];
   try {
     const response = await fetch(RELEASES_URL, {
-      headers: { "User-Agent": "gsd-changelog" },
+      headers: { "User-Agent": "sf-changelog" },
     });
 
     if (!response.ok) {
@@ -207,7 +207,7 @@ export async function handleChangelog(
   ].join("\n");
 
   pi.sendMessage(
-    { customType: "gsd-changelog", content: prompt, display: true },
+    { customType: "sf-changelog", content: prompt, display: true },
     { triggerTurn: true },
   );
 }

@@ -41,9 +41,14 @@ function withFakeRtk<T>(mapping: Record<string, string | { status?: number; stdo
   const previousPath = process.env.SF_RTK_PATH;
   const previousDisabled = process.env.SF_RTK_DISABLED;
   const previousTimeout = process.env.SF_RTK_REWRITE_TIMEOUT_MS;
+  const previousGsdPath = process.env.GSD_RTK_PATH;
+  const previousGsdDisabled = process.env.GSD_RTK_DISABLED;
+  const previousGsdTimeout = process.env.GSD_RTK_REWRITE_TIMEOUT_MS;
   process.env.SF_RTK_PATH = fake.path;
   process.env.SF_RTK_REWRITE_TIMEOUT_MS = "20000";
   delete process.env.SF_RTK_DISABLED;
+  delete process.env.GSD_RTK_PATH;
+  delete process.env.GSD_RTK_DISABLED;
 
   const finalize = () => {
     if (previousPath === undefined) delete process.env.SF_RTK_PATH;
@@ -52,6 +57,12 @@ function withFakeRtk<T>(mapping: Record<string, string | { status?: number; stdo
     else process.env.SF_RTK_DISABLED = previousDisabled;
     if (previousTimeout === undefined) delete process.env.SF_RTK_REWRITE_TIMEOUT_MS;
     else process.env.SF_RTK_REWRITE_TIMEOUT_MS = previousTimeout;
+    if (previousGsdPath === undefined) delete process.env.GSD_RTK_PATH;
+    else process.env.GSD_RTK_PATH = previousGsdPath;
+    if (previousGsdDisabled === undefined) delete process.env.GSD_RTK_DISABLED;
+    else process.env.GSD_RTK_DISABLED = previousGsdDisabled;
+    if (previousGsdTimeout === undefined) delete process.env.GSD_RTK_REWRITE_TIMEOUT_MS;
+    else process.env.GSD_RTK_REWRITE_TIMEOUT_MS = previousGsdTimeout;
     fake.cleanup();
   };
 
@@ -83,10 +94,16 @@ function withManagedFakeRtk<T>(mapping: Record<string, string | { status?: numbe
   const previousPath = process.env.SF_RTK_PATH;
   const previousDisabled = process.env.SF_RTK_DISABLED;
   const previousTimeout = process.env.SF_RTK_REWRITE_TIMEOUT_MS;
+  const previousGsdHome = process.env.GSD_HOME;
+  const previousGsdPath = process.env.GSD_RTK_PATH;
+  const previousGsdDisabled = process.env.GSD_RTK_DISABLED;
+  const previousGsdTimeout = process.env.GSD_RTK_REWRITE_TIMEOUT_MS;
   process.env.SF_HOME = managedHome;
   process.env.SF_RTK_REWRITE_TIMEOUT_MS = "20000";
   delete process.env.SF_RTK_PATH;
   delete process.env.SF_RTK_DISABLED;
+  delete process.env.GSD_RTK_PATH;
+  delete process.env.GSD_RTK_DISABLED;
 
   const env: NodeJS.ProcessEnv = {
     ...process.env,
@@ -104,6 +121,14 @@ function withManagedFakeRtk<T>(mapping: Record<string, string | { status?: numbe
     else process.env.SF_RTK_DISABLED = previousDisabled;
     if (previousTimeout === undefined) delete process.env.SF_RTK_REWRITE_TIMEOUT_MS;
     else process.env.SF_RTK_REWRITE_TIMEOUT_MS = previousTimeout;
+    if (previousGsdHome === undefined) delete process.env.GSD_HOME;
+    else process.env.GSD_HOME = previousGsdHome;
+    if (previousGsdPath === undefined) delete process.env.GSD_RTK_PATH;
+    else process.env.GSD_RTK_PATH = previousGsdPath;
+    if (previousGsdDisabled === undefined) delete process.env.GSD_RTK_DISABLED;
+    else process.env.GSD_RTK_DISABLED = previousGsdDisabled;
+    if (previousGsdTimeout === undefined) delete process.env.GSD_RTK_REWRITE_TIMEOUT_MS;
+    else process.env.GSD_RTK_REWRITE_TIMEOUT_MS = previousGsdTimeout;
     fake.cleanup();
     rmSync(managedHome, { recursive: true, force: true });
   };

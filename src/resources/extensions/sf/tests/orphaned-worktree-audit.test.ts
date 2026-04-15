@@ -1,4 +1,4 @@
-// GSD2 — Tests for auditOrphanedMilestoneBranches bootstrap audit
+// SF2 — Tests for auditOrphanedMilestoneBranches bootstrap audit
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync, realpathSync } from "node:fs";
@@ -36,7 +36,7 @@ describe("auditOrphanedMilestoneBranches", () => {
 
   beforeEach(() => {
     dir = createRepo();
-    openDatabase(join(dir, ".gsd", "gsd.db"));
+    openDatabase(join(dir, ".gsd", "sf.db"));
   });
 
   afterEach(() => {

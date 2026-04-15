@@ -71,5 +71,5 @@ brew unpin node@24
 ```bash
 node --version   # v24.x.x
 npm install -g sf-run
-gsd --version
+sf --version
 ```

@@ -16,7 +16,7 @@ import { formatMergeResults, mergeAllCompleted, mergeCompletedMilestone } from "
 import { loadEffectiveSFPreferences, resolveParallelConfig } from "../../preferences.js";
 import { projectRoot } from "../context.js";
 function emitParallelMessage(pi: ExtensionAPI, content: string): void {
-  pi.sendMessage({ customType: "gsd-parallel", content, display: true });
+  pi.sendMessage({ customType: "sf-parallel", content, display: true });
 }
 
 export async function handleParallelCommand(trimmed: string, _ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<boolean> {
@@ -129,7 +129,7 @@ export async function handleParallelCommand(trimmed: string, _ctx: ExtensionComm
     return true;
   }
 
-  emitParallelMessage(pi, `Unknown parallel subcommand "${subcommand}". Usage: /gsd parallel [start|status|stop|pause|resume|merge|watch]`);
+  emitParallelMessage(pi, `Unknown parallel subcommand "${subcommand}". Usage: /sf parallel [start|status|stop|pause|resume|merge|watch]`);
   return true;
 }
 

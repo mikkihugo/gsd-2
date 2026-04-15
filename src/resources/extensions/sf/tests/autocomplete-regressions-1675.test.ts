@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 import { registerSFCommand } from "../commands.ts";
-import { handleGSDCommand } from "../commands/dispatcher.ts";
+import { handleSFCommand } from "../commands/dispatcher.ts";
 
 function createMockPi() {
   const commands = new Map<string, any>();
@@ -32,51 +32,51 @@ function createMockCtx() {
   };
 }
 
-test("/gsd description includes discuss", () => {
+test("/sf description includes discuss", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  assert.ok(gsd, "registerSFCommand should register /gsd");
+  const sf = pi.commands.get("sf");
+  assert.ok(sf, "registerSFCommand should register /sf");
   assert.ok(
-    gsd.description.includes("discuss"),
+    sf.description.includes("discuss"),
     "description should include discuss",
   );
 });
 
-test("/gsd next completions include --debug", () => {
+test("/sf next completions include --debug", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  const completions = gsd.getArgumentCompletions("next ");
+  const sf = pi.commands.get("sf");
+  const completions = sf.getArgumentCompletions("next ");
   const debug = completions.find((c: any) => c.value === "next --debug");
   assert.ok(debug, "next --debug should appear in completions");
 });
 
-test("/gsd widget completions include full|small|min|off", () => {
+test("/sf widget completions include full|small|min|off", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  const completions = gsd.getArgumentCompletions("widget ");
+  const sf = pi.commands.get("sf");
+  const completions = sf.getArgumentCompletions("widget ");
   const values = completions.map((c: any) => c.value);
   for (const expected of ["widget full", "widget small", "widget min", "widget off"]) {
     assert.ok(values.includes(expected), `missing completion: ${expected}`);
   }
 });
 
-test("bare /gsd skip shows usage and does not fall through to unknown-command warning", async () => {
+test("bare /sf skip shows usage and does not fall through to unknown-command warning", async () => {
   const ctx = createMockCtx();
 
-  await handleGSDCommand("skip", ctx as any, {} as any);
+  await handleSFCommand("skip", ctx as any, {} as any);
 
   assert.ok(
-    ctx.notifications.some((n) => n.message.includes("Usage: /gsd skip <unit-id>")),
+    ctx.notifications.some((n) => n.message.includes("Usage: /sf skip <unit-id>")),
     "should show skip usage guidance",
   );
   assert.ok(
-    !ctx.notifications.some((n) => n.message.startsWith("Unknown: /gsd skip")),
+    !ctx.notifications.some((n) => n.message.startsWith("Unknown: /sf skip")),
     "should not emit unknown-command warning for bare skip",
   );
 });

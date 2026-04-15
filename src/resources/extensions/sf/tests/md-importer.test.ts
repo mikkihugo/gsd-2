@@ -28,7 +28,7 @@ const DECISIONS_MD = `# Decisions Register
 | # | When | Scope | Decision | Choice | Rationale | Revisable? |
 |---|------|-------|----------|--------|-----------|------------|
 | D001 | M001 | library | SQLite library | better-sqlite3 | Sync API | No |
-| D002 | M001 | arch | DB location | .gsd/gsd.db | Derived state | No |
+| D002 | M001 | arch | DB location | .gsd/sf.db | Derived state | No |
 | D010 | M001/S01 | library | Provider strategy (amends D001) | node:sqlite fallback | Zero deps | No |
 | D020 | M001/S02 | library | Importer approach (amends D010) | Direct parse | Simple | Yes |
 `;
@@ -97,14 +97,14 @@ const REQUIREMENTS_MD = `# Requirements
 // ═══════════════════════════════════════════════════════════════════════════
 
 function createFixtureTree(baseDir: string): void {
-  const gsd = path.join(baseDir, '.gsd');
-  fs.mkdirSync(gsd, { recursive: true });
-  fs.writeFileSync(path.join(gsd, 'DECISIONS.md'), DECISIONS_MD);
-  fs.writeFileSync(path.join(gsd, 'REQUIREMENTS.md'), REQUIREMENTS_MD);
-  fs.writeFileSync(path.join(gsd, 'PROJECT.md'), '# Test Project\nA test project.');
+  const sf = path.join(baseDir, '.gsd');
+  fs.mkdirSync(sf, { recursive: true });
+  fs.writeFileSync(path.join(sf, 'DECISIONS.md'), DECISIONS_MD);
+  fs.writeFileSync(path.join(sf, 'REQUIREMENTS.md'), REQUIREMENTS_MD);
+  fs.writeFileSync(path.join(sf, 'PROJECT.md'), '# Test Project\nA test project.');
 
   // Create milestone hierarchy
-  const m001 = path.join(gsd, 'milestones', 'M001');
+  const m001 = path.join(sf, 'milestones', 'M001');
   fs.mkdirSync(m001, { recursive: true });
   fs.writeFileSync(path.join(m001, 'M001-ROADMAP.md'), '# M001 Roadmap\nTest roadmap content.');
   fs.writeFileSync(path.join(m001, 'M001-CONTEXT.md'), '# M001 Context\nTest context.');
@@ -194,7 +194,7 @@ test('md-importer: made_by column parsing (new 8-column format)', () => {
 | # | When | Scope | Decision | Choice | Rationale | Revisable? | Made By |
 |---|------|-------|----------|--------|-----------|------------|---------|
 | D001 | M001 | library | SQLite library | better-sqlite3 | Sync API | No | human |
-| D002 | M001 | arch | DB location | .gsd/gsd.db | Derived state | No | agent |
+| D002 | M001 | arch | DB location | .gsd/sf.db | Derived state | No | agent |
 | D003 | M002 | impl | Config format | JSON | Simple | Yes | collaborative |
 | D004 | M002 | impl | Cache strategy | LRU | Predictable | No | bogus |
 `;
@@ -251,7 +251,7 @@ test('md-importer: parseRequirementsSections', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: migrateFromMarkdown orchestrator', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-import-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-import-test-'));
   createFixtureTree(tmpDir);
 
   try {
@@ -303,7 +303,7 @@ test('md-importer: migrateFromMarkdown orchestrator', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: idempotent re-import', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-idemp-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-idemp-test-'));
   createFixtureTree(tmpDir);
 
   try {
@@ -336,7 +336,7 @@ test('md-importer: idempotent re-import', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: missing file handling', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-empty-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-empty-test-'));
   // Create empty .gsd/ with no files
   fs.mkdirSync(path.join(tmpDir, '.gsd'), { recursive: true });
 
@@ -377,7 +377,7 @@ test('md-importer: schema v1→v2 migration', () => {
 // ═══════════════════════════════════════════════════════════════════════════
 
 test('md-importer: round-trip fidelity', () => {
-  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-roundtrip-test-'));
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-roundtrip-test-'));
   createFixtureTree(tmpDir);
 
   try {
@@ -389,7 +389,7 @@ test('md-importer: round-trip fidelity', () => {
     assert.deepStrictEqual(d002?.when_context, 'M001', 'D002 when_context round-trip');
     assert.deepStrictEqual(d002?.scope, 'arch', 'D002 scope round-trip');
     assert.deepStrictEqual(d002?.decision, 'DB location', 'D002 decision round-trip');
-    assert.deepStrictEqual(d002?.choice, '.gsd/gsd.db', 'D002 choice round-trip');
+    assert.deepStrictEqual(d002?.choice, '.gsd/sf.db', 'D002 choice round-trip');
     assert.deepStrictEqual(d002?.rationale, 'Derived state', 'D002 rationale round-trip');
 
     const r002 = getRequirementById('R002');

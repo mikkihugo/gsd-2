@@ -81,7 +81,7 @@ let _lockCompromised: boolean = false;
 /** Whether we've already registered a process.on('exit') handler. */
 let _exitHandlerRegistered: boolean = false;
 
-/** Registry of all gsdDir paths where locks were created during this session.
+/** Registry of all sfDir paths where locks were created during this session.
  *  The exit handler cleans ALL of these, not just the current sfRoot(). (#1578) */
 const _lockDirRegistry: Set<string> = new Set();
 
@@ -111,9 +111,9 @@ export function effectiveLockFile(): string {
  * In parallel worker mode, uses `.gsd/parallel/<milestoneId>/` instead of
  * `.gsd/` so workers don't contend on the same proper-lockfile directory (#2184).
  */
-export function effectiveLockTarget(gsdDir: string): string {
+export function effectiveLockTarget(sfDir: string): string {
   const mid = process.env.SF_PARALLEL_WORKER ? process.env.SF_MILESTONE_LOCK : null;
-  return mid ? join(gsdDir, "parallel", mid) : gsdDir;
+  return mid ? join(sfDir, "parallel", mid) : sfDir;
 }
 
 function lockPath(basePath: string): string {
@@ -132,15 +132,15 @@ function lockPath(basePath: string): string {
  * Also removes stray proper-lockfile directories beyond the canonical `.gsd.lock/`.
  */
 export function cleanupStrayLockFiles(basePath: string): void {
-  const gsdDir = sfRoot(basePath);
+  const sfDir = sfRoot(basePath);
 
   // Clean numbered auto lock files inside .gsd/
   try {
-    if (existsSync(gsdDir)) {
-      for (const entry of readdirSync(gsdDir)) {
+    if (existsSync(sfDir)) {
+      for (const entry of readdirSync(sfDir)) {
         // Match "auto <N>.lock" or "auto (<N>).lock" variants but NOT the canonical "auto.lock"
         if (entry !== LOCK_FILE && /^auto\s.+\.lock$/i.test(entry)) {
-          try { unlinkSync(join(gsdDir, entry)); } catch { /* best-effort */ }
+          try { unlinkSync(join(sfDir, entry)); } catch { /* best-effort */ }
         }
       }
     }
@@ -149,12 +149,12 @@ export function cleanupStrayLockFiles(basePath: string): void {
   // Clean stray proper-lockfile directories (e.g. ".gsd 2.lock/")
   // The canonical one is ".gsd.lock/" — anything else is stray.
   try {
-    const parentDir = dirname(gsdDir);
-    const gsdDirName = gsdDir.split("/").pop() || ".gsd";
+    const parentDir = dirname(sfDir);
+    const sfDirName = sfDir.split("/").pop() || ".gsd";
     if (existsSync(parentDir)) {
       for (const entry of readdirSync(parentDir)) {
         // Match ".gsd <N>.lock" or ".gsd (<N>).lock" directories but NOT ".gsd.lock"
-        if (entry !== `${gsdDirName}.lock` && entry.startsWith(gsdDirName) && entry.endsWith(".lock")) {
+        if (entry !== `${sfDirName}.lock` && entry.startsWith(sfDirName) && entry.endsWith(".lock")) {
           const fullPath = join(parentDir, entry);
           try {
             const stat = statSync(fullPath);
@@ -173,9 +173,9 @@ export function cleanupStrayLockFiles(basePath: string): void {
  * Uses module-level references so it always operates on current state.
  * Only registers once — subsequent calls are no-ops.
  */
-function ensureExitHandler(_gsdDir: string): void {
-  // Register the gsdDir so exit cleanup covers it
-  _lockDirRegistry.add(_gsdDir);
+function ensureExitHandler(_sfDir: string): void {
+  // Register the sfDir so exit cleanup covers it
+  _lockDirRegistry.add(_sfDir);
 
   if (_exitHandlerRegistered) return;
   _exitHandlerRegistered = true;
@@ -297,13 +297,13 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
     return acquireFallbackLock(basePath, lp, lockData);
   }
 
-  const gsdDir = sfRoot(basePath);
-  const lockTarget = effectiveLockTarget(gsdDir);
+  const sfDir = sfRoot(basePath);
+  const lockTarget = effectiveLockTarget(sfDir);
 
   // #3218: Pre-flight stale lock cleanup — if the .lock/ directory exists but
   // no auto.lock metadata is present (or the PID is dead), remove the lock
   // directory before attempting acquisition. This prevents the 30-min stale
-  // window from blocking /gsd after crashes, SIGKILL, or laptop sleep.
+  // window from blocking /sf after crashes, SIGKILL, or laptop sleep.
   const lockDir = lockTarget + ".lock";
   if (existsSync(lockDir)) {
     const existingData = readExistingLockData(lp);
@@ -536,8 +536,8 @@ export function releaseSessionLock(basePath: string): void {
 
   // Remove the proper-lockfile directory for the current lock target.
   // In parallel worker mode, this is .gsd/parallel/<MID>.lock/ (#2184).
-  const gsdDir = sfRoot(basePath);
-  const lockTarget = effectiveLockTarget(gsdDir);
+  const sfDir = sfRoot(basePath);
+  const lockTarget = effectiveLockTarget(sfDir);
   try {
     const lockDir = join(lockTarget + ".lock");
     if (existsSync(lockDir)) rmSync(lockDir, { recursive: true, force: true });
@@ -545,7 +545,7 @@ export function releaseSessionLock(basePath: string): void {
     // Non-fatal
   }
   // Also clean the per-milestone parallel directory itself if it exists
-  if (lockTarget !== gsdDir) {
+  if (lockTarget !== sfDir) {
     try {
       if (existsSync(lockTarget)) rmSync(lockTarget, { recursive: true, force: true });
     } catch {

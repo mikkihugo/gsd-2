@@ -7,11 +7,11 @@ Captures let you fire-and-forget thoughts during auto-mode execution. Instead of
 While auto mode is running (or any time):
 
 ```
-/gsd capture "add rate limiting to the API endpoints"
-/gsd capture "the auth flow should support OAuth, not just JWT"
+/sf capture "add rate limiting to the API endpoints"
+/sf capture "the auth flow should support OAuth, not just JWT"
 ```
 
-Captures are appended to `.gsd/CAPTURES.md` and triaged automatically between tasks.
+Captures are appended to `.sf/CAPTURES.md` and triaged automatically between tasks.
 
 ## How It Works
 
@@ -44,7 +44,7 @@ Plan-modifying resolutions (inject, replan) require your confirmation.
 Trigger triage manually at any time:
 
 ```
-/gsd triage
+/sf triage
 ```
 
 Useful when you've accumulated several captures and want to process them before the next natural seam.

@@ -1,5 +1,5 @@
 /**
- * stash-pop-gsd-conflict.test.ts — Regression test for #2766.
+ * stash-pop-sf-conflict.test.ts — Regression test for #2766.
  *
  * When a squash merge stash-pops and hits conflicts on .gsd/ state files,
  * the UU entries block every subsequent merge. This test verifies that
@@ -24,7 +24,7 @@ let fakeHome: string;
 
 test.before(() => {
   originalHome = process.env.HOME;
-  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
+  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-fake-home-")));
   process.env.HOME = fakeHome;
   _clearGsdRootCache();
   _resetServiceCache();
@@ -130,7 +130,7 @@ test("#2766: stash pop conflict on non-.gsd files preserves stash for manual res
     // and is NOT a .gsd/ file, so it should be left for manual resolution
     writeFileSync(join(repo, "README.md"), "# locally modified\n");
 
-    const roadmap = makeRoadmap("M301", "Non-gsd stash conflict", [
+    const roadmap = makeRoadmap("M301", "Non-sf stash conflict", [
       { id: "S01", title: "Readme update" },
     ]);
 

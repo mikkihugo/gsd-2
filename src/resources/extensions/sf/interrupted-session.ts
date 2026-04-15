@@ -14,7 +14,7 @@ import {
   type RecoveryBriefing,
 } from "./session-forensics.js";
 import { deriveState } from "./state.js";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 
 export type InterruptedSessionClassification =
   | "none"
@@ -41,7 +41,7 @@ export interface InterruptedSessionAssessment {
   classification: InterruptedSessionClassification;
   lock: LockData | null;
   pausedSession: PausedSessionMetadata | null;
-  state: GSDState | null;
+  state: SFState | null;
   recovery: RecoveryBriefing | null;
   recoveryPrompt: string | null;
   recoveryToolCallCount: number;
@@ -71,7 +71,7 @@ export function isBootstrapCrashLock(lock: LockData | null): boolean {
   );
 }
 
-export function hasResumableDerivedState(state: GSDState | null): boolean {
+export function hasResumableDerivedState(state: SFState | null): boolean {
   return !!(state?.activeMilestone && state.phase !== "complete");
 }
 

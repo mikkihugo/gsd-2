@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd add-tests
+ * SF Command — /sf add-tests
  *
  * Generates tests for a completed slice by dispatching an LLM prompt
  * with implementation context (summaries, changed files, test patterns).
@@ -105,7 +105,7 @@ export async function handleAddTests(
   const targetId = args.trim() || findLastCompletedSlice(basePath, milestoneId);
   if (!targetId) {
     ctx.ui.notify(
-      "No completed slices found. Specify a slice ID: /gsd add-tests S03",
+      "No completed slices found. Specify a slice ID: /sf add-tests S03",
       "warning",
     );
     return;
@@ -127,7 +127,7 @@ export async function handleAddTests(
     });
 
     pi.sendMessage(
-      { customType: "gsd-add-tests", content: prompt, display: false },
+      { customType: "sf-add-tests", content: prompt, display: false },
       { triggerTurn: true },
     );
   } catch (err) {

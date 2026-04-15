@@ -1,20 +1,20 @@
 # Configuration
 
-SF preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project-local). Manage interactively with `/gsd prefs`.
+SF preferences live in `~/.sf/PREFERENCES.md` (global) or `.sf/PREFERENCES.md` (project-local). Manage interactively with `/sf prefs`.
 
-## `/gsd prefs` Commands
+## `/sf prefs` Commands
 
 | Command | Description |
 |---------|-------------|
-| `/gsd prefs` | Open the global preferences wizard (default) |
-| `/gsd prefs global` | Interactive wizard for global preferences (`~/.gsd/PREFERENCES.md`) |
-| `/gsd prefs project` | Interactive wizard for project preferences (`.gsd/PREFERENCES.md`) |
-| `/gsd prefs status` | Show current preference files, merged values, and skill resolution status |
-| `/gsd prefs wizard` | Alias for `/gsd prefs global` |
-| `/gsd prefs setup` | Alias for `/gsd prefs wizard` — creates preferences file if missing |
-| `/gsd prefs import-claude` | Import Claude marketplace plugins and skills as namespaced SF components |
-| `/gsd prefs import-claude global` | Import to global scope |
-| `/gsd prefs import-claude project` | Import to project scope |
+| `/sf prefs` | Open the global preferences wizard (default) |
+| `/sf prefs global` | Interactive wizard for global preferences (`~/.sf/PREFERENCES.md`) |
+| `/sf prefs project` | Interactive wizard for project preferences (`.sf/PREFERENCES.md`) |
+| `/sf prefs status` | Show current preference files, merged values, and skill resolution status |
+| `/sf prefs wizard` | Alias for `/sf prefs global` |
+| `/sf prefs setup` | Alias for `/sf prefs wizard` — creates preferences file if missing |
+| `/sf prefs import-claude` | Import Claude marketplace plugins and skills as namespaced SF components |
+| `/sf prefs import-claude global` | Import to global scope |
+| `/sf prefs import-claude project` | Import to project scope |
 
 ## Preferences File Format
 
@@ -42,20 +42,20 @@ token_profile: balanced
 
 | Scope | Path | Applies to |
 |-------|------|-----------|
-| Global | `~/.gsd/PREFERENCES.md` | All projects |
-| Project | `.gsd/PREFERENCES.md` | Current project only |
+| Global | `~/.sf/PREFERENCES.md` | All projects |
+| Project | `.sf/PREFERENCES.md` | Current project only |
 
 **Merge behavior:**
 - **Scalar fields** (`skill_discovery`, `budget_ceiling`): project wins if defined
 - **Array fields** (`always_use_skills`, etc.): concatenated (global first, then project)
 - **Object fields** (`models`, `git`, `auto_supervisor`): shallow-merged, project overrides per-key
 
-## Global API Keys (`/gsd config`)
+## Global API Keys (`/sf config`)
 
-Tool API keys are stored globally in `~/.gsd/agent/auth.json` and apply to all projects automatically. Set them once with `/gsd config` — no need to configure per-project `.env` files.
+Tool API keys are stored globally in `~/.sf/agent/auth.json` and apply to all projects automatically. Set them once with `/sf config` — no need to configure per-project `.env` files.
 
 ```bash
-/gsd config
+/sf config
 ```
 
 This opens an interactive wizard showing which keys are configured and which are missing. Select a tool to enter its key.
@@ -70,7 +70,7 @@ This opens an interactive wizard showing which keys are configured and which are
 
 ### How it works
 
-1. `/gsd config` saves keys to `~/.gsd/agent/auth.json`
+1. `/sf config` saves keys to `~/.sf/agent/auth.json`
 2. On every session start, `loadToolApiKeys()` reads the file and sets environment variables
 3. Keys apply to all projects — no per-project setup required
 4. Environment variables (`export BRAVE_API_KEY=...`) take precedence over saved keys
@@ -85,12 +85,12 @@ SF can connect to external MCP servers configured in project files. This is usef
 SF reads MCP client configuration from these project-local paths:
 
 - `.mcp.json`
-- `.gsd/mcp.json`
+- `.sf/mcp.json`
 
 If both files exist, server names are merged and the first definition found wins. Use:
 
 - `.mcp.json` for repo-shared MCP configuration you may want to commit
-- `.gsd/mcp.json` for local-only MCP configuration you do **not** want to share
+- `.sf/mcp.json` for local-only MCP configuration you do **not** want to share
 
 ### Supported transports
 
@@ -148,15 +148,15 @@ Recommended verification order:
 
 - Use absolute paths for local executables and scripts when possible.
 - For `stdio` servers, prefer setting required environment variables directly in the MCP config instead of relying on an interactive shell profile.
-- SF and `gsd-mcp-server` both hydrate supported model and tool keys saved in `~/.gsd/agent/auth.json`, so MCP configs can safely reference them through `${ENV_VAR}` placeholders without committing raw credentials.
+- SF and `sf-mcp-server` both hydrate supported model and tool keys saved in `~/.sf/agent/auth.json`, so MCP configs can safely reference them through `${ENV_VAR}` placeholders without committing raw credentials.
 - If a server is team-shared and safe to commit, `.mcp.json` is usually the better home.
-- If a server depends on machine-local paths, personal services, or local-only secrets, prefer `.gsd/mcp.json`.
+- If a server depends on machine-local paths, personal services, or local-only secrets, prefer `.sf/mcp.json`.
 
 ## Environment Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SF_HOME` | `~/.gsd` | Global SF directory. All paths derive from this unless individually overridden. Affects preferences, skills, sessions, and per-project state. (v2.39) |
+| `SF_HOME` | `~/.sf` | Global SF directory. All paths derive from this unless individually overridden. Affects preferences, skills, sessions, and per-project state. (v2.39) |
 | `SF_PROJECT_ID` | (auto-hash) | Override the automatic project identity hash. Per-project state goes to `$SF_HOME/projects/<SF_PROJECT_ID>/` instead of the computed hash. Useful for CI/CD or sharing state across clones of the same repo. (v2.39) |
 | `SF_STATE_DIR` | `$SF_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. Takes precedence over `SF_HOME` for project state. |
 | `SF_CODING_AGENT_DIR` | `$SF_HOME/agent` | Agent directory containing managed resources, extensions, and auth. Takes precedence over `SF_HOME` for agent paths. |
@@ -191,12 +191,12 @@ models:
 
 ### Custom Model Definitions (`models.json`)
 
-Define custom models and providers in `~/.gsd/agent/models.json`. This lets you add models not included in the default registry — useful for self-hosted endpoints (Ollama, vLLM, LM Studio), fine-tuned models, proxies, or new provider releases.
+Define custom models and providers in `~/.sf/agent/models.json`. This lets you add models not included in the default registry — useful for self-hosted endpoints (Ollama, vLLM, LM Studio), fine-tuned models, proxies, or new provider releases.
 
 SF resolves models.json with fallback logic:
-1. `~/.gsd/agent/models.json` — primary (SF)
+1. `~/.sf/agent/models.json` — primary (SF)
 2. `~/.pi/agent/models.json` — fallback (Pi)
-3. If neither exists, creates `~/.gsd/agent/models.json`
+3. If neither exists, creates `~/.sf/agent/models.json`
 
 **Quick example for local models (Ollama):**
 
@@ -240,7 +240,7 @@ For providers not built into SF, community extensions can add full provider supp
 
 | Extension | Provider | Models | Install |
 |-----------|----------|--------|---------|
-| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope (ModelStudio) | Qwen3, GLM-5, MiniMax M2.5, Kimi K2.5 | `gsd install npm:pi-dashscope` |
+| [`pi-dashscope`](https://www.npmjs.com/package/pi-dashscope) | Alibaba DashScope (ModelStudio) | Qwen3, GLM-5, MiniMax M2.5, Kimi K2.5 | `sf install npm:pi-dashscope` |
 
 Community extensions are recommended over the built-in `alibaba-coding-plan` provider for DashScope models — they use the correct OpenAI-compatible endpoint and include per-model compatibility flags for thinking mode.
 
@@ -368,7 +368,7 @@ Public URLs (`https://example.com`, `http://8.8.8.8`) are not affected.
 
 **Allowing specific internal hosts:**
 
-If you need the agent to fetch from internal URLs (self-hosted docs, internal APIs behind a VPN), add their hostnames to `fetchAllowedUrls` in global settings (`~/.gsd/agent/settings.json`):
+If you need the agent to fetch from internal URLs (self-hosted docs, internal APIs behind a VPN), add their hostnames to `fetchAllowedUrls` in global settings (`~/.sf/agent/settings.json`):
 
 ```json
 {
@@ -394,7 +394,7 @@ Auto-generate HTML reports after milestone completion:
 auto_report: true    # default: true
 ```
 
-Reports are written to `.gsd/reports/` as self-contained HTML files with embedded CSS/JS.
+Reports are written to `.sf/reports/` as self-contained HTML files with embedded CSS/JS.
 
 ### `unique_milestone_ids`
 
@@ -420,9 +420,9 @@ git:
   main_branch: main           # primary branch name
   merge_strategy: squash      # how worktree branches merge: "squash" or "merge"
   isolation: worktree         # git isolation: "worktree", "branch", or "none"
-  commit_docs: true           # commit .gsd/ artifacts to git (set false to keep local)
+  commit_docs: true           # commit .sf/ artifacts to git (set false to keep local)
   manage_gitignore: true      # set false to prevent SF from modifying .gitignore
-  worktree_post_create: .gsd/hooks/post-worktree-create  # script to run after worktree creation
+  worktree_post_create: .sf/hooks/post-worktree-create  # script to run after worktree creation
   auto_pr: false              # create a PR on milestone completion (requires push_branches)
   pr_target_branch: develop   # target branch for auto-created PRs (default: main branch)
 ```
@@ -438,7 +438,7 @@ git:
 | `main_branch` | string | `"main"` | Primary branch name |
 | `merge_strategy` | string | `"squash"` | How worktree branches merge: `"squash"` (combine all commits) or `"merge"` (preserve individual commits) |
 | `isolation` | string | `"worktree"` | Auto-mode isolation: `"worktree"` (separate directory), `"branch"` (work in project root — useful for submodule-heavy repos), or `"none"` (no isolation — commits on current branch, no worktree or milestone branch) |
-| `commit_docs` | boolean | `true` | Commit `.gsd/` planning artifacts to git. Set `false` to keep local-only |
+| `commit_docs` | boolean | `true` | Commit `.sf/` planning artifacts to git. Set `false` to keep local-only |
 | `manage_gitignore` | boolean | `true` | When `false`, SF will not modify `.gitignore` at all — no baseline patterns, no self-healing. Use if you manage your own `.gitignore` |
 | `worktree_post_create` | string | (none) | Script to run after worktree creation. Receives `SOURCE_DIR` and `WORKTREE_DIR` env vars |
 | `auto_pr` | boolean | `false` | Automatically create a pull request when a milestone completes. Requires `auto_push: true` and `gh` CLI installed and authenticated |
@@ -450,14 +450,14 @@ Script to run after a worktree is created (both auto-mode and manual `/worktree`
 
 ```yaml
 git:
-  worktree_post_create: .gsd/hooks/post-worktree-create
+  worktree_post_create: .sf/hooks/post-worktree-create
 ```
 
 The script receives two environment variables:
 - `SOURCE_DIR` — the original project root
 - `WORKTREE_DIR` — the newly created worktree path
 
-Example hook script (`.gsd/hooks/post-worktree-create`):
+Example hook script (`.sf/hooks/post-worktree-create`):
 
 ```bash
 #!/bin/bash
@@ -500,7 +500,7 @@ GitHub sync configuration. When enabled, SF auto-syncs milestones, slices, and t
 github:
   enabled: true
   repo: "owner/repo"              # auto-detected from git remote if omitted
-  labels: [gsd, auto-generated]   # labels applied to created issues/PRs
+  labels: [sf, auto-generated]   # labels applied to created issues/PRs
   project: "Project ID"           # optional GitHub Project board
 ```
 
@@ -513,7 +513,7 @@ github:
 
 **Requirements:**
 - `gh` CLI installed and authenticated (`gh auth login`)
-- Sync mapping is persisted in `.gsd/.github-sync.json`
+- Sync mapping is persisted in `.sf/.github-sync.json`
 - Rate-limit aware — skips sync when GitHub API rate limit is low
 
 **Commands:**
@@ -652,13 +652,13 @@ custom_instructions:
   - "Prefer functional patterns over classes"
 ```
 
-For project-specific knowledge (patterns, gotchas, lessons learned), use `.gsd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically. Add entries with `/gsd knowledge rule|pattern|lesson <description>`.
+For project-specific knowledge (patterns, gotchas, lessons learned), use `.sf/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically. Add entries with `/sf knowledge rule|pattern|lesson <description>`.
 
 ### `RUNTIME.md` — Runtime Context (v2.39)
 
-Declare project-level runtime context in `.gsd/RUNTIME.md`. This file is inlined into task execution prompts, giving the agent accurate information about your runtime environment without relying on hallucinated paths or URLs.
+Declare project-level runtime context in `.sf/RUNTIME.md`. This file is inlined into task execution prompts, giving the agent accurate information about your runtime environment without relying on hallucinated paths or URLs.
 
-**Location:** `.gsd/RUNTIME.md`
+**Location:** `.sf/RUNTIME.md`
 
 **Example:**
 
@@ -711,7 +711,7 @@ context_management:
 
 ### `service_tier` (v2.42)
 
-OpenAI service tier preference for supported models. Toggle with `/gsd fast`.
+OpenAI service tier preference for supported models. Toggle with `/sf fast`.
 
 | Value | Behavior |
 |-------|----------|
@@ -725,7 +725,7 @@ service_tier: priority
 
 ### `forensics_dedup` (v2.43)
 
-Opt-in: search existing issues and PRs before filing from `/gsd forensics`. Uses additional AI tokens.
+Opt-in: search existing issues and PRs before filing from `/sf forensics`. Uses additional AI tokens.
 
 ```yaml
 forensics_dedup: true    # default: false
@@ -826,7 +826,7 @@ notifications:
 auto_visualize: true
 
 # Service tier
-service_tier: priority         # "priority" or "flex" (for /gsd fast)
+service_tier: priority         # "priority" or "flex" (for /sf fast)
 
 # Diagnostics
 forensics_dedup: true          # deduplicate before filing forensics issues

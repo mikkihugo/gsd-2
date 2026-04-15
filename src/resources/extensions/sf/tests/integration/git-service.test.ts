@@ -263,7 +263,7 @@ describe('git-service', async () => {
     ".gsd/completed-units*.json",
     ".gsd/state-manifest.json",
     ".gsd/STATE.md",
-    ".gsd/gsd.db*",
+    ".gsd/sf.db*",
     ".gsd/journal/",
     ".gsd/doctor-history.jsonl",
     ".gsd/event-log.jsonl",
@@ -288,7 +288,7 @@ describe('git-service', async () => {
   // ─── runGit ────────────────────────────────────────────────────────────
 
 
-  const tempDir = mkdtempSync(join(tmpdir(), "gsd-git-service-test-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "sf-git-service-test-"));
   runGit(tempDir, ["init", "-b", "main"]);
   runGit(tempDir, ["config", "user.name", "Pi Test"]);
   runGit(tempDir, ["config", "user.email", "pi@example.com"]);
@@ -335,7 +335,7 @@ describe('git-service', async () => {
   }
 
   function initTempRepo(): string {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-git-t02-"));
+    const dir = mkdtempSync(join(tmpdir(), "sf-git-t02-"));
     runGit(dir, ["init", "-b", "main"]);
     runGit(dir, ["config", "user.name", "Pi Test"]);
     runGit(dir, ["config", "user.email", "pi@example.com"]);
@@ -483,7 +483,7 @@ describe('git-service', async () => {
 
     // Without task context, autoCommit uses generic chore message
     const msg = svc.autoCommit("task", "T01");
-    assert.deepStrictEqual(msg, "chore: auto-commit after task\n\nGSD-Unit: T01", "autoCommit returns generic format with trailer");
+    assert.deepStrictEqual(msg, "chore: auto-commit after task\n\nSF-Unit: T01", "autoCommit returns generic format with trailer");
 
     const log = run("git log --oneline -1", repo);
     assert.ok(log.includes("chore: auto-commit after task"), "generic commit message is in git log");
@@ -535,7 +535,7 @@ describe('git-service', async () => {
 
     // Auto-commit with .gsd/ excluded (simulates pre-switch)
     const msg = svc.autoCommit("pre-switch", "main", [".gsd/"]);
-    assert.deepStrictEqual(msg, "chore: auto-commit after pre-switch\n\nGSD-Unit: main", "pre-switch autoCommit with .gsd/ exclusion commits");
+    assert.deepStrictEqual(msg, "chore: auto-commit after pre-switch\n\nSF-Unit: main", "pre-switch autoCommit with .gsd/ exclusion commits");
 
     // Verify .gsd/ file was NOT committed
     const show = run("git show --stat HEAD", repo);
@@ -578,7 +578,7 @@ describe('git-service', async () => {
   // ─── Helper: create repo for branch tests ────────────────────────────
 
   function initBranchTestRepo(): string {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-git-t03-"));
+    const dir = mkdtempSync(join(tmpdir(), "sf-git-t03-"));
     runGit(dir, ["init", "-b", "main"]);
     runGit(dir, ["config", "user.name", "Pi Test"]);
     runGit(dir, ["config", "user.email", "pi@example.com"]);
@@ -619,7 +619,7 @@ describe('git-service', async () => {
 
   {
     // master-only repo
-    const repo = mkdtempSync(join(tmpdir(), "gsd-git-t03-master-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-git-t03-master-"));
     runGit(repo, ["init", "-b", "master"]);
     runGit(repo, ["config", "user.name", "Pi Test"]);
     runGit(repo, ["config", "user.email", "pi@example.com"]);
@@ -938,7 +938,7 @@ describe('git-service', async () => {
 
   // ─── writeIntegrationBranch: still records legitimate branches ────────
 
-  test('Integration branch: records non-ephemeral gsd branches', () => {
+  test('Integration branch: records non-ephemeral sf branches', () => {
     const repo = initBranchTestRepo();
 
     // A normal feature branch should still be recorded
@@ -1116,7 +1116,7 @@ describe('git-service', async () => {
 
   test('untrackRuntimeFiles', async () => {
     const { untrackRuntimeFiles } = await import("../../gitignore.ts");
-    const repo = mkdtempSync(join(tmpdir(), "gsd-untrack-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-untrack-"));
     runGit(repo, ["init", "-b", "main"]);
     runGit(repo, ["config", "user.email", "test@test.com"]);
     runGit(repo, ["config", "user.name", "Test"]);
@@ -1165,7 +1165,7 @@ describe('git-service', async () => {
   // ─── smartStage excludes runtime files but allows milestone artifacts ──
 
   test('smartStage excludes runtime files, allows milestone artifacts', () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-smart-stage-excludes-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-smart-stage-excludes-"));
     runGit(repo, ["init", "-b", "main"]);
     runGit(repo, ["config", "user.email", "test@test.com"]);
     runGit(repo, ["config", "user.name", "Test"]);
@@ -1225,7 +1225,7 @@ describe('git-service', async () => {
 
   test('ensureGitignore: adds .gsd entry', async () => {
     const { ensureGitignore } = await import("../../gitignore.ts");
-    const repo = mkdtempSync(join(tmpdir(), "gsd-gitignore-external-state-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-gitignore-external-state-"));
 
     // Should add .gsd to gitignore (external state dir is a symlink)
     const modified = ensureGitignore(repo);
@@ -1252,7 +1252,7 @@ describe('git-service', async () => {
     const repo = initTempRepo();
 
     // Create the real .gsd directory outside the repo, then symlink it
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-"));
+    const externalGsd = mkdtempSync(join(tmpdir(), "sf-external-"));
     mkdirSync(join(externalGsd, "activity"), { recursive: true });
     writeFileSync(join(externalGsd, "activity", "log.jsonl"), "log data");
     writeFileSync(join(externalGsd, "STATE.md"), "# State");
@@ -1342,9 +1342,9 @@ describe('git-service', async () => {
     assert.ok(err instanceof Error, "MergeConflictError is an Error instance");
   });
 
-  // ─── Integration branch: rejects gsd/quick/* branches ────────────────────
+  // ─── Integration branch: rejects sf/quick/* branches ────────────────────
 
-  test('Integration branch: rejects gsd/quick/* branches', () => {
+  test('Integration branch: rejects sf/quick/* branches', () => {
     const repo = initBranchTestRepo();
 
     writeIntegrationBranch(repo, "M001", "sf/quick/1234-some-task");
@@ -1438,7 +1438,7 @@ describe('git-service', async () => {
     const repo = initTempRepo();
 
     // Create an external .gsd directory and symlink it into the repo
-    const externalGsd = mkdtempSync(join(tmpdir(), "gsd-external-symlink-"));
+    const externalGsd = mkdtempSync(join(tmpdir(), "sf-external-symlink-"));
     mkdirSync(join(externalGsd, "milestones", "M009"), { recursive: true });
     mkdirSync(join(externalGsd, "activity"), { recursive: true });
     mkdirSync(join(externalGsd, "runtime"), { recursive: true });

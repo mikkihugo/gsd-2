@@ -1,5 +1,5 @@
 /**
- * commands-workflow-custom.test.ts — Tests for `/gsd workflow` subcommands
+ * commands-workflow-custom.test.ts — Tests for `/sf workflow` subcommands
  * and catalog completions.
  *
  * Uses real temp directories with actual definition YAML files.
@@ -190,16 +190,16 @@ describe("workflow command handler", () => {
     return { handled, notifications: ctx.notifications };
   }
 
-  it("bare '/gsd workflow' shows usage", async () => {
+  it("bare '/sf workflow' shows usage", async () => {
     const { handled, notifications } = await callHandler("workflow");
     assert.ok(handled, "should be handled");
     assert.ok(
-      notifications.some((n) => n.message.includes("Usage: /gsd workflow")),
+      notifications.some((n) => n.message.includes("Usage: /sf workflow")),
       "should show usage",
     );
   });
 
-  it("'/gsd workflow new' shows skill invocation message", async () => {
+  it("'/sf workflow new' shows skill invocation message", async () => {
     const { handled, notifications } = await callHandler("workflow new");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -208,7 +208,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow run' without name shows usage warning", async () => {
+  it("'/sf workflow run' without name shows usage warning", async () => {
     const { handled, notifications } = await callHandler("workflow run");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -231,7 +231,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow run nonexistent' shows error for missing definition", async () => {
+  it("'/sf workflow run nonexistent' shows error for missing definition", async () => {
     const { handled, notifications } = await callHandler("workflow run nonexistent-def-12345");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -240,7 +240,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow validate' without name shows usage warning", async () => {
+  it("'/sf workflow validate' without name shows usage warning", async () => {
     const { handled, notifications } = await callHandler("workflow validate");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -249,7 +249,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow validate nonexistent' shows definition not found", async () => {
+  it("'/sf workflow validate nonexistent' shows definition not found", async () => {
     const { handled, notifications } = await callHandler("workflow validate nonexistent-def-12345");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -258,7 +258,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow pause' without custom engine shows warning", async () => {
+  it("'/sf workflow pause' without custom engine shows warning", async () => {
     const { handled, notifications } = await callHandler("workflow pause");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -267,7 +267,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow resume' without custom engine shows warning", async () => {
+  it("'/sf workflow resume' without custom engine shows warning", async () => {
     const { handled, notifications } = await callHandler("workflow resume");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -276,7 +276,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow unknown-sub' shows unknown subcommand", async () => {
+  it("'/sf workflow unknown-sub' shows unknown subcommand", async () => {
     const { handled, notifications } = await callHandler("workflow blurble");
     assert.ok(handled, "should be handled");
     assert.ok(
@@ -285,7 +285,7 @@ describe("workflow command handler", () => {
     );
   });
 
-  it("'/gsd workflow list' with no runs shows empty message", async () => {
+  it("'/sf workflow list' with no runs shows empty message", async () => {
     const { handled, notifications } = await callHandler("workflow list");
     assert.ok(handled, "should be handled");
     assert.ok(

@@ -12,7 +12,7 @@ import { clearPathCache } from '../paths.ts';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-const base = mkdtempSync(join(tmpdir(), "gsd-unit-runtime-test-"));
+const base = mkdtempSync(join(tmpdir(), "sf-unit-runtime-test-"));
 const tasksDir = join(base, ".gsd", "milestones", "M100", "slices", "S02", "tasks");
 mkdirSync(tasksDir, { recursive: true });
 writeFileSync(join(base, ".gsd", "STATE.md"), "## Next Action\nExecute T09 for S02: do the thing\n", "utf-8");
@@ -92,7 +92,7 @@ console.log("\n=== hook unit type sanitization (slash in unitType) ===");
 // ─── Must-have durability integration tests ───────────────────────────────
 
 // Create a separate temp base for must-have tests to avoid interference
-const mhBase = mkdtempSync(join(tmpdir(), "gsd-unit-runtime-mh-test-"));
+const mhBase = mkdtempSync(join(tmpdir(), "sf-unit-runtime-mh-test-"));
 
 console.log("\n=== must-haves: all mentioned in summary ===");
 {

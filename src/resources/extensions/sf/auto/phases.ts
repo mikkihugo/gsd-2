@@ -180,7 +180,7 @@ async function generateMilestoneReport(
     (m: { id: string }) => m.id === milestoneId,
   );
   const msTitle = completedMs?.title ?? milestoneId;
-  const gsdVersion = process.env.SF_VERSION ?? "0.0.0";
+  const sfVersion = process.env.SF_VERSION ?? "0.0.0";
   const projName = basename(reportBasePath);
   const doneSlices = snapData.milestones.reduce(
     (acc: number, m: { slices: { done: boolean }[] }) =>
@@ -196,7 +196,7 @@ async function generateMilestoneReport(
     html: generateHtmlReport(snapData, {
       projectName: projName,
       projectPath: reportBasePath,
-      gsdVersion,
+      sfVersion,
       milestoneId,
       indexRelPath: "index.html",
     }),
@@ -205,7 +205,7 @@ async function generateMilestoneReport(
     kind: "milestone",
     projectName: projName,
     projectPath: reportBasePath,
-    gsdVersion,
+    sfVersion,
     totalCost: snapData.totals?.cost ?? 0,
     totalTokens: snapData.totals?.tokens.total ?? 0,
     totalDuration: snapData.totals?.duration ?? 0,
@@ -362,7 +362,7 @@ export async function runPreDispatch(
         findings: healthGate.reason,
       });
       ctx.ui.notify(
-        healthGate.reason || "Pre-dispatch health check failed — run /gsd doctor for details.",
+        healthGate.reason || "Pre-dispatch health check failed — run /sf doctor for details.",
         "error",
       );
       await deps.pauseAuto(ctx, pi);
@@ -523,7 +523,7 @@ export async function runPreDispatch(
 
     const vizPrefs = prefs;
     if (vizPrefs?.auto_visualize) {
-      ctx.ui.notify("Run /gsd visualize to see progress overview.", "info");
+      ctx.ui.notify("Run /sf visualize to see progress overview.", "info");
     }
     if (vizPrefs?.auto_report !== false) {
       try {
@@ -550,7 +550,7 @@ export async function runPreDispatch(
       if (mergeErr instanceof MergeConflictError) {
         // Real code conflicts — stop the loop instead of retrying forever (#2330)
         ctx.ui.notify(
-          `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /gsd auto to resume.`,
+          `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /sf auto to resume.`,
           "error",
         );
         await deps.stopAuto(ctx, pi, `Merge conflict on milestone ${s.currentMilestoneId}`);
@@ -559,7 +559,7 @@ export async function runPreDispatch(
       // Non-conflict merge errors — stop auto to avoid advancing with unmerged work
       logError("engine", "Milestone merge failed with non-conflict error", { milestone: s.currentMilestoneId!, error: String(mergeErr) });
       ctx.ui.notify(
-        `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /gsd auto to resume.`,
+        `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /sf auto to resume.`,
         "error",
       );
       await deps.stopAuto(ctx, pi, `Merge error on milestone ${s.currentMilestoneId}: ${String(mergeErr)}`);
@@ -650,7 +650,7 @@ export async function runPreDispatch(
         } catch (mergeErr) {
           if (mergeErr instanceof MergeConflictError) {
             ctx.ui.notify(
-              `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /gsd auto to resume.`,
+              `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /sf auto to resume.`,
               "error",
             );
             await deps.stopAuto(ctx, pi, `Merge conflict on milestone ${s.currentMilestoneId}`);
@@ -658,7 +658,7 @@ export async function runPreDispatch(
           }
           logError("engine", "Milestone merge failed with non-conflict error", { milestone: s.currentMilestoneId!, error: String(mergeErr) });
           ctx.ui.notify(
-            `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /gsd auto to resume.`,
+            `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /sf auto to resume.`,
             "error",
           );
           await deps.stopAuto(ctx, pi, `Merge error on milestone ${s.currentMilestoneId}: ${String(mergeErr)}`);
@@ -694,11 +694,11 @@ export async function runPreDispatch(
       );
     } else if (state.phase === "blocked") {
       const blockerMsg = `Blocked: ${state.blockers.join(", ")}`;
-      // Pause instead of hard-stop so the session is resumable with `/gsd auto`.
+      // Pause instead of hard-stop so the session is resumable with `/sf auto`.
       // Hard-stop here was causing premature termination when slice dependencies
       // were temporarily unresolvable (e.g. after reassessment added new slices).
       await deps.pauseAuto(ctx, pi);
-      ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
+      ctx.ui.notify(`${blockerMsg}. Fix and run /sf auto to resume.`, "warning");
       deps.sendDesktopNotification("SF", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
       deps.logCmuxEvent(prefs, blockerMsg, "warning");
     } else {
@@ -764,7 +764,7 @@ export async function runPreDispatch(
       } catch (mergeErr) {
         if (mergeErr instanceof MergeConflictError) {
           ctx.ui.notify(
-            `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /gsd auto to resume.`,
+            `Merge conflict: ${mergeErr.conflictedFiles.join(", ")}. Resolve conflicts manually and run /sf auto to resume.`,
             "error",
           );
           await deps.stopAuto(ctx, pi, `Merge conflict on milestone ${s.currentMilestoneId}`);
@@ -772,7 +772,7 @@ export async function runPreDispatch(
         }
         logError("engine", "Milestone merge failed with non-conflict error", { milestone: s.currentMilestoneId!, error: String(mergeErr) });
         ctx.ui.notify(
-          `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /gsd auto to resume.`,
+          `Merge failed: ${mergeErr instanceof Error ? mergeErr.message : String(mergeErr)}. Resolve and run /sf auto to resume.`,
           "error",
         );
         await deps.stopAuto(ctx, pi, `Merge error on milestone ${s.currentMilestoneId}: ${String(mergeErr)}`);
@@ -813,7 +813,7 @@ export async function runPreDispatch(
       );
     }
     await deps.pauseAuto(ctx, pi);
-    ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
+    ctx.ui.notify(`${blockerMsg}. Fix and run /sf auto to resume.`, "warning");
     deps.sendDesktopNotification("SF", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
     deps.logCmuxEvent(prefs, blockerMsg, "warning");
     debugLog("autoLoop", { phase: "exit", reason: "blocked" });
@@ -853,7 +853,7 @@ export async function runDispatch(
     deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: ic.nextSeq(), eventType: "dispatch-stop", rule: dispatchResult.matchedRule, data: { reason: dispatchResult.reason } });
     // Warning-level stops are recoverable human checkpoints (e.g. UAT verdict
     // gate) — pause instead of hard-stopping so the session is resumable with
-    // `/gsd auto`. Error/info-level stops remain hard stops for infrastructure
+    // `/sf auto`. Error/info-level stops remain hard stops for infrastructure
     // failures and terminal conditions respectively.
     // See: https://github.com/singularity-forge/sf-run/issues/2474
     if (dispatchResult.level === "warning") {
@@ -1118,7 +1118,7 @@ export async function runGuards(
         }
         if (budgetEnforcementAction === "pause") {
           ctx.ui.notify(
-            `${msg} Pausing auto-mode — /gsd auto to override and continue.`,
+            `${msg} Pausing auto-mode — /sf auto to override and continue.`,
             "warning",
           );
           deps.sendDesktopNotification("SF", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
@@ -1161,7 +1161,7 @@ export async function runGuards(
     ) {
       const msg = `Context window at ${contextUsage.percent}% (threshold: ${contextThreshold}%). Pausing to prevent truncated output.`;
       ctx.ui.notify(
-        `${msg} Run /gsd auto to continue (will start fresh session).`,
+        `${msg} Run /sf auto to continue (will start fresh session).`,
         "warning",
       );
       deps.sendDesktopNotification(
@@ -1325,7 +1325,7 @@ export async function runUnitPhase(
   );
 
   // Status bar (widget + preconditions deferred until after model selection — see #2899)
-  ctx.ui.setStatus("gsd-auto", "auto");
+  ctx.ui.setStatus("sf-auto", "auto");
   if (mid)
     deps.updateSliceProgressCache(s.basePath, mid, state.activeSlice?.id);
 

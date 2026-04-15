@@ -22,10 +22,10 @@ function run(command: string, cwd: string): string {
 }
 
 function createTestRepo(): string {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-quick-lifecycle-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-quick-lifecycle-"));
   run("git init -b main", repo);
   run(`git config user.name "SF Test"`, repo);
-  run(`git config user.email "test@gsd.dev"`, repo);
+  run(`git config user.email "test@sf.dev"`, repo);
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   mkdirSync(join(repo, ".gsd", "milestones", "M001"), { recursive: true });
   writeFileSync(join(repo, "README.md"), "init\n");
@@ -56,7 +56,7 @@ test('captureIntegrationBranch: skips quick-task branches', () => {
     const repo = createTestRepo();
 
     // Create and checkout a quick-task branch
-    run("git checkout -b gsd/quick/1-fix-typo", repo);
+    run("git checkout -b sf/quick/1-fix-typo", repo);
     assert.deepStrictEqual(getCurrentBranch(repo), "sf/quick/1-fix-typo", "on quick branch");
 
     captureIntegrationBranch(repo, "M001");
@@ -77,7 +77,7 @@ test('captureIntegrationBranch: records main correctly', () => {
       "main is recorded as integration branch");
 
     // Switch to quick branch — capture should be no-op (doesn't overwrite main)
-    run("git checkout -b gsd/quick/1-fix-typo", repo);
+    run("git checkout -b sf/quick/1-fix-typo", repo);
     captureIntegrationBranch(repo, "M001");
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), "main",
       "quick branch does not overwrite existing integration branch");
@@ -90,14 +90,14 @@ test('captureIntegrationBranch: correct after quick branch round-trip', () => {
     const repo = createTestRepo();
 
     // Simulate quick-task lifecycle: branch off, do work, return to main
-    run("git checkout -b gsd/quick/1-fix-typo", repo);
+    run("git checkout -b sf/quick/1-fix-typo", repo);
     writeFileSync(join(repo, "fix.txt"), "fixed\n");
     run("git add -A", repo);
     run(`git commit -m "quick-fix"`, repo);
     run("git checkout main", repo);
-    run("git merge --squash gsd/quick/1-fix-typo", repo);
+    run("git merge --squash sf/quick/1-fix-typo", repo);
     run(`git commit -m "quick(Q1): fix-typo"`, repo);
-    run("git branch -D gsd/quick/1-fix-typo", repo);
+    run("git branch -D sf/quick/1-fix-typo", repo);
 
     // Now capture — should get main, not the deleted quick branch
     captureIntegrationBranch(repo, "M002");
@@ -115,7 +115,7 @@ test('cleanupQuickBranch: merges back and cleans up (same session)', async () =>
     const origCwd = process.cwd();
 
     // Simulate what handleQuick does: create branch, set pending state
-    run("git checkout -b gsd/quick/1-fix-typo", repo);
+    run("git checkout -b sf/quick/1-fix-typo", repo);
     writeFileSync(join(repo, "fix.txt"), "fixed\n");
     run("git add -A", repo);
     run(`git commit -m "quick-fix"`, repo);
@@ -168,7 +168,7 @@ test('cleanupQuickBranch: recovers from disk state (cross-session)', async () =>
 
     // Simulate a crashed session: branch exists with work, disk state persisted,
     // but in-memory state is gone (new process)
-    run("git checkout -b gsd/quick/2-add-docs", repo);
+    run("git checkout -b sf/quick/2-add-docs", repo);
     writeFileSync(join(repo, "docs.md"), "# Docs\n");
     run("git add -A", repo);
     run(`git commit -m "add-docs"`, repo);
@@ -228,7 +228,7 @@ test('E2E: quick branch does not contaminate integration branch', () => {
     assert.deepStrictEqual(readIntegrationBranch(repo, "M001"), "main", "M001 integration = main");
 
     // 2. Start a quick task (branch off)
-    run("git checkout -b gsd/quick/1-fix-typo", repo);
+    run("git checkout -b sf/quick/1-fix-typo", repo);
 
     // 3. Try to capture integration branch for M002 while on quick branch
     captureIntegrationBranch(repo, "M002");

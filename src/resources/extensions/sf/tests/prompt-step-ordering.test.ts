@@ -4,7 +4,7 @@
  * 1. complete-milestone.md: sf_requirement_update (step 9) before
  *    sf_complete_milestone (step 10)
  * 2. complete-slice.md: uses sf_requirement_update
- * 3. register-extension.ts: _gsdEpipeGuard logs instead of re-throwing
+ * 3. register-extension.ts: _sfEpipeGuard logs instead of re-throwing
  * 4. register-hooks.ts: session_before_compact only checks isAutoActive
  */
 
@@ -55,14 +55,14 @@ describe('prompt step ordering (#3696)', () => {
   });
 });
 
-describe('register-extension _gsdEpipeGuard (#3696)', () => {
-  test('_gsdEpipeGuard exists and does not re-throw', () => {
-    assert.match(registerExtSrc, /_gsdEpipeGuard/,
-      '_gsdEpipeGuard should be defined in register-extension.ts');
+describe('register-extension _sfEpipeGuard (#3696)', () => {
+  test('_sfEpipeGuard exists and does not re-throw', () => {
+    assert.match(registerExtSrc, /_sfEpipeGuard/,
+      '_sfEpipeGuard should be defined in register-extension.ts');
     // After the fix, the handler logs instead of throwing
     assert.ok(
       !registerExtSrc.includes('throw err'),
-      '_gsdEpipeGuard should NOT contain "throw err"',
+      '_sfEpipeGuard should NOT contain "throw err"',
     );
   });
 });

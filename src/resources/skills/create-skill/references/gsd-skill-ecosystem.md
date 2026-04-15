@@ -5,13 +5,13 @@ SF-specific skill ecosystem details: directory conventions, discovery mechanics,
 <skill_directories>
 SF supports two skill directories, checked in order:
 
-**User-scope (global):** `~/.gsd/agent/skills/`
+**User-scope (global):** `~/.sf/agent/skills/`
 - Available in every SF session regardless of working directory
 - Installed by default or by the user
 
 **Project-scope (local):** `.pi/agent/skills/`
 - Available only when SF runs inside the project directory
-- The project-local directory uses `.pi` (inherited from the pi base), **not** `.gsd`
+- The project-local directory uses `.pi` (inherited from the pi base), **not** `.sf`
 - Ideal for project-specific workflows, deploy scripts, or conventions
 
 Skills in both directories follow the same SKILL.md format and router pattern conventions.
@@ -42,7 +42,7 @@ Skill metadata has validation constraints:
 - **Staleness detection:** Skills unused for 60+ days are flagged as stale
 - **Pass/fail rates:** Derived from unit completion status when a skill is active
 
-Telemetry data is stored in `~/.gsd/metrics.json` alongside other SF metrics.
+Telemetry data is stored in `~/.sf/metrics.json` alongside other SF metrics.
 </skill_telemetry>
 
 <skill_health>

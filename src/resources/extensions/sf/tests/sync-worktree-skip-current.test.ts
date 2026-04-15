@@ -15,7 +15,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const src = readFileSync(
-  resolve(process.cwd(), 'src', 'resources', 'extensions', 'gsd', 'auto-worktree.ts'),
+  resolve(process.cwd(), 'src', 'resources', 'extensions', 'sf', 'auto-worktree.ts'),
   'utf-8',
 )
 

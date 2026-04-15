@@ -240,7 +240,7 @@ export async function handleCleanupWorktrees(ctx: ExtensionCommandContext, baseP
 
 export async function handleSkip(unitArg: string, ctx: ExtensionCommandContext, basePath: string): Promise<void> {
   if (!unitArg) {
-    ctx.ui.notify("Usage: /gsd skip <unit-id>  (e.g., /gsd skip execute-task/M001/S01/T03 or /gsd skip T03)", "info");
+    ctx.ui.notify("Usage: /sf skip <unit-id>  (e.g., /sf skip execute-task/M001/S01/T03 or /sf skip T03)", "info");
     return;
   }
 
@@ -450,7 +450,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
   }
 
   if (!fix && orphaned.length > 0) {
-    lines.push(`Run /gsd cleanup projects --fix to permanently delete ${pl(orphaned.length, "orphaned director")}${orphaned.length === 1 ? "y" : "ies"}.`);
+    lines.push(`Run /sf cleanup projects --fix to permanently delete ${pl(orphaned.length, "orphaned director")}${orphaned.length === 1 ? "y" : "ies"}.`);
     ctx.ui.notify(lines.join("\n"), "warning");
     return;
   }
@@ -479,7 +479,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
 }
 
 /**
- * `gsd recover` — Reconstruct DB hierarchy state from rendered markdown on disk.
+ * `sf recover` — Reconstruct DB hierarchy state from rendered markdown on disk.
  *
  * Deletes milestones, slices, and tasks table rows (preserves decisions,
  * requirements, artifacts, memories), re-runs `migrateHierarchyToDb()` to
@@ -493,7 +493,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
   const { invalidateStateCache } = await import("./state.js");
 
   if (!dbAvailable()) {
-    ctx.ui.notify("gsd recover: No database open. Run a SF command first to initialize the DB.", "error");
+    ctx.ui.notify("sf recover: No database open. Run a SF command first to initialize the DB.", "error");
     return;
   }
 
@@ -515,7 +515,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
 
     // 5. Report
     const lines = [
-      `gsd recover: reconstructed hierarchy from markdown`,
+      `sf recover: reconstructed hierarchy from markdown`,
       `  Milestones: ${counts.milestones}`,
       `  Slices:     ${counts.slices}`,
       `  Tasks:      ${counts.tasks}`,
@@ -533,12 +533,12 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
     }
 
     process.stderr.write(
-      `gsd-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
+      `sf-recover: recovered ${counts.milestones}M/${counts.slices}S/${counts.tasks}T hierarchy\n`,
     );
     ctx.ui.notify(lines.join("\n"), "success");
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logWarning("command", `recover failed: ${msg}`);
-    ctx.ui.notify(`gsd recover failed: ${msg}`, "error");
+    ctx.ui.notify(`sf recover failed: ${msg}`, "error");
   }
 }

@@ -1,5 +1,5 @@
 /**
- * Regression test for #3691 — /gsd status opens DB before deriveState
+ * Regression test for #3691 — /sf status opens DB before deriveState
  *
  * In cold sessions the DB was not opened before deriveState, causing
  * status to fall back to filesystem-only state.  The fix adds an

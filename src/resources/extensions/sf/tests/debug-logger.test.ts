@@ -19,7 +19,7 @@ import {
 } from '../debug-logger.ts';
 
 function createTempGsdDir(): string {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-debug-test-'));
+  const tmp = mkdtempSync(join(tmpdir(), 'sf-debug-test-'));
   mkdirSync(join(tmp, '.gsd'), { recursive: true });
   return tmp;
 }

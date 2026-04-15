@@ -38,7 +38,7 @@ function run(command: string, cwd: string): string {
   return execSync(command, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();
 }
 
-const base = mkdtempSync(join(tmpdir(), "gsd-branch-test-"));
+const base = mkdtempSync(join(tmpdir(), "sf-branch-test-"));
 run("git init -b main", base);
 run('git config user.name "Pi Test"', base);
 run('git config user.email "pi@example.com"', base);
@@ -92,7 +92,7 @@ describe('worktree', async () => {
   assert.ok(SLICE_BRANCH_RE.test("sf/M001/S01"), "regex matches plain branch");
   assert.ok(SLICE_BRANCH_RE.test("sf/my-wt/M001/S01"), "regex matches worktree branch");
   assert.ok(!SLICE_BRANCH_RE.test("main"), "regex rejects main");
-  assert.ok(!SLICE_BRANCH_RE.test("sf/"), "regex rejects bare gsd/");
+  assert.ok(!SLICE_BRANCH_RE.test("sf/"), "regex rejects bare sf/");
   assert.ok(!SLICE_BRANCH_RE.test("worktree/foo"), "regex rejects worktree/foo");
 
   console.log("\n=== detectWorktreeName ===");
@@ -109,7 +109,7 @@ describe('worktree', async () => {
   console.log("\n=== captureIntegrationBranch: records current branch ===");
 
   {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-integ-facade-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-integ-facade-"));
     run("git init -b main", repo);
     run("git config user.name 'Pi Test'", repo);
     run("git config user.email 'pi@example.com'", repo);
@@ -136,7 +136,7 @@ describe('worktree', async () => {
   console.log("\n=== captureIntegrationBranch: skips slice branches ===");
 
   {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-integ-skip-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-integ-skip-"));
     run("git init -b main", repo);
     run("git config user.name 'Pi Test'", repo);
     run("git config user.email 'pi@example.com'", repo);
@@ -157,7 +157,7 @@ describe('worktree', async () => {
   console.log("\n=== setActiveMilestoneId + getMainBranch ===");
 
   {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-integ-main-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-integ-main-"));
     run("git init -b main", repo);
     run("git config user.name 'Pi Test'", repo);
     run("git config user.email 'pi@example.com'", repo);
@@ -170,7 +170,7 @@ describe('worktree', async () => {
     // Isolate from user's global preferences (which may have git.main_branch set).
     // Reset caches so getService() creates a fresh instance with empty preferences.
     const originalHome = process.env.HOME;
-    const fakeHome = mkdtempSync(join(tmpdir(), "gsd-fake-home-"));
+    const fakeHome = mkdtempSync(join(tmpdir(), "sf-fake-home-"));
     process.env.HOME = fakeHome;
     _clearGsdRootCache();
     _resetServiceCache();
@@ -264,8 +264,8 @@ describe('worktree', async () => {
 
   // Real symlink + git worktree scenario, with deep nested path from cwd
   {
-    const fakeHome = mkdtempSync(join(tmpdir(), "gsd-home-"));
-    const project = realpathSync(mkdtempSync(join(tmpdir(), "gsd-proj-")));
+    const fakeHome = mkdtempSync(join(tmpdir(), "sf-home-"));
+    const project = realpathSync(mkdtempSync(join(tmpdir(), "sf-proj-")));
     const storage = join(fakeHome, ".gsd", "projects", "abc123def456");
     mkdirSync(storage, { recursive: true });
     symlinkSync(storage, join(project, ".gsd"));

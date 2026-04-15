@@ -87,7 +87,7 @@ test("formatProviderReport shows error icon and detail for error status", () => 
     category: "llm",
     status: "error",
     message: "Anthropic (Claude) — no API key found",
-    detail: "Set ANTHROPIC_API_KEY or run /gsd keys",
+    detail: "Set ANTHROPIC_API_KEY or run /sf keys",
     required: true,
   }];
   const out = formatProviderReport(results);
@@ -195,7 +195,7 @@ test("summariseProviderIssues ignores unconfigured optional providers", () => {
 test("runProviderChecks detects Anthropic key from ANTHROPIC_API_KEY env var", () => {
   // Isolate from real HOME so loadEffectiveSFPreferences returns null (default → anthropic)
   // and auth.json lookups hit an empty directory.
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-env-test-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-env-test-")));
   withEnv({ ANTHROPIC_API_KEY: "sk-ant-test-key", ANTHROPIC_OAUTH_TOKEN: undefined, HOME: tmpHome }, () => {
     try {
       const results = runProviderChecks();
@@ -210,7 +210,7 @@ test("runProviderChecks detects Anthropic key from ANTHROPIC_API_KEY env var", (
 });
 
 test("runProviderChecks returns error for Anthropic when no key present", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-test-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-test-")));
   withEnv({
     ANTHROPIC_API_KEY: undefined,
     ANTHROPIC_OAUTH_TOKEN: undefined,
@@ -244,7 +244,7 @@ test("runProviderChecks optional providers show unconfigured when no key", () =>
     { BRAVE_API_KEY: undefined, TAVILY_API_KEY: undefined, JINA_API_KEY: undefined, CONTEXT7_API_KEY: undefined },
     () => {
       const origHome = process.env.HOME;
-      process.env.HOME = mkdtempSync(join(tmpdir(), "gsd-providers-test-"));
+      process.env.HOME = mkdtempSync(join(tmpdir(), "sf-providers-test-"));
       try {
         const results = runProviderChecks();
         const brave = results.find(r => r.name === "brave");
@@ -271,7 +271,7 @@ test("runProviderChecks optional providers show ok when key set", () => {
 
 test("runProviderChecks detects key from auth.json", () => {
   withEnv({ ANTHROPIC_API_KEY: undefined }, () => {
-    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-test-")));
+    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-test-")));
     const agentDir = join(tmpHome, ".gsd", "agent");
     mkdirSync(agentDir, { recursive: true });
 
@@ -296,7 +296,7 @@ test("runProviderChecks detects key from auth.json", () => {
 
 test("runProviderChecks ignores empty placeholder keys in auth.json", () => {
   withEnv({ ANTHROPIC_API_KEY: undefined, ANTHROPIC_OAUTH_TOKEN: undefined, COPILOT_GITHUB_TOKEN: undefined, GH_TOKEN: undefined, GITHUB_TOKEN: undefined }, () => {
-    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-test-")));
+    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-test-")));
     const agentDir = join(tmpHome, ".gsd", "agent");
     mkdirSync(agentDir, { recursive: true });
 
@@ -320,7 +320,7 @@ test("runProviderChecks ignores empty placeholder keys in auth.json", () => {
 // ─── runProviderChecks — cross-provider routing ──────────────────────────────
 
 test("runProviderChecks reports ok for Anthropic when GitHub Copilot env var is set", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-copilot-test-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-copilot-test-")));
   withEnv({
     ANTHROPIC_API_KEY: undefined,
     ANTHROPIC_OAUTH_TOKEN: undefined,
@@ -342,7 +342,7 @@ test("runProviderChecks reports ok for Anthropic when GitHub Copilot env var is 
 });
 
 test("runProviderChecks reports ok for Anthropic via GITHUB_TOKEN cross-provider routing", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-ghtoken-test-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-ghtoken-test-")));
   withEnv({
     ANTHROPIC_API_KEY: undefined,
     ANTHROPIC_OAUTH_TOKEN: undefined,
@@ -363,7 +363,7 @@ test("runProviderChecks reports ok for Anthropic via GITHUB_TOKEN cross-provider
 });
 
 test("runProviderChecks detects ANTHROPIC_OAUTH_TOKEN as valid Anthropic auth", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-oauth-test-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-oauth-test-")));
   withEnv({
     ANTHROPIC_API_KEY: undefined,
     ANTHROPIC_OAUTH_TOKEN: PRESENT_TEST_VALUE,
@@ -392,7 +392,7 @@ test("runProviderChecks reports ok via Copilot auth.json for Anthropic", () => {
     GH_TOKEN: undefined,
     GITHUB_TOKEN: undefined,
   }, () => {
-    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-copilot-auth-test-")));
+    const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-copilot-auth-test-")));
     const agentDir = join(tmpHome, ".gsd", "agent");
     mkdirSync(agentDir, { recursive: true });
 
@@ -415,8 +415,8 @@ test("runProviderChecks reports ok via Copilot auth.json for Anthropic", () => {
 });
 
 test("runProviderChecks uses provider-qualified anthropic-vertex model IDs", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-prefix-home-")));
-  const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-prefix-repo-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-vertex-prefix-home-")));
+  const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-vertex-prefix-repo-")));
   mkdirSync(join(repo, ".gsd"), { recursive: true });
   writeFileSync(
     join(repo, ".gsd", "PREFERENCES.md"),
@@ -450,8 +450,8 @@ test("runProviderChecks uses provider-qualified anthropic-vertex model IDs", () 
 });
 
 test("runProviderChecks uses object provider field for anthropic-vertex models", () => {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-provider-home-")));
-  const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-vertex-provider-repo-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-vertex-provider-home-")));
+  const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-vertex-provider-repo-")));
   mkdirSync(join(repo, ".gsd"), { recursive: true });
   writeFileSync(
     join(repo, ".gsd", "PREFERENCES.md"),
@@ -488,7 +488,7 @@ test("runProviderChecks uses object provider field for anthropic-vertex models",
 // ─── Cross-provider routing: Codex & Gemini CLI (#2922) ────────────────────
 
 test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#2922)", () => {
-  const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-gemini-cli-repo-")));
+  const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-gemini-cli-repo-")));
   mkdirSync(join(repo, ".gsd"), { recursive: true });
   writeFileSync(
     join(repo, ".gsd", "PREFERENCES.md"),
@@ -501,7 +501,7 @@ test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#
     ].join("\n"),
   );
 
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-gemini-cli-home-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-gemini-cli-home-")));
   const agentDir = join(tmpHome, ".gsd", "agent");
   mkdirSync(agentDir, { recursive: true });
 
@@ -530,7 +530,7 @@ test("runProviderChecks reports ok for Google via google-gemini-cli auth.json (#
 });
 
 test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)", () => {
-  const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-codex-repo-")));
+  const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-codex-repo-")));
   mkdirSync(join(repo, ".gsd"), { recursive: true });
   writeFileSync(
     join(repo, ".gsd", "PREFERENCES.md"),
@@ -543,7 +543,7 @@ test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)
     ].join("\n"),
   );
 
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-codex-home-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-codex-home-")));
   const agentDir = join(tmpHome, ".gsd", "agent");
   mkdirSync(agentDir, { recursive: true });
 
@@ -575,7 +575,7 @@ test("runProviderChecks reports ok for OpenAI via openai-codex auth.json (#2922)
 });
 
 test("runProviderChecks reports ok for claude-code without any API key", () => {
-  const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-cc-repo-")));
+  const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-cc-repo-")));
   mkdirSync(join(repo, ".gsd"), { recursive: true });
   writeFileSync(
     join(repo, ".gsd", "PREFERENCES.md"),
@@ -590,7 +590,7 @@ test("runProviderChecks reports ok for claude-code without any API key", () => {
     ].join("\n"),
   );
 
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-providers-cc-home-")));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-providers-cc-home-")));
 
   withEnv({
     HOME: tmpHome,

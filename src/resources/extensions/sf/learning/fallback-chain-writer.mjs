@@ -1,5 +1,5 @@
 /**
- * gsd-learning: fallback-chain writer
+ * sf-learning: fallback-chain writer
  *
  * Writes per-unit-type runtime fallback chains into `~/.gsd/agent/settings.json`
  * under `fallback.chains.*`, so pi-ai's `FallbackResolver` has ONE entry per
@@ -10,7 +10,7 @@
  *
  * ## Why this lives in the plugin, not in preferences.md
  *
- * `~/.gsd/preferences.md` tells gsd which model to START a unit with — it
+ * `~/.gsd/preferences.md` tells sf which model to START a unit with — it
  * feeds `before_model_select`, which this plugin already intercepts. But
  * once dispatch begins and the LLM call 429s, pi-ai's retry path reads
  * `~/.gsd/agent/settings.json` → `fallback.chains` directly via
@@ -60,7 +60,7 @@
  * - Errors are caught by the caller (index.mjs) — a failed chain write
  *   must never block plugin init.
  *
- * @module gsd-learning/fallback-chain-writer
+ * @module sf-learning/fallback-chain-writer
  */
 
 import { readFileSync, writeFileSync, renameSync, existsSync, realpathSync } from "node:fs";
@@ -284,7 +284,7 @@ function writeSettingsWithChains(settingsPath, chainsByName) {
  * a consistent performer across all categories.
  *
  * This replaces the earlier "clone the subagent chain" approach, which
- * was task-blind: pinning a coding model via `/gsd model` and then
+ * was task-blind: pinning a coding model via `/sf model` and then
  * dispatching `plan-slice` would yield fallbacks ranked by generalist
  * scores instead of planning-specific ones (combatant finding #3).
  *
@@ -348,7 +348,7 @@ function resolveCanonicalPath(pathValue) {
  * this plugin writes globally (combatant finding #4).
  *
  * Bails out early when `cwd/.gsd/agent/settings.json` resolves to the same
- * canonical path as the global settings file — i.e. when gsd is invoked
+ * canonical path as the global settings file — i.e. when sf is invoked
  * from `$HOME` and the "project-level" probe aliases the global file.
  * Without this guard, the plugin warns about its own writes shadowing
  * themselves (false positive; surfaced in user notifications 2026-04-15).
@@ -389,7 +389,7 @@ function detectProjectSettingsShadow(cwd, globalSettingsPath, log) {
  * Compute and write runtime fallback chains for every unit type in the
  * plugin's weight config, plus a `default` chain that fans across all
  * unit types (used when the current model isn't in any unit-specific
- * chain — e.g. the user overrode the model via `/gsd model`).
+ * chain — e.g. the user overrode the model via `/sf model`).
  *
  * Also checks for a project-level `.gsd/agent/settings.json` that might
  * silently shadow the global chains via pi-ai's deep-merge, and warns

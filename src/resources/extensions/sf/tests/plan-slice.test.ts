@@ -10,7 +10,7 @@ import { parsePlan } from '../parsers-legacy.ts';
 import { parseTaskPlanFile } from '../files.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-plan-slice-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-plan-slice-'));
   mkdirSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
   return base;
 }
@@ -63,7 +63,7 @@ function validParams() {
 
 test('handlePlanSlice writes slice/task planning state and renders plan artifacts', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParentSlice();
@@ -100,7 +100,7 @@ test('handlePlanSlice writes slice/task planning state and renders plan artifact
 
 test('handlePlanSlice rejects invalid payloads', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParentSlice();
@@ -114,7 +114,7 @@ test('handlePlanSlice rejects invalid payloads', async () => {
 
 test('handlePlanSlice rejects missing parent slice', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     insertMilestone({ id: 'M001', title: 'Milestone', status: 'active' });
@@ -128,7 +128,7 @@ test('handlePlanSlice rejects missing parent slice', async () => {
 
 test('handlePlanSlice surfaces render failures without changing parse-visible task-plan state for the failing task', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParentSlice();
@@ -150,7 +150,7 @@ test('handlePlanSlice surfaces render failures without changing parse-visible ta
 
 test('handlePlanSlice reruns idempotently and refreshes parse-visible state', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParentSlice();

@@ -31,33 +31,33 @@ function createMockCtx() {
   };
 }
 
-test("/gsd update appears in subcommand completions", () => {
+test("/sf update appears in subcommand completions", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  assert.ok(gsd, "registerSFCommand should register /gsd");
+  const sf = pi.commands.get("sf");
+  assert.ok(sf, "registerSFCommand should register /sf");
 
-  const completions = gsd.getArgumentCompletions("update");
+  const completions = sf.getArgumentCompletions("update");
   const updateEntry = completions.find((c: any) => c.value === "update");
   assert.ok(updateEntry, "update should appear in completions");
   assert.equal(updateEntry.label, "update");
 });
 
-test("/gsd update appears in help description", () => {
+test("/sf update appears in help description", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  assert.ok(gsd?.description?.includes("update"), "description should mention update");
+  const sf = pi.commands.get("sf");
+  assert.ok(sf?.description?.includes("update"), "description should mention update");
 });
 
-test("/gsd update is listed in completions with correct description", () => {
+test("/sf update is listed in completions with correct description", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  const completions = gsd.getArgumentCompletions("");
+  const sf = pi.commands.get("sf");
+  const completions = sf.getArgumentCompletions("");
   const updateEntry = completions.find((c: any) => c.value === "update");
   assert.ok(updateEntry, "update should appear in full completion list");
   assert.ok(
@@ -66,21 +66,21 @@ test("/gsd update is listed in completions with correct description", () => {
   );
 });
 
-test("/gsd codebase appears in top-level completions", () => {
+test("/sf codebase appears in top-level completions", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  const completions = gsd.getArgumentCompletions("code");
+  const sf = pi.commands.get("sf");
+  const completions = sf.getArgumentCompletions("code");
   const codebaseEntry = completions.find((c: any) => c.value === "codebase");
   assert.ok(codebaseEntry, "codebase should appear in completions");
   assert.match(codebaseEntry.description, /codebase map cache/i);
 });
 
-test("/gsd codebase appears in help description", () => {
+test("/sf codebase appears in help description", () => {
   const pi = createMockPi();
   registerSFCommand(pi as any);
 
-  const gsd = pi.commands.get("gsd");
-  assert.ok(gsd?.description?.includes("codebase"), "description should mention codebase");
+  const sf = pi.commands.get("sf");
+  assert.ok(sf?.description?.includes("codebase"), "description should mention codebase");
 });

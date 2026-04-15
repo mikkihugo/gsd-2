@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
 
-import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/sf/gsd-db.ts";
+import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/sf/sf-db.ts";
 import { registerWorkflowTools, WORKFLOW_TOOL_NAMES } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {

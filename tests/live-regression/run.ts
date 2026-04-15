@@ -27,7 +27,7 @@ import { tmpdir } from "os";
 
 // ─── Config ───────────────────────────────────────────────────────────────
 
-const binary = process.env.SF_SMOKE_BINARY || "gsd";
+const binary = process.env.SF_SMOKE_BINARY || process.env.GSD_SMOKE_BINARY || "gsd";
 let passed = 0;
 let failed = 0;
 
@@ -55,7 +55,7 @@ function gsd(args: string[], cwd: string, env?: Record<string, string>): { stdou
       encoding: "utf-8",
       timeout: 30_000,
       stdio: ["pipe", "pipe", "pipe"],
-      env: { ...process.env, ...env, SF_NON_INTERACTIVE: "1" },
+      env: { ...process.env, ...env, SF_NON_INTERACTIVE: "1", GSD_NON_INTERACTIVE: "1" },
     });
     return { stdout, stderr: "", code: 0 };
   } catch (err: any) {
@@ -98,8 +98,8 @@ function buildTaskSummary(id: string): string {
 run("headless query returns valid JSON on initialized project", () => {
   const dir = createTempProject("query");
   try {
-    const gsdDir = join(dir, ".gsd");
-    mkdirSync(join(gsdDir, "milestones"), { recursive: true });
+    const sfDir = join(dir, ".gsd");
+    mkdirSync(join(sfDir, "milestones"), { recursive: true });
     
     const result = gsd(["headless", "query"], dir);
     assert(result.code === 0, `expected exit 0, got ${result.code}: ${result.stderr}`);
@@ -209,10 +209,10 @@ run("headless query: milestone with summary reports complete", () => {
 run("stale auto.lock with dead PID does not block --version", () => {
   const dir = createTempProject("stale-lock");
   try {
-    const gsdDir = join(dir, ".gsd");
-    mkdirSync(gsdDir, { recursive: true });
+    const sfDir = join(dir, ".gsd");
+    mkdirSync(sfDir, { recursive: true });
     // Write a lock with a PID that doesn't exist
-    writeFileSync(join(gsdDir, "auto.lock"), JSON.stringify({
+    writeFileSync(join(sfDir, "auto.lock"), JSON.stringify({
       pid: 99999999,
       startedAt: new Date().toISOString(),
       unitType: "starting",
@@ -234,9 +234,9 @@ run("stale auto.lock with dead PID does not block --version", () => {
 run("crash recovery shows actionable guidance", () => {
   const dir = createTempProject("crash-recovery");
   try {
-    const gsdDir = join(dir, ".gsd");
-    mkdirSync(join(gsdDir, "milestones"), { recursive: true });
-    writeFileSync(join(gsdDir, "auto.lock"), JSON.stringify({
+    const sfDir = join(dir, ".gsd");
+    mkdirSync(join(sfDir, "milestones"), { recursive: true });
+    writeFileSync(join(sfDir, "auto.lock"), JSON.stringify({
       pid: 99999999,
       startedAt: new Date().toISOString(),
       unitType: "execute-task",
@@ -282,14 +282,14 @@ run("version skew is detected before TTY check", () => {
     const agentDir = join(dir, ".gsd-test-agent");
     mkdirSync(agentDir, { recursive: true });
     writeFileSync(join(agentDir, "managed-resources.json"), JSON.stringify({
-      gsdVersion: "999.0.0",
+      sfVersion: "999.0.0",
     }));
     
     // Set HOME to the temp dir so SF reads the fake agent dir
     const fakeHome = dir;
     mkdirSync(join(fakeHome, ".gsd", "agent"), { recursive: true });
     writeFileSync(join(fakeHome, ".gsd", "agent", "managed-resources.json"), JSON.stringify({
-      gsdVersion: "999.0.0",
+      sfVersion: "999.0.0",
     }));
     
     const result = gsd([], dir, { HOME: fakeHome });

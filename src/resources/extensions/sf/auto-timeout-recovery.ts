@@ -113,7 +113,7 @@ export async function recoverTimedOutUnit(
 
       pi.sendMessage(
         {
-          customType: "gsd-auto-timeout-recovery",
+          customType: "sf-auto-timeout-recovery",
           display: verbose,
           content: steeringLines.join("\n"),
         },
@@ -217,7 +217,7 @@ export async function recoverTimedOutUnit(
 
     pi.sendMessage(
       {
-        customType: "gsd-auto-timeout-recovery",
+        customType: "sf-auto-timeout-recovery",
         display: verbose,
         content: steeringLines.join("\n"),
       },
@@ -241,7 +241,7 @@ export async function recoverTimedOutUnit(
       lastRecoveryReason: reason,
     });
     ctx.ui.notify(
-      `Milestone ${unitId} ${reason}-recovery exhausted ${maxRecoveryAttempts} attempt(s) — worktree branch preserved. Re-run /gsd auto once blockers are resolved.`,
+      `Milestone ${unitId} ${reason}-recovery exhausted ${maxRecoveryAttempts} attempt(s) — worktree branch preserved. Re-run /sf auto once blockers are resolved.`,
       "error",
     );
     return "paused";

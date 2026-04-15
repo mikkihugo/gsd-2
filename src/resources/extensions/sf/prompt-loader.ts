@@ -8,7 +8,7 @@
  * They use {{variableName}} syntax for substitution.
  *
  * All templates are eagerly loaded into cache at module init via warmCache().
- * This prevents a running session from being invalidated when another `gsd`
+ * This prevents a running session from being invalidated when another `sf`
  * launch overwrites ~/.gsd/agent/ with newer templates via initResources().
  * Without eager caching, the in-memory extension code (which knows variable
  * set A) can read a newer template from disk (which expects variable set B),
@@ -18,7 +18,7 @@
  */
 
 import { readFileSync, readdirSync, existsSync } from "node:fs";
-import { GSDError, SF_PARSE_ERROR } from "./errors.js";
+import { SFError, SF_PARSE_ERROR } from "./errors.js";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { homedir } from "node:os";
@@ -40,7 +40,7 @@ function resolveExtensionDir(): string {
 
   // Fallback: user-local agent directory
   const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
-  const agentGsdDir = join(sfHome, "agent", "extensions", "gsd");
+  const agentGsdDir = join(sfHome, "agent", "extensions", "sf");
   if (existsSync(join(agentGsdDir, "prompts"))) return agentGsdDir;
 
   // Last resort: return the module dir (warmCache will silently handle the miss)
@@ -133,7 +133,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
       .map(m => m.slice(2, -2))
       .filter(key => !(key in effectiveVars));
     if (missing.length > 0) {
-      throw new GSDError(
+      throw new SFError(
         SF_PARSE_ERROR,
         `loadPrompt("${name}"): template declares {{${missing.join("}}, {{")}}}} but no value was provided. ` +
         `This usually means the extension code in memory is older than the template on disk. ` +

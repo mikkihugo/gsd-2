@@ -23,7 +23,7 @@ import {
 } from "../../doctor-environment.ts";
 /** Create a directory tree with files. */
 function createDir(files: Record<string, string> = {}): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-wt-env-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-wt-env-"));
   for (const [name, content] of Object.entries(files)) {
     const filePath = join(dir, name);
     mkdirSync(dirname(filePath), { recursive: true });

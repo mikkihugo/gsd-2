@@ -27,7 +27,7 @@ function loadPromptFromWorktree(name: string, vars: Record<string, string> = {})
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-replan-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-replan-test-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -452,7 +452,7 @@ console.log('\n=== display: replan-slice prompt template has correct unit header
 // Doctor: blocker_discovered_no_replan diagnostics
 // ═══════════════════════════════════════════════════════════════════════════
 
-import { runGSDDoctor } from '../doctor.ts';
+import { runSFDoctor } from '../doctor.ts';
 // (a) blocker + no REPLAN.md → issue emitted
 console.log('\n=== doctor: blocker + no REPLAN.md → blocker_discovered_no_replan issue ===');
 {
@@ -461,7 +461,7 @@ console.log('\n=== doctor: blocker + no REPLAN.md → blocker_discovered_no_repl
   writePlan(base, 'M001', 'S01', makePlanT01DoneT02Pending());
   writeTaskSummary(base, 'M001', 'S01', 'T01', makeTaskSummary('T01', true));
 
-  const report = await runGSDDoctor(base, { fix: false, scope: 'M001/S01' });
+  const report = await runSFDoctor(base, { fix: false, scope: 'M001/S01' });
   const blockerIssues = report.issues.filter(i => i.code === 'blocker_discovered_no_replan');
   assert.ok(blockerIssues.length > 0, 'doctor emits blocker_discovered_no_replan when blocker + no REPLAN');
   assert.ok(blockerIssues[0]?.message.includes('T01'), 'issue message mentions the blocker task T01');
@@ -479,7 +479,7 @@ console.log('\n=== doctor: blocker + REPLAN.md exists → no blocker_discovered_
   writeTaskSummary(base, 'M001', 'S01', 'T01', makeTaskSummary('T01', true));
   writeReplanFile(base, 'M001', 'S01', '# Replan\n\nAlready replanned.');
 
-  const report = await runGSDDoctor(base, { fix: false, scope: 'M001/S01' });
+  const report = await runSFDoctor(base, { fix: false, scope: 'M001/S01' });
   const blockerIssues = report.issues.filter(i => i.code === 'blocker_discovered_no_replan');
   assert.deepStrictEqual(blockerIssues.length, 0, 'no blocker_discovered_no_replan when REPLAN.md exists');
   rmSync(base, { recursive: true, force: true });
@@ -493,7 +493,7 @@ console.log('\n=== doctor: no blocker → no blocker_discovered_no_replan issue 
   writePlan(base, 'M001', 'S01', makePlanT01DoneT02Pending());
   writeTaskSummary(base, 'M001', 'S01', 'T01', makeTaskSummary('T01', false));
 
-  const report = await runGSDDoctor(base, { fix: false, scope: 'M001/S01' });
+  const report = await runSFDoctor(base, { fix: false, scope: 'M001/S01' });
   const blockerIssues = report.issues.filter(i => i.code === 'blocker_discovered_no_replan');
   assert.deepStrictEqual(blockerIssues.length, 0, 'no blocker_discovered_no_replan when no blocker');
   rmSync(base, { recursive: true, force: true });

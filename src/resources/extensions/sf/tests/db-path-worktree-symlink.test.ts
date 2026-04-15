@@ -34,7 +34,7 @@ const standardPath = `/home/user/myproject/.gsd/worktrees/M001/work`;
 const standardResult = resolveProjectRootDbPath(standardPath);
 assertEq(
   standardResult,
-  join("/home/user/myproject", ".gsd", "gsd.db"),
+  join("/home/user/myproject", ".gsd", "sf.db"),
   "Standard worktree layout resolves to project root DB path",
 );
 
@@ -47,7 +47,7 @@ const symlinkPath = `/home/user/myproject/.gsd/projects/abc123def/worktrees/M001
 const symlinkResult = resolveProjectRootDbPath(symlinkPath);
 assertEq(
   symlinkResult,
-  join("/home/user/myproject/.gsd/projects/abc123def", "gsd.db"),
+  join("/home/user/myproject/.gsd/projects/abc123def", "sf.db"),
   "/.gsd/projects/<hash>/worktrees/ resolves to hash-level DB (#2517, updated for #2952)",
 );
 
@@ -57,7 +57,7 @@ if (sep === "\\") {
   const winResult = resolveProjectRootDbPath(winSymlinkPath);
   assertEq(
     winResult,
-    join("C:\\Users\\dev\\project\\.gsd\\projects\\abc123def", "gsd.db"),
+    join("C:\\Users\\dev\\project\\.gsd\\projects\\abc123def", "sf.db"),
     "Windows /.gsd/projects/<hash>/worktrees/ resolves to hash-level DB",
   );
 } else {
@@ -66,7 +66,7 @@ if (sep === "\\") {
   const fwdResult = resolveProjectRootDbPath(fwdSymlinkPath);
   assertEq(
     fwdResult,
-    join("/home/user/myproject/.gsd/projects/abc123def", "gsd.db"),
+    join("/home/user/myproject/.gsd/projects/abc123def", "sf.db"),
     "Forward-slash /.gsd/projects/<hash>/worktrees/ resolves to hash-level DB on POSIX",
   );
 }
@@ -76,7 +76,7 @@ const deepSymlinkPath = `/home/user/myproject/.gsd/projects/deadbeef42/worktrees
 const deepResult = resolveProjectRootDbPath(deepSymlinkPath);
 assertEq(
   deepResult,
-  join("/home/user/myproject/.gsd/projects/deadbeef42", "gsd.db"),
+  join("/home/user/myproject/.gsd/projects/deadbeef42", "sf.db"),
   "Deep /.gsd/projects/<hash>/worktrees/ path resolves to hash-level DB (#2952)",
 );
 
@@ -85,7 +85,7 @@ const normalPath = `/home/user/myproject`;
 const normalResult = resolveProjectRootDbPath(normalPath);
 assertEq(
   normalResult,
-  join("/home/user/myproject", ".gsd", "gsd.db"),
+  join("/home/user/myproject", ".gsd", "sf.db"),
   "Non-worktree path is unchanged",
 );
 

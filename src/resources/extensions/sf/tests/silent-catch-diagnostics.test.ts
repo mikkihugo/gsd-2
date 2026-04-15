@@ -15,7 +15,7 @@ import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 
 /** Files exempt from the raw-stderr/console check */
 const EXEMPT_FILES = new Set([
@@ -83,14 +83,14 @@ function getAutoModeFiles(): string[] {
   const files: string[] = [];
 
   // Top-level auto*.ts files
-  for (const f of readdirSync(gsdDir)) {
+  for (const f of readdirSync(sfDir)) {
     if (f.startsWith("auto") && f.endsWith(".ts") && !f.endsWith(".test.ts")) {
-      files.push(join(gsdDir, f));
+      files.push(join(sfDir, f));
     }
   }
 
   // auto/ subdirectory
-  const autoSubDir = join(gsdDir, "auto");
+  const autoSubDir = join(sfDir, "auto");
   for (const f of readdirSync(autoSubDir)) {
     if (f.endsWith(".ts") && !f.endsWith(".test.ts")) {
       files.push(join(autoSubDir, f));
@@ -120,7 +120,7 @@ function getGsdSourceFiles(): string[] {
     }
   }
 
-  walk(gsdDir);
+  walk(sfDir);
   return files;
 }
 
@@ -231,7 +231,7 @@ describe("workflow-logger coverage (#3348)", () => {
     const allFiles = getGsdSourceFiles();
     const migratedPaths = new Set(autoFiles);
     for (const file of allFiles) {
-      const rel = relative(gsdDir, file);
+      const rel = relative(sfDir, file);
       if (MIGRATED_FILES.has(rel)) {
         migratedPaths.add(file);
       }
@@ -241,7 +241,7 @@ describe("workflow-logger coverage (#3348)", () => {
 
     const violations: string[] = [];
     for (const file of migratedPaths) {
-      const rel = relative(gsdDir, file);
+      const rel = relative(sfDir, file);
       const basename = rel.split("/").pop()!;
       // sf-db.ts has intentionally silent provider probes
       if (basename === "sf-db.ts" || basename === "session-lock.ts") continue;
@@ -265,7 +265,7 @@ describe("workflow-logger coverage (#3348)", () => {
 
     const violations: string[] = [];
     for (const file of files) {
-      const rel = relative(gsdDir, file);
+      const rel = relative(sfDir, file);
       const basename = rel.split("/").pop()!;
       if (EXEMPT_FILES.has(basename)) continue;
 

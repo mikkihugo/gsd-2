@@ -32,8 +32,8 @@ function run(command: string, cwd: string): string {
 // mimicking the external state directory layout (~/.gsd/projects/<hash>/).
 // Resolve tmpdir to handle macOS /tmp -> /private/var/... symlink.
 const realTmp = realpathSync(tmpdir());
-const base = mkdtempSync(join(realTmp, "gsd-wt-symlink-test-"));
-const externalState = mkdtempSync(join(realTmp, "gsd-wt-symlink-ext-"));
+const base = mkdtempSync(join(realTmp, "sf-wt-symlink-test-"));
+const externalState = mkdtempSync(join(realTmp, "sf-wt-symlink-ext-"));
 
 run("git init -b main", base);
 run('git config user.name "Test"', base);

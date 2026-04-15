@@ -8,13 +8,13 @@ SF supports three isolation modes, configured via the `git.isolation` preference
 
 | Mode | Working Directory | Branch | Best For |
 |------|-------------------|--------|----------|
-| `worktree` (default) | `.gsd/worktrees/<MID>/` | `milestone/<MID>` | Most projects — full file isolation between milestones |
+| `worktree` (default) | `.sf/worktrees/<MID>/` | `milestone/<MID>` | Most projects — full file isolation between milestones |
 | `branch` | Project root | `milestone/<MID>` | Submodule-heavy repos where worktrees don't work well |
 | `none` | Project root | Current branch (no milestone branch) | Hot-reload workflows where file isolation breaks dev tooling |
 
 ### `worktree` Mode (Default)
 
-Each milestone gets its own git worktree at `.gsd/worktrees/<MID>/` on a `milestone/<MID>` branch. All execution happens inside the worktree. On completion, the worktree is squash-merged to main as one clean commit. The worktree and branch are then cleaned up.
+Each milestone gets its own git worktree at `.sf/worktrees/<MID>/` on a `milestone/<MID>` branch. All execution happens inside the worktree. On completion, the worktree is squash-merged to main as one clean commit. The worktree and branch are then cleaned up.
 
 This provides full file isolation — changes in a milestone can't interfere with your main working copy.
 
@@ -95,8 +95,8 @@ These features apply only in **worktree mode**.
 
 Auto mode creates and manages worktrees automatically:
 
-1. When a milestone starts, a worktree is created at `.gsd/worktrees/<MID>/` on branch `milestone/<MID>`
-2. Planning artifacts from `.gsd/milestones/` are copied into the worktree
+1. When a milestone starts, a worktree is created at `.sf/worktrees/<MID>/` on branch `milestone/<MID>`
+2. Planning artifacts from `.sf/milestones/` are copied into the worktree
 3. All execution happens inside the worktree
 4. On milestone completion, the worktree is squash-merged to the integration branch
 5. The worktree and branch are removed
@@ -148,7 +148,7 @@ git:
   pre_merge_check: false      # pre-merge validation
   commit_type: feat           # override commit type prefix
   main_branch: main           # primary branch name
-  commit_docs: true           # commit .gsd/ to git
+  commit_docs: true           # commit .sf/ to git
   isolation: worktree         # "worktree", "branch", or "none"
   auto_pr: false              # create PR on milestone completion
   pr_target_branch: develop   # PR target branch (default: main)
@@ -170,7 +170,7 @@ This pushes the milestone branch and creates a PR targeting `develop` (or whiche
 
 ### `commit_docs: false`
 
-When set to `false`, SF adds `.gsd/` to `.gitignore` and keeps all planning artifacts local-only. Useful for teams where only some members use SF, or when company policy requires a clean repository.
+When set to `false`, SF adds `.sf/` to `.gitignore` and keeps all planning artifacts local-only. Useful for teams where only some members use SF, or when company policy requires a clean repository.
 
 ## Self-Healing
 
@@ -180,7 +180,7 @@ SF includes automatic recovery for common git issues:
 - **Stale lock files** — removes `index.lock` files from crashed processes
 - **Orphaned worktrees** — detects and offers to clean up abandoned worktrees (worktree mode only)
 
-Run `/gsd doctor` to check git health manually.
+Run `/sf doctor` to check git health manually.
 
 ## Native Git Operations
 

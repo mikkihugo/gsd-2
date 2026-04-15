@@ -1,5 +1,5 @@
 /**
- * /gsd show-config command — structural tests.
+ * /sf show-config command — structural tests.
  *
  * Verifies the config overlay class and command handler exist
  * with correct structure.
@@ -18,14 +18,14 @@ const coreSrc = readFileSync(join(__dirname, "..", "commands", "handlers", "core
 
 // ─── Config overlay ───────────────────────────────────────────────────────
 
-test("GSDConfigOverlay class is exported", () => {
+test("SFConfigOverlay class is exported", () => {
   assert.ok(
-    overlaySrc.includes("export class GSDConfigOverlay"),
-    "GSDConfigOverlay should be exported",
+    overlaySrc.includes("export class SFConfigOverlay"),
+    "SFConfigOverlay should be exported",
   );
 });
 
-test("GSDConfigOverlay implements Component interface methods", () => {
+test("SFConfigOverlay implements Component interface methods", () => {
   assert.ok(overlaySrc.includes("render("), "should have render method");
   assert.ok(overlaySrc.includes("handleInput("), "should have handleInput method");
   assert.ok(overlaySrc.includes("invalidate("), "should have invalidate method");

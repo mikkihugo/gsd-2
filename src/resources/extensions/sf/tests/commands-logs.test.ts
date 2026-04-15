@@ -9,7 +9,7 @@ import { handleLogs } from "../commands-logs.ts";
 // ─── Test helpers ───────────────────────────────────────────────────────────
 
 function createTestDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-logs-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-logs-test-"));
   mkdirSync(join(dir, ".gsd", "activity"), { recursive: true });
   mkdirSync(join(dir, ".gsd", "debug"), { recursive: true });
   return dir;
@@ -82,7 +82,7 @@ test("logs lists activity logs", async (t) => {
   assert.ok(msg.includes("Activity Logs"), "should show activity logs header");
   assert.ok(msg.includes("execute-task"), "should show unit type");
   assert.ok(msg.includes("complete-slice"), "should show second log");
-  assert.ok(msg.includes("/gsd logs <#>"), "should show usage hint");
+  assert.ok(msg.includes("/sf logs <#>"), "should show usage hint");
 });
 
 test("logs <N> shows activity log details", async (t) => {

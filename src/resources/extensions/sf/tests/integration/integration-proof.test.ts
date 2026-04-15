@@ -82,7 +82,7 @@ import {
 import { detectRogueFileWrites } from "../../auto-post-unit.ts";
 
 // ── Doctor ────────────────────────────────────────────────────────────────
-import { runGSDDoctor } from "../../doctor.ts";
+import { runSFDoctor } from "../../doctor.ts";
 
 // ── Undo/reset ────────────────────────────────────────────────────────────
 import { handleUndoTask, handleResetSlice } from "../../undo.ts";
@@ -95,7 +95,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-integration-proof-"));
+  return mkdtempSync(join(tmpdir(), "sf-integration-proof-"));
 }
 
 function makeCtx(): { notifications: Array<{ message: string; level: string }>; ctx: any } {
@@ -118,13 +118,13 @@ function makeCtx(): { notifications: Array<{ message: string; level: string }>; 
  */
 function createRealisticFixture(): string {
   const base = makeTempDir();
-  const gsdDir = join(base, ".gsd");
-  const mDir = join(gsdDir, "milestones", "M001");
+  const sfDir = join(base, ".gsd");
+  const mDir = join(sfDir, "milestones", "M001");
   const sliceDir = join(mDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
 
   mkdirSync(tasksDir, { recursive: true });
-  mkdirSync(join(gsdDir, "activity"), { recursive: true });
+  mkdirSync(join(sfDir, "activity"), { recursive: true });
 
   // Roadmap with exact format
   writeFileSync(
@@ -184,7 +184,7 @@ Prove all subsystems compose.
 
   // Minimal REQUIREMENTS.md
   writeFileSync(
-    join(gsdDir, "REQUIREMENTS.md"),
+    join(sfDir, "REQUIREMENTS.md"),
     `# Requirements
 
 ## Active
@@ -198,7 +198,7 @@ Prove all subsystems compose.
 
   // Minimal DECISIONS.md
   writeFileSync(
-    join(gsdDir, "DECISIONS.md"),
+    join(sfDir, "DECISIONS.md"),
     `# Decisions
 
 | ID | Decision | Choice | Rationale |
@@ -209,7 +209,7 @@ Prove all subsystems compose.
 
   // PROJECT.md stub
   writeFileSync(
-    join(gsdDir, "PROJECT.md"),
+    join(sfDir, "PROJECT.md"),
     "# Integration Proof Project\n\nTest project for integration proof.\n",
     "utf-8",
   );
@@ -276,7 +276,7 @@ function makeCompleteSliceParams(): any {
 
 test("full lifecycle: migration through completion through doctor", async (t) => {
   const base = createRealisticFixture();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   t.after(() => {
     closeDatabase();
@@ -378,7 +378,7 @@ test("full lifecycle: migration through completion through doctor", async (t) =>
     assert.ok(dbState.registry.length > 0, "DB registry should have entries");
 
     // ── (h) Doctor zero-fix (R009) ───────────────────────────────────
-    const doctorReport = await runGSDDoctor(base, {
+    const doctorReport = await runSFDoctor(base, {
       fix: false,
       isolationMode: "none",
     });
@@ -415,7 +415,7 @@ test("full lifecycle: migration through completion through doctor", async (t) =>
 
 test("recovery: DB loss → migrateFromMarkdown restores state, stale render detection", async (t) => {
   const base = createRealisticFixture();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   t.after(() => {
     closeDatabase();
@@ -503,7 +503,7 @@ test("recovery: DB loss → migrateFromMarkdown restores state, stale render det
 
 test("undo/reset: undo task and reset slice revert DB + markdown", async (t) => {
   const base = createRealisticFixture();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   t.after(() => {
     closeDatabase();

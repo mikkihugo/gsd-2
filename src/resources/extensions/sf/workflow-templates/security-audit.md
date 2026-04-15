@@ -4,7 +4,7 @@
 name: security-audit
 version: 1
 requires_project: false
-artifact_dir: .gsd/workflows/audits/
+artifact_dir: .sf/workflows/audits/
 </template_meta>
 
 <purpose>

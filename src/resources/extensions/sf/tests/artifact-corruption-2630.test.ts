@@ -12,7 +12,7 @@ import {
   renderStateContent,
 } from '../workflow-projections.ts';
 import type { SliceRow, TaskRow, MilestoneRow } from '../sf-db.ts';
-import type { GSDState } from '../types.ts';
+import type { SFState } from '../types.ts';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -104,7 +104,7 @@ function makeMilestoneRow(overrides?: Partial<MilestoneRow>): MilestoneRow {
   };
 }
 
-function makeGSDState(overrides?: Partial<GSDState>): GSDState {
+function makeSFState(overrides?: Partial<SFState>): SFState {
   return {
     activeMilestone: { id: 'M001', title: 'Topic-to-pipeline foundation' },
     activeSlice: { id: 'S01', title: 'Auth Layer' },
@@ -139,7 +139,7 @@ test('#2630 renderRoadmapContent: milestone title with pre-existing ID prefix re
 });
 
 test('#2630 renderStateContent: active milestone title with pre-existing ID prefix renders without duplication', () => {
-  const state = makeGSDState({
+  const state = makeSFState({
     activeMilestone: { id: 'M001', title: 'M001: Topic-to-pipeline foundation' },
   });
   const content = renderStateContent(state);
@@ -155,7 +155,7 @@ test('#2630 renderStateContent: active milestone title with pre-existing ID pref
 });
 
 test('#2630 renderStateContent: registry entry with pre-existing ID prefix renders without duplication', () => {
-  const state = makeGSDState({
+  const state = makeSFState({
     registry: [
       { id: 'M001', title: 'M001: Topic-to-pipeline foundation', status: 'active' },
     ],

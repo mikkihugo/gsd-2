@@ -1,15 +1,15 @@
 # Migration from v1
 
-If you have projects with `.planning` directories from the original Singularity Forge (v1), you can migrate them to SF's `.gsd` format.
+If you have projects with `.planning` directories from the original Singularity Forge (v1), you can migrate them to SF's `.sf` format.
 
 ## Running the Migration
 
 ```bash
 # From within the project directory
-/gsd migrate
+/sf migrate
 
 # Or specify a path
-/gsd migrate ~/projects/my-old-project
+/sf migrate ~/projects/my-old-project
 ```
 
 ## What Gets Migrated
@@ -42,7 +42,7 @@ Migration works best with a `ROADMAP.md` file for milestone structure. Without o
 After migrating, verify the output:
 
 ```
-/gsd doctor
+/sf doctor
 ```
 
-This checks `.gsd/` integrity and flags any structural issues.
+This checks `.sf/` integrity and flags any structural issues.

@@ -1,13 +1,13 @@
 /**
- * MCP Status — `/gsd mcp` command handler.
+ * MCP Status — `/sf mcp` command handler.
  *
  * Shows configured MCP servers, their connection status, and available tools.
  *
  * Subcommands:
- *   /gsd mcp             — Overview of all servers (alias: /gsd mcp status)
- *   /gsd mcp status      — Same as bare /gsd mcp
- *   /gsd mcp check <srv> — Detailed status for a specific server
- *   /gsd mcp init [dir]  — Write project-local SF workflow MCP config
+ *   /sf mcp             — Overview of all servers (alias: /sf mcp status)
+ *   /sf mcp status      — Same as bare /sf mcp
+ *   /sf mcp check <srv> — Detailed status for a specific server
+ *   /sf mcp init [dir]  — Write project-local SF workflow MCP config
  */
 
 import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -119,7 +119,7 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
       "No MCP servers configured.",
       "",
       "Add servers to .mcp.json or .gsd/mcp.json to enable MCP integrations.",
-      "Tip: run /gsd mcp init . to write the local SF workflow MCP config.",
+      "Tip: run /sf mcp init . to write the local SF workflow MCP config.",
       "See: https://modelcontextprotocol.io/quickstart",
     ].join("\n");
   }
@@ -137,7 +137,7 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
   }
 
   lines.push("");
-  lines.push("Use /gsd mcp check <server> for details on a specific server.");
+  lines.push("Use /sf mcp check <server> for details on a specific server.");
   lines.push("Use mcp_discover to connect and list tools for a server.");
 
   return lines.join("\n");
@@ -173,7 +173,7 @@ export function formatMcpServerDetail(server: McpServerDetail): string {
 // ─── Command handler ────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd mcp [status|check <server>]`.
+ * Handle `/sf mcp [status|check <server>]`.
  */
 export async function handleMcpStatus(
   args: string,
@@ -183,7 +183,7 @@ export async function handleMcpStatus(
   const lowered = trimmed.toLowerCase();
   const configs = readMcpConfigs();
 
-  // /gsd mcp init [dir]
+  // /sf mcp init [dir]
   if (!lowered || lowered === "status") {
     // handled below
   } else if (lowered === "init" || lowered.startsWith("init ")) {
@@ -201,7 +201,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp check <server>
+  // /sf mcp check <server>
   if (lowered.startsWith("check ")) {
     const serverName = trimmed.slice("check ".length).trim();
     const config = configs.find((c) => c.name === serverName);
@@ -246,7 +246,7 @@ export async function handleMcpStatus(
     return;
   }
 
-  // /gsd mcp or /gsd mcp status
+  // /sf mcp or /sf mcp status
   if (!lowered || lowered === "status") {
     // Build status for each server
     const statuses: McpServerStatus[] = [];
@@ -284,7 +284,7 @@ export async function handleMcpStatus(
 
   // Unknown subcommand
   ctx.ui.notify(
-    "Usage: /gsd mcp [status|check <server>|init [dir]]\n\n" +
+    "Usage: /sf mcp [status|check <server>|init [dir]]\n\n" +
     "  status           Show all MCP server statuses (default)\n" +
     "  check <server>   Detailed status for a specific server\n" +
     "  init [dir]       Write .mcp.json for the local SF workflow MCP server",

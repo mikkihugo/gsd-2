@@ -34,7 +34,7 @@ import assert from 'node:assert/strict';
 
 
 function createBase(name: string): string {
-  const base = mkdtempSync(join(tmpdir(), `gsd-wt-sync-${name}-`));
+  const base = mkdtempSync(join(tmpdir(), `sf-wt-sync-${name}-`));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -112,12 +112,12 @@ describe('worktree-sync-milestones', async () => {
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
       // Worktree has an empty (0-byte) sf.db — stale/corrupt
-      writeFileSync(join(wtBase, '.gsd', 'gsd.db'), '');
-      assert.ok(existsSync(join(wtBase, '.gsd', 'gsd.db')), 'sf.db exists before sync');
+      writeFileSync(join(wtBase, '.gsd', 'sf.db'), '');
+      assert.ok(existsSync(join(wtBase, '.gsd', 'sf.db')), 'sf.db exists before sync');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
-      assert.ok(!existsSync(join(wtBase, '.gsd', 'gsd.db')), '#853: empty sf.db deleted after sync');
+      assert.ok(!existsSync(join(wtBase, '.gsd', 'sf.db')), '#853: empty sf.db deleted after sync');
     } finally {
       cleanup(mainBase);
       cleanup(wtBase);
@@ -135,13 +135,13 @@ describe('worktree-sync-milestones', async () => {
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
-      // Worktree has a populated sf.db (e.g. from gsd-migrate on respawn)
-      writeFileSync(join(wtBase, '.gsd', 'gsd.db'), 'migrated-db-content');
-      assert.ok(existsSync(join(wtBase, '.gsd', 'gsd.db')), 'sf.db exists before sync');
+      // Worktree has a populated sf.db (e.g. from sf-migrate on respawn)
+      writeFileSync(join(wtBase, '.gsd', 'sf.db'), 'migrated-db-content');
+      assert.ok(existsSync(join(wtBase, '.gsd', 'sf.db')), 'sf.db exists before sync');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
-      assert.ok(existsSync(join(wtBase, '.gsd', 'gsd.db')), '#2815: non-empty sf.db preserved after sync');
+      assert.ok(existsSync(join(wtBase, '.gsd', 'sf.db')), '#2815: non-empty sf.db preserved after sync');
     } finally {
       cleanup(mainBase);
       cleanup(wtBase);
@@ -186,7 +186,7 @@ describe('worktree-sync-milestones', async () => {
   console.log('\n=== 7. milestones/ directory created in worktree when missing ===');
   {
     const mainBase = createBase('main');
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-sync-wt-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-sync-wt-'));
 
     try {
       // Worktree has .gsd/ but NO milestones/ subdirectory
@@ -216,8 +216,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 8. syncWorktreeStateBack recurses into tasks/ (#1678) ───────────
   console.log('\n=== 8. syncWorktreeStateBack copies tasks/ subdirectory (#1678) ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-wt-'));
 
     try {
       // Build worktree milestone structure with slice-level and task-level files
@@ -263,8 +263,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 9. syncWorktreeStateBack syncs root-level .gsd/ files ──────────
   console.log('\n=== 9. syncWorktreeStateBack syncs root-level files (REQUIREMENTS, PROJECT) ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-root-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-root-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-root-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-root-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones', 'M001'), { recursive: true });
@@ -316,8 +316,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 10. syncWorktreeStateBack syncs ALL milestone directories ─────
   console.log('\n=== 10. syncWorktreeStateBack syncs all milestone dirs, not just current ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-all-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-all-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-all-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-all-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones'), { recursive: true });
@@ -375,8 +375,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 11. Full M006→M007 transition scenario ───────────────────────────
   console.log('\n=== 11. complete-milestone creates next-milestone artifacts that survive sync ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-transition-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-transition-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-transition-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-transition-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones'), { recursive: true });
@@ -450,8 +450,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 12. syncWorktreeStateBack no-op for root files that don't exist ──
   console.log('\n=== 12. root files not in worktree are not created in main ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-noroot-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-noroot-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-noroot-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-noroot-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones', 'M001'), { recursive: true });
@@ -481,8 +481,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 13. syncWorktreeStateBack syncs QUEUE.md and completed-units.json (#1787) ──
   console.log('\n=== 13. QUEUE.md and completed-units.json synced from worktree (#1787) ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-queue-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-queue-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-queue-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-queue-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones', 'M001'), { recursive: true });
@@ -581,8 +581,8 @@ describe('worktree-sync-milestones', async () => {
   // ─── 15. syncWorktreeStateBack syncs non-standard milestone dir names (#1547) ──
   console.log('\n=== 15. syncWorktreeStateBack syncs non-standard milestone dir names (#1547) ===');
   {
-    const mainBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-custom-main-'));
-    const wtBase = mkdtempSync(join(tmpdir(), 'gsd-wt-back-custom-wt-'));
+    const mainBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-custom-main-'));
+    const wtBase = mkdtempSync(join(tmpdir(), 'sf-wt-back-custom-wt-'));
 
     try {
       mkdirSync(join(mainBase, '.gsd', 'milestones'), { recursive: true });

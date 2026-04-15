@@ -63,5 +63,5 @@ Introduce a provider capability registry and tool compatibility layer that integ
 | `packages/pi-ai/src/providers/transform-messages.ts` | Cross-provider normalization |
 | `packages/pi-ai/src/types.ts` | Core types |
 | `packages/pi-coding-agent/src/core/extensions/types.ts` | ToolDefinition, ExtensionAPI |
-| `src/resources/extensions/gsd/model-router.ts` | Capability scoring (ADR-004) |
-| `src/resources/extensions/gsd/auto-model-selection.ts` | Model selection orchestration |
+| `src/resources/extensions/sf/model-router.ts` | Capability scoring (ADR-004) |
+| `src/resources/extensions/sf/auto-model-selection.ts` | Model selection orchestration |

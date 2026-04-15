@@ -2,8 +2,8 @@
  * Regression tests for #3348 secondary issues — crash handler gaps surfaced after #3696
  *
  * 1. register-extension.ts: writeCrashLog writes to ~/.gsd/crash/ directory
- * 2. register-extension.ts: _gsdRejectionGuard registered for unhandledRejection
- * 3. register-extension.ts: _gsdEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
+ * 2. register-extension.ts: _sfRejectionGuard registered for unhandledRejection
+ * 3. register-extension.ts: _sfEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
  * 4. crash-recovery.ts: emitCrashRecoveredUnitEnd closes open unit-start journal entries
  */
 
@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-${randomUUID()}`);
   mkdirSync(join(base, '.gsd'), { recursive: true });
   return base;
 }
@@ -35,7 +35,7 @@ const registerExtSrc = readFileSync(
 describe('register-extension crash handler secondary fixes (#3348)', () => {
   test('writeCrashLog is exported and writes a file to the crash directory', async () => {
     // Dynamic import so SF_HOME can be pointed at a temp dir without polluting ~/.gsd
-    const tmpHome = join(tmpdir(), `gsd-crash-test-${randomUUID()}`);
+    const tmpHome = join(tmpdir(), `sf-crash-test-${randomUUID()}`);
     const origHome = process.env.SF_HOME;
     process.env.SF_HOME = tmpHome;
     try {
@@ -59,11 +59,11 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     }
   });
 
-  test('_gsdRejectionGuard is registered for unhandledRejection', () => {
+  test('_sfRejectionGuard is registered for unhandledRejection', () => {
     assert.match(
       registerExtSrc,
-      /_gsdRejectionGuard/,
-      '_gsdRejectionGuard handler should be defined',
+      /_sfRejectionGuard/,
+      '_sfRejectionGuard handler should be defined',
     );
     assert.match(
       registerExtSrc,
@@ -72,17 +72,17 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     );
   });
 
-  test('_gsdEpipeGuard calls process.exit(1) for unrecoverable errors, not log-and-continue', () => {
+  test('_sfEpipeGuard calls process.exit(1) for unrecoverable errors, not log-and-continue', () => {
     // The original #3696 fix replaced "throw err" with a log-and-continue.
     // The secondary fix replaces that with writeCrashLog + process.exit(1).
     assert.ok(
       !registerExtSrc.includes('process.stderr.write(`[forge] uncaught extension error (non-fatal)'),
-      '_gsdEpipeGuard should NOT log errors as non-fatal and continue',
+      '_sfEpipeGuard should NOT log errors as non-fatal and continue',
     );
     assert.match(
       registerExtSrc,
       /process\.exit\(1\)/,
-      '_gsdEpipeGuard should call process.exit(1) for unrecoverable errors',
+      '_sfEpipeGuard should call process.exit(1) for unrecoverable errors',
     );
   });
 
@@ -90,7 +90,7 @@ describe('register-extension crash handler secondary fixes (#3348)', () => {
     const { writeCrashLog } = await import('../bootstrap/crash-log.ts');
     const origHome = process.env.SF_HOME;
     // Point at a path that will fail to mkdir (e.g. a file that exists as non-dir)
-    const tmpFile = join(tmpdir(), `gsd-not-a-dir-${randomUUID()}`);
+    const tmpFile = join(tmpdir(), `sf-not-a-dir-${randomUUID()}`);
     // Don't create it — mkdirSync with bad path should be caught internally
     process.env.SF_HOME = join(tmpFile, 'nested', 'deeply');
     try {

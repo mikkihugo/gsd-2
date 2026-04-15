@@ -352,7 +352,7 @@ describe("workflow-logger", () => {
 
       logWarning("engine", "test warn");
       assert.equal(written.length, 1);
-      assert.ok(written[0].includes("[gsd:engine] WARN: test warn"));
+      assert.ok(written[0].includes("[sf:engine] WARN: test warn"));
     });
 
     test("writes ERROR prefix to stderr for errors", (t) => {
@@ -363,7 +363,7 @@ describe("workflow-logger", () => {
       t.after(() => { process.stderr.write = orig; });
 
       logError("intercept", "blocked");
-      assert.ok(written[0].includes("[gsd:intercept] ERROR: blocked"));
+      assert.ok(written[0].includes("[sf:intercept] ERROR: blocked"));
     });
 
     test("includes serialized context in stderr output", (t) => {

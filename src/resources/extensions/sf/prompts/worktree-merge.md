@@ -38,7 +38,7 @@ The worktree was created as a parallel workspace. It may contain code changes, n
 ### SF Artifact Diff
 
 ```diff
-{{gsdDiff}}
+{{sfDiff}}
 ```
 
 ## Your Task

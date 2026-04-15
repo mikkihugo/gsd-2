@@ -19,7 +19,7 @@ import {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-freeform-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-freeform-'));
   fs.mkdirSync(path.join(dir, '.gsd'), { recursive: true });
   return dir;
 }
@@ -55,7 +55,7 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb destroys freeform DECISIONS.md content', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
     openDatabase(dbPath);
 
@@ -151,7 +151,7 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb with table-format DECISIONS.md still regenerates normally', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
     openDatabase(dbPath);
 
@@ -200,7 +200,7 @@ describe('freeform-decisions', () => {
 
   test('saveDecisionToDb with no existing DECISIONS.md creates table', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     const mdPath = path.join(tmpDir, '.gsd', 'DECISIONS.md');
     openDatabase(dbPath);
 

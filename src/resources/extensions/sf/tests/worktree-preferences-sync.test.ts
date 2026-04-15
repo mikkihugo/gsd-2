@@ -31,7 +31,7 @@ import {
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function makeTempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), `gsd-prefs-test-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `sf-prefs-test-${prefix}-`));
 }
 
 function cleanup(...dirs: string[]): void {

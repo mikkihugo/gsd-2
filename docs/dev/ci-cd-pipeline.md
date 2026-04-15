@@ -80,7 +80,7 @@ docker run --rm -v $(pwd):/workspace ghcr.io/singularity-forge/sf-run:latest --v
 CI automatically detects when a PR contains only documentation changes (`.md` files and `docs/` content). When docs-only:
 
 - **Skipped:** `build`, `windows-portability` (no code to compile or test)
-- **Still runs:** `lint` (secret scanning, `.gsd/` check), `docs-check` (prompt injection scan)
+- **Still runs:** `lint` (secret scanning, `.sf/` check), `docs-check` (prompt injection scan)
 
 This saves CI minutes on documentation PRs while still enforcing security checks.
 
@@ -147,7 +147,7 @@ For `@dev` or `@next` rollbacks, the next successful merge will overwrite the ta
 | Secret: `ANTHROPIC_API_KEY` | Prod environment only |
 | Secret: `OPENAI_API_KEY` | Prod environment only |
 | Variable: `RUN_LIVE_TESTS` | `false` (set to `true` to enable live LLM tests) |
-| GHCR | Enabled for the `gsd-build` org |
+| GHCR | Enabled for the `sf-build` org |
 
 ### Docker Images
 

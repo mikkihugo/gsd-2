@@ -10,7 +10,7 @@ import { resolveExpectedArtifactPath, diagnoseExpectedArtifact } from "../auto-a
 import { verifyExpectedArtifact, buildLoopRemediationSteps } from "../auto-recovery.ts";
 import { resolveDispatch, type DispatchContext } from "../auto-dispatch.ts";
 import { buildCompleteMilestonePrompt, buildValidateMilestonePrompt } from "../auto-prompts.ts";
-import type { GSDState } from "../types.ts";
+import type { SFState } from "../types.ts";
 import { clearPathCache } from "../paths.ts";
 import { clearParseCache } from "../files.ts";
 import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../sf-db.ts";
@@ -18,7 +18,7 @@ import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../sf
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-val-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-val-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }
@@ -31,7 +31,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
   assert.equal(openDatabase(dbPath), true, "test DB should open");
 }
 
@@ -307,7 +307,7 @@ Test
 // ─── Dispatch rule ────────────────────────────────────────────────────────
 
 test("dispatch rule matches validating-milestone phase", async () => {
-  const state: GSDState = {
+  const state: SFState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -344,7 +344,7 @@ test("dispatch rule matches validating-milestone phase", async () => {
 });
 
 test("dispatch rule skips when skip_milestone_validation preference is set", async () => {
-  const state: GSDState = {
+  const state: SFState = {
     activeMilestone: { id: "M001", title: "Test" },
     activeSlice: null,
     activeTask: null,
@@ -497,7 +497,7 @@ test("buildLoopRemediationSteps returns steps for validate-milestone", () => {
     assert.ok(result);
     assert.ok(result!.includes("VALIDATION"));
     assert.ok(result!.includes("verdict: pass"));
-    assert.ok(result!.includes("gsd recover"));
+    assert.ok(result!.includes("sf recover"));
   } finally {
     cleanup(base);
   }

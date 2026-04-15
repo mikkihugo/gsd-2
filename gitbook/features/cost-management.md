@@ -4,9 +4,9 @@ SF tracks token usage and cost for every unit of work during auto mode. This dat
 
 ## Viewing Costs
 
-**Dashboard:** Press `Ctrl+Alt+G` or type `/gsd status` for real-time cost breakdown.
+**Dashboard:** Press `Ctrl+Alt+G` or type `/sf status` for real-time cost breakdown.
 
-**Visualizer:** `/gsd visualize` → Metrics tab for detailed charts.
+**Visualizer:** `/sf visualize` → Metrics tab for detailed charts.
 
 **Aggregations:**
 - By phase (research, planning, execution, completion, reassessment)
@@ -66,9 +66,9 @@ This spreads your budget across remaining work instead of exhausting it early.
 ## Tips
 
 - Start with `balanced` profile and a generous `budget_ceiling` to establish baseline costs
-- Check `/gsd status` after a few slices to see per-slice cost averages
+- Check `/sf status` after a few slices to see per-slice cost averages
 - Switch to `budget` for well-understood, repetitive work
 - Use `quality` only when architectural decisions are being made
 - Use per-phase model selection to save: Opus for planning, Sonnet for execution
 - Enable `dynamic_routing` for automatic model downgrading on simple tasks
-- Use `/gsd visualize` → Metrics tab to see where your budget is going
+- Use `/sf visualize` → Metrics tab to see where your budget is going

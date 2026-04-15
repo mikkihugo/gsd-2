@@ -60,7 +60,7 @@ import type { WorkerInfo } from "../parallel-orchestrator.js";
 // ─── Test Helpers ────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-parallel-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-parallel-test-"));
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }
@@ -671,7 +671,7 @@ describe("parallel-merge: formatMergeResults", () => {
     assert.ok(output.includes("CONFLICT (2 file(s))"));
     assert.ok(output.includes("`src/types.ts`"));
     assert.ok(output.includes("`src/utils.ts`"));
-    assert.ok(output.includes("/gsd parallel merge M003"));
+    assert.ok(output.includes("/sf parallel merge M003"));
   });
 
   it("formats a generic error (no conflict files) with the error message", () => {

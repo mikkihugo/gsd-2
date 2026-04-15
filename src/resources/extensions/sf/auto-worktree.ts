@@ -20,7 +20,7 @@ import {
 } from "node:fs";
 import { isAbsolute, join, sep as pathSep } from "node:path";
 import { homedir } from "node:os";
-import { GSDError, SF_IO_ERROR, SF_GIT_ERROR } from "./errors.js";
+import { SFError, SF_IO_ERROR, SF_GIT_ERROR } from "./errors.js";
 import {
   reconcileWorktreeDb,
   isDbAvailable,
@@ -177,11 +177,11 @@ function forceOverwriteAssessmentsWithVerdict(
 let originalBase: string | null = null;
 
 function clearProjectRootStateFiles(basePath: string, milestoneId: string): void {
-  const gsdDir = sfRoot(basePath);
+  const sfDir = sfRoot(basePath);
   const transientFiles = [
-    join(gsdDir, "STATE.md"),
-    join(gsdDir, "auto.lock"),
-    join(gsdDir, "milestones", milestoneId, `${milestoneId}-META.json`),
+    join(sfDir, "STATE.md"),
+    join(sfDir, "auto.lock"),
+    join(sfDir, "milestones", milestoneId, `${milestoneId}-META.json`),
   ];
 
   for (const file of transientFiles) {
@@ -201,8 +201,8 @@ function clearProjectRootStateFiles(basePath: string, milestoneId: string): void
   // `git merge --squash`, git rejects the merge with "local changes would
   // be overwritten", causing silent data loss (#1738).
   const syncedDirs = [
-    join(gsdDir, "milestones", milestoneId),
-    join(gsdDir, "runtime", "units"),
+    join(sfDir, "milestones", milestoneId),
+    join(sfDir, "runtime", "units"),
   ];
 
   for (const dir of syncedDirs) {
@@ -315,11 +315,11 @@ export function syncProjectRootToWorktree(
 
   // Delete worktree sf.db ONLY if it is empty (0 bytes).
   // An empty DB is stale/corrupt and should be rebuilt (#853).
-  // A non-empty DB was populated by gsd-migrate on respawn and must be
+  // A non-empty DB was populated by sf-migrate on respawn and must be
   // preserved — deleting it truncates the file to 0 bytes when
   // openDatabase re-creates it, causing "no such table" failures (#2815).
   try {
-    const wtDb = join(wtGsd, "gsd.db");
+    const wtDb = join(wtGsd, "sf.db");
     let deleteSidecars = false;
     if (existsSync(wtDb)) {
       const size = statSync(wtDb).size;
@@ -403,7 +403,7 @@ export function syncStateToProjectRoot(
 
 /**
  * Read the resource version (semver) from the managed-resources manifest.
- * Uses gsdVersion instead of syncedAt so that launching a second session
+ * Uses sfVersion instead of syncedAt so that launching a second session
  * doesn't falsely trigger staleness (#804).
  */
 export function readResourceVersion(): string | null {
@@ -412,8 +412,8 @@ export function readResourceVersion(): string | null {
   const manifestPath = join(agentDir, "managed-resources.json");
   try {
     const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
-    return typeof manifest?.gsdVersion === "string"
-      ? manifest.gsdVersion
+    return typeof manifest?.sfVersion === "string"
+      ? manifest.sfVersion
       : null;
   } catch (e) {
     logWarning("worktree", `readResourceVersion failed: ${(e as Error).message}`);
@@ -432,7 +432,7 @@ export function checkResourcesStale(
   const current = readResourceVersion();
   if (current === null) return null;
   if (current !== versionOnStart) {
-    return "SF resources were updated since this session started. Restart gsd to load the new code.";
+    return "SF resources were updated since this session started. Restart sf to load the new code.";
   }
   return null;
 }
@@ -730,8 +730,8 @@ export function syncWorktreeStateBack(
   // reconcile its hierarchy data into the project root DB before syncing
   // files. This handles in-flight worktrees that were created before the
   // upgrade to shared WAL mode.
-  const wtLocalDb = join(wtGsd, "gsd.db");
-  const mainDb = join(mainGsd, "gsd.db");
+  const wtLocalDb = join(wtGsd, "sf.db");
+  const mainDb = join(mainGsd, "sf.db");
   if (existsSync(wtLocalDb) && existsSync(mainDb)) {
     try {
       reconcileWorktreeDb(mainDb, wtLocalDb);
@@ -1116,7 +1116,7 @@ export function createAutoWorktree(
   } catch (err) {
     // If chdir fails, the worktree was created but we couldn't enter it.
     // Don't store originalBase -- caller can retry or clean up.
-    throw new GSDError(
+    throw new SFError(
       SF_IO_ERROR,
       `Auto-worktree created at ${info.path} but chdir failed: ${err instanceof Error ? err.message : String(err)}`,
     );
@@ -1198,7 +1198,7 @@ export function teardownAutoWorktree(
     process.chdir(originalBasePath);
     originalBase = null;
   } catch (err) {
-    throw new GSDError(
+    throw new SFError(
       SF_IO_ERROR,
       `Failed to chdir back to ${originalBasePath} during teardown: ${err instanceof Error ? err.message : String(err)}`,
     );
@@ -1295,7 +1295,7 @@ export function enterAutoWorktree(
 ): string {
   const p = worktreePath(basePath, milestoneId);
   if (!existsSync(p)) {
-    throw new GSDError(
+    throw new SFError(
       SF_IO_ERROR,
       `Auto-worktree for ${milestoneId} does not exist at ${p}`,
     );
@@ -1304,7 +1304,7 @@ export function enterAutoWorktree(
   // Validate this is a real git worktree, not a stray directory (#695)
   const gitPath = join(p, ".git");
   if (!existsSync(gitPath)) {
-    throw new GSDError(
+    throw new SFError(
       SF_GIT_ERROR,
       `Auto-worktree path ${p} exists but is not a git worktree (no .git)`,
     );
@@ -1312,14 +1312,14 @@ export function enterAutoWorktree(
   try {
     const content = readFileSync(gitPath, "utf8").trim();
     if (!content.startsWith("gitdir: ")) {
-      throw new GSDError(
+      throw new SFError(
         SF_GIT_ERROR,
         `Auto-worktree path ${p} has a .git but it is not a worktree gitdir pointer`,
       );
     }
   } catch (err) {
     if (err instanceof Error && err.message.includes("worktree")) throw err;
-    throw new GSDError(
+    throw new SFError(
       SF_IO_ERROR,
       `Auto-worktree path ${p} exists but .git is unreadable`,
     );
@@ -1331,7 +1331,7 @@ export function enterAutoWorktree(
     process.chdir(p);
     originalBase = basePath;
   } catch (err) {
-    throw new GSDError(
+    throw new SFError(
       SF_IO_ERROR,
       `Failed to enter auto-worktree at ${p}: ${err instanceof Error ? err.message : String(err)}`,
     );
@@ -1453,8 +1453,8 @@ export function mergeMilestoneToMain(
   // database (#2823).
   if (isDbAvailable()) {
     try {
-      const worktreeDbPath = join(worktreeCwd, ".gsd", "gsd.db");
-      const mainDbPath = join(originalBasePath_, ".gsd", "gsd.db");
+      const worktreeDbPath = join(worktreeCwd, ".gsd", "sf.db");
+      const mainDbPath = join(originalBasePath_, ".gsd", "sf.db");
       if (!isSamePath(worktreeDbPath, mainDbPath)) {
         reconcileWorktreeDb(mainDbPath, worktreeDbPath);
       }
@@ -1528,9 +1528,9 @@ export function mergeMilestoneToMain(
     const sliceLines = completedSlices
       .map((s) => `- ${s.id}: ${s.title}`)
       .join("\n");
-    body = `\n\nCompleted slices:\n${sliceLines}\n\nGSD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
+    body = `\n\nCompleted slices:\n${sliceLines}\n\nSF-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
   } else {
-    body = `\n\nGSD-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
+    body = `\n\nSF-Milestone: ${milestoneId}\nBranch: ${milestoneBranch}`;
   }
   const commitMessage = subject + body;
 
@@ -1571,7 +1571,7 @@ export function mergeMilestoneToMain(
         } else {
           // Diverged — fail loudly rather than silently losing commits
           process.chdir(previousCwd);
-          throw new GSDError(
+          throw new SFError(
             SF_GIT_ERROR,
             `Worktree HEAD (${worktreeHead.slice(0, 8)}) diverged from ` +
               `${milestoneBranch} (${branchHead.slice(0, 8)}). ` +
@@ -1580,9 +1580,9 @@ export function mergeMilestoneToMain(
         }
       }
     } catch (err) {
-      // Re-throw GSDError (divergence); swallow rev-parse failures
+      // Re-throw SFError (divergence); swallow rev-parse failures
       // (e.g. worktree dir already removed by external cleanup)
-      if (err instanceof GSDError) throw err;
+      if (err instanceof SFError) throw err;
       debugLog("mergeMilestoneToMain", {
         action: "reconcile-skipped",
         reason: String(err),
@@ -1613,7 +1613,7 @@ export function mergeMilestoneToMain(
         "git",
         [
           "stash", "push", "--include-untracked",
-          "-m", `gsd: pre-merge stash for ${milestoneId}`,
+          "-m", `sf: pre-merge stash for ${milestoneId}`,
           "--", ":(exclude).gsd/milestones",
         ],
         { cwd: originalBasePath_, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
@@ -1733,7 +1733,7 @@ export function mergeMilestoneToMain(
       const fileList = mergeResult.dirtyFiles?.length
         ? `Dirty files:\n${mergeResult.dirtyFiles.map((f) => `  ${f}`).join("\n")}`
         : `Check \`git status\` in the project root for details.`;
-      throw new GSDError(
+      throw new SFError(
         SF_GIT_ERROR,
         `Squash merge of ${milestoneBranch} rejected: working tree has dirty or untracked files ` +
           `that conflict with the merge. ${fileList}`,
@@ -1858,11 +1858,11 @@ export function mergeMilestoneToMain(
       // .gsd/ conflicts during the merge itself: accept HEAD (the just-committed
       // version) and drop the now-applied stash.
       const uu = nativeConflictFiles(originalBasePath_);
-      const gsdUU = uu.filter((f) => f.startsWith(".gsd/"));
+      const sfUU = uu.filter((f) => f.startsWith(".gsd/"));
       const nonGsdUU = uu.filter((f) => !f.startsWith(".gsd/"));
 
-      if (gsdUU.length > 0) {
-        for (const f of gsdUU) {
+      if (sfUU.length > 0) {
+        for (const f of sfUU) {
           try {
             // Accept the committed (HEAD) version of the state file
             execFileSync("git", ["checkout", "HEAD", "--", f], {
@@ -1918,7 +1918,7 @@ export function mergeMilestoneToMain(
     if (codeChanges.length > 0) {
       // Milestone has unanchored code changes — abort teardown.
       process.chdir(previousCwd);
-      throw new GSDError(
+      throw new SFError(
         SF_GIT_ERROR,
         `Squash merge produced nothing to commit but milestone branch "${milestoneBranch}" ` +
           `has ${codeChanges.length} code file(s) not on "${mainBranch}". ` +

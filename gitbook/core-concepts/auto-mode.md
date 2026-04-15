@@ -1,14 +1,14 @@
 # Auto Mode
 
-Auto mode is SF's autonomous execution engine. Run `/gsd auto`, walk away, come back to built software with clean git history.
+Auto mode is SF's autonomous execution engine. Run `/sf auto`, walk away, come back to built software with clean git history.
 
 ## Starting Auto Mode
 
 ```
-/gsd auto
+/sf auto
 ```
 
-SF reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh AI session with all relevant context, and lets the AI execute. When it finishes, SF reads disk state again and dispatches the next unit. This continues until the milestone is complete.
+SF reads `.sf/STATE.md`, determines the next unit of work, creates a fresh AI session with all relevant context, and lets the AI execute. When it finishes, SF reads disk state again and dispatches the next unit. This continues until the milestone is complete.
 
 ## The Execution Loop
 
@@ -35,7 +35,7 @@ Press **Escape**. The conversation is preserved. You can interact with the agent
 ### Resume
 
 ```
-/gsd auto
+/sf auto
 ```
 
 Auto mode reads disk state and picks up where it left off.
@@ -43,7 +43,7 @@ Auto mode reads disk state and picks up where it left off.
 ### Stop
 
 ```
-/gsd stop
+/sf stop
 ```
 
 Stops auto mode gracefully. Can be run from a different terminal.
@@ -51,7 +51,7 @@ Stops auto mode gracefully. Can be run from a different terminal.
 ### Steer
 
 ```
-/gsd steer
+/sf steer
 ```
 
 Modify plan documents during execution without stopping. Changes are picked up at the next phase boundary.
@@ -59,7 +59,7 @@ Modify plan documents during execution without stopping. Changes are picked up a
 ### Capture Thoughts
 
 ```
-/gsd capture "add rate limiting to API endpoints"
+/sf capture "add rate limiting to API endpoints"
 ```
 
 Fire-and-forget thought capture. Captures are triaged automatically between tasks without pausing execution. See [Captures & Triage](../features/captures.md).
@@ -82,9 +82,9 @@ In worktree mode, all commits are squash-merged to main as one clean commit when
 
 ## Crash Recovery
 
-If a session dies, the next `/gsd auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
+If a session dies, the next `/sf auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
 
-In headless mode (`gsd headless auto`), crashes trigger automatic restart with exponential backoff (5s → 10s → 30s, up to 3 attempts). Combined with crash recovery, this enables true overnight "fire and forget" execution.
+In headless mode (`sf headless auto`), crashes trigger automatic restart with exponential backoff (5s → 10s → 30s, up to 3 attempts). Combined with crash recovery, this enables true overnight "fire and forget" execution.
 
 ## Provider Error Recovery
 
@@ -151,7 +151,7 @@ Every unit's token usage and cost is captured, broken down by phase, slice, and 
 
 ## Dashboard
 
-`Ctrl+Alt+G` or `/gsd status` shows real-time progress:
+`Ctrl+Alt+G` or `/sf status` shows real-time progress:
 
 - Current milestone, slice, and task
 - Auto mode elapsed time and phase
@@ -163,21 +163,21 @@ Every unit's token usage and cost is captured, broken down by phase, slice, and 
 
 ## HTML Reports
 
-After a milestone completes, SF generates a self-contained HTML report in `.gsd/reports/` with project summary, progress tree, dependency graph, cost metrics, timeline, and changelog. Generate manually with:
+After a milestone completes, SF generates a self-contained HTML report in `.sf/reports/` with project summary, progress tree, dependency graph, cost metrics, timeline, and changelog. Generate manually with:
 
 ```
-/gsd export --html
-/gsd export --html --all    # all milestones
+/sf export --html
+/sf export --html --all    # all milestones
 ```
 
 ## Diagnostic Tools
 
 If auto mode has issues, SF provides two diagnostic tools:
 
-- **`/gsd doctor`** — validates `.gsd/` integrity, checks referential consistency, fixes structural issues
-- **`/gsd forensics`** — full post-mortem debugger with anomaly detection, unit traces, metrics analysis, and AI-guided investigation
+- **`/sf doctor`** — validates `.sf/` integrity, checks referential consistency, fixes structural issues
+- **`/sf forensics`** — full post-mortem debugger with anomaly detection, unit traces, metrics analysis, and AI-guided investigation
 
 ```
-/gsd doctor
-/gsd forensics [optional problem description]
+/sf doctor
+/sf forensics [optional problem description]
 ```

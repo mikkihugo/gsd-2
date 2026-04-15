@@ -17,7 +17,7 @@ import { clearPathCache } from "../paths.js";
 import { clearParseCache } from "../files.js";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-ct-rollback-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-ct-rollback-${randomUUID()}`);
   // Create the full tasks directory so the success path works
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
@@ -55,7 +55,7 @@ describe("complete-task rollback cleans up verification_evidence (#2724)", () =>
 
   it("inserts verification_evidence rows on success", async () => {
     base = makeTmpBase();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
 
@@ -77,7 +77,7 @@ describe("complete-task rollback cleans up verification_evidence (#2724)", () =>
 
   it("deletes verification_evidence rows on disk-render rollback", async () => {
     base = makeTmpBase();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
 

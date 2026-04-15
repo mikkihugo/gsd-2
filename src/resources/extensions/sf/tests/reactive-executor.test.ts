@@ -74,14 +74,14 @@ test("reactive_execution validation warns on unknown keys", () => {
 
 test("reactive dispatch requires enabled config and multiple ready tasks", async () => {
   // Build a minimal filesystem with a slice plan and task plans
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-dispatch-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-dispatch-"));
   try {
-    const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-    mkdirSync(join(gsd, "tasks"), { recursive: true });
+    const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+    mkdirSync(join(sf, "tasks"), { recursive: true });
 
     // Slice plan with 3 tasks
     writeFileSync(
-      join(gsd, "S01-PLAN.md"),
+      join(sf, "S01-PLAN.md"),
       [
         "# S01: Test Slice",
         "",
@@ -102,7 +102,7 @@ test("reactive dispatch requires enabled config and multiple ready tasks", async
 
     // Task plans with non-overlapping IO (all independent)
     writeFileSync(
-      join(gsd, "tasks", "T01-PLAN.md"),
+      join(sf, "tasks", "T01-PLAN.md"),
       [
         "# T01: First",
         "",
@@ -120,7 +120,7 @@ test("reactive dispatch requires enabled config and multiple ready tasks", async
     );
 
     writeFileSync(
-      join(gsd, "tasks", "T02-PLAN.md"),
+      join(sf, "tasks", "T02-PLAN.md"),
       [
         "# T02: Second",
         "",
@@ -138,7 +138,7 @@ test("reactive dispatch requires enabled config and multiple ready tasks", async
     );
 
     writeFileSync(
-      join(gsd, "tasks", "T03-PLAN.md"),
+      join(sf, "tasks", "T03-PLAN.md"),
       [
         "# T03: Third",
         "",
@@ -177,13 +177,13 @@ test("reactive dispatch requires enabled config and multiple ready tasks", async
 });
 
 test("reactive dispatch falls back when graph is ambiguous (task without IO)", async () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-ambiguous-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-ambiguous-"));
   try {
-    const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-    mkdirSync(join(gsd, "tasks"), { recursive: true });
+    const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+    mkdirSync(join(sf, "tasks"), { recursive: true });
 
     writeFileSync(
-      join(gsd, "S01-PLAN.md"),
+      join(sf, "S01-PLAN.md"),
       [
         "# S01: Test",
         "",
@@ -200,11 +200,11 @@ test("reactive dispatch falls back when graph is ambiguous (task without IO)", a
 
     // T01 has IO, T02 has NO IO sections → ambiguous
     writeFileSync(
-      join(gsd, "tasks", "T01-PLAN.md"),
+      join(sf, "tasks", "T01-PLAN.md"),
       "# T01: A\n\n## Inputs\n\n- `src/a.ts`\n\n## Expected Output\n\n- `src/b.ts`\n",
     );
     writeFileSync(
-      join(gsd, "tasks", "T02-PLAN.md"),
+      join(sf, "tasks", "T02-PLAN.md"),
       "# T02: B\n\n## Description\n\nNo IO sections.\n",
     );
 
@@ -217,13 +217,13 @@ test("reactive dispatch falls back when graph is ambiguous (task without IO)", a
 });
 
 test("single ready task falls through to sequential", async () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-single-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-single-"));
   try {
-    const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-    mkdirSync(join(gsd, "tasks"), { recursive: true });
+    const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+    mkdirSync(join(sf, "tasks"), { recursive: true });
 
     writeFileSync(
-      join(gsd, "S01-PLAN.md"),
+      join(sf, "S01-PLAN.md"),
       [
         "# S01: Linear",
         "",
@@ -239,11 +239,11 @@ test("single ready task falls through to sequential", async () => {
     );
 
     writeFileSync(
-      join(gsd, "tasks", "T01-PLAN.md"),
+      join(sf, "tasks", "T01-PLAN.md"),
       "# T01: First\n\n## Inputs\n\n- `src/config.json`\n\n## Expected Output\n\n- `src/a.ts`\n",
     );
     writeFileSync(
-      join(gsd, "tasks", "T02-PLAN.md"),
+      join(sf, "tasks", "T02-PLAN.md"),
       "# T02: Second\n\n## Inputs\n\n- `src/a.ts`\n\n## Expected Output\n\n- `src/b.ts`\n",
     );
 
@@ -261,7 +261,7 @@ test("single ready task falls through to sequential", async () => {
 // ─── State Persistence ────────────────────────────────────────────────────
 
 test("saveReactiveState and loadReactiveState round-trip", () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-state-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-state-"));
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   try {
     const state: ReactiveExecutionState = {
@@ -281,7 +281,7 @@ test("saveReactiveState and loadReactiveState round-trip", () => {
 });
 
 test("clearReactiveState removes the file", () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-clear-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-clear-"));
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   try {
     const state: ReactiveExecutionState = {
@@ -303,7 +303,7 @@ test("clearReactiveState removes the file", () => {
 });
 
 test("loadReactiveState returns null when no file exists", () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-nofile-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-nofile-"));
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   try {
     const loaded = loadReactiveState(repo, "M001", "S01");
@@ -314,14 +314,14 @@ test("loadReactiveState returns null when no file exists", () => {
 });
 
 test("completed tasks are not re-dispatched on next iteration", async () => {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-reentry-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-reentry-"));
   try {
-    const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-    mkdirSync(join(gsd, "tasks"), { recursive: true });
+    const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+    mkdirSync(join(sf, "tasks"), { recursive: true });
     mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
 
     writeFileSync(
-      join(gsd, "S01-PLAN.md"),
+      join(sf, "S01-PLAN.md"),
       [
         "# S01: Reentry Test",
         "",
@@ -338,15 +338,15 @@ test("completed tasks are not re-dispatched on next iteration", async () => {
     );
 
     writeFileSync(
-      join(gsd, "tasks", "T01-PLAN.md"),
+      join(sf, "tasks", "T01-PLAN.md"),
       "# T01: Done\n\n## Inputs\n\n- `src/config.json`\n\n## Expected Output\n\n- `src/a.ts`\n",
     );
     writeFileSync(
-      join(gsd, "tasks", "T02-PLAN.md"),
+      join(sf, "tasks", "T02-PLAN.md"),
       "# T02: Pending\n\n## Inputs\n\n- `src/a.ts`\n\n## Expected Output\n\n- `src/b.ts`\n",
     );
     writeFileSync(
-      join(gsd, "tasks", "T03-PLAN.md"),
+      join(sf, "tasks", "T03-PLAN.md"),
       "# T03: Also Pending\n\n## Inputs\n\n- `src/a.ts`\n\n## Expected Output\n\n- `src/c.ts`\n",
     );
 
@@ -373,7 +373,7 @@ test("completed tasks are not re-dispatched on next iteration", async () => {
 
 test("verifyExpectedArtifact: reactive-execute passes when all dispatched summaries exist", async () => {
   const { verifyExpectedArtifact } = await import("../auto-recovery.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-verify-pass-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-verify-pass-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -389,7 +389,7 @@ test("verifyExpectedArtifact: reactive-execute passes when all dispatched summar
 
 test("verifyExpectedArtifact: reactive-execute fails when a dispatched summary is missing", async () => {
   const { verifyExpectedArtifact } = await import("../auto-recovery.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-verify-fail-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-verify-fail-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -405,7 +405,7 @@ test("verifyExpectedArtifact: reactive-execute fails when a dispatched summary i
 
 test("verifyExpectedArtifact: reactive-execute fails even with pre-existing summaries from other tasks", async () => {
   const { verifyExpectedArtifact } = await import("../auto-recovery.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-verify-preexisting-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-verify-preexisting-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -421,7 +421,7 @@ test("verifyExpectedArtifact: reactive-execute fails even with pre-existing summ
 
 test("verifyExpectedArtifact: reactive-execute legacy format (no batch IDs) falls back", async () => {
   const { verifyExpectedArtifact } = await import("../auto-recovery.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-verify-legacy-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-verify-legacy-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -455,7 +455,7 @@ test("unitId batch encoding round-trips correctly", () => {
 
 test("getDependencyTaskSummaryPaths returns only dependency summaries", async () => {
   const { getDependencyTaskSummaryPaths } = await import("../auto-prompts.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-depcarry-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-depcarry-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -477,7 +477,7 @@ test("getDependencyTaskSummaryPaths returns only dependency summaries", async ()
 
 test("getDependencyTaskSummaryPaths falls back to order-based for root tasks", async () => {
   const { getDependencyTaskSummaryPaths } = await import("../auto-prompts.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-depcarry-root-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-depcarry-root-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });
@@ -494,7 +494,7 @@ test("getDependencyTaskSummaryPaths falls back to order-based for root tasks", a
 
 test("getDependencyTaskSummaryPaths handles missing dependency summaries gracefully", async () => {
   const { getDependencyTaskSummaryPaths } = await import("../auto-prompts.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-reactive-depcarry-missing-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-reactive-depcarry-missing-"));
   try {
     const tasksDir = join(repo, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
     mkdirSync(tasksDir, { recursive: true });

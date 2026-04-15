@@ -26,8 +26,8 @@ If you use cmux (terminal multiplexer), SF can integrate with it:
 
 | Command | Description |
 |---------|-------------|
-| `/gsd cmux status` | Show cmux detection and capabilities |
-| `/gsd cmux on` / `off` | Enable/disable integration |
-| `/gsd cmux notifications on/off` | Toggle desktop notifications |
-| `/gsd cmux sidebar on/off` | Toggle sidebar metadata |
-| `/gsd cmux splits on/off` | Toggle visual subagent splits |
+| `/sf cmux status` | Show cmux detection and capabilities |
+| `/sf cmux on` / `off` | Enable/disable integration |
+| `/sf cmux notifications on/off` | Toggle desktop notifications |
+| `/sf cmux sidebar on/off` | Toggle sidebar metadata |
+| `/sf cmux splits on/off` | Toggle visual subagent splits |

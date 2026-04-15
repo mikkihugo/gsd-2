@@ -7,7 +7,7 @@
 ## 打开可视化器
 
 ```
-/gsd visualize
+/sf visualize
 ```
 
 或者配置为在 milestone 完成后自动显示：
@@ -59,7 +59,7 @@ S01 ──→ S02 ──→ S04
 - **按 slice**：每个 slice 的成本以及累计总额
 - **按模型**：哪些模型消耗了最多预算
 
-数据来自 `.gsd/metrics.json`。
+数据来自 `.sf/metrics.json`。
 
 ### 4. 时间线
 
@@ -89,7 +89,7 @@ S01 ──→ S02 ──→ S04
 
 ## HTML 导出（v2.26）
 
-如果需要在终端外部分享报告，可以使用 `/gsd export --html`。它会在 `.gsd/reports/` 中生成一个自包含的 HTML 文件，包含与 TUI 可视化器相同的数据：进度树、依赖图（SVG DAG）、成本 / Token 柱状图、执行时间线、变更日志和知识库。所有 CSS 和 JS 都会内联，无外部依赖，也可以在任意浏览器中打印为 PDF。
+如果需要在终端外部分享报告，可以使用 `/sf export --html`。它会在 `.sf/reports/` 中生成一个自包含的 HTML 文件，包含与 TUI 可视化器相同的数据：进度树、依赖图（SVG DAG）、成本 / Token 柱状图、执行时间线、变更日志和知识库。所有 CSS 和 JS 都会内联，无外部依赖，也可以在任意浏览器中打印为 PDF。
 
 自动生成的 `index.html` 会集中列出所有报告，并显示跨 milestones 的推进指标。
 

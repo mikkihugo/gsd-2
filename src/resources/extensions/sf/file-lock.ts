@@ -5,10 +5,10 @@ function _require(name: string) {
     return require(name);
   } catch {
     try {
-      const gsdPiRequire = require("module").createRequire(
+      const sfPiRequire = require("module").createRequire(
         require("path").join(process.cwd(), "node_modules", "sf-run", "index.js")
       );
-      return gsdPiRequire(name);
+      return sfPiRequire(name);
     } catch {
       return null;
     }

@@ -24,7 +24,7 @@ const properLockfileAvailable = hasProperLockfile();
 // ─── writeLock creates auto.lock in .gsd/ ────────────────────────────────
 
 test("writeLock creates auto.lock with correct structure", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   writeLock(dir, "starting", "M001");
@@ -42,7 +42,7 @@ test("writeLock creates auto.lock with correct structure", () => {
 });
 
 test("writeLock updates existing lock with new unit info", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   writeLock(dir, "starting", "M001");
@@ -59,7 +59,7 @@ test("writeLock updates existing lock with new unit info", () => {
 // ─── readCrashLock reads auto.lock data ──────────────────────────────────
 
 test("readCrashLock returns null when no lock file exists", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   const lock = readCrashLock(dir);
@@ -69,7 +69,7 @@ test("readCrashLock returns null when no lock file exists", () => {
 });
 
 test("readCrashLock returns lock data when file exists", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   writeLock(dir, "plan-milestone", "M002");
@@ -85,7 +85,7 @@ test("readCrashLock returns lock data when file exists", () => {
 // ─── clearLock removes auto.lock ─────────────────────────────────────────
 
 test("clearLock removes the lock file", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   writeLock(dir, "starting", "M001");
@@ -98,7 +98,7 @@ test("clearLock removes the lock file", () => {
 });
 
 test("clearLock is safe when no lock file exists", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   // Should not throw
@@ -108,7 +108,7 @@ test("clearLock is safe when no lock file exists", () => {
 });
 
 test("bootstrap cleanup releases session lock artifacts", (t) => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   t.after(() => rmSync(dir, { recursive: true, force: true }));
@@ -165,7 +165,7 @@ test("isLockProcessAlive returns false for invalid PID", () => {
 // ─── Cross-process detection via lock file ───────────────────────────────
 
 test("lock file enables cross-process auto-mode detection", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   // Use the parent process PID — guaranteed alive on all platforms (Unix and Windows).
@@ -192,7 +192,7 @@ test("lock file enables cross-process auto-mode detection", () => {
 });
 
 test("stale lock from dead process is detected as not alive", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-lock-test-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
 
   // Simulate a stale lock from a process that no longer exists

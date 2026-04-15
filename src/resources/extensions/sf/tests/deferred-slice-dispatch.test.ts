@@ -29,7 +29,7 @@ import { isDeferredStatus } from "../status-guards.ts";
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-deferred-dispatch-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-deferred-dispatch-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }

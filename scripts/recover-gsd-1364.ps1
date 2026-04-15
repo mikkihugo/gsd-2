@@ -103,15 +103,15 @@ if ($DryRun) {
 
 Write-Section "── Step 1: Detect .gsd/ directory ─────────────────────────────────"
 
-$gsdDir = Join-Path $repoRoot '.gsd'
+$sfDir = Join-Path $repoRoot '.gsd'
 $GsdIsSymlink = $false
 
-if (-not (Test-Path $gsdDir)) {
+if (-not (Test-Path $sfDir)) {
     Write-Ok ".gsd/ does not exist in this repo — not affected."
     exit 0
 }
 
-if (Test-ReparsePoint $gsdDir) {
+if (Test-ReparsePoint $sfDir) {
     # Scenario C: migration succeeded (symlink/junction in place) but git index was never
     # cleaned — tracked .gsd/* files still appear as deleted through the reparse point.
     $GsdIsSymlink = $true

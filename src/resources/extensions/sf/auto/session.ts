@@ -113,7 +113,7 @@ export class AutoSession {
 
   // ── Model state ──────────────────────────────────────────────────────────
   autoModeStartModel: StartModel | null = null;
-  /** Explicit /gsd model pin captured at bootstrap (session-scoped policy override). */
+  /** Explicit /sf model pin captured at bootstrap (session-scoped policy override). */
   manualSessionModelOverride: StartModel | null = null;
   currentUnitModel: Model<Api> | null = null;
   /** Fully-qualified model ID (provider/id) set after selectAndApplyModel + hook overrides (#2899). */

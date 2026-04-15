@@ -25,7 +25,7 @@ function makeEvent(cmd: string, params: Record<string, unknown>, ts?: string): W
 const tempDirs: string[] = [];
 
 function tempDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-recon-test-"));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "sf-recon-test-"));
   tempDirs.push(dir);
   return dir;
 }
@@ -142,8 +142,8 @@ describe("reconciliation-edge-cases", () => {
   test("appendEvent creates event log if directory does not exist", () => {
     const base = tempDir();
     // Remove the .gsd directory if it somehow exists — appendEvent should create it.
-    const gsdDir = path.join(base, ".gsd");
-    if (fs.existsSync(gsdDir)) fs.rmSync(gsdDir, { recursive: true, force: true });
+    const sfDir = path.join(base, ".gsd");
+    if (fs.existsSync(sfDir)) fs.rmSync(sfDir, { recursive: true, force: true });
 
     appendEvent(base, {
       cmd: "complete_task",

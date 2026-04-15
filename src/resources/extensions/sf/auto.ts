@@ -18,7 +18,7 @@ import type {
 
 import { deriveState } from "./state.js";
 import { parseUnitId } from "./unit-id.js";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 import {
   assessInterruptedSession,
   readPausedSessionMetadata,
@@ -100,7 +100,7 @@ import {
   restoreHookState,
   clearPersistedHookState,
 } from "./post-unit-hooks.js";
-import { runGSDDoctor, rebuildState } from "./doctor.js";
+import { runSFDoctor, rebuildState } from "./doctor.js";
 import {
   preDispatchHealthGate,
   recordHealthSnapshot,
@@ -116,7 +116,7 @@ import {
   resetSkillTelemetry,
 } from "./skill-telemetry.js";
 import { getRtkSessionSavings } from "../shared/rtk-session-stats.js";
-import { deactivateGSD } from "../shared/sf-phase-state.js";
+import { deactivateSF } from "../shared/sf-phase-state.js";
 import {
   initMetrics,
   resetMetrics,
@@ -543,8 +543,8 @@ export function stopAutoRemote(projectRoot: string): {
 /**
  * Check if a remote auto-mode session is running (from a different process).
  * Reads the crash lock, checks PID liveness, and returns session details.
- * Used by the guard in commands.ts to prevent bare /gsd, /gsd next, and
- * /gsd auto from stealing the session lock.
+ * Used by the guard in commands.ts to prevent bare /sf, /sf next, and
+ * /sf auto from stealing the session lock.
  */
 export function checkRemoteAutoSession(projectRoot: string): {
   running: boolean;
@@ -646,7 +646,7 @@ function handleLostSessionLock(
   });
   s.active = false;
   s.paused = false;
-  deactivateGSD();
+  deactivateSF();
   clearUnitTimeout();
   restoreProjectRootEnv();
   restoreMilestoneLockEnv();
@@ -654,7 +654,7 @@ function handleLostSessionLock(
   clearCmuxSidebar(loadEffectiveSFPreferences()?.preferences);
   const base = lockBase();
   const lockFilePath = base ? join(sfRoot(base), "auto.lock") : "unknown";
-  const recoverySuggestion = "\nTo recover, run: gsd doctor --fix";
+  const recoverySuggestion = "\nTo recover, run: sf doctor --fix";
   const message =
     lockStatus?.failureReason === "pid-mismatch"
       ? lockStatus.existingPid
@@ -669,8 +669,8 @@ function handleLostSessionLock(
     message,
     "error",
   );
-  ctx?.ui.setStatus("gsd-auto", undefined);
-  ctx?.ui.setWidget("gsd-progress", undefined);
+  ctx?.ui.setStatus("sf-auto", undefined);
+  ctx?.ui.setWidget("sf-progress", undefined);
   ctx?.ui.setFooter(undefined);
   if (ctx) initHealthWidget(ctx);
 }
@@ -685,12 +685,12 @@ function handleLostSessionLock(
 function cleanupAfterLoopExit(ctx: ExtensionContext): void {
   s.currentUnit = null;
   s.active = false;
-  deactivateGSD();
+  deactivateSF();
   clearUnitTimeout();
   restoreProjectRootEnv();
   restoreMilestoneLockEnv();
 
-  // Clear crash lock and release session lock so the next `/gsd next` does
+  // Clear crash lock and release session lock so the next `/sf next` does
   // not see a stale lock with the current PID and treat it as a "remote"
   // session (which would cause it to SIGTERM itself). (#2730)
   try {
@@ -704,8 +704,8 @@ function cleanupAfterLoopExit(ctx: ExtensionContext): void {
   // A transient provider-error pause intentionally leaves the paused badge
   // visible so the user still has a resumable auto-mode signal on screen.
   if (!s.paused) {
-    ctx.ui.setStatus("gsd-auto", undefined);
-    ctx.ui.setWidget("gsd-progress", undefined);
+    ctx.ui.setStatus("sf-auto", undefined);
+    ctx.ui.setWidget("sf-progress", undefined);
     ctx.ui.setFooter(undefined);
     initHealthWidget(ctx);
   }
@@ -742,7 +742,7 @@ export async function stopAuto(
     }
 
     // ── Step 1b: Flush queued follow-up messages (#3512) ──
-    // Late async notifications (async_job_result, gsd-auto-wrapup) can trigger
+    // Late async notifications (async_job_result, sf-auto-wrapup) can trigger
     // extra LLM turns after stop. Flush them the same way run-unit.ts does.
     try {
       const cmdCtxAny = s.cmdCtx as Record<string, unknown> | null;
@@ -976,8 +976,8 @@ export async function stopAuto(
     resetProactiveHealing();
 
     // UI cleanup
-    ctx?.ui.setStatus("gsd-auto", undefined);
-    ctx?.ui.setWidget("gsd-progress", undefined);
+    ctx?.ui.setStatus("sf-auto", undefined);
+    ctx?.ui.setWidget("sf-progress", undefined);
     ctx?.ui.setFooter(undefined);
     if (ctx) initHealthWidget(ctx);
     restoreProjectRootEnv();
@@ -990,7 +990,7 @@ export async function stopAuto(
 
 /**
  * Pause auto-mode without destroying state. Context is preserved.
- * The user can interact with the agent, then `/gsd auto` resumes
+ * The user can interact with the agent, then `/sf auto` resumes
  * from disk state. Called when the user presses Escape during auto-mode.
  */
 export async function pauseAuto(
@@ -1002,7 +1002,7 @@ export async function pauseAuto(
   clearUnitTimeout();
 
   // Flush queued follow-up messages (#3512).
-  // Late async notifications (async_job_result, gsd-auto-wrapup) can trigger
+  // Late async notifications (async_job_result, sf-auto-wrapup) can trigger
   // extra LLM turns after pause. Flush them the same way run-unit.ts does.
   try {
     const cmdCtxAny = s.cmdCtx as Record<string, unknown> | null;
@@ -1073,16 +1073,16 @@ export async function pauseAuto(
 
   s.active = false;
   s.paused = true;
-  deactivateGSD();
+  deactivateSF();
   restoreProjectRootEnv();
   restoreMilestoneLockEnv();
   s.pendingVerificationRetry = null;
   s.verificationRetryCount.clear();
-  ctx?.ui.setStatus("gsd-auto", "paused");
-  ctx?.ui.setWidget("gsd-progress", undefined);
+  ctx?.ui.setStatus("sf-auto", "paused");
+  ctx?.ui.setWidget("sf-progress", undefined);
   ctx?.ui.setFooter(undefined);
   if (ctx) initHealthWidget(ctx);
-  const resumeCmd = s.stepMode ? "/gsd next" : "/gsd auto";
+  const resumeCmd = s.stepMode ? "/sf next" : "/sf auto";
   ctx?.ui.notify(
     `${s.stepMode ? "Step" : "Auto"}-mode paused (Escape). Type to interact, or ${resumeCmd} to resume.`,
     "info",
@@ -1454,7 +1454,7 @@ export async function startAuto(
 
     registerSigtermHandler(lockBase());
 
-    ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+    ctx.ui.setStatus("sf-auto", s.stepMode ? "next" : "auto");
     ctx.ui.setFooter(hideFooter);
     ctx.ui.notify(
       s.stepMode ? "Step-mode resumed." : "Auto-mode resumed.",
@@ -1487,7 +1487,7 @@ export async function startAuto(
       });
     }
     try {
-      const report = await runGSDDoctor(s.basePath, { fix: true });
+      const report = await runSFDoctor(s.basePath, { fix: true });
       if (report.fixesApplied.length > 0) {
         ctx.ui.notify(
           `Resume: applied ${report.fixesApplied.length} fix(es) to state.`,
@@ -1615,7 +1615,7 @@ function updateProgressWidget(
   ctx: ExtensionContext,
   unitType: string,
   unitId: string,
-  state: GSDState,
+  state: SFState,
 ): void {
   const badge = s.currentUnitRouting?.tier
     ? ({ light: "L", standard: "S", heavy: "H" }[s.currentUnitRouting.tier] ??
@@ -1652,7 +1652,7 @@ function ensurePreconditions(
   unitType: string,
   unitId: string,
   base: string,
-  state: GSDState,
+  state: SFState,
 ): void {
   const { milestone: mid, slice: sid } = parseUnitId(unitId);
 
@@ -1762,7 +1762,7 @@ export async function dispatchHookUnit(
     await pauseAuto(ctx, pi);
   }, hookHardTimeoutMs);
 
-  ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+  ctx.ui.setStatus("sf-auto", s.stepMode ? "next" : "auto");
   ctx.ui.notify(`Running post-unit hook: ${hookName}`, "info");
 
   // Ensure cwd matches basePath before hook dispatch (#1389)
@@ -1775,7 +1775,7 @@ export async function dispatchHookUnit(
     promptLength: hookPrompt.length,
   });
   pi.sendMessage(
-    { customType: "gsd-auto", content: hookPrompt, display: true },
+    { customType: "sf-auto", content: hookPrompt, display: true },
     { triggerTurn: true },
   );
 

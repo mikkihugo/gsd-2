@@ -56,7 +56,7 @@ export interface WorkspaceScopeTarget {
   kind: "project" | "milestone" | "slice" | "task";
 }
 
-export interface GSDWorkspaceIndex {
+export interface SFWorkspaceIndex {
   milestones: WorkspaceMilestoneTarget[];
   active: {
     milestoneId?: string;
@@ -140,7 +140,7 @@ export interface IndexWorkspaceOptions {
   validate?: boolean;
 }
 
-export async function indexWorkspace(basePath: string, opts: IndexWorkspaceOptions = {}): Promise<GSDWorkspaceIndex> {
+export async function indexWorkspace(basePath: string, opts: IndexWorkspaceOptions = {}): Promise<SFWorkspaceIndex> {
   const milestoneIds = findMilestoneIds(basePath);
   const milestones: WorkspaceMilestoneTarget[] = [];
 
@@ -263,10 +263,10 @@ export async function getSuggestedNextCommands(basePath: string): Promise<string
     : index.active.milestoneId;
 
   const commands = new Set<string>();
-  if (index.active.phase === "planning") commands.add("/gsd");
-  if (index.active.phase === "executing" || index.active.phase === "summarizing") commands.add("/gsd auto");
-  if (scope) commands.add(`/gsd doctor ${scope}`);
-  if (scope) commands.add(`/gsd doctor fix ${scope}`);
-  commands.add("/gsd status");
+  if (index.active.phase === "planning") commands.add("/sf");
+  if (index.active.phase === "executing" || index.active.phase === "summarizing") commands.add("/sf auto");
+  if (scope) commands.add(`/sf doctor ${scope}`);
+  if (scope) commands.add(`/sf doctor fix ${scope}`);
+  commands.add("/sf status");
   return [...commands];
 }

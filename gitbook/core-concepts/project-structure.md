@@ -37,12 +37,12 @@ Examples:
 - "Implement JWT middleware"
 - "Build the login form component"
 
-## The `.gsd/` Directory
+## The `.sf/` Directory
 
-All project state lives on disk in a `.gsd/` directory at your project root:
+All project state lives on disk in a `.sf/` directory at your project root:
 
 ```
-.gsd/
+.sf/
   PROJECT.md          — living description of what the project is
   REQUIREMENTS.md     — requirement contract (active/validated/deferred)
   DECISIONS.md        — append-only architectural decisions log
@@ -96,9 +96,9 @@ After all slices complete, a **milestone validation** gate checks that success c
 SF maintains a knowledge base that persists across sessions. Add rules, patterns, or lessons:
 
 ```
-/gsd knowledge rule "Always use parameterized queries for database access"
-/gsd knowledge pattern "Service classes go in src/services/"
-/gsd knowledge lesson "The OAuth flow requires the redirect URL to match exactly"
+/sf knowledge rule "Always use parameterized queries for database access"
+/sf knowledge pattern "Service classes go in src/services/"
+/sf knowledge lesson "The OAuth flow requires the redirect URL to match exactly"
 ```
 
 This knowledge is injected into every task prompt automatically.

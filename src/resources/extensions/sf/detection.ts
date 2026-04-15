@@ -17,7 +17,7 @@ const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
 
 export interface ProjectDetection {
   /** What kind of SF state exists in this directory */
-  state: "none" | "v1-planning" | "v2-gsd" | "v2-gsd-empty";
+  state: "none" | "v1-planning" | "v2-sf" | "v2-sf-empty";
 
   /** Is this the first time SF has been used on this machine? */
   isFirstEverLaunch: boolean;
@@ -28,7 +28,7 @@ export interface ProjectDetection {
   /** v1 details (only when state === 'v1-planning') */
   v1?: V1Detection;
 
-  /** v2 details (only when state === 'v2-gsd' or 'v2-gsd-empty') */
+  /** v2 details (only when state === 'v2-sf' or 'v2-sf-empty') */
   v2?: V2Detection;
 
   /** Detected project ecosystem signals */
@@ -298,9 +298,9 @@ export function detectProjectState(basePath: string): ProjectDetection {
 
   let state: ProjectDetection["state"];
   if (v2 && v2.milestoneCount > 0) {
-    state = "v2-gsd";
+    state = "v2-sf";
   } else if (v2 && v2.milestoneCount === 0) {
-    state = "v2-gsd-empty";
+    state = "v2-sf-empty";
   } else if (v1) {
     state = "v1-planning";
   } else {
@@ -744,7 +744,7 @@ export function isFirstEverLaunch(): boolean {
   if (existsSync(join(sfHome, "agent", "auth.json"))) return false;
 
   // Check legacy path too
-  const legacyPath = join(homedir(), ".pi", "agent", "gsd-preferences.md");
+  const legacyPath = join(homedir(), ".pi", "agent", "sf-preferences.md");
   if (existsSync(legacyPath)) return false;
 
   return true;

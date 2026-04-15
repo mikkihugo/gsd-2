@@ -1,6 +1,6 @@
 # SF Preferences Reference
 
-Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
+Full documentation for `~/.sf/PREFERENCES.md` (global) and `.sf/PREFERENCES.md` (project).
 
 ---
 
@@ -10,7 +10,7 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 - Prefer explicit skill names or absolute paths.
 - Use absolute paths for personal/local skills when you want zero ambiguity.
 - These preferences guide which skills SF should load and follow; they do not override higher-priority instructions in the current conversation.
-- For Claude marketplace/plugin import behavior, see `~/.gsd/agent/extensions/sf/docs/claude-marketplace-import.md`.
+- For Claude marketplace/plugin import behavior, see `~/.sf/agent/extensions/sf/docs/claude-marketplace-import.md`.
 
 ---
 
@@ -51,8 +51,8 @@ skill_rules: []
 
 Preferences are loaded from two locations and merged:
 
-1. **Global:** `~/.gsd/PREFERENCES.md` — applies to all projects
-2. **Project:** `.gsd/PREFERENCES.md` — applies to the current project only
+1. **Global:** `~/.sf/PREFERENCES.md` — applies to all projects
+2. **Project:** `.sf/PREFERENCES.md` — applies to the current project only
 
 **Merge behavior** (see `mergePreferences()` in `preferences.ts`):
 
@@ -90,7 +90,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   | `git.isolation`        | `"worktree"` | `"worktree"` |
   | `unique_milestone_ids` | `false`      | `true`       |
 
-  Quick setup: `/gsd mode` (global) or `/gsd mode project` (project-level).
+  Quick setup: `/sf mode` (global) or `/sf mode project` (project-level).
 
 - `always_use_skills`: skills SF should use whenever they are relevant.
 
@@ -100,7 +100,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `skill_rules`: situational rules with a human-readable `when` trigger and one or more of `use`, `prefer`, or `avoid`.
 
-- `custom_instructions`: extra durable instructions related to skill use. For operational project knowledge (recurring rules, gotchas, patterns), use `.gsd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically and agents can append to it during execution.
+- `custom_instructions`: extra durable instructions related to skill use. For operational project knowledge (recurring rules, gotchas, patterns), use `.sf/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically and agents can append to it during execution.
 
 - `models`: per-stage model selection (applies to both auto-mode and guided-flow dispatches). Keys: `research`, `planning`, `discuss`, `execution`, `execution_simple`, `completion`, `validation`, `subagent`. Values can be:
   - Simple string: `"claude-sonnet-4-6"` — single model, no fallbacks
@@ -140,7 +140,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `worktree_post_create`: string — script to run after a worktree is created (both auto-mode and manual `/worktree`). Receives `SOURCE_DIR` and `WORKTREE_DIR` as environment variables. Can be absolute or relative to project root. Runs with 30-second timeout. Failure is non-fatal (logged as warning). Default: none.
   - `auto_pr`: boolean — automatically create a GitHub pull request after a milestone branch is merged. Requires `gh` CLI to be installed. Default: `false`.
   - `pr_target_branch`: string — branch to target when `auto_pr` is enabled. Defaults to `main_branch` when omitted.
-  - **Deprecated:** `commit_docs` — no longer valid; `.gsd/` is always gitignored. Remove this setting.
+  - **Deprecated:** `commit_docs` — no longer valid; `.sf/` is always gitignored. Remove this setting.
   - **Deprecated:** `merge_to_main` — no longer valid; milestone-level merge is always used. Remove this setting.
 
 - `unique_milestone_ids`: boolean — when `true`, generates milestone IDs in `M{seq}-{rand6}` format (e.g. `M001-eh88as`) instead of plain sequential `M001`. Prevents ID collisions in team workflows where multiple contributors create milestones concurrently. Both formats coexist — existing `M001`-style milestones remain valid. Default: `false`.

@@ -59,7 +59,7 @@ export function resolveModulePaths(
     "src",
     "resources",
     "extensions",
-    "gsd",
+    "sf",
     "tests",
     "resolve-ts.mjs",
   )
@@ -128,7 +128,7 @@ export async function runSubprocess<T>(options: RunSubprocessOptions): Promise<T
 
   const tsLoaderPath =
     options.tsLoaderPath ??
-    join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+    join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 
   return await new Promise<T>((resolveResult, reject) => {
     execFile(

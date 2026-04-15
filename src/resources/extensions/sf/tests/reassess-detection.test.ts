@@ -7,10 +7,10 @@ import { randomUUID } from "node:crypto";
 
 import { checkNeedsReassessment } from "../auto-prompts.ts";
 import { invalidateAllCaches } from "../cache.ts";
-import type { GSDState } from "../types.ts";
+import type { SFState } from "../types.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-reassess-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-reassess-${randomUUID()}`);
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S02", "tasks"), { recursive: true });
   return base;
@@ -44,7 +44,7 @@ const ROADMAP_S01_DONE_S02_TODO = `# M001 Roadmap
 - [ ] **S02: Second** \`risk:medium\` \`depends:[S01]\`
 `;
 
-const dummyState: GSDState = {
+const dummyState: SFState = {
   phase: "executing",
   activeMilestone: { id: "M001", title: "Test" },
   activeSlice: { id: "S02", title: "Second" },

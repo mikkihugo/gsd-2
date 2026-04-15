@@ -7,10 +7,10 @@ import fs from "node:fs";
 import { handleInspect } from "../commands-inspect.ts";
 import { closeDatabase, openDatabase } from "../sf-db.ts";
 
-test("/gsd inspect opens existing database when it was not yet opened in session", async (t) => {
+test("/sf inspect opens existing database when it was not yet opened in session", async (t) => {
   closeDatabase();
 
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-inspect-db-"));
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "sf-inspect-db-"));
   const prevCwd = process.cwd();
 
   t.after(() => {
@@ -19,9 +19,9 @@ test("/gsd inspect opens existing database when it was not yet opened in session
     fs.rmSync(tmp, { recursive: true, force: true });
   });
 
-  const gsdDir = path.join(tmp, ".gsd");
-  fs.mkdirSync(gsdDir, { recursive: true });
-  const dbPath = path.join(gsdDir, "gsd.db");
+  const sfDir = path.join(tmp, ".gsd");
+  fs.mkdirSync(sfDir, { recursive: true });
+  const dbPath = path.join(sfDir, "sf.db");
 
   assert.equal(openDatabase(dbPath), true);
   closeDatabase();

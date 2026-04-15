@@ -143,7 +143,7 @@ describe("parallel-worker-monitoring", () => {
   });
 
   it("refreshWorkerStatuses restores persisted workers from disk", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-monitoring-"));
+    const base = mkdtempSync(join(tmpdir(), "sf-parallel-monitoring-"));
     try {
       mkdirSync(join(base, ".gsd"), { recursive: true });
       writeFileSync(join(base, ".gsd", "orchestrator.json"), JSON.stringify({
@@ -174,7 +174,7 @@ describe("parallel-worker-monitoring", () => {
   });
 
   it("refreshWorkerStatuses restores persisted workers from live session status files", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-stderr-"));
+    const base = mkdtempSync(join(tmpdir(), "sf-parallel-stderr-"));
     try {
       mkdirSync(join(base, ".gsd", "parallel"), { recursive: true });
       writeFileSync(join(base, ".gsd", "parallel", "M009.status.json"), JSON.stringify({

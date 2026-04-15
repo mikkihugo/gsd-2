@@ -8,7 +8,7 @@ import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
 import type { SFPreferences } from "../preferences.js";
-import type { GSDState } from "../types.js";
+import type { SFState } from "../types.js";
 import type { SessionLockStatus } from "../session-lock.js";
 import type { CloseoutOptions } from "../auto-unit-closeout.js";
 import type { PostUnitContext, PreVerificationOpts } from "../auto-post-unit.js";
@@ -44,9 +44,9 @@ export interface LoopDeps {
     ctx: ExtensionContext,
     unitType: string,
     unitId: string,
-    state: GSDState,
+    state: SFState,
   ) => void;
-  syncCmuxSidebar: (preferences: SFPreferences | undefined, state: GSDState) => void;
+  syncCmuxSidebar: (preferences: SFPreferences | undefined, state: SFState) => void;
   logCmuxEvent: (
     preferences: SFPreferences | undefined,
     message: string,
@@ -55,7 +55,7 @@ export interface LoopDeps {
 
   // State and cache functions
   invalidateAllCaches: () => void;
-  deriveState: (basePath: string) => Promise<GSDState>;
+  deriveState: (basePath: string) => Promise<SFState>;
   rebuildState: (basePath: string) => Promise<void>;
   loadEffectiveSFPreferences: () =>
     | { preferences?: SFPreferences }
@@ -152,7 +152,7 @@ export interface LoopDeps {
     basePath: string;
     mid: string;
     midTitle: string;
-    state: GSDState;
+    state: SFState;
     prefs: SFPreferences | undefined;
     session?: AutoSession;
   }) => Promise<DispatchAction>;
@@ -202,7 +202,7 @@ export interface LoopDeps {
     unitType: string,
     unitId: string,
     basePath: string,
-    state: GSDState,
+    state: SFState,
   ) => void;
   updateSliceProgressCache: (
     basePath: string,

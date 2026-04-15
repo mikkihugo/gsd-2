@@ -1,4 +1,4 @@
-// GSD2 — Extension registration: wires all SF tools, commands, and hooks into pi
+// SF2 — Extension registration: wires all SF tools, commands, and hooks into pi
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
@@ -34,8 +34,8 @@ export function handleRecoverableExtensionProcessError(err: Error): boolean {
 }
 
 function installEpipeGuard(): void {
-  if (!process.listeners("uncaughtException").some((listener) => listener.name === "_gsdEpipeGuard")) {
-    const _gsdEpipeGuard = (err: Error): void => {
+  if (!process.listeners("uncaughtException").some((listener) => listener.name === "_sfEpipeGuard")) {
+    const _sfEpipeGuard = (err: Error): void => {
       if (handleRecoverableExtensionProcessError(err)) return;
       // Write crash log and exit cleanly for unrecoverable errors.
       // Logging and continuing was the original double-fault fix (#3163), but
@@ -43,17 +43,17 @@ function installEpipeGuard(): void {
       writeCrashLog(err, "uncaughtException");
       process.exit(1);
     };
-    process.on("uncaughtException", _gsdEpipeGuard);
+    process.on("uncaughtException", _sfEpipeGuard);
   }
 
-  if (!process.listeners("unhandledRejection").some((listener) => listener.name === "_gsdRejectionGuard")) {
-    const _gsdRejectionGuard = (reason: unknown, _promise: Promise<unknown>): void => {
+  if (!process.listeners("unhandledRejection").some((listener) => listener.name === "_sfRejectionGuard")) {
+    const _sfRejectionGuard = (reason: unknown, _promise: Promise<unknown>): void => {
       const err = reason instanceof Error ? reason : new Error(String(reason));
       if (handleRecoverableExtensionProcessError(err)) return;
       writeCrashLog(err, "unhandledRejection");
       process.exit(1);
     };
-    process.on("unhandledRejection", _gsdRejectionGuard);
+    process.on("unhandledRejection", _sfRejectionGuard);
   }
 }
 

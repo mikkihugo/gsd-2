@@ -108,7 +108,7 @@ const DEFAULT_MAX_FILES = 500;
 const DEFAULT_COLLAPSE_THRESHOLD = 20;
 const DEFAULT_REFRESH_TTL_MS = 30_000;
 const DEFAULT_MAX_AGE_MS = 15 * 60_000;
-const CODEBASE_METADATA_PREFIX = "<!-- gsd:codebase-meta ";
+const CODEBASE_METADATA_PREFIX = "<!-- sf:codebase-meta ";
 
 const freshnessCache = new Map<string, { checkedAt: number; result: EnsureCodebaseMapResult }>();
 
@@ -116,7 +116,7 @@ const freshnessCache = new Map<string, { checkedAt: number; result: EnsureCodeba
 
 /**
  * Parse an existing CODEBASE.md to extract file → description mappings.
- * Also scans <!-- gsd:collapsed-descriptions --> comment blocks to preserve
+ * Also scans <!-- sf:collapsed-descriptions --> comment blocks to preserve
  * descriptions for files in collapsed directories across incremental updates.
  */
 export function parseCodebaseMap(content: string): Map<string, string> {
@@ -125,7 +125,7 @@ export function parseCodebaseMap(content: string): Map<string, string> {
 
   for (const line of content.split("\n")) {
     // Track collapsed-description comment blocks
-    if (line.trimStart().startsWith("<!-- gsd:collapsed-descriptions")) {
+    if (line.trimStart().startsWith("<!-- sf:collapsed-descriptions")) {
       inCollapsedBlock = true;
       continue;
     }
@@ -200,7 +200,7 @@ function shouldExclude(filePath: string, excludes: string[]): boolean {
 function lsFiles(basePath: string): string[] {
   try {
     // stdio: "pipe" captures stderr into the thrown Error instead of
-    // inheriting it to the parent. Without it, running gsd from a non-repo
+    // inheriting it to the parent. Without it, running sf from a non-repo
     // cwd (e.g. `$HOME`) leaks a "fatal: not a git repository" line to the
     // user's terminal before the catch silently falls through to [].
     const result = execSync("git ls-files", {
@@ -337,7 +337,7 @@ function renderCodebaseMap(
         .filter((f) => f.description)
         .map((f) => `- \`${f.path}\` — ${f.description}`);
       if (descLines.length > 0) {
-        lines.push("<!-- gsd:collapsed-descriptions");
+        lines.push("<!-- sf:collapsed-descriptions");
         lines.push(...descLines);
         lines.push("-->");
       }

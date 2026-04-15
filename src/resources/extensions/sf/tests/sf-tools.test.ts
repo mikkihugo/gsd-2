@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-// gsd-tools — Structured LLM tool tests
+// sf-tools — Structured LLM tool tests
 //
 // Tests the three registered tools: sf_decision_save, sf_requirement_update, sf_summary_save.
 // Each tool is tested via direct function invocation against an in-memory DB.
@@ -33,7 +33,7 @@ import type { Requirement } from '../types.ts';
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-tools-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-tools-'));
   fs.mkdirSync(path.join(dir, '.gsd'), { recursive: true });
   return dir;
 }
@@ -50,11 +50,11 @@ function cleanupDir(dir: string): void {
  * execute logic pattern: check DB -> call writer -> return result.
  */
 
-describe('gsd-tools', () => {
+describe('sf-tools', () => {
   test('sf_decision_save', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
       assert.ok(isDbAvailable(), 'DB should be available after open');
 
@@ -119,7 +119,7 @@ describe('gsd-tools', () => {
   test('sf_requirement_update', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // Seed a requirement
@@ -177,7 +177,7 @@ describe('gsd-tools', () => {
   test('sf_summary_save', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // (c) Summary tool creates artifact row
@@ -248,7 +248,7 @@ describe('gsd-tools', () => {
   test('sf_summary_save supports CONTEXT-DRAFT persistence', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       await saveArtifactToDb(
@@ -296,7 +296,7 @@ describe('gsd-tools', () => {
   test('sf_requirement_save creates new requirement', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // (a) saveRequirementToDb creates a new requirement with auto-assigned ID
@@ -349,7 +349,7 @@ describe('gsd-tools', () => {
   test('nextRequirementId computes correct next ID', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // No requirements yet
@@ -384,7 +384,7 @@ describe('gsd-tools', () => {
   test('sf_requirement_update upserts when requirement not in DB', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // Requirement R025 does NOT exist in DB — simulates the bug scenario
@@ -414,7 +414,7 @@ describe('gsd-tools', () => {
   test('Tool result format', async () => {
     const tmpDir = makeTmpDir();
     try {
-      const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+      const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
       openDatabase(dbPath);
 
       // Verify result follows AgentToolResult interface: {content: [{type: "text", text}], details}

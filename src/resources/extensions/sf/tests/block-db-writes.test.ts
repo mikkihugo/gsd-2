@@ -11,20 +11,20 @@ import assert from 'node:assert/strict';
 import { isBlockedStateFile, isBashWriteToStateFile } from '../write-intercept.ts';
 
 describe('isBlockedStateFile blocks sf.db paths (#3674)', () => {
-  test('blocks .gsd/gsd.db', () => {
-    assert.ok(isBlockedStateFile('/project/.gsd/gsd.db'));
+  test('blocks .gsd/sf.db', () => {
+    assert.ok(isBlockedStateFile('/project/.gsd/sf.db'));
   });
 
-  test('blocks .gsd/gsd.db-wal', () => {
-    assert.ok(isBlockedStateFile('/project/.gsd/gsd.db-wal'));
+  test('blocks .gsd/sf.db-wal', () => {
+    assert.ok(isBlockedStateFile('/project/.gsd/sf.db-wal'));
   });
 
-  test('blocks .gsd/gsd.db-shm', () => {
-    assert.ok(isBlockedStateFile('/project/.gsd/gsd.db-shm'));
+  test('blocks .gsd/sf.db-shm', () => {
+    assert.ok(isBlockedStateFile('/project/.gsd/sf.db-shm'));
   });
 
   test('blocks resolved symlink path under .gsd/projects/', () => {
-    assert.ok(isBlockedStateFile('/home/user/.gsd/projects/myproj/gsd.db'));
+    assert.ok(isBlockedStateFile('/home/user/.gsd/projects/myproj/sf.db'));
   });
 
   test('still blocks STATE.md', () => {
@@ -38,26 +38,26 @@ describe('isBlockedStateFile blocks sf.db paths (#3674)', () => {
 
 describe('isBashWriteToStateFile blocks DB shell commands (#3674)', () => {
   test('blocks sqlite3 targeting sf.db', () => {
-    assert.ok(isBashWriteToStateFile('sqlite3 .gsd/gsd.db "INSERT INTO ..."'));
+    assert.ok(isBashWriteToStateFile('sqlite3 .gsd/sf.db "INSERT INTO ..."'));
   });
 
   test('blocks better-sqlite3 targeting sf.db', () => {
-    assert.ok(isBashWriteToStateFile('node -e "require(\'better-sqlite3\')(\'.gsd/gsd.db\')"'));
+    assert.ok(isBashWriteToStateFile('node -e "require(\'better-sqlite3\')(\'.gsd/sf.db\')"'));
   });
 
   test('blocks shell redirect to sf.db', () => {
-    assert.ok(isBashWriteToStateFile('echo data > .gsd/gsd.db'));
+    assert.ok(isBashWriteToStateFile('echo data > .gsd/sf.db'));
   });
 
   test('blocks cp to sf.db', () => {
-    assert.ok(isBashWriteToStateFile('cp backup.db .gsd/gsd.db'));
+    assert.ok(isBashWriteToStateFile('cp backup.db .gsd/sf.db'));
   });
 
   test('blocks mv to sf.db', () => {
-    assert.ok(isBashWriteToStateFile('mv temp.db .gsd/gsd.db'));
+    assert.ok(isBashWriteToStateFile('mv temp.db .gsd/sf.db'));
   });
 
   test('does not block reading sf.db with cat', () => {
-    assert.ok(!isBashWriteToStateFile('cat .gsd/gsd.db'));
+    assert.ok(!isBashWriteToStateFile('cat .gsd/sf.db'));
   });
 });

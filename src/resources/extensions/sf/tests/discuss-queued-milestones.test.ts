@@ -1,7 +1,7 @@
 /**
  * discuss-queued-milestones.test.ts — Tests for #2307.
  *
- * /gsd discuss was previously gated on state.activeMilestone, which prevented
+ * /sf discuss was previously gated on state.activeMilestone, which prevented
  * users from discussing queued (pending) milestones during roadmap grooming.
  *
  * These tests verify:
@@ -29,7 +29,7 @@ import { resolveMilestoneFile } from "../paths.ts";
 // ─── Fixture Helpers ──────────────────────────────────────────────────────────
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-discuss-queued-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-discuss-queued-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }
@@ -174,7 +174,7 @@ describe("discuss-queued-milestones (#2307)", () => {
 
     // The old guard was a simple early-exit:
     //   if (!state.activeMilestone) {
-    //     ctx.ui.notify("No active milestone. Run /gsd to create one first.", "warning");
+    //     ctx.ui.notify("No active milestone. Run /sf to create one first.", "warning");
     //     return;
     //   }
     //

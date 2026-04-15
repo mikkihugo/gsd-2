@@ -20,7 +20,7 @@ import {
 } from "../sf-db.ts";
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-park-db-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-park-db-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
   writeFileSync(
     join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),

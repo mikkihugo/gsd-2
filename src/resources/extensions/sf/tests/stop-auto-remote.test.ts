@@ -16,7 +16,7 @@ import {
 import { stopAutoRemote } from "../auto.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }

@@ -174,7 +174,7 @@ function mergeNodeOptions(existing: string | undefined, additions: string[]): st
 
 function buildWorkflowLaunchEnv(
   projectRoot: string,
-  gsdCliPath: string | undefined,
+  sfCliPath: string | undefined,
   explicitEnv?: Record<string, string>,
   workflowCliPath?: string,
 ): Record<string, string> {
@@ -197,7 +197,7 @@ function buildWorkflowLaunchEnv(
 
   return {
     ...(explicitEnv ?? {}),
-    ...(gsdCliPath ? { SF_CLI_PATH: gsdCliPath } : {}),
+    ...(sfCliPath ? { SF_CLI_PATH: sfCliPath } : {}),
     ...(executorModulePath ? { SF_WORKFLOW_EXECUTORS_MODULE: executorModulePath } : {}),
     ...(writeGateModulePath ? { SF_WORKFLOW_WRITE_GATE_MODULE: writeGateModulePath } : {}),
     ...(nodeOptions ? { NODE_OPTIONS: nodeOptions } : {}),
@@ -210,12 +210,12 @@ export function detectWorkflowMcpLaunchConfig(
   projectRoot = process.cwd(),
   env: NodeJS.ProcessEnv = process.env,
 ): WorkflowMcpLaunchConfig | null {
-  const name = env.SF_WORKFLOW_MCP_NAME?.trim() || "gsd-workflow";
+  const name = env.SF_WORKFLOW_MCP_NAME?.trim() || "sf-workflow";
   const explicitCommand = env.SF_WORKFLOW_MCP_COMMAND?.trim();
   const explicitArgs = parseJsonEnv<unknown>(env, "SF_WORKFLOW_MCP_ARGS");
   const explicitEnv = parseJsonEnv<Record<string, string>>(env, "SF_WORKFLOW_MCP_ENV");
   const explicitCwd = env.SF_WORKFLOW_MCP_CWD?.trim();
-  const gsdCliPath = env.SF_CLI_PATH?.trim() || env.SF_BIN_PATH?.trim();
+  const sfCliPath = env.SF_CLI_PATH?.trim() || env.SF_BIN_PATH?.trim();
   const workflowProjectRoot =
     explicitEnv?.SF_WORKFLOW_PROJECT_ROOT?.trim() ||
     env.SF_WORKFLOW_PROJECT_ROOT?.trim() ||
@@ -225,7 +225,7 @@ export function detectWorkflowMcpLaunchConfig(
   const resolvedWorkflowProjectRoot = resolve(workflowProjectRoot);
 
   if (explicitCommand) {
-    const launchEnv = buildWorkflowLaunchEnv(resolve(workflowProjectRoot), gsdCliPath, explicitEnv);
+    const launchEnv = buildWorkflowLaunchEnv(resolve(workflowProjectRoot), sfCliPath, explicitEnv);
     return {
       name,
       command: explicitCommand,
@@ -242,7 +242,7 @@ export function detectWorkflowMcpLaunchConfig(
       command: process.execPath,
       args: [distCli],
       cwd: resolvedWorkflowProjectRoot,
-      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, gsdCliPath, undefined, distCli),
+      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, sfCliPath, undefined, distCli),
     };
   }
 
@@ -253,16 +253,16 @@ export function detectWorkflowMcpLaunchConfig(
       command: process.execPath,
       args: [bundledCli],
       cwd: resolvedWorkflowProjectRoot,
-      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, gsdCliPath, undefined, bundledCli),
+      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, sfCliPath, undefined, bundledCli),
     };
   }
 
-  const binPath = lookupCommand("gsd-mcp-server");
+  const binPath = lookupCommand("sf-mcp-server");
   if (binPath) {
     return {
       name,
       command: binPath,
-      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, gsdCliPath),
+      env: buildWorkflowLaunchEnv(resolvedWorkflowProjectRoot, sfCliPath),
     };
   }
 
@@ -379,7 +379,7 @@ export function getWorkflowTransportSupportError(
   const providerLabel = `"${provider}"`;
 
   if (!launch) {
-    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the SF workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /gsd mcp init . from your project root. You can also configure SF_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install gsd-mcp-server on PATH.`;
+    return `Provider ${providerLabel} cannot run ${surface}${unitLabel}: the SF workflow MCP server is not configured or discoverable. Detected Claude Code model but no workflow MCP. Please run /sf mcp init . from your project root. You can also configure SF_WORKFLOW_MCP_COMMAND, build packages/mcp-server/dist/cli.js, or install sf-mcp-server on PATH.`;
   }
 
   const missing = [...new Set(requiredTools)].filter((tool) => !MCP_WORKFLOW_TOOL_SURFACE.has(tool));

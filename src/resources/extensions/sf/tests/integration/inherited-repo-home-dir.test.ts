@@ -42,7 +42,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
 
   beforeEach(() => {
     // Create a fake HOME that is itself a git repo (dotfile manager scenario).
-    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-home-repo-")));
+    fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-home-repo-")));
     run("git", ["init", "-b", "main"], fakeHome);
     run("git", ["config", "user.name", "Test"], fakeHome);
     run("git", ["config", "user.email", "test@example.com"], fakeHome);
@@ -59,7 +59,7 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     origGsdHome = process.env.SF_HOME;
     origGsdStateDir = process.env.SF_STATE_DIR;
     process.env.SF_HOME = join(fakeHome, ".gsd");
-    stateDir = mkdtempSync(join(tmpdir(), "gsd-state-"));
+    stateDir = mkdtempSync(join(tmpdir(), "sf-state-"));
     process.env.SF_STATE_DIR = stateDir;
   });
 
@@ -94,11 +94,11 @@ describe("isInheritedRepo when git root is HOME (#2393)", () => {
     // .gsd is a symlink to an external state directory.
     const externalState = join(stateDir, "projects", "home-project");
     mkdirSync(externalState, { recursive: true });
-    const gsdDir = join(fakeHome, ".gsd");
+    const sfDir = join(fakeHome, ".gsd");
 
     // Remove the plain directory and replace with a symlink (real project .gsd)
-    rmSync(gsdDir, { recursive: true, force: true });
-    symlinkSync(externalState, gsdDir);
+    rmSync(sfDir, { recursive: true, force: true });
+    symlinkSync(externalState, sfDir);
 
     const projectDir = join(fakeHome, "projects", "my-app");
     mkdirSync(projectDir, { recursive: true });
@@ -124,7 +124,7 @@ describe("isInheritedRepo with stale .gsd at parent git root", () => {
   let parentRepo: string;
 
   beforeEach(() => {
-    parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-stale-parent-")));
+    parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-stale-parent-")));
     run("git", ["init", "-b", "main"], parentRepo);
     run("git", ["config", "user.name", "Test"], parentRepo);
     run("git", ["config", "user.email", "test@example.com"], parentRepo);
@@ -170,7 +170,7 @@ describe("isInheritedRepo with stale .gsd at parent git root", () => {
     const projectDir = join(parentRepo, "my-project");
     mkdirSync(projectDir, { recursive: true });
 
-    const externalState = mkdtempSync(join(tmpdir(), "gsd-ext-state-"));
+    const externalState = mkdtempSync(join(tmpdir(), "sf-ext-state-"));
     symlinkSync(externalState, join(projectDir, ".gsd"));
 
     // Before fix: the walk-up loop started at normalizedBase (projectDir),

@@ -36,7 +36,7 @@ npx skills update
 
 ## Onboarding Catalog
 
-During `gsd init`, SF detects your project's tech stack and recommends relevant skill packs:
+During `sf init`, SF detects your project's tech stack and recommends relevant skill packs:
 
 - **Swift** — SwiftUI, Swift Core, concurrency, Charts, Testing
 - **iOS** — App Intents, Widgets, StoreKit, MapKit, Core ML, Vision, accessibility
@@ -100,10 +100,10 @@ Project-local skills can be committed to git so team members share the same skil
 Track skill performance:
 
 ```
-/gsd skill-health              # overview table
-/gsd skill-health rust-core    # detailed view for one skill
-/gsd skill-health --stale 30   # skills unused for 30+ days
-/gsd skill-health --declining  # skills with falling success rates
+/sf skill-health              # overview table
+/sf skill-health rust-core    # detailed view for one skill
+/sf skill-health --stale 30   # skills unused for 30+ days
+/sf skill-health --declining  # skills with falling success rates
 ```
 
 The dashboard flags:

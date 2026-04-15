@@ -375,7 +375,7 @@ export function writeConflictsFile(
     `# Merge Conflicts — ${timestamp}`,
     "",
     `Conflicts detected merging worktree \`${worktreePath}\` into \`${basePath}\`.`,
-    `Run \`gsd resolve-conflict\` to resolve each conflict.`,
+    `Run \`sf resolve-conflict\` to resolve each conflict.`,
     "",
   ];
 
@@ -394,7 +394,7 @@ export function writeConflictsFile(
       lines.push(`  params: ${JSON.stringify(event.params)}`);
     }
     lines.push("");
-    lines.push(`**Resolve with:** \`gsd resolve-conflict --entity ${conflict.entityType}:${conflict.entityId} --pick [main|worktree]\``);
+    lines.push(`**Resolve with:** \`sf resolve-conflict --entity ${conflict.entityType}:${conflict.entityId} --pick [main|worktree]\``);
     lines.push("");
   });
 
@@ -492,7 +492,7 @@ function _reconcileWorktreeLogsInner(
   atomicWriteSync(join(mainBasePath, ".gsd", "event-log.jsonl"), logContent);
 
   // Step 8: Replay into DB (wrapped in a transaction by replayEvents)
-  openDatabase(join(mainBasePath, ".gsd", "gsd.db"));
+  openDatabase(join(mainBasePath, ".gsd", "sf.db"));
   replayEvents(merged);
 
   // Step 9: Write manifest
@@ -647,7 +647,7 @@ export function resolveConflict(
   writeEventLog(targetBasePath, targetBaseEvents.concat(rewrittenTargetEvents));
 
   // Replay resolved events through the DB (updates DB state)
-  openDatabase(join(basePath, ".gsd", "gsd.db"));
+  openDatabase(join(basePath, ".gsd", "sf.db"));
   replayEvents(eventsToReplay);
   invalidateStateCache();
   clearPathCache();

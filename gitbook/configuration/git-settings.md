@@ -8,7 +8,7 @@ SF supports three isolation modes, configured via `git.isolation` in preferences
 
 | Mode | Working Directory | Branch | Best For |
 |------|-------------------|--------|----------|
-| `worktree` (default) | `.gsd/worktrees/<MID>/` | `milestone/<MID>` | Most projects — full isolation |
+| `worktree` (default) | `.sf/worktrees/<MID>/` | `milestone/<MID>` | Most projects — full isolation |
 | `branch` | Project root | `milestone/<MID>` | Submodule-heavy repos |
 | `none` | Project root | Current branch | Hot-reload workflows |
 
@@ -69,7 +69,7 @@ git:
   main_branch: main           # primary branch name
   merge_strategy: squash      # "squash" or "merge"
   isolation: worktree         # "worktree", "branch", or "none"
-  commit_docs: true           # commit .gsd/ artifacts to git
+  commit_docs: true           # commit .sf/ artifacts to git
   manage_gitignore: true      # let SF manage .gitignore
   auto_pr: false              # create PR on milestone completion
   pr_target_branch: develop   # PR target branch
@@ -94,7 +94,7 @@ Run a script after worktree creation (copy `.env` files, symlink assets, etc.):
 
 ```yaml
 git:
-  worktree_post_create: .gsd/hooks/post-worktree-create
+  worktree_post_create: .sf/hooks/post-worktree-create
 ```
 
 Example hook:
@@ -105,7 +105,7 @@ cp "$SOURCE_DIR/.env" "$WORKTREE_DIR/.env"
 ln -sf "$SOURCE_DIR/assets" "$WORKTREE_DIR/assets"
 ```
 
-## Keeping `.gsd/` Local
+## Keeping `.sf/` Local
 
 For teams where only some members use SF:
 
@@ -114,7 +114,7 @@ git:
   commit_docs: false
 ```
 
-This adds `.gsd/` to `.gitignore` entirely. You get structured planning without affecting teammates who don't use SF.
+This adds `.sf/` to `.gitignore` entirely. You get structured planning without affecting teammates who don't use SF.
 
 ## Commit Format
 
@@ -145,4 +145,4 @@ SF automatically recovers from common git issues:
 - **Stale lock files** — removes `index.lock` from crashed processes
 - **Orphaned worktrees** — detects and cleans up abandoned worktrees
 
-Run `/gsd doctor` to check git health manually.
+Run `/sf doctor` to check git health manually.

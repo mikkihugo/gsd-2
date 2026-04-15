@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd extract-learnings
+ * SF Command — /sf extract-learnings
  *
  * Analyses completed milestone artefacts and dispatches an LLM turn that
  * extracts structured knowledge into 4 categories:
@@ -234,11 +234,11 @@ export async function handleExtractLearnings(
   const { milestoneId } = parseExtractLearningsArgs(args);
 
   if (!milestoneId) {
-    ctx.ui.notify("Usage: /gsd extract-learnings <milestoneId>  (e.g. M001)", "warning");
+    ctx.ui.notify("Usage: /sf extract-learnings <milestoneId>  (e.g. M001)", "warning");
     return;
   }
 
-  // projectRoot() throws GSDNoProjectError if no project found — intentional, handled by dispatcher
+  // projectRoot() throws SFNoProjectError if no project found — intentional, handled by dispatcher
   const basePath = projectRoot();
   const milestoneDir = resolveMilestonePath(basePath, milestoneId);
 
@@ -298,7 +298,7 @@ export async function handleExtractLearnings(
   ctx.ui.notify(`Extracting learnings for ${milestoneId}: "${milestoneName}"...`, "info");
 
   pi.sendMessage(
-    { customType: "gsd-extract-learnings", content: prompt, display: false },
+    { customType: "sf-extract-learnings", content: prompt, display: false },
     { triggerTurn: true },
   );
 }

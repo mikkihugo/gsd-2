@@ -273,9 +273,9 @@ test('write-gate: shouldBlockPendingGate blocks write/edit during pending gate',
   const editResult = shouldBlockPendingGate('edit', 'M001', false);
   assert.strictEqual(editResult.block, true, 'edit should be blocked');
 
-  // gsd tools should be blocked
-  const gsdResult = shouldBlockPendingGate('sf_plan_milestone', 'M001', false);
-  assert.strictEqual(gsdResult.block, true, 'gsd tools should be blocked');
+  // sf tools should be blocked
+  const sfResult = shouldBlockPendingGate('sf_plan_milestone', 'M001', false);
+  assert.strictEqual(sfResult.block, true, 'sf tools should be blocked');
 
   clearDiscussionFlowState();
 });

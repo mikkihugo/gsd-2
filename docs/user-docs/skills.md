@@ -15,7 +15,7 @@ SF reads skills from two locations, in priority order:
 
 Global skills take precedence over project skills when names collide.
 
-> **Migration from `~/.gsd/agent/skills/`:** On first launch after upgrading, SF automatically copies skills from the legacy `~/.gsd/agent/skills/` directory to `~/.agents/skills/`. The old directory is preserved for backward compatibility.
+> **Migration from `~/.sf/agent/skills/`:** On first launch after upgrading, SF automatically copies skills from the legacy `~/.sf/agent/skills/` directory to `~/.agents/skills/`. The old directory is preserved for backward compatibility.
 
 ## Installing Skills
 
@@ -40,9 +40,9 @@ npx skills update
 
 ### Onboarding Catalog
 
-During `gsd init`, SF detects the project's tech stack and recommends relevant skill packs. For brownfield projects, detection is automatic; for greenfield projects, the user picks a tech stack.
+During `sf init`, SF detects the project's tech stack and recommends relevant skill packs. For brownfield projects, detection is automatic; for greenfield projects, the user picks a tech stack.
 
-The curated catalog is maintained in `src/resources/extensions/gsd/skill-catalog.ts`. Each entry maps a tech stack to a skills.sh repo and specific skill names.
+The curated catalog is maintained in `src/resources/extensions/sf/skill-catalog.ts`. Each entry maps a tech stack to a skills.sh repo and specific skill names.
 
 #### Available Skill Packs
 
@@ -73,7 +73,7 @@ The curated catalog is maintained in `src/resources/extensions/gsd/skill-catalog
 
 ### Maintaining the Catalog
 
-The skill catalog lives in [`src/resources/extensions/gsd/skill-catalog.ts`](../src/resources/extensions/gsd/skill-catalog.ts). To add or update a pack:
+The skill catalog lives in [`src/resources/extensions/sf/skill-catalog.ts`](../src/resources/extensions/sf/skill-catalog.ts). To add or update a pack:
 
 1. Add a `SkillPack` entry to the `SKILL_CATALOG` array with `repo`, `skills`, and matching criteria
 2. For language-detection matching, use `matchLanguages` (values from `detection.ts` `LANGUAGE_MAP`)
@@ -155,13 +155,13 @@ Every auto-mode unit records which skills were available and actively loaded. Th
 
 ### Skill Health Dashboard
 
-View skill performance with `/gsd skill-health`:
+View skill performance with `/sf skill-health`:
 
 ```
-/gsd skill-health              # overview table: name, uses, success%, tokens, trend, last used
-/gsd skill-health rust-core    # detailed view for one skill
-/gsd skill-health --stale 30   # skills unused for 30+ days
-/gsd skill-health --declining  # skills with falling success rates
+/sf skill-health              # overview table: name, uses, success%, tokens, trend, last used
+/sf skill-health rust-core    # detailed view for one skill
+/sf skill-health --stale 30   # skills unused for 30+ days
+/sf skill-health --declining  # skills with falling success rates
 ```
 
 The dashboard flags skills that may need attention:
@@ -183,6 +183,6 @@ Stale skills are excluded from automatic matching but remain invokable explicitl
 
 ### Heal-Skill (Post-Unit Analysis)
 
-When configured as a post-unit hook, SF can analyze whether the agent deviated from a skill's instructions during execution. If significant drift is detected (outdated API patterns, incorrect guidance), it writes proposed fixes to `.gsd/skill-review-queue.md` for human review.
+When configured as a post-unit hook, SF can analyze whether the agent deviated from a skill's instructions during execution. If significant drift is detected (outdated API patterns, incorrect guidance), it writes proposed fixes to `.sf/skill-review-queue.md` for human review.
 
 Key design principle: skills are **never auto-modified**. Research shows curated skills outperform auto-generated ones significantly, so the human review step is critical.

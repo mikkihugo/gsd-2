@@ -24,10 +24,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-const gsdDir = join(import.meta.dirname, "..");
-const autoSrc = readFileSync(join(gsdDir, "auto.ts"), "utf-8");
-const postUnitSrc = readFileSync(join(gsdDir, "auto-post-unit.ts"), "utf-8");
-const timeoutSrc = readFileSync(join(gsdDir, "auto-timeout-recovery.ts"), "utf-8");
+const sfDir = join(import.meta.dirname, "..");
+const autoSrc = readFileSync(join(sfDir, "auto.ts"), "utf-8");
+const postUnitSrc = readFileSync(join(sfDir, "auto-post-unit.ts"), "utf-8");
+const timeoutSrc = readFileSync(join(sfDir, "auto-timeout-recovery.ts"), "utf-8");
 
 test("#4175: stopAuto uses DB status as the authoritative milestone-complete signal", () => {
   const step4Idx = autoSrc.indexOf("Step 4: Auto-worktree exit");
@@ -51,8 +51,8 @@ test("#4175: stopAuto uses DB status as the authoritative milestone-complete sig
 
 test("#4175: stopAuto imports getMilestone from sf-db", () => {
   assert.ok(
-    /import\s*\{[^}]*\bgetMilestone\b[^}]*\}\s*from\s*"\.\/gsd.db\.js"/.test(autoSrc),
-    "auto.ts should import getMilestone from ./gsd.db.js",
+    /import\s*\{[^}]*\bgetMilestone\b[^}]*\}\s*from\s*"\.\/sf.db\.js"/.test(autoSrc),
+    "auto.ts should import getMilestone from ./sf-db.js",
   );
 });
 

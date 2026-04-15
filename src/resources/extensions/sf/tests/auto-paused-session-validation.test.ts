@@ -44,7 +44,7 @@ test("auto.ts validates milestone before restoring paused session (#1664)", () =
 // ─── Filesystem validation unit tests ───────────────────────────────────────
 
 function makeTmpBase(): string {
-  return join(tmpdir(), `gsd-paused-test-${randomUUID()}`);
+  return join(tmpdir(), `sf-paused-test-${randomUUID()}`);
 }
 
 function cleanup(base: string): void {

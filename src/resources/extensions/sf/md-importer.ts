@@ -272,8 +272,8 @@ export function parseRequirementsSections(content: string): Requirement[] {
  * Import decisions from DECISIONS.md into the database.
  * Handles supersession chains.
  */
-function importDecisions(gsdDir: string): number {
-  const filePath = resolveSfRootFile(gsdDir, 'DECISIONS');
+function importDecisions(sfDir: string): number {
+  const filePath = resolveSfRootFile(sfDir, 'DECISIONS');
   if (!existsSync(filePath)) return 0;
 
   const content = readFileSync(filePath, 'utf-8');
@@ -289,8 +289,8 @@ function importDecisions(gsdDir: string): number {
 /**
  * Import requirements from REQUIREMENTS.md into the database.
  */
-function importRequirements(gsdDir: string): number {
-  const filePath = resolveSfRootFile(gsdDir, 'REQUIREMENTS');
+function importRequirements(sfDir: string): number {
+  const filePath = resolveSfRootFile(sfDir, 'REQUIREMENTS');
   if (!existsSync(filePath)) return 0;
 
   const content = readFileSync(filePath, 'utf-8');
@@ -314,9 +314,9 @@ const TASK_SUFFIXES = ['PLAN', 'SUMMARY', 'CONTINUE', 'CONTEXT', 'RESEARCH'];
  * Import hierarchy artifacts (roadmaps, plans, summaries, etc.) from the .gsd/ tree.
  * Walks milestones → slices → tasks directories.
  */
-function importHierarchyArtifacts(gsdDir: string): number {
+function importHierarchyArtifacts(sfDir: string): number {
   let count = 0;
-  const sfPath = sfRoot(gsdDir);
+  const sfPath = sfRoot(sfDir);
 
   // Root-level artifacts: PROJECT.md, QUEUE.md
   const rootFiles = ['PROJECT.md', 'QUEUE.md', 'SECRETS-MANIFEST.md'];
@@ -338,8 +338,8 @@ function importHierarchyArtifacts(gsdDir: string): number {
   }
 
   // Walk milestones
-  const milestoneIds = findMilestoneIds(gsdDir);
-  const msDir = milestonesDir(gsdDir);
+  const milestoneIds = findMilestoneIds(sfDir);
+  const msDir = milestonesDir(sfDir);
 
   for (const milestoneId of milestoneIds) {
     // Find the actual milestone directory name (handles legacy naming)
@@ -637,7 +637,7 @@ export function migrateHierarchyToDb(basePath: string): {
             if (!existsSync(summaryFile)) {
               taskStatus = 'pending';
               process.stderr.write(
-                `gsd-migrate: ${milestoneId}/${sliceEntry.id}/${taskEntry.id} marked done but missing summary — importing as pending\n`,
+                `sf-migrate: ${milestoneId}/${sliceEntry.id}/${taskEntry.id} marked done but missing summary — importing as pending\n`,
               );
             }
           }
@@ -676,7 +676,7 @@ export function migrateHierarchyToDb(basePath: string): {
           if (_getAdapter()) {
             updateSliceStatus(milestoneId, sliceEntry.id, 'complete');
             process.stderr.write(
-              `gsd-migrate: ${milestoneId}/${sliceEntry.id} all tasks + slice summary complete — upgrading slice to complete\n`,
+              `sf-migrate: ${milestoneId}/${sliceEntry.id} all tasks + slice summary complete — upgrading slice to complete\n`,
             );
           }
         }
@@ -696,13 +696,13 @@ export function migrateHierarchyToDb(basePath: string): {
  *
  * Missing files are skipped gracefully — no errors produced.
  */
-export function migrateFromMarkdown(gsdDir: string): {
+export function migrateFromMarkdown(sfDir: string): {
   decisions: number;
   requirements: number;
   artifacts: number;
   hierarchy: { milestones: number; slices: number; tasks: number };
 } {
-  const dbPath = join(sfRoot(gsdDir), 'gsd.db');
+  const dbPath = join(sfRoot(sfDir), 'sf.db');
 
   // Open DB if not already open
   if (!_getAdapter()) {
@@ -716,32 +716,32 @@ export function migrateFromMarkdown(gsdDir: string): {
 
   transaction(() => {
     try {
-      decisions = importDecisions(gsdDir);
+      decisions = importDecisions(sfDir);
     } catch (err) {
       logWarning("migration", `skipping decisions import: ${(err as Error).message}`);
     }
 
     try {
-      requirements = importRequirements(gsdDir);
+      requirements = importRequirements(sfDir);
     } catch (err) {
       logWarning("migration", `skipping requirements import: ${(err as Error).message}`);
     }
 
     try {
-      artifacts = importHierarchyArtifacts(gsdDir);
+      artifacts = importHierarchyArtifacts(sfDir);
     } catch (err) {
       logWarning("migration", `skipping artifacts import: ${(err as Error).message}`);
     }
 
     try {
-      hierarchy = migrateHierarchyToDb(gsdDir);
+      hierarchy = migrateHierarchyToDb(sfDir);
     } catch (err) {
       logWarning("migration", `skipping hierarchy migration: ${(err as Error).message}`);
     }
   });
 
   process.stderr.write(
-    `gsd-migrate: imported ${decisions} decisions, ${requirements} requirements, ${artifacts} artifacts, ${hierarchy.milestones}M/${hierarchy.slices}S/${hierarchy.tasks}T hierarchy\n`,
+    `sf-migrate: imported ${decisions} decisions, ${requirements} requirements, ${artifacts} artifacts, ${hierarchy.milestones}M/${hierarchy.slices}S/${hierarchy.tasks}T hierarchy\n`,
   );
 
   return { decisions, requirements, artifacts, hierarchy };

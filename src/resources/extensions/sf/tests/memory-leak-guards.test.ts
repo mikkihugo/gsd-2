@@ -27,7 +27,7 @@ test("clearActivityLogState resets dedup state so identical saves write again", 
   // On macOS, /tmp is a symlink to /private/tmp — without realpathSync, the
   // key changes between the first save (dir doesn't exist, realpathSync throws)
   // and subsequent saves (dir exists, realpathSync resolves to /private/tmp/...).
-  const baseDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-memleak-test-")));
+  const baseDir = realpathSync(mkdtempSync(join(tmpdir(), "sf-memleak-test-")));
   try {
     const entries = [{ role: "assistant", content: "test entry" }];
     const ctx = createCtx(entries);
@@ -57,7 +57,7 @@ test("clearActivityLogState resets dedup state so identical saves write again", 
 
 test("saveActivityLog writes valid JSONL via streaming", () => {
   clearActivityLogState();
-  const baseDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-memleak-jsonl-")));
+  const baseDir = realpathSync(mkdtempSync(join(tmpdir(), "sf-memleak-jsonl-")));
   try {
     const entries = [
       { type: "message", message: { role: "user", content: "hello" } },

@@ -88,7 +88,7 @@ Then proceed directly to the workflow.
 ## Skill Structure Quick Reference
 
 **Skill directories:**
-- Global: `~/.gsd/agent/skills/{skill-name}/`
+- Global: `~/.sf/agent/skills/{skill-name}/`
 - Project-local: `.pi/agent/skills/{skill-name}/`
 
 **Simple skill (single file):**
@@ -139,7 +139,7 @@ All in `references/`:
 **Patterns:** common-patterns.md, workflows-and-validation.md
 **Assets:** using-templates.md, using-scripts.md
 **Advanced:** executable-code.md, api-security.md, iteration-and-testing.md
-**SF-specific:** gsd-skill-ecosystem.md
+**SF-specific:** sf-skill-ecosystem.md
 </reference_index>
 
 <workflows_index>

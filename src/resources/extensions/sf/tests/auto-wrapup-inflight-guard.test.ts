@@ -1,4 +1,4 @@
-// SF-2 — Regression tests for #3512: gsd-auto-wrapup mid-turn interruption
+// SF-2 — Regression tests for #3512: sf-auto-wrapup mid-turn interruption
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, test } from "node:test";
@@ -15,7 +15,7 @@ const autoSrc = readFileSync(autoPath, "utf-8");
 const runUnitPath = join(import.meta.dirname, "..", "auto", "run-unit.ts");
 const runUnitSrc = readFileSync(runUnitPath, "utf-8");
 
-describe("#3512: gsd-auto-wrapup must not interrupt in-flight tool calls", () => {
+describe("#3512: sf-auto-wrapup must not interrupt in-flight tool calls", () => {
   test("soft timeout wrapup gates triggerTurn on getInFlightToolCount() === 0", () => {
     // The soft timeout sendMessage must NOT use a hardcoded `triggerTurn: true`.
     // It must check getInFlightToolCount() before deciding whether to trigger.

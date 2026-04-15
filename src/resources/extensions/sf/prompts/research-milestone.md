@@ -27,7 +27,7 @@ Then research the codebase and relevant technologies. Narrate key findings and s
 4. Use `resolve_library` / `get_library_docs` for unfamiliar libraries — skip this for libraries already used in the codebase
 5. **Web search budget:** You have a limited budget of web searches (max ~15 per session). Use them strategically — prefer `resolve_library` / `get_library_docs` for library documentation. Do NOT repeat the same or similar queries. If a search didn't find what you need, rephrase once or move on. Target 3-5 total web searches for a typical research unit.
 6. Use the **Research** output template from the inlined context above — include only sections that have real content
-7. If `.gsd/REQUIREMENTS.md` exists, research against it. Identify which Active requirements are table stakes, likely omissions, overbuilt risks, or domain-standard behaviors the user may or may not want.
+7. If `.sf/REQUIREMENTS.md` exists, research against it. Identify which Active requirements are table stakes, likely omissions, overbuilt risks, or domain-standard behaviors the user may or may not want.
 8. Call `sf_summary_save` with `milestone_id: {{milestoneId}}`, `artifact_type: "RESEARCH"`, and the full research markdown as `content` — the tool computes the file path and persists to both DB and disk.
 
 ## Strategic Questions to Answer

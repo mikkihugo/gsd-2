@@ -8,7 +8,7 @@ import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
 import type { SFPreferences } from "../preferences.js";
-import type { GSDState } from "../types.js";
+import type { SFState } from "../types.js";
 import type { CmuxLogLevel } from "../../cmux/index.js";
 import type { LoopDeps } from "./loop-deps.js";
 
@@ -99,7 +99,7 @@ export interface LoopState {
 export const MAX_FINALIZE_TIMEOUTS = 3;
 
 export interface PreDispatchData {
-  state: GSDState;
+  state: SFState;
   mid: string;
   midTitle: string;
 }
@@ -110,7 +110,7 @@ export interface IterationData {
   prompt: string;
   finalPrompt: string;
   pauseAfterUatDispatch: boolean;
-  state: GSDState;
+  state: SFState;
   mid: string | undefined;
   midTitle: string | undefined;
   isRetry: boolean;

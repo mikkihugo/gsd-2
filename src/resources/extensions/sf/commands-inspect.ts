@@ -51,17 +51,17 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
     const { isDbAvailable, _getAdapter, openDatabase } = await import("./sf-db.js");
 
     if (!isDbAvailable()) {
-      const gsdDir = sfRoot(process.cwd());
-      const dbPath = join(gsdDir, "gsd.db");
-      if (!existsSync(gsdDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
-        ctx.ui.notify("No SF database available. Run /gsd auto to create one.", "info");
+      const sfDir = sfRoot(process.cwd());
+      const dbPath = join(sfDir, "sf.db");
+      if (!existsSync(sfDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
+        ctx.ui.notify("No SF database available. Run /sf auto to create one.", "info");
         return;
       }
     }
 
     const adapter = _getAdapter();
     if (!adapter) {
-      ctx.ui.notify("No SF database available. Run /gsd auto to create one.", "info");
+      ctx.ui.notify("No SF database available. Run /sf auto to create one.", "info");
       return;
     }
 
@@ -93,7 +93,7 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
 
     ctx.ui.notify(formatInspectOutput(data), "info");
   } catch (err) {
-    logWarning("command", `/gsd inspect failed: ${getErrorMessage(err)}`);
+    logWarning("command", `/sf inspect failed: ${getErrorMessage(err)}`);
     ctx.ui.notify("Failed to inspect SF database. Check stderr for details.", "error");
   }
 }

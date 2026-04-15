@@ -1,15 +1,15 @@
 # 从 v1 迁移
 
-如果你有仍在使用原始 Singularity Forge（v1）`.planning` 目录结构的项目，可以把它们迁移到 SF 的 `.gsd` 格式。
+如果你有仍在使用原始 Singularity Forge（v1）`.planning` 目录结构的项目，可以把它们迁移到 SF 的 `.sf` 格式。
 
 ## 运行迁移
 
 ```bash
 # 在项目目录内执行
-/gsd migrate
+/sf migrate
 
 # 或者显式指定路径
-/gsd migrate ~/projects/my-old-project
+/sf migrate ~/projects/my-old-project
 ```
 
 ## 会迁移什么
@@ -42,7 +42,7 @@
 迁移完成后，用下面的命令检查输出结果：
 
 ```bash
-/gsd doctor
+/sf doctor
 ```
 
-它会检查 `.gsd/` 的完整性，并标出任何结构性问题。
+它会检查 `.sf/` 的完整性，并标出任何结构性问题。

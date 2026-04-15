@@ -15,15 +15,15 @@ import type { TokenProfile, InlineLevel } from "./types.js";
 
 import type {
   SFPreferences,
-  GSDModelConfigV2,
-  GSDPhaseModelConfig,
+  SFModelConfigV2,
+  SFPhaseModelConfig,
   ResolvedModelConfig,
   AutoSupervisorConfig,
 } from "./preferences-types.js";
 import { loadEffectiveSFPreferences, getGlobalSFPreferencesPath } from "./preferences.js";
 
 // Re-export types so existing consumers of ./preferences-models.js keep working
-export type { GSDPhaseModelConfig, GSDModelConfig, GSDModelConfigV2, ResolvedModelConfig } from "./preferences-types.js";
+export type { SFPhaseModelConfig, SFModelConfig, SFModelConfigV2, ResolvedModelConfig } from "./preferences-types.js";
 
 /**
  * Resolve which model ID to use for a given auto-mode unit type.
@@ -45,9 +45,9 @@ export function resolveModelForUnit(unitType: string): string | undefined {
 export function resolveModelWithFallbacksForUnit(unitType: string): ResolvedModelConfig | undefined {
   const prefs = loadEffectiveSFPreferences();
   if (!prefs?.preferences.models) return undefined;
-  const m = prefs.preferences.models as GSDModelConfigV2;
+  const m = prefs.preferences.models as SFModelConfigV2;
 
-  let phaseConfig: string | GSDPhaseModelConfig | undefined;
+  let phaseConfig: string | SFPhaseModelConfig | undefined;
   switch (unitType) {
     case "research-milestone":
     case "research-slice":
@@ -134,10 +134,10 @@ export function resolveDefaultSessionModel(
   const prefs = loadEffectiveSFPreferences();
   if (!prefs?.preferences.models) return undefined;
 
-  const m = prefs.preferences.models as GSDModelConfigV2;
+  const m = prefs.preferences.models as SFModelConfigV2;
 
   // Priority: execution → planning → first configured value
-  const candidates: Array<string | GSDPhaseModelConfig | undefined> = [
+  const candidates: Array<string | SFPhaseModelConfig | undefined> = [
     m.execution,
     m.planning,
     m.research,
@@ -193,7 +193,7 @@ export function resolveDefaultSessionModel(
  * proxies, etc.).
  *
  * Used by auto-mode bootstrap to decide whether the session model
- * (set via `/gsd model`) should override `PREFERENCES.md`.  Custom providers
+ * (set via `/sf model`) should override `PREFERENCES.md`.  Custom providers
  * are never reachable from `PREFERENCES.md` (which only knows built-in
  * providers), so when the user has explicitly selected one, it must take
  * priority — otherwise auto-mode tries to start the built-in provider from
@@ -286,7 +286,7 @@ export function validateModelId(modelId: string): boolean {
  * Performs a safe read-modify-write: reads current content, updates the models
  * YAML block, and writes back. Creates the file if it doesn't exist.
  */
-export function updatePreferencesModels(models: GSDModelConfigV2): void {
+export function updatePreferencesModels(models: SFModelConfigV2): void {
   const prefsPath = getGlobalSFPreferencesPath();
 
   let content = "";
@@ -300,7 +300,7 @@ export function updatePreferencesModels(models: GSDModelConfigV2): void {
     if (typeof value === "string") {
       lines.push(`  ${phase}: ${value}`);
     } else if (value && typeof value === "object") {
-      const config = value as GSDPhaseModelConfig;
+      const config = value as SFPhaseModelConfig;
       lines.push(`  ${phase}:`);
       lines.push(`    model: ${config.model}`);
       if (config.provider) {

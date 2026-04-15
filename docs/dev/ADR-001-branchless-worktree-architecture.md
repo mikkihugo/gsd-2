@@ -7,9 +7,9 @@
 
 ## Context
 
-SF uses git for isolation during autonomous coding sessions. The current architecture (shipped in M003, v2.13.0) creates a **worktree per milestone** with **slice branches inside each worktree**. Each slice (`S01`, `S02`, ...) gets its own branch (`gsd/M001/S01`) within the worktree, which merges back to the milestone branch (`milestone/M001`) via `--no-ff` when the slice completes. The milestone branch squash-merges to `main` when the milestone completes.
+SF uses git for isolation during autonomous coding sessions. The current architecture (shipped in M003, v2.13.0) creates a **worktree per milestone** with **slice branches inside each worktree**. Each slice (`S01`, `S02`, ...) gets its own branch (`sf/M001/S01`) within the worktree, which merges back to the milestone branch (`milestone/M001`) via `--no-ff` when the slice completes. The milestone branch squash-merges to `main` when the milestone completes.
 
-This architecture replaced a previous "branch-per-slice" model that had severe `.gsd/` merge conflicts. M003 solved the merge conflicts but retained slice branches inside worktrees, inheriting complexity that has produced persistent, user-facing failures.
+This architecture replaced a previous "branch-per-slice" model that had severe `.sf/` merge conflicts. M003 solved the merge conflicts but retained slice branches inside worktrees, inheriting complexity that has produced persistent, user-facing failures.
 
 ### Problems
 
@@ -19,11 +19,11 @@ When `research-slice` or `plan-slice` dispatches, the agent writes artifacts (e.
 
 Documented in the auto-stop architecture doc as "The Branch-Switching Problem."
 
-**2. `.gsd/` state clobbering across branches**
+**2. `.sf/` state clobbering across branches**
 
-`.gsd/` is gitignored (line 52 of `.gitignore`: `.gsd/`). Planning artifacts (roadmaps, plans, summaries, decisions, requirements) live in `.gsd/milestones/` but are invisible to git. When multiple branches or worktrees operate from the same repo, they share a single `.gsd/` directory on disk. Branch A's M001 roadmap overwrites Branch B's M001 roadmap. SF reads corrupted state, shows wrong milestone as complete, or enters infinite dispatch loops.
+`.sf/` is gitignored (line 52 of `.gitignore`: `.sf/`). Planning artifacts (roadmaps, plans, summaries, decisions, requirements) live in `.sf/milestones/` but are invisible to git. When multiple branches or worktrees operate from the same repo, they share a single `.sf/` directory on disk. Branch A's M001 roadmap overwrites Branch B's M001 roadmap. SF reads corrupted state, shows wrong milestone as complete, or enters infinite dispatch loops.
 
-The codebase has a contradictory workaround: `smartStage()` (git-service.ts:304-352) force-adds `SF_DURABLE_PATHS` (milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md) despite the `.gitignore`. This means `.gsd/milestones/` IS partially tracked on some branches but the gitignore claims otherwise. The code fights the configuration.
+The codebase has a contradictory workaround: `smartStage()` (git-service.ts:304-352) force-adds `SF_DURABLE_PATHS` (milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md) despite the `.gitignore`. This means `.sf/milestones/` IS partially tracked on some branches but the gitignore claims otherwise. The code fights the configuration.
 
 **3. Merge/conflict code complexity**
 
@@ -33,7 +33,7 @@ The current slice branch model requires:
 - `git-self-heal.ts` — 198 lines, 3 recovery functions for merge failures
 - `fix-merge` dispatch unit — dedicated LLM session to resolve conflicts the auto-resolver can't handle
 - `smartStage()` — 49 lines of runtime exclusion during staging
-- Conflict categorization — 80 lines classifying `.gsd/` vs runtime vs code conflicts
+- Conflict categorization — 80 lines classifying `.sf/` vs runtime vs code conflicts
 
 Total: **~582 lines** of merge/branch/conflict code across 3 files, plus the `fix-merge` prompt template and dispatch logic. This code exists solely because of slice branches.
 
@@ -45,14 +45,14 @@ Branch-mode (`git-service.ts:mergeSliceToMain`) and worktree-mode (`auto-worktre
 
 - v2.11.1: URGENT fix for parse cache staleness causing repeated unit dispatch (directly caused by branch switching invalidation timing)
 - v2.13.1: Windows hotfix for multi-line commit messages in `mergeSliceToMilestone`
-- 15+ separate bug fixes for `.gsd/` merge conflicts in the pre-M003 era
+- 15+ separate bug fixes for `.sf/` merge conflicts in the pre-M003 era
 - Persistent user complaints about loop detection failures and state corruption
 
 ## Decision
 
 **Eliminate slice branches entirely.** All work within a milestone worktree commits sequentially on a single branch (`milestone/<MID>`). No branch creation, no branch switching, no slice merges, no conflict resolution within a worktree.
 
-Track `.gsd/` planning artifacts in git. Gitignore only runtime/ephemeral state.
+Track `.sf/` planning artifacts in git. Gitignore only runtime/ephemeral state.
 
 ### The Architecture
 
@@ -92,49 +92,49 @@ main ─────────────────────────
 | Branch switching | Never happens. All work on one branch. |
 | Conflict resolution | No merges within a worktree means no conflicts within a worktree. |
 
-### `.gsd/` Tracking Model
+### `.sf/` Tracking Model
 
 **Tracked in git (travels with the branch):**
 ```
-.gsd/milestones/         — roadmaps, plans, summaries, research, contexts, task plans/summaries
-.gsd/PROJECT.md          — project overview
-.gsd/DECISIONS.md        — architectural decision register
-.gsd/REQUIREMENTS.md     — requirements register
-.gsd/QUEUE.md            — work queue
+.sf/milestones/         — roadmaps, plans, summaries, research, contexts, task plans/summaries
+.sf/PROJECT.md          — project overview
+.sf/DECISIONS.md        — architectural decision register
+.sf/REQUIREMENTS.md     — requirements register
+.sf/QUEUE.md            — work queue
 ```
 
 **Gitignored (ephemeral, runtime, infrastructure):**
 ```
-.gsd/runtime/            — dispatch records, timeout tracking
-.gsd/activity/           — JSONL session dumps
-.gsd/worktrees/          — git worktree working directories
-.gsd/auto.lock           — crash detection sentinel
-.gsd/metrics.json        — token/cost accumulator
-.gsd/completed-units.json — dispatch idempotency tracker
-.gsd/STATE.md            — derived state cache (rebuilt by deriveState())
-.gsd/gsd.db              — SQLite cache (rebuilt from tracked markdown by importers)
-.gsd/DISCUSSION-MANIFEST.json — discussion phase tracking
-.gsd/milestones/**/*-CONTINUE.md — interrupted-work markers
-.gsd/milestones/**/continue.md   — legacy continue markers
+.sf/runtime/            — dispatch records, timeout tracking
+.sf/activity/           — JSONL session dumps
+.sf/worktrees/          — git worktree working directories
+.sf/auto.lock           — crash detection sentinel
+.sf/metrics.json        — token/cost accumulator
+.sf/completed-units.json — dispatch idempotency tracker
+.sf/STATE.md            — derived state cache (rebuilt by deriveState())
+.sf/sf.db              — SQLite cache (rebuilt from tracked markdown by importers)
+.sf/DISCUSSION-MANIFEST.json — discussion phase tracking
+.sf/milestones/**/*-CONTINUE.md — interrupted-work markers
+.sf/milestones/**/continue.md   — legacy continue markers
 ```
 
 ### `.gitignore` Update
 
-Replace the current blanket `.gsd/` ignore with explicit runtime-only ignores:
+Replace the current blanket `.sf/` ignore with explicit runtime-only ignores:
 
 ```gitignore
 # ── SF: Runtime / Ephemeral ─────────────────────────────────
-.gsd/auto.lock
-.gsd/completed-units.json
-.gsd/STATE.md
-.gsd/metrics.json
-.gsd/gsd.db
-.gsd/activity/
-.gsd/runtime/
-.gsd/worktrees/
-.gsd/DISCUSSION-MANIFEST.json
-.gsd/milestones/**/*-CONTINUE.md
-.gsd/milestones/**/continue.md
+.sf/auto.lock
+.sf/completed-units.json
+.sf/STATE.md
+.sf/metrics.json
+.sf/sf.db
+.sf/activity/
+.sf/runtime/
+.sf/worktrees/
+.sf/DISCUSSION-MANIFEST.json
+.sf/milestones/**/*-CONTINUE.md
+.sf/milestones/**/continue.md
 ```
 
 Planning artifacts (milestones/, PROJECT.md, DECISIONS.md, REQUIREMENTS.md, QUEUE.md) are NOT in `.gitignore` and are tracked normally.
@@ -163,7 +163,7 @@ The function simplifies dramatically:
 5. `git commit` with milestone summary
 6. Remove worktree + delete branch
 
-No conflict categorization. No runtime file stripping. No `.gsd/` special handling. Planning artifacts merge cleanly because they're in `.gsd/milestones/M001/` which doesn't exist on `main` until this merge.
+No conflict categorization. No runtime file stripping. No `.sf/` special handling. Planning artifacts merge cleanly because they're in `.sf/milestones/M001/` which doesn't exist on `main` until this merge.
 
 ### What `smartStage()` Becomes
 
@@ -192,7 +192,7 @@ The `fix-merge` dispatch unit type is eliminated. Within a worktree, there are n
 
 The `shouldUseWorktreeIsolation()` three-tier preference resolution is replaced by a single behavior: worktree isolation is always used. The `git.isolation: "branch"` preference is deprecated.
 
-Projects with existing `gsd/M001/S01` slice branches can still be read by state derivation, but new work never creates slice branches.
+Projects with existing `sf/M001/S01` slice branches can still be read by state derivation, but new work never creates slice branches.
 
 ### Risks
 
@@ -209,7 +209,7 @@ Squash merge collapses all commits into one on `main`. Mitigations:
 
 **3. SQLite DB desync after `git reset`**
 
-If tracked markdown rolls back via `git reset --hard`, the gitignored `gsd.db` doesn't. Mitigation: the importer layer (M001/S02) rebuilds the DB from markdown on startup. The DB is a cache, markdown is truth.
+If tracked markdown rolls back via `git reset --hard`, the gitignored `sf.db` doesn't. Mitigation: the importer layer (M001/S02) rebuilds the DB from markdown on startup. The DB is a cache, markdown is truth.
 
 **4. Disk space with multiple worktrees**
 
@@ -223,15 +223,15 @@ After `research-slice` or `plan-slice`, immediately merge the slice branch back 
 
 **Rejected:** Adds another merge path instead of removing the root cause. Still requires conflict resolution, self-healing, branch switching.
 
-### B. Keep `.gsd/` gitignored, bootstrap from git history for manual worktrees
+### B. Keep `.sf/` gitignored, bootstrap from git history for manual worktrees
 
-When SF detects an empty `.gsd/` in a worktree, reconstruct state from the branch's git history using `git show <commit>:.gsd/...`.
+When SF detects an empty `.sf/` in a worktree, reconstruct state from the branch's git history using `git show <commit>:.sf/...`.
 
 **Rejected:** Recovery logic, not architecture. Doesn't fix the fundamental problem of branch-agnostic state. Fails when git history has been rewritten.
 
-### C. Branch-scoped `.gsd/` directories (`.gsd/branches/<branch-name>/milestones/...`)
+### C. Branch-scoped `.sf/` directories (`.sf/branches/<branch-name>/milestones/...`)
 
-Each branch writes to a namespaced subdirectory within `.gsd/`.
+Each branch writes to a namespaced subdirectory within `.sf/`.
 
 **Rejected:** Adds complexity instead of removing it. Requires renaming/moving on branch creation, doesn't work with standard git tools (`git checkout` doesn't rename directories).
 
@@ -243,7 +243,7 @@ This architecture was stress-tested by three independent models:
 
 **GPT-5.4 (Codex)** read the full codebase and confirmed the model is sound. Identified that `smartStage()` already force-adds durable paths (validating the tracked-artifact approach) and that `resolveMainWorktreeRoot` in PR #487 is architecturally wrong (adopted — PR to be closed).
 
-**Codebase analysis** confirmed `.gsd/milestones/` is already partially tracked on `main` despite the `.gitignore`, that `SF_DURABLE_PATHS` exists as a code-level acknowledgment that planning artifacts should be tracked, and that the README already documents the correct runtime-only gitignore pattern.
+**Codebase analysis** confirmed `.sf/milestones/` is already partially tracked on `main` despite the `.gitignore`, that `SF_DURABLE_PATHS` exists as a code-level acknowledgment that planning artifacts should be tracked, and that the README already documents the correct runtime-only gitignore pattern.
 
 ### Codex (GPT-5.4) Dissent — "No Slice Branches Is a Redesign"
 
@@ -255,7 +255,7 @@ Rebuttal: In the branchless model, there is no integration step to crash between
 
 **Concern 2: "Concurrent edits to shared root docs (PROJECT.md, DECISIONS.md) from two terminals."**
 
-Rebuttal: Valid edge case. If `/gsd queue` edits `DECISIONS.md` on `main` while auto-mode edits it in a worktree, there's a content conflict at squash-merge time. This is a standard git content conflict — no different from two developers editing the same file. Handled by normal merge resolution. Not caused by or solved by slice branches.
+Rebuttal: Valid edge case. If `/sf queue` edits `DECISIONS.md` on `main` while auto-mode edits it in a worktree, there's a content conflict at squash-merge time. This is a standard git content conflict — no different from two developers editing the same file. Handled by normal merge resolution. Not caused by or solved by slice branches.
 
 **Concern 3: "Slice→milestone merges provide continuous integration. Removing them pushes conflict discovery to the end."**
 
@@ -263,7 +263,7 @@ Rebuttal: In a single-user sequential workflow, there is nothing to integrate ag
 
 **Concern 4: "Replace slice branches with another explicit slice-boundary primitive. Don't just delete them."**
 
-Response: Accepted in spirit. Commits with conventional tags (`feat(M001/S01):`, `feat(M001/S01/T01):`) serve as the slice boundary primitive. `git log --grep="M001/S01"` isolates a slice's history. `git revert` targets specific commits. Git tags (`gsd/M001/S01-complete`) can mark slice completion if needed. The boundary primitive is commit metadata, not branches.
+Response: Accepted in spirit. Commits with conventional tags (`feat(M001/S01):`, `feat(M001/S01/T01):`) serve as the slice boundary primitive. `git log --grep="M001/S01"` isolates a slice's history. `git revert` targets specific commits. Git tags (`sf/M001/S01-complete`) can mark slice completion if needed. The boundary primitive is commit metadata, not branches.
 
 ## Action Items
 

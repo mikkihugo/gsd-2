@@ -23,7 +23,7 @@ import {
   mergeWorktreeToMain,
   diffWorktreeAll,
   diffWorktreeNumstat,
-  getWorktreeGSDDiff,
+  getWorktreeSFDiff,
   getWorktreeCodeDiff,
   getWorktreeLog,
   worktreeBranchName,
@@ -291,7 +291,7 @@ function hasExistingMilestones(wtPath: string): boolean {
  * Clear SF planning artifacts so auto-mode starts fresh with the discuss flow.
  * Keeps the .gsd/ directory structure intact but removes milestones and root planning files.
  */
-function clearGSDPlans(wtPath: string): void {
+function clearSFPlans(wtPath: string): void {
   const mDir = milestonesDir(wtPath);
   if (existsSync(mDir)) {
     rmSync(mDir, { recursive: true, force: true });
@@ -347,13 +347,13 @@ async function handleCreate(
           `This worktree inherited existing SF milestones from the main branch.`,
           ``,
           `  Continue — keep milestones and pick up where main left off`,
-          `  Start fresh — clear milestones so /gsd auto starts a new project`,
+          `  Start fresh — clear milestones so /sf auto starts a new project`,
         ].join("\n"),
         confirmLabel: "Continue",
         declineLabel: "Start fresh",
       });
       if (!keepExisting) {
-        clearGSDPlans(info.path);
+        clearSFPlans(info.path);
         clearedPlans = true;
       }
     }
@@ -362,7 +362,7 @@ async function handleCreate(
       ? `  ${CLR.muted("Auto-committed on previous branch before switching.")}`
       : "";
     const freshNote = clearedPlans
-      ? `  ${CLR.ok("✓")} Cleared milestones — ${CLR.hint("/gsd auto")} will start fresh.`
+      ? `  ${CLR.ok("✓")} Cleared milestones — ${CLR.hint("/sf auto")} will start fresh.`
       : "";
     ctx.ui.notify(
       [
@@ -585,7 +585,7 @@ async function handleMerge(
     // Gather merge context — full repo diff, not just .gsd/
     const diffSummary = diffWorktreeAll(basePath, name);
     const numstat = diffWorktreeNumstat(basePath, name);
-    const gsdDiff = getWorktreeGSDDiff(basePath, name);
+    const sfDiff = getWorktreeSFDiff(basePath, name);
     const codeDiff = getWorktreeCodeDiff(basePath, name);
     const commitLog = getWorktreeLog(basePath, name);
 
@@ -605,13 +605,13 @@ async function handleMerge(
     for (const s of numstat) { totalAdded += s.added; totalRemoved += s.removed; }
 
     // Split files into code vs SF for the preview
-    const isGSD = (f: string) => f.startsWith(".gsd/");
-    const codeChanges = diffSummary.added.filter(f => !isGSD(f)).length
-      + diffSummary.modified.filter(f => !isGSD(f)).length
-      + diffSummary.removed.filter(f => !isGSD(f)).length;
-    const gsdChanges = diffSummary.added.filter(isGSD).length
-      + diffSummary.modified.filter(isGSD).length
-      + diffSummary.removed.filter(isGSD).length;
+    const isSF = (f: string) => f.startsWith(".gsd/");
+    const codeChanges = diffSummary.added.filter(f => !isSF(f)).length
+      + diffSummary.modified.filter(f => !isSF(f)).length
+      + diffSummary.removed.filter(f => !isSF(f)).length;
+    const sfChanges = diffSummary.added.filter(isSF).length
+      + diffSummary.modified.filter(isSF).length
+      + diffSummary.removed.filter(isSF).length;
 
     // Format a file line with +/- stats
     const formatFileLine = (prefix: string, file: string): string => {
@@ -624,7 +624,7 @@ async function handleMerge(
     const previewLines = [
       `Merge ${CLR.name(name)} → ${CLR.branch(mainBranch)}`,
       "",
-      `  ${totalChanges} file${totalChanges === 1 ? "" : "s"} changed, ${CLR.ok(`+${totalAdded}`)} ${RED}-${totalRemoved}${RESET} lines ${CLR.muted(`(${codeChanges} code, ${gsdChanges} SF)`)}`,
+      `  ${totalChanges} file${totalChanges === 1 ? "" : "s"} changed, ${CLR.ok(`+${totalAdded}`)} ${RED}-${totalRemoved}${RESET} lines ${CLR.muted(`(${codeChanges} code, ${sfChanges} SF)`)}`,
     ];
 
     const appendFileList = (label: string, files: string[], prefix: string, limit = 10) => {
@@ -661,11 +661,11 @@ async function handleMerge(
     // --- Deterministic merge path (preferred) ---
     // Try a direct squash-merge first. Only fall back to LLM on conflict.
     const commitType = inferCommitType(name);
-    const commitMessage = `${commitType}: merge worktree ${name}\n\nGSD-Worktree: ${name}`;
+    const commitMessage = `${commitType}: merge worktree ${name}\n\nSF-Worktree: ${name}`;
 
     // Reconcile worktree DB into main DB before squash merge
-    const wtDbPath = join(worktreePath(basePath, name), ".gsd", "gsd.db");
-    const mainDbPath = join(basePath, ".gsd", "gsd.db");
+    const wtDbPath = join(worktreePath(basePath, name), ".gsd", "sf.db");
+    const mainDbPath = join(basePath, ".gsd", "sf.db");
     if (existsSync(wtDbPath) && existsSync(mainDbPath)) {
       try {
         const { reconcileWorktreeDb } = await import("./sf-db.js");
@@ -724,14 +724,14 @@ async function handleMerge(
       addedFiles: formatFiles(diffSummary.added),
       modifiedFiles: formatFiles(diffSummary.modified),
       removedFiles: formatFiles(diffSummary.removed),
-      gsdDiff: gsdDiff || "(no SF artifact changes)",
+      sfDiff: sfDiff || "(no SF artifact changes)",
       codeDiff: codeDiff || "(no code changes)",
     });
 
     // Dispatch to the LLM
     pi.sendMessage(
       {
-        customType: "gsd-worktree-merge",
+        customType: "sf-worktree-merge",
         content: prompt,
         display: false,
       },
@@ -739,7 +739,7 @@ async function handleMerge(
     );
 
     ctx.ui.notify(
-      `${CLR.ok("✓")} Merge helper started for ${CLR.name(name)} ${CLR.muted(`(${codeChanges} code + ${gsdChanges} SF artifact change${totalChanges === 1 ? "" : "s"})`)}`,
+      `${CLR.ok("✓")} Merge helper started for ${CLR.name(name)} ${CLR.muted(`(${codeChanges} code + ${sfChanges} SF artifact change${totalChanges === 1 ? "" : "s"})`)}`,
       "info",
     );
   } catch (error) {

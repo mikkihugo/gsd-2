@@ -22,7 +22,7 @@ describe("categorizePluginRoots", () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "gsd-mktplace-test-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "sf-mktplace-test-"));
   });
 
   afterEach(() => {
@@ -159,7 +159,7 @@ describe("discoverClaudePlugins — Claude plugin.json recognition", () => {
   let tmpDir: string;
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "gsd-plugin-disc-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "sf-plugin-disc-"));
   });
 
   afterEach(() => {

@@ -8,7 +8,7 @@ import { writePhaseAnchor, readPhaseAnchor, formatAnchorForPrompt } from "../pha
 import type { PhaseAnchor } from "../phase-anchor.js";
 
 function makeTempBase(): string {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-anchor-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-anchor-test-"));
   mkdirSync(join(tmp, ".gsd", "milestones", "M001", "anchors"), { recursive: true });
   return tmp;
 }

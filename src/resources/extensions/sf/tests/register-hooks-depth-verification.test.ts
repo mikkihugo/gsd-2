@@ -14,7 +14,7 @@ import {
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-depth-gate-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-depth-gate-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;

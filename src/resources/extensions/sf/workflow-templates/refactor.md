@@ -4,7 +4,7 @@
 name: refactor
 version: 1
 requires_project: false
-artifact_dir: .gsd/workflows/refactors/
+artifact_dir: .sf/workflows/refactors/
 </template_meta>
 
 <purpose>

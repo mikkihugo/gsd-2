@@ -8,7 +8,7 @@ import { randomUUID } from "node:crypto";
 import { assessInterruptedSession } from "../interrupted-session.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-smart-entry-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-smart-entry-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }

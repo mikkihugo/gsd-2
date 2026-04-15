@@ -113,11 +113,11 @@ export interface BootstrapDeps {
 const MAX_CONSECUTIVE_COMPLETE_BOOTSTRAPS = 2;
 
 export async function openProjectDbIfPresent(basePath: string): Promise<void> {
-  const gsdDbPath = resolveProjectRootDbPath(basePath);
-  if (!existsSync(gsdDbPath) || isDbAvailable()) return;
+  const sfDbPath = resolveProjectRootDbPath(basePath);
+  if (!existsSync(sfDbPath) || isDbAvailable()) return;
 
   try {
-    openDatabase(gsdDbPath);
+    openDatabase(sfDbPath);
   } catch (err) {
     logWarning("engine", `sf-db: failed to open existing database: ${err instanceof Error ? err.message : String(err)}`);
   }
@@ -232,7 +232,7 @@ export function auditOrphanedMilestoneBranches(
       // Branch is NOT merged — preserve for safety, warn the user
       warnings.push(
         `Branch ${branch} exists for completed milestone ${milestoneId} but is NOT merged into ${mainBranch}. ` +
-        `This may contain unmerged work. Merge manually or run \`/gsd health --fix\` to resolve.`,
+        `This may contain unmerged work. Merge manually or run \`/sf health --fix\` to resolve.`,
       );
     }
   }
@@ -273,12 +273,12 @@ export async function bootstrapAutoSession(
   // phase-specific planning model for a discuss turn (#2829).
   //
   // Precedence:
-  // 1) Explicit session override via /gsd model (this session)
+  // 1) Explicit session override via /sf model (this session)
   // 2) SF model preferences from PREFERENCES.md (validated against live auth)
   // 3) Current session model from settings/session restore (if provider ready)
   //
   // This preserves #3517 defaults while honoring explicit runtime model
-  // selection for subsequent /gsd runs in the same session.
+  // selection for subsequent /sf runs in the same session.
   //
   // Exception (#4122): when the session provider is a custom provider declared
   // in ~/.gsd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
@@ -367,13 +367,13 @@ export async function bootstrapAutoSession(
     // Bootstrap milestones/ if it doesn't exist.
     // Check milestones/ directly — ensureGsdSymlink above already created .gsd/,
     // so checking .gsd/ existence would be dead code (#2942).
-    const gsdDir = join(base, ".gsd");
-    const milestonesPath = join(gsdDir, "milestones");
+    const sfDir = join(base, ".gsd");
+    const milestonesPath = join(sfDir, "milestones");
     if (!existsSync(milestonesPath)) {
       mkdirSync(milestonesPath, { recursive: true });
       try {
         nativeAddAll(base);
-        nativeCommit(base, "chore: init gsd");
+        nativeCommit(base, "chore: init sf");
       } catch (err) {
         /* nothing to commit */
         logWarning("engine", `mkdir failed: ${err instanceof Error ? err.message : String(err)}`);
@@ -503,7 +503,7 @@ export async function bootstrapAutoSession(
         hasSurvivorBranch = false;
       } else {
         ctx.ui.notify(
-          "Discussion completed but milestone draft was not promoted. Run /gsd to try again.",
+          "Discussion completed but milestone draft was not promoted. Run /sf to try again.",
           "warning",
         );
         return releaseLockAndReturn();
@@ -541,7 +541,7 @@ export async function bootstrapAutoSession(
           s.consecutiveCompleteBootstraps = 0;
           ctx.ui.notify(
             "All milestones are complete and the discussion didn't produce a new one. " +
-            "Run /gsd to start a new milestone manually.",
+            "Run /sf to start a new milestone manually.",
             "warning",
           );
           return releaseLockAndReturn();
@@ -573,7 +573,7 @@ export async function bootstrapAutoSession(
             state = postState;
           } else {
             ctx.ui.notify(
-              "Discussion completed but no milestone context was written. Run /gsd to try the discussion again, or /gsd auto after creating the milestone manually.",
+              "Discussion completed but no milestone context was written. Run /sf to try the discussion again, or /sf auto after creating the milestone manually.",
               "warning",
             );
             return releaseLockAndReturn();
@@ -598,7 +598,7 @@ export async function bootstrapAutoSession(
             state = postState;
           } else {
             ctx.ui.notify(
-              "Discussion completed but milestone context is still missing. Run /gsd to try again.",
+              "Discussion completed but milestone context is still missing. Run /sf to try again.",
               "warning",
             );
             return releaseLockAndReturn();
@@ -620,7 +620,7 @@ export async function bootstrapAutoSession(
           state = postState;
         } else {
           ctx.ui.notify(
-            "Discussion completed but milestone draft was not promoted. Run /gsd to try again.",
+            "Discussion completed but milestone draft was not promoted. Run /sf to try again.",
             "warning",
           );
           return releaseLockAndReturn();
@@ -640,8 +640,8 @@ export async function bootstrapAutoSession(
 
     // ── Initialize session state ──
     // Notify shared phase state so subagent conflict checks can fire
-    const { activateGSD: activateGSDPhaseState } = await import("../shared/sf-phase-state.js");
-    activateGSDPhaseState();
+    const { activateSF: activateSFPhaseState } = await import("../shared/sf-phase-state.js");
+    activateSFPhaseState();
     s.active = true;
     s.stepMode = requestedStepMode;
     s.verbose = verboseMode;
@@ -726,15 +726,15 @@ export async function bootstrapAutoSession(
     }
 
     // ── DB lifecycle ──
-    const gsdDbPath = resolveProjectRootDbPath(s.basePath);
-    const gsdDirPath = join(s.basePath, ".gsd");
-    if (existsSync(gsdDirPath) && !existsSync(gsdDbPath)) {
-      const hasDecisions = existsSync(join(gsdDirPath, "DECISIONS.md"));
-      const hasRequirements = existsSync(join(gsdDirPath, "REQUIREMENTS.md"));
-      const hasMilestones = existsSync(join(gsdDirPath, "milestones"));
+    const sfDbPath = resolveProjectRootDbPath(s.basePath);
+    const sfDirPath = join(s.basePath, ".gsd");
+    if (existsSync(sfDirPath) && !existsSync(sfDbPath)) {
+      const hasDecisions = existsSync(join(sfDirPath, "DECISIONS.md"));
+      const hasRequirements = existsSync(join(sfDirPath, "REQUIREMENTS.md"));
+      const hasMilestones = existsSync(join(sfDirPath, "milestones"));
       try {
         const { openDatabase: openDb } = await import("./sf-db.js");
-        openDb(gsdDbPath);
+        openDb(sfDbPath);
         if (hasDecisions || hasRequirements || hasMilestones) {
           const { migrateFromMarkdown } = await import("./md-importer.js");
           migrateFromMarkdown(s.basePath);
@@ -743,10 +743,10 @@ export async function bootstrapAutoSession(
         logError("engine", `auto-migration failed: ${(err as Error).message}`);
       }
     }
-    if (existsSync(gsdDbPath) && !isDbAvailable()) {
+    if (existsSync(sfDbPath) && !isDbAvailable()) {
       try {
         const { openDatabase: openDb } = await import("./sf-db.js");
-        openDb(gsdDbPath);
+        openDb(sfDbPath);
       } catch (err) {
         logError("engine", `failed to open existing database: ${(err as Error).message}`);
       }
@@ -757,7 +757,7 @@ export async function bootstrapAutoSession(
     // auto-mode starts but every sf_task_complete / sf_slice_complete
     // call returns "db_unavailable", triggering artifact-retry which
     // re-dispatches the same task — producing an infinite loop (#2419).
-    if (existsSync(gsdDbPath) && !isDbAvailable()) {
+    if (existsSync(sfDbPath) && !isDbAvailable()) {
       ctx.ui.notify(
         "SQLite database exists but failed to open. Auto-mode cannot proceed without a working database provider. " +
           "Check for corrupt sf.db or missing native SQLite bindings.",
@@ -805,9 +805,9 @@ export async function bootstrapAutoSession(
       snapshotSkills();
     }
 
-    ctx.ui.setStatus("gsd-auto", s.stepMode ? "next" : "auto");
+    ctx.ui.setStatus("sf-auto", s.stepMode ? "next" : "auto");
     ctx.ui.setFooter(hideFooter);
-    // Hide sf-health during AUTO — gsd-progress is the single source of truth
+    // Hide sf-health during AUTO — sf-progress is the single source of truth
     // for last-commit / cost / health signal while auto is running.
     ctx.ui.setWidget("sf-health", undefined);
     const modeLabel = s.stepMode ? "Step-mode" : "Auto-mode";

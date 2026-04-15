@@ -27,8 +27,8 @@ Simplified Chinese translation: [`zh-CN/`](./zh-CN/).
 | [Working in Teams](./user-docs/working-in-teams.md) | Unique milestone IDs, `.gitignore` setup, and shared planning artifacts |
 | [Skills](./user-docs/skills.md) | Bundled skills, skill discovery, and custom skill authoring |
 | [Migration from v1](./user-docs/migration.md) | Migrating `.planning` directories from the original SF |
-| [Troubleshooting](./user-docs/troubleshooting.md) | Common issues, `/gsd doctor` (real-time visibility v2.40), `/gsd forensics` (full debugger v2.40), and recovery procedures |
-| [Web Interface](./user-docs/web-interface.md) | Browser-based project management with `gsd --web` (v2.41) |
+| [Troubleshooting](./user-docs/troubleshooting.md) | Common issues, `/sf doctor` (real-time visibility v2.40), `/sf forensics` (full debugger v2.40), and recovery procedures |
+| [Web Interface](./user-docs/web-interface.md) | Browser-based project management with `sf --web` (v2.41) |
 | [VS Code Extension](../vscode-extension/README.md) | Chat participant, sidebar dashboard, and RPC integration for VS Code |
 
 ## Architecture & Internals
@@ -43,7 +43,7 @@ Design documents, ADRs, and internal references. Located in [`dev/`](./dev/).
 | [ADR-003: Pipeline Simplification](./dev/ADR-003-pipeline-simplification.md) | Research merged into planning, mechanical completion (v2.30) |
 | [ADR-004: Capability-Aware Model Routing](./dev/ADR-004-capability-aware-model-routing.md) | Extend routing from tier/cost selection to task-capability matching |
 | [ADR-007: Model Catalog Split](./dev/ADR-007-model-catalog-split.md) | Separate model metadata from routing logic for extensibility |
-| [ADR-008: SF Tools over MCP](./dev/ADR-008-gsd-tools-over-mcp-for-provider-parity.md) | Native tools over MCP for provider parity |
+| [ADR-008: SF Tools over MCP](./dev/ADR-008-sf-tools-over-mcp-for-provider-parity.md) | Native tools over MCP for provider parity |
 | [ADR-008: Implementation Plan](./dev/ADR-008-IMPLEMENTATION-PLAN.md) | Implementation plan for ADR-008 |
 | [Context Optimization Opportunities](./dev/pi-context-optimization-opportunities.md) | Analysis of context window usage and optimization strategies |
 | [File System Map](./dev/FILE-SYSTEM-MAP.md) | Complete file system reference |

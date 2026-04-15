@@ -19,7 +19,7 @@ import {
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-derive-db-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-derive-db-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -102,7 +102,7 @@ const REQUIREMENTS_CONTENT = `# Requirements
 
 describe('derive-state-db', async () => {
 
-  // ─── Test 1: DB-backed deriveState produces identical GSDState ─────────
+  // ─── Test 1: DB-backed deriveState produces identical SFState ─────────
   test('derive-state-db: DB path matches file path', async () => {
     const base = createFixtureBase();
     try {
@@ -1002,7 +1002,7 @@ describe('derive-state-db', async () => {
       writeFile(base, 'milestones/M002/M002-CONTEXT.md', '# M002: Queued\n\nQueued milestone.');
 
       openDatabase(':memory:');
-      // Only insert M001 — simulates the state after migration guard ran then /gsd queue added M002
+      // Only insert M001 — simulates the state after migration guard ran then /sf queue added M002
       insertMilestone({ id: 'M001', title: 'First', status: 'complete' });
 
       invalidateStateCache();

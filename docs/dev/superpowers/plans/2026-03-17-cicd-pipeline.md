@@ -23,9 +23,9 @@
 | `.github/workflows/cleanup-dev-versions.yml` | Weekly scheduled cleanup of old `-dev.` npm versions |
 | `scripts/version-stamp.mjs` | Reads `package.json` version, appends `-dev.<sha>`, writes back |
 | `tests/smoke/run.ts` | Smoke test runner — discovers and executes all smoke tests |
-| `tests/smoke/test-version.ts` | Verify `gsd --version` outputs valid semver |
-| `tests/smoke/test-help.ts` | Verify `gsd --help` exits 0 and contains expected output |
-| `tests/smoke/test-init.ts` | Verify `gsd init` creates expected files in a temp dir |
+| `tests/smoke/test-version.ts` | Verify `sf --version` outputs valid semver |
+| `tests/smoke/test-help.ts` | Verify `sf --help` exits 0 and contains expected output |
+| `tests/smoke/test-init.ts` | Verify `sf init` creates expected files in a temp dir |
 | `tests/fixtures/provider.ts` | `FixtureProvider` — wraps `ApiProvider`, records/replays turns |
 | `tests/fixtures/run.ts` | Fixture test runner — loads recordings, replays via `FixtureProvider` |
 | `tests/fixtures/record.ts` | Recording helper — runs a session with `SF_FIXTURE_MODE=record` |
@@ -141,13 +141,13 @@ RUN npm install -g sf-run@${SF_VERSION}
 # Default working directory for user projects
 WORKDIR /workspace
 
-ENTRYPOINT ["gsd"]
+ENTRYPOINT ["sf"]
 CMD ["--help"]
 ```
 
 - [ ] **Step 2: Verify builder stage builds**
 
-Run: `docker build --target builder -t gsd-ci-builder-test .`
+Run: `docker build --target builder -t sf-ci-builder-test .`
 Expected: Completes successfully (may take 5-10 min first time)
 
 - [ ] **Step 3: Verify runtime stage builds**
@@ -225,7 +225,7 @@ if (failed > 0) process.exit(1);
 
 ```typescript
 // tests/smoke/test-version.ts
-// Verifies that `gsd --version` outputs valid semver-like string.
+// Verifies that `sf --version` outputs valid semver-like string.
 // When SF_SMOKE_BINARY is set (CI), uses that binary directly.
 // Otherwise falls back to npx sf-run.
 
@@ -248,7 +248,7 @@ console.log(`version: ${output}`);
 
 ```typescript
 // tests/smoke/test-help.ts
-// Verifies that `gsd --help` exits 0 and contains expected keywords.
+// Verifies that `sf --help` exits 0 and contains expected keywords.
 
 import { execFileSync } from "child_process";
 
@@ -257,7 +257,7 @@ const output = bin
   ? execFileSync(bin, ["--help"], { encoding: "utf8", timeout: 30_000 })
   : execFileSync("npx", ["sf-run", "--help"], { encoding: "utf8", timeout: 30_000 });
 
-const requiredKeywords = ["gsd", "usage"];
+const requiredKeywords = ["sf", "usage"];
 for (const keyword of requiredKeywords) {
   if (!output.toLowerCase().includes(keyword)) {
     console.error(`Missing keyword "${keyword}" in help output`);
@@ -272,14 +272,14 @@ console.log("help output OK");
 
 ```typescript
 // tests/smoke/test-init.ts
-// Verifies that `gsd init` creates expected files in a temp directory.
+// Verifies that `sf init` creates expected files in a temp directory.
 
 import { execFileSync } from "child_process";
 import { mkdtempSync, existsSync, rmSync } from "fs";
 import { join } from "path";
 import { tmpdir } from "os";
 
-const tmp = mkdtempSync(join(tmpdir(), "gsd-smoke-init-"));
+const tmp = mkdtempSync(join(tmpdir(), "sf-smoke-init-"));
 
 try {
   const bin = process.env.SF_SMOKE_BINARY;
@@ -291,9 +291,9 @@ try {
     env: { ...process.env, SF_NON_INTERACTIVE: "1" },
   });
 
-  // Check that .gsd directory was created
-  if (!existsSync(join(tmp, ".gsd"))) {
-    console.error("Expected .gsd/ directory not found after init");
+  // Check that .sf directory was created
+  if (!existsSync(join(tmp, ".sf"))) {
+    console.error("Expected .sf/ directory not found after init");
     process.exit(1);
   }
 
@@ -484,7 +484,7 @@ export class FixtureReplayer {
 }
 ```
 
-Note: This provider implements the core recording/replay data structures and utilities. Wiring it into the `pi-ai` registry as a drop-in `ApiProvider` (via `registerApiProvider()` from `packages/pi-ai/src/api-registry.ts`) requires importing `@gsd/pi-ai` internals, which couples tests to the build output. This integration is deferred to a follow-up task after the pipeline is operational. The current implementation validates fixture format, turn sequencing, and replay correctness independently.
+Note: This provider implements the core recording/replay data structures and utilities. Wiring it into the `pi-ai` registry as a drop-in `ApiProvider` (via `registerApiProvider()` from `packages/pi-ai/src/api-registry.ts`) requires importing `@sf/pi-ai` internals, which couples tests to the build output. This integration is deferred to a follow-up task after the pipeline is operational. The current implementation validates fixture format, turn sequencing, and replay correctness independently.
 
 - [ ] **Step 2: Verify the file has no syntax errors**
 
@@ -1038,7 +1038,7 @@ jobs:
           mkdir /tmp/smoke-test && cd /tmp/smoke-test
           npm init -y
           npm install sf-run@dev
-          npx gsd --version
+          npx sf --version
 
   # ─── TEST STAGE ────────────────────────────────────────────
   test-verify:
@@ -1067,7 +1067,7 @@ jobs:
       - name: Run CLI smoke tests
         run: npm run test:smoke
         env:
-          SF_SMOKE_BINARY: gsd  # Use globally installed binary, not npx
+          SF_SMOKE_BINARY: sf  # Use globally installed binary, not npx
 
       - name: Run fixture replay tests
         run: npm run test:fixtures
@@ -1141,7 +1141,7 @@ jobs:
           mkdir /tmp/prod-smoke && cd /tmp/prod-smoke
           npm init -y
           npm install sf-run@latest
-          npx gsd --version
+          npx sf --version
 
   # ─── CI BUILDER IMAGE (conditional) ────────────────────────
   update-builder:
@@ -1395,7 +1395,7 @@ These steps require repo admin access and cannot be automated:
    - `RUN_LIVE_TESTS` → `false` by default on `prod` (set to `true` to enable)
 
 4. **Enable GHCR:**
-   - Ensure GitHub Container Registry is enabled for the `gsd-build` org
+   - Ensure GitHub Container Registry is enabled for the `sf-build` org
 
 5. **Test the pipeline end-to-end:**
    - Merge a test PR to `main`

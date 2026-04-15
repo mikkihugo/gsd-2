@@ -244,7 +244,7 @@ test("visualizer overlay closes on escape in filter and help submodes", async ()
   };
 
   let closedFilter = false;
-  const filterOverlay = new mod.GSDVisualizerOverlay(
+  const filterOverlay = new mod.SFVisualizerOverlay(
     mockTui,
     mockTheme as any,
     () => { closedFilter = true; },
@@ -255,7 +255,7 @@ test("visualizer overlay closes on escape in filter and help submodes", async ()
   filterOverlay.dispose();
 
   let closedHelp = false;
-  const helpOverlay = new mod.GSDVisualizerOverlay(
+  const helpOverlay = new mod.SFVisualizerOverlay(
     mockTui,
     mockTheme as any,
     () => { closedHelp = true; },
@@ -275,7 +275,7 @@ test("visualizer overlay tab hitboxes include rendered badges", async () => {
     bold: (text: string) => text,
   };
 
-  const overlay = new mod.GSDVisualizerOverlay(
+  const overlay = new mod.SFVisualizerOverlay(
     mockTui,
     mockTheme as any,
     () => {},

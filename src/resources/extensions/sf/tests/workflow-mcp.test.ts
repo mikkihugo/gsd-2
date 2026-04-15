@@ -19,7 +19,7 @@ import {
 } from "../workflow-mcp.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 
 type ElicitPayload = {
   message: string;
@@ -27,7 +27,7 @@ type ElicitPayload = {
 };
 
 function readSrc(file: string): string {
-  return readFileSync(join(gsdDir, file), "utf-8");
+  return readFileSync(join(sfDir, file), "utf-8");
 }
 
 function extractElicitPayload(request: unknown): ElicitPayload {
@@ -50,7 +50,7 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
     SF_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
     SF_WORKFLOW_MCP_ENV: JSON.stringify({ FOO: "bar" }),
     SF_WORKFLOW_MCP_CWD: "/tmp/project",
-    SF_CLI_PATH: "/tmp/gsd",
+    SF_CLI_PATH: "/tmp/sf",
   });
 
   assert.deepEqual(launch, {
@@ -61,7 +61,7 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
     env: launch?.env,
   });
   assert.equal(launch?.env?.FOO, "bar");
-  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/gsd");
+  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/sf");
   assert.equal(launch?.env?.SF_PERSIST_WRITE_GATE_STATE, "1");
   assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
   assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
@@ -75,21 +75,21 @@ test("buildWorkflowMcpServers mirrors explicit launch config", () => {
   });
 
   assert.deepEqual(servers, {
-    "gsd-workflow": {
+    "sf-workflow": {
       command: "node",
       args: ["dist/cli.js"],
-      env: servers?.["gsd-workflow"]?.env,
+      env: servers?.["sf-workflow"]?.env,
     },
   });
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal((servers?.["sf-workflow"]?.env as Record<string, string> | undefined)?.SF_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal((servers?.["sf-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match((servers?.["sf-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match((servers?.["sf-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
 test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_PROJECT_ROOT", () => {
-  const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
-  const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
+  const repoRoot = mkdtempSync(join(tmpdir(), "sf-workflow-root-"));
+  const worktreeRoot = mkdtempSync(join(tmpdir(), "sf-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
 
   mkdirSync(join(repoRoot, "packages", "mcp-server", "dist"), { recursive: true });
@@ -100,7 +100,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_PROJECT_
   });
 
   assert.deepEqual(launch, {
-    name: "gsd-workflow",
+    name: "sf-workflow",
     command: process.execPath,
     args: [cliPath],
     cwd: repoRoot,
@@ -113,8 +113,8 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_PROJECT_
 });
 
 test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_BIN_PATH ancestry", () => {
-  const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
-  const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
+  const repoRoot = mkdtempSync(join(tmpdir(), "sf-workflow-root-"));
+  const worktreeRoot = mkdtempSync(join(tmpdir(), "sf-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
   const devCliPath = join(repoRoot, "scripts", "dev-cli.js");
 
@@ -128,7 +128,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_BIN_PATH
   });
 
   assert.deepEqual(launch, {
-    name: "gsd-workflow",
+    name: "sf-workflow",
     command: process.execPath,
     args: [cliPath],
     cwd: worktreeRoot,
@@ -143,12 +143,12 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_BIN_PATH
 
 test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the installed SF package", () => {
   const launch = detectWorkflowMcpLaunchConfig("/tmp/project", {
-    SF_BIN_PATH: "/tmp/gsd-loader.js",
+    SF_BIN_PATH: "/tmp/sf-loader.js",
   });
 
   assert.equal(launch?.command, process.execPath);
   assert.equal(launch?.cwd, "/tmp/project");
-  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/gsd-loader.js");
+  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/sf-loader.js");
   assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
   assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
   assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
@@ -178,18 +178,18 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 });
 
 test("workflow MCP launch config reaches mutation tools over stdio", async () => {
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-transport-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "sf-workflow-transport-"));
   mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
   assert.match(
     launch.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "",
-    /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.(js|ts))$/,
+    /(dist[\/\\]resources[\/\\]extensions[\/\\]sf[\/\\]tools[\/\\]workflow-tool-executors\.js|src[\/\\]resources[\/\\]extensions[\/\\]sf[\/\\]tools[\/\\]workflow-tool-executors\.(js|ts))$/,
   );
   assert.match(
     launch.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "",
-    /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.(js|ts))$/,
+    /(dist[\/\\]resources[\/\\]extensions[\/\\]sf[\/\\]bootstrap[\/\\]write-gate\.js|src[\/\\]resources[\/\\]extensions[\/\\]sf[\/\\]bootstrap[\/\\]write-gate\.(js|ts))$/,
   );
   if ((launch.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
     assert.match(launch.env?.NODE_OPTIONS ?? "", /--experimental-strip-types/);
@@ -349,7 +349,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 });
 
 test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async () => {
-  const projectRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-elicit-"));
+  const projectRoot = mkdtempSync(join(tmpdir(), "sf-workflow-elicit-"));
   mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
@@ -689,7 +689,7 @@ test("auto phases source enforces workflow compatibility preflight", () => {
   assert.match(src, /workflow-capability/);
 });
 
-test("workflow transport error guidance includes /gsd mcp init hint", () => {
+test("workflow transport error guidance includes /sf mcp init hint", () => {
   const src = readSrc("workflow-mcp.ts");
-  assert.match(src, /Please run \/gsd mcp init \./);
+  assert.match(src, /Please run \/sf mcp init \./);
 });

@@ -4,13 +4,13 @@
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `SF_HOME` | `~/.gsd` | Global SF directory. All paths derive from this unless individually overridden. |
+| `SF_HOME` | `~/.sf` | Global SF directory. All paths derive from this unless individually overridden. |
 | `SF_PROJECT_ID` | (auto-hash) | Override automatic project identity hash. Useful for CI/CD or sharing state across repo clones. |
 | `SF_STATE_DIR` | `$SF_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. |
 | `SF_CODING_AGENT_DIR` | `$SF_HOME/agent` | Agent directory for extensions, auth, and managed resources. |
 | `SF_FETCH_ALLOWED_URLS` | (none) | Comma-separated hostnames exempt from internal URL blocking. |
 | `SF_ALLOWED_COMMAND_PREFIXES` | (built-in) | Comma-separated command prefixes allowed for value resolution. |
-| `SF_WEB_PROJECT_CWD` | — | Default project path for `gsd --web` when `?project=` is not specified. |
+| `SF_WEB_PROJECT_CWD` | — | Default project path for `sf --web` when `?project=` is not specified. |
 
 ## LLM Provider Keys
 
@@ -51,6 +51,6 @@ The `fetch_page` tool blocks requests to private/internal networks by default (S
 export SF_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
 ```
 
-Or set `fetchAllowedUrls` in `~/.gsd/agent/settings.json`.
+Or set `fetchAllowedUrls` in `~/.sf/agent/settings.json`.
 
 Blocked by default: private IP ranges, cloud metadata endpoints, localhost, non-HTTP protocols, IPv6 private ranges.

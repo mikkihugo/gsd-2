@@ -23,7 +23,7 @@ import {
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-detection-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-detection-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;
@@ -49,24 +49,24 @@ test("detectProjectState: empty directory returns state=none", (t) => {
   assert.equal(result.v2, undefined);
 });
 
-test("detectProjectState: directory with .gsd/milestones/M001 returns v2-gsd", (t) => {
-  const dir = makeTempDir("v2-gsd");
+test("detectProjectState: directory with .gsd/milestones/M001 returns v2-sf", (t) => {
+  const dir = makeTempDir("v2-sf");
   t.after(() => cleanup(dir));
 
   mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd");
+  assert.equal(result.state, "v2-sf");
   assert.ok(result.v2);
   assert.equal(result.v2!.milestoneCount, 1);
 });
 
-test("detectProjectState: directory with empty .gsd/milestones returns v2-gsd-empty", (t) => {
+test("detectProjectState: directory with empty .gsd/milestones returns v2-sf-empty", (t) => {
   const dir = makeTempDir("v2-empty");
   t.after(() => cleanup(dir));
 
   mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd-empty");
+  assert.equal(result.state, "v2-sf-empty");
   assert.ok(result.v2);
   assert.equal(result.v2!.milestoneCount, 0);
 });
@@ -92,7 +92,7 @@ test("detectProjectState: v2 takes priority over v1 when both exist", (t) => {
   mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
   mkdirSync(join(dir, ".planning"), { recursive: true });
   const result = detectProjectState(dir);
-  assert.equal(result.state, "v2-gsd");
+  assert.equal(result.state, "v2-sf");
 });
 
 test("detectProjectState: detects preferences in .gsd/", (t) => {

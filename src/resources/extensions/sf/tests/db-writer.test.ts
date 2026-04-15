@@ -68,7 +68,7 @@ const SAMPLE_DECISIONS: Decision[] = [
     when_context: 'M001',
     scope: 'arch',
     decision: 'DB location',
-    choice: '.gsd/gsd.db',
+    choice: '.gsd/sf.db',
     rationale: 'Derived state',
     revisable: 'No',
     made_by: 'agent',
@@ -307,7 +307,7 @@ describe('db-writer', () => {
 
   test('saveDecisionToDb', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -365,7 +365,7 @@ describe('db-writer', () => {
 
   test('parallel saveDecisionToDb calls produce unique IDs', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -406,7 +406,7 @@ describe('db-writer', () => {
 
   test('updateRequirementInDb', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -460,7 +460,7 @@ describe('db-writer', () => {
 
   test('updateRequirementInDb — upserts when not found (#2919)', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -478,7 +478,7 @@ describe('db-writer', () => {
 
   test('updateRequirementInDb — seeds from REQUIREMENTS.md when DB empty (#3346)', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -547,7 +547,7 @@ describe('db-writer', () => {
 
   test('saveArtifactToDb', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -587,7 +587,7 @@ describe('db-writer', () => {
 
   test('saveArtifactToDb — shrinkage guard preserves larger existing file', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {
@@ -633,7 +633,7 @@ describe('db-writer', () => {
 
   test('saveArtifactToDb — allows overwrite when new content is similar size', async () => {
     const tmpDir = makeTmpDir();
-    const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+    const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
     openDatabase(dbPath);
 
     try {

@@ -28,7 +28,7 @@ import {
 import { renderPlanFromDb } from "../../markdown-renderer.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-${randomUUID()}`);
   // Create .gsd/milestones/M001/slices/S01/tasks/ structure
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
@@ -195,7 +195,7 @@ test("buildLoopRemediationSteps returns steps for execute-task", (t) => {
   const steps = buildLoopRemediationSteps("execute-task", "M001/S01/T01", base);
   assert.ok(steps);
   assert.ok(steps!.includes("T01"));
-  assert.ok(steps!.includes("gsd undo-task"));
+  assert.ok(steps!.includes("sf undo-task"));
 });
 
 test("buildLoopRemediationSteps returns steps for plan-slice", (t) => {
@@ -205,7 +205,7 @@ test("buildLoopRemediationSteps returns steps for plan-slice", (t) => {
   const steps = buildLoopRemediationSteps("plan-slice", "M001/S01", base);
   assert.ok(steps);
   assert.ok(steps!.includes("PLAN"));
-  assert.ok(steps!.includes("gsd recover"));
+  assert.ok(steps!.includes("sf recover"));
 });
 
 test("buildLoopRemediationSteps returns steps for complete-slice", (t) => {
@@ -215,7 +215,7 @@ test("buildLoopRemediationSteps returns steps for complete-slice", (t) => {
   const steps = buildLoopRemediationSteps("complete-slice", "M001/S01", base);
   assert.ok(steps);
   assert.ok(steps!.includes("S01"));
-  assert.ok(steps!.includes("gsd reset-slice"));
+  assert.ok(steps!.includes("sf reset-slice"));
 });
 
 test("buildLoopRemediationSteps returns null for unknown type", (t) => {
@@ -484,7 +484,7 @@ test("verifyExpectedArtifact execute-task rejects heading-style plan without che
 
 test("verifyExpectedArtifact plan-slice passes for rendered slice/task plan artifacts from DB", async () => {
   const base = makeTmpBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
   openDatabase(dbPath);
   try {
     insertMilestone({ id: "M001", title: "Milestone", status: "active" });
@@ -513,7 +513,7 @@ test("verifyExpectedArtifact plan-slice passes for rendered slice/task plan arti
         estimate: "30m",
         files: ["src/resources/extensions/sf/markdown-renderer.ts"],
         verify: "node --test markdown-renderer.test.ts",
-        inputs: ["src/resources/extensions/sf/gsd.db.ts"],
+        inputs: ["src/resources/extensions/sf/sf-db.ts"],
         expectedOutput: ["src/resources/extensions/sf/tests/markdown-renderer.test.ts"],
         observabilityImpact: "Renderer tests cover the failure mode.",
       },
@@ -557,7 +557,7 @@ test("verifyExpectedArtifact plan-slice passes for rendered slice/task plan arti
 
 test("verifyExpectedArtifact plan-slice fails after deleting a rendered task plan file", async () => {
   const base = makeTmpBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
   openDatabase(dbPath);
   try {
     insertMilestone({ id: "M001", title: "Milestone", status: "active" });
@@ -586,7 +586,7 @@ test("verifyExpectedArtifact plan-slice fails after deleting a rendered task pla
         estimate: "30m",
         files: ["src/resources/extensions/sf/markdown-renderer.ts"],
         verify: "node --test markdown-renderer.test.ts",
-        inputs: ["src/resources/extensions/sf/gsd.db.ts"],
+        inputs: ["src/resources/extensions/sf/sf-db.ts"],
         expectedOutput: ["src/resources/extensions/sf/tests/markdown-renderer.test.ts"],
         observabilityImpact: "Renderer tests cover the failure mode.",
       },
@@ -672,7 +672,7 @@ test("#793: invalidateAllCaches clears all caches so deriveState sees fresh disk
 // ─── hasImplementationArtifacts (#1703) ───────────────────────────────────
 
 function makeGitBase(): string {
-  const base = join(tmpdir(), `gsd-test-git-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-git-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   execFileSync("git", ["init", "--initial-branch=main"], { cwd: base, stdio: "ignore" });
   execFileSync("git", ["config", "user.email", "test@test.com"], { cwd: base, stdio: "ignore" });
@@ -718,7 +718,7 @@ test("hasImplementationArtifacts returns 'present' when implementation files com
 });
 
 test("hasImplementationArtifacts returns 'unknown' on non-git directory (fail-open)", (t) => {
-  const base = join(tmpdir(), `gsd-test-nogit-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-nogit-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   t.after(() => cleanup(base));
 
@@ -733,7 +733,7 @@ test("verifyExpectedArtifact complete-milestone fails with only .gsd/ files (#17
   t.after(() => cleanup(base));
 
   // Create feature branch with only .gsd/ files
-  execFileSync("git", ["checkout", "-b", "feat/ms-only-gsd"], { cwd: base, stdio: "ignore" });
+  execFileSync("git", ["checkout", "-b", "feat/ms-only-sf"], { cwd: base, stdio: "ignore" });
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
   writeFileSync(join(base, ".gsd", "milestones", "M001", "M001-SUMMARY.md"), "# Milestone Summary\nDone.");
   execFileSync("git", ["add", "."], { cwd: base, stdio: "ignore" });

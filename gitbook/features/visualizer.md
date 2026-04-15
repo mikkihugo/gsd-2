@@ -5,7 +5,7 @@ The workflow visualizer is a full-screen terminal overlay showing project progre
 ## Opening
 
 ```
-/gsd visualize
+/sf visualize
 ```
 
 Or configure automatic display after milestone completion:
@@ -71,11 +71,11 @@ The visualizer auto-refreshes every 2 seconds, staying current alongside running
 For shareable reports outside the terminal:
 
 ```
-/gsd export --html              # current milestone
-/gsd export --html --all        # all milestones
+/sf export --html              # current milestone
+/sf export --html --all        # all milestones
 ```
 
-Generates self-contained HTML files in `.gsd/reports/` with progress tree, dependency graph, cost charts, timeline, and changelog. All CSS and JS are inlined — no external dependencies. Printable to PDF from any browser.
+Generates self-contained HTML files in `.sf/reports/` with progress tree, dependency graph, cost charts, timeline, and changelog. All CSS and JS are inlined — no external dependencies. Printable to PDF from any browser.
 
 ```yaml
 auto_report: true    # auto-generate after milestone completion (default)

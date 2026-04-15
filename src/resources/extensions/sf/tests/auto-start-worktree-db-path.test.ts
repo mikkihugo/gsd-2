@@ -16,12 +16,12 @@ assertTrue(dbLifecycleIdx > 0, "auto-start.ts has a DB lifecycle section");
 const dbLifecycleRegion = dbLifecycleIdx > 0 ? src.slice(dbLifecycleIdx, dbLifecycleIdx + 600) : "";
 
 assertTrue(
-  dbLifecycleRegion.includes("const gsdDbPath = resolveProjectRootDbPath(s.basePath);"),
+  dbLifecycleRegion.includes("const sfDbPath = resolveProjectRootDbPath(s.basePath);"),
   "DB lifecycle resolves the project-root DB path after worktree entry (#3822)",
 );
 
 assertTrue(
-  !dbLifecycleRegion.includes('join(s.basePath, ".gsd", "gsd.db")'),
+  !dbLifecycleRegion.includes('join(s.basePath, ".gsd", "sf.db")'),
   "DB lifecycle no longer derives sf.db directly from the worktree path (#3822)",
 );
 

@@ -7,7 +7,7 @@ SF can connect to external MCP (Model Context Protocol) servers for local tools,
 SF reads MCP config from these project-local paths:
 
 - `.mcp.json` — repo-shared config (safe to commit)
-- `.gsd/mcp.json` — local-only config (not shared)
+- `.sf/mcp.json` — local-only config (not shared)
 
 If both exist, server names are merged and the first definition found wins.
 
@@ -61,5 +61,5 @@ After adding config, verify from a SF session:
 
 - Use **absolute paths** for executables and scripts
 - Set required **environment variables** directly in the MCP config's `env` block
-- Use `.mcp.json` for team-shared servers; `.gsd/mcp.json` for machine-local ones
-- If a server depends on local paths or personal secrets, keep it in `.gsd/mcp.json`
+- Use `.mcp.json` for team-shared servers; `.sf/mcp.json` for machine-local ones
+- If a server depends on local paths or personal secrets, keep it in `.sf/mcp.json`

@@ -25,9 +25,9 @@ SF's code is clearly separated from pi's code at the module system level. The ve
 
 | Criterion | Measurement |
 |-----------|-------------|
-| Zero SF business logic in vendored pi packages | `pi-coding-agent/src/` contains no files that import from `@gsd/` packages (except the extension system's bundled module map) |
+| Zero SF business logic in vendored pi packages | `pi-coding-agent/src/` contains no files that import from `@sf/` packages (except the extension system's bundled module map) |
 | Module boundary is compiler-enforced | TypeScript `paths` config or package `exports` prevents pi packages from importing SF packages |
-| Applying a pi-mono update is scoped | Updating pi packages produces type errors only in `@gsd/agent-core` and `@gsd/agent-modes` — no changes required in pi package source files |
+| Applying a pi-mono update is scoped | Updating pi packages produces type errors only in `@sf/agent-core` and `@sf/agent-modes` — no changes required in pi package source files |
 | Install experience is unchanged | `npm install -g sf-run@latest` produces an identical binary from the user's perspective |
 | Existing extensions continue to work | All built-in SF extensions load and execute without modification |
 | Build time does not regress significantly | Full build completes within 120% of current baseline |
@@ -43,14 +43,14 @@ SF's code is clearly separated from pi's code at the module system level. The ve
 ## Stakeholders
 
 - **Maintainers applying pi updates** — primary beneficiary; this work directly reduces their update burden
-- **Extension authors** — must not be broken; the extension API surface stays in `@gsd/pi-coding-agent`
+- **Extension authors** — must not be broken; the extension API surface stays in `@sf/pi-coding-agent`
 - **End users** — not impacted; the refactor is entirely internal
 
 ## Requirements
 
-### R1 — New package: `@gsd/agent-core`
+### R1 — New package: `@sf/agent-core`
 
-A new workspace package at `packages/gsd-agent-core/` that owns all SF session orchestration logic. It depends on `@gsd/pi-coding-agent`, `@gsd/pi-agent-core`, and `@gsd/pi-ai`. Nothing in the vendored pi packages depends on it.
+A new workspace package at `packages/sf-agent-core/` that owns all SF session orchestration logic. It depends on `@sf/pi-coding-agent`, `@sf/pi-agent-core`, and `@sf/pi-ai`. Nothing in the vendored pi packages depends on it.
 
 Must contain:
 - `agent-session.ts` and all `AgentSession` types
@@ -66,9 +66,9 @@ Must contain:
 - `artifact-manager.ts`, `blob-store.ts`
 - `export-html/`
 
-### R2 — New package: `@gsd/agent-modes`
+### R2 — New package: `@sf/agent-modes`
 
-A new workspace package at `packages/gsd-agent-modes/` that owns all run-mode and CLI code. It depends on `@gsd/agent-core`, `@gsd/pi-coding-agent`, and `@gsd/pi-tui`. It is the layer the top-level `sf-run` binary entry point assembles.
+A new workspace package at `packages/sf-agent-modes/` that owns all run-mode and CLI code. It depends on `@sf/agent-core`, `@sf/pi-coding-agent`, and `@sf/pi-tui`. It is the layer the top-level `sf-run` binary entry point assembles.
 
 Must contain:
 - `modes/interactive/` (full TUI interactive mode and all components)
@@ -80,32 +80,32 @@ Must contain:
 ### R3 — `pi-coding-agent` contains only upstream code and the extension system
 
 After the migration, the vendored `pi-coding-agent` source must not contain files that:
-- Import from `@gsd/agent-core` or `@gsd/agent-modes`
+- Import from `@sf/agent-core` or `@sf/agent-modes`
 - Contain SF business logic (compaction, session management, run modes, CLI)
 
-The extension system (`src/core/extensions/`) remains in `pi-coding-agent` because it is legitimately pi-typed: extension authors write against pi's `AgentMessage`, `Model`, and `TUI` types. The virtual module map in `extensions/loader.ts` must be updated to include `@gsd/agent-core` and `@gsd/agent-modes` so extensions can import from them.
+The extension system (`src/core/extensions/`) remains in `pi-coding-agent` because it is legitimately pi-typed: extension authors write against pi's `AgentMessage`, `Model`, and `TUI` types. The virtual module map in `extensions/loader.ts` must be updated to include `@sf/agent-core` and `@sf/agent-modes` so extensions can import from them.
 
 ### R4 — Public API surfaces are explicit
 
 Each new package must have an `index.ts` that declares its public API. Internal files must not be imported by path from outside the package. Specifically:
-- `web/bridge-service.ts` currently imports `AgentSessionEvent` from an internal path in `pi-coding-agent` — this must be fixed to use the public export from `@gsd/agent-core`
+- `web/bridge-service.ts` currently imports `AgentSessionEvent` from an internal path in `pi-coding-agent` — this must be fixed to use the public export from `@sf/agent-core`
 - Any other internal-path imports identified during migration must be fixed
 
 ### R5 — Build order is updated
 
 The workspace build script must be updated to build packages in dependency order:
-1. `@gsd/pi-agent-core`, `@gsd/pi-ai`, `@gsd/pi-tui` (parallel, no dependencies between them)
-2. `@gsd/pi-coding-agent`
-3. `@gsd/agent-core`
-4. `@gsd/agent-modes`
+1. `@sf/pi-agent-core`, `@sf/pi-ai`, `@sf/pi-tui` (parallel, no dependencies between them)
+2. `@sf/pi-coding-agent`
+3. `@sf/agent-core`
+4. `@sf/agent-modes`
 5. `sf-run` (top-level binary)
 
 ### R6 — No change to the extension loader's public interface
 
-Extensions are loaded by `pi-coding-agent`'s jiti-based loader. The virtual module map (`STATIC_BUNDLED_MODULES`) must be updated to resolve `@gsd/agent-core` and `@gsd/agent-modes` alongside the existing pi package mappings. This requires both a map entry and a top-level bundle import in `loader.ts` (see ADR-009 for the exact diff). Extension authors must not need to change their import paths.
+Extensions are loaded by `pi-coding-agent`'s jiti-based loader. The virtual module map (`STATIC_BUNDLED_MODULES`) must be updated to resolve `@sf/agent-core` and `@sf/agent-modes` alongside the existing pi package mappings. This requires both a map entry and a top-level bundle import in `loader.ts` (see ADR-009 for the exact diff). Extension authors must not need to change their import paths.
 
 ## Open Questions
 
 1. Does `clearQueue()` on `AgentSession` need to be added to a public type export, or is it already accessible to the auto-mode extension that uses it?
-2. Does `buildSessionContext()` on `SessionManager` need a public re-export from `@gsd/agent-core`?
-3. Should `@gsd/agent-modes` re-export `createAgentSession()` as a convenience, or should consumers always import it from `@gsd/agent-core` directly?
+2. Does `buildSessionContext()` on `SessionManager` need a public re-export from `@sf/agent-core`?
+3. Should `@sf/agent-modes` re-export `createAgentSession()` as a convenience, or should consumers always import it from `@sf/agent-core` directly?

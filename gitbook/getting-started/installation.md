@@ -9,17 +9,17 @@ npm install -g sf-run
 Requires **Node.js 22.0.0 or later** (24 LTS recommended) and **Git**.
 
 {% hint style="info" %}
-**`command not found: gsd`?** Your shell may not have npm's global bin directory in `$PATH`. Run `npm prefix -g` to find it, then add `$(npm prefix -g)/bin` to your PATH. See [Troubleshooting](../reference/troubleshooting.md) for details.
+**`command not found: sf`?** Your shell may not have npm's global bin directory in `$PATH`. Run `npm prefix -g` to find it, then add `$(npm prefix -g)/bin` to your PATH. See [Troubleshooting](../reference/troubleshooting.md) for details.
 {% endhint %}
 
-SF checks for updates once every 24 hours. When a new version is available, you'll see a prompt at startup with the option to update immediately or skip. You can also update from within a session with `/gsd update`.
+SF checks for updates once every 24 hours. When a new version is available, you'll see a prompt at startup with the option to update immediately or skip. You can also update from within a session with `/sf update`.
 
 ## Set Up Your LLM Provider
 
 Launch SF for the first time:
 
 ```bash
-gsd
+sf
 ```
 
 The setup wizard walks you through:
@@ -30,14 +30,14 @@ The setup wizard walks you through:
 Re-run the wizard anytime with:
 
 ```bash
-gsd config
+sf config
 ```
 
 For detailed provider setup, see [Provider Setup](../configuration/providers.md).
 
 ## Set Up API Keys for Tools
 
-If you use a non-Anthropic model, you may need a search API key for web search. Run `/gsd config` inside any SF session to set keys globally — they're saved to `~/.gsd/agent/auth.json` and apply to all projects.
+If you use a non-Anthropic model, you may need a search API key for web search. Run `/sf config` inside any SF session to set keys globally — they're saved to `~/.sf/agent/auth.json` and apply to all projects.
 
 | Tool | Purpose | Get a Key |
 |------|---------|-----------|
@@ -53,7 +53,7 @@ SF is also available as a VS Code extension. Install from the marketplace (publi
 
 The extension provides:
 
-- **`@gsd` chat participant** — talk to the agent in VS Code Chat
+- **`@sf` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage, quick actions
 - **Full command palette** — start/stop agent, switch models, export sessions
 
@@ -64,21 +64,21 @@ The CLI (`sf-run`) must be installed first — the extension connects to it via 
 SF also has a browser-based interface:
 
 ```bash
-gsd --web
+sf --web
 ```
 
 This starts a local web server with a visual dashboard, real-time progress, and multi-project support. See [Web Interface](../features/web-interface.md) for details.
 
 ## Alternative Binary Name
 
-If the `gsd` command conflicts with another tool (e.g., the oh-my-zsh git plugin aliases `gsd` to `git svn dcommit`), use the alternative:
+If the `sf` command conflicts with another tool (e.g., the oh-my-zsh git plugin aliases `sf` to `git svn dcommit`), use the alternative:
 
 ```bash
-gsd-cli
+sf-cli
 ```
 
-Both `gsd` and `gsd-cli` point to the same binary. To remove the conflict permanently, add this to your `~/.zshrc`:
+Both `sf` and `sf-cli` point to the same binary. To remove the conflict permanently, add this to your `~/.zshrc`:
 
 ```bash
-unalias gsd 2>/dev/null
+unalias sf 2>/dev/null
 ```

@@ -5,8 +5,8 @@ Pre-supply answers to eliminate interactive prompts during headless execution.
 ## CLI Usage
 
 ```bash
-gsd headless --answers answers.json auto
-gsd headless --answers answers.json new-milestone --context spec.md --auto
+sf headless --answers answers.json auto
+sf headless --answers answers.json new-milestone --context spec.md --auto
 ```
 
 The `--answers` flag takes a path to a JSON file containing pre-supplied answers and secrets.

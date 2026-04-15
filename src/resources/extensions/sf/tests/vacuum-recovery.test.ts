@@ -18,7 +18,7 @@ const _require = createRequire(import.meta.url);
 // ═══════════════════════════════════════════════════════════════════════════
 
 function tempDbPath(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-vacuum-test-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-vacuum-test-'));
   return path.join(dir, 'test.db');
 }
 

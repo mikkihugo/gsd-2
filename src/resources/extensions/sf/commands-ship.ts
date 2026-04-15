@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd ship
+ * SF Command — /sf ship
  *
  * Creates a PR from milestone artifacts: generates title + body from
  * roadmap, slice summaries, and metrics, then opens via `gh pr create`.

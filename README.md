@@ -2,11 +2,11 @@
 
 # SF
 
-**The evolution of [Singularity Forge](https://github.com/gsd-build/get-shit-done) — now a real coding agent.**
+**The evolution of [Singularity Forge](https://github.com/sf-build/get-shit-done) — now a real coding agent.**
 
 [![npm version](https://img.shields.io/npm/v/sf-run?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/sf-run)
 [![npm downloads](https://img.shields.io/npm/dm/sf-run?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/sf-run)
-[![GitHub stars](https://img.shields.io/github/stars/gsd-build/SF?style=for-the-badge&logo=github&color=181717)](https://github.com/gsd-build/SF)
+[![GitHub stars](https://img.shields.io/github/stars/sf-build/SF?style=for-the-badge&logo=github&color=181717)](https://github.com/sf-build/SF)
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/nKXTsAcmbT)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
 [![$SF Token](https://img.shields.io/badge/$SF-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
@@ -44,7 +44,7 @@ One command. Walk away. Come back to a built project with clean git history.
 
 - **Unconfigured models blocked** — models without a configured provider are filtered from selection surfaces, preventing dispatch failures.
 - **Provider readiness required** — saved default model selection now verifies the provider is ready before accepting it.
-- **Session override honored** — `/gsd model` selection persists as a session override across all dispatch phases.
+- **Session override honored** — `/sf model` selection persists as a session override across all dispatch phases.
 - **Minimal context guard** — model override logic is skipped in minimal command contexts where it doesn't apply.
 
 ### Auto-Mode Resilience
@@ -101,7 +101,7 @@ See the full [Changelog](./CHANGELOG.md) for details on every release.
 - **Discord bot & daemon** — dedicated daemon package, Discord bot, and headless text mode with tool calls
 - **Capability-aware model routing (ADR-004)** — capability scoring, `before_model_select` hook, and task metadata extraction
 - **VS Code sidebar redesign** — SCM provider, checkpoints, diagnostics panel, activity feed, workflow controls, session forking
-- **`/gsd parallel watch`** — native TUI overlay for real-time worker monitoring
+- **`/sf parallel watch`** — native TUI overlay for real-time worker monitoring
 - **Codebase map** — automatic codebase map injection for fresh agent contexts
 - **`--resume` flag** — resume previous sessions from the CLI
 - **Concurrent invocation guard** — prevents overlapping auto-mode runs
@@ -138,7 +138,7 @@ Full documentation is in the [`docs/`](./docs/) directory:
 - **[Remote Questions](./docs/user-docs/remote-questions.md)** — route decisions to Slack or Discord when human input is needed
 - **[Dynamic Model Routing](./docs/user-docs/dynamic-model-routing.md)** — complexity-based model selection and budget pressure
 - **[Web Interface](./docs/user-docs/web-interface.md)** — browser-based project management and real-time progress
-- **[Migration from v1](./docs/user-docs/migration.md)** — `.planning` → `.gsd` migration
+- **[Migration from v1](./docs/user-docs/migration.md)** — `.planning` → `.sf` migration
 - **[Docker Sandbox](./docker/README.md)** — run SF auto mode in an isolated Docker container
 
 ### Developer Docs
@@ -165,7 +165,7 @@ SF v2 solves all of these because it's not a prompt framework anymore — it's a
 | -------------------- | ---------------------------- | ------------------------------------------------------- |
 | Runtime              | Claude Code slash commands   | Standalone CLI via Pi SDK                               |
 | Context management   | Hope the LLM doesn't fill up | Fresh session per task, programmatic                    |
-| Auto mode            | LLM self-loop                | State machine reading `.gsd/` files                     |
+| Auto mode            | LLM self-loop                | State machine reading `.sf/` files                     |
 | Crash recovery       | None                         | Lock files + session forensics                          |
 | Git strategy         | LLM writes git commands      | Worktree isolation, sequential commits, squash merge    |
 | Cost tracking        | None                         | Per-unit token/cost ledger with dashboard               |
@@ -182,14 +182,14 @@ SF v2 solves all of these because it's not a prompt framework anymore — it's a
 
 > **Note:** Migration works best with a `ROADMAP.md` file for milestone structure. Without one, milestones are inferred from the `phases/` directory.
 
-If you have projects with `.planning` directories from the original Singularity Forge, you can migrate them to SF's `.gsd` format:
+If you have projects with `.planning` directories from the original Singularity Forge, you can migrate them to SF's `.sf` format:
 
 ```bash
 # From within the project directory
-/gsd migrate
+/sf migrate
 
 # Or specify a path
-/gsd migrate ~/projects/my-old-project
+/sf migrate ~/projects/my-old-project
 ```
 
 The migration tool:
@@ -229,15 +229,15 @@ Plan (with integrated research) → Execute (per task) → Complete → Reassess
 
 **Plan** scouts the codebase, researches relevant docs, and decomposes the slice into tasks with must-haves (mechanically verifiable outcomes). **Execute** runs each task in a fresh context window with only the relevant files pre-loaded — then runs configured verification commands (lint, test, etc.) with auto-fix retries. **Complete** writes the summary, UAT script, marks the roadmap, and commits with meaningful messages derived from task summaries. **Reassess** checks if the roadmap still makes sense given what was learned. **Validate Milestone** runs a reconciliation gate after all slices complete — comparing roadmap success criteria against actual results before sealing the milestone.
 
-### `/gsd auto` — The Main Event
+### `/sf auto` — The Main Event
 
 This is what makes SF different. Run it, walk away, come back to built software.
 
 ```
-/gsd auto
+/sf auto
 ```
 
-Auto mode is a state machine driven by files on disk. It reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode reads disk state again and dispatches the next unit.
+Auto mode is a state machine driven by files on disk. It reads `.sf/STATE.md`, determines the next unit of work, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode reads disk state again and dispatches the next unit.
 
 **What happens under the hood:**
 
@@ -247,7 +247,7 @@ Auto mode is a state machine driven by files on disk. It reads `.gsd/STATE.md`, 
 
 3. **Git isolation** — When `git.isolation` is set to `worktree` or `branch`, each milestone runs on its own `milestone/<MID>` branch (in a worktree or in-place). All slice work commits sequentially — no branch switching, no merge conflicts. When the milestone completes, it's squash-merged to main as one clean commit. The default is `none` (work on the current branch), configurable via preferences.
 
-4. **Crash recovery** — A lock file tracks the current unit. If the session dies, the next `/gsd auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context. Parallel orchestrator state is persisted to disk with PID liveness detection, so multi-worker sessions survive crashes too. In headless mode, crashes trigger automatic restart with exponential backoff (default 3 attempts).
+4. **Crash recovery** — A lock file tracks the current unit. If the session dies, the next `/sf auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context. Parallel orchestrator state is persisted to disk with PID liveness detection, so multi-worker sessions survive crashes too. In headless mode, crashes trigger automatic restart with exponential backoff (default 3 attempts).
 
 5. **Provider error recovery** — Transient provider errors (rate limits, 500/503 server errors, overloaded) auto-resume after a delay. Permanent errors (auth, billing) pause for manual review. The model fallback chain retries transient network errors before switching models.
 
@@ -263,18 +263,18 @@ Auto mode is a state machine driven by files on disk. It reads `.gsd/STATE.md`, 
 
 11. **Milestone validation** — After all slices complete, a `validate-milestone` gate compares roadmap success criteria against actual results before sealing the milestone.
 
-12. **Escape hatch** — Press Escape to pause. The conversation is preserved. Interact with the agent, inspect what happened, or just `/gsd auto` to resume from disk state.
+12. **Escape hatch** — Press Escape to pause. The conversation is preserved. Interact with the agent, inspect what happened, or just `/sf auto` to resume from disk state.
 
-### `/gsd` and `/gsd next` — Step Mode
+### `/sf` and `/sf next` — Step Mode
 
-By default, `/gsd` runs in **step mode**: the same state machine as auto mode, but it pauses between units with a wizard showing what completed and what's next. You advance one step at a time, review the output, and continue when ready.
+By default, `/sf` runs in **step mode**: the same state machine as auto mode, but it pauses between units with a wizard showing what completed and what's next. You advance one step at a time, review the output, and continue when ready.
 
-- **No `.gsd/` directory** → Start a new project. Discussion flow captures your vision, constraints, and preferences.
+- **No `.sf/` directory** → Start a new project. Discussion flow captures your vision, constraints, and preferences.
 - **Milestone exists, no roadmap** → Discuss or research the milestone.
 - **Roadmap exists, slices pending** → Plan the next slice, execute one task, or switch to auto.
 - **Mid-task** → Resume from where you left off.
 
-`/gsd next` is an explicit alias for step mode. You can switch from step → auto mid-session via the wizard.
+`/sf next` is an explicit alias for step mode. You can switch from step → auto mid-session via the wizard.
 
 Step mode is the on-ramp. Auto mode is the highway.
 
@@ -293,7 +293,7 @@ npm install -g sf-run
 First, choose your LLM provider:
 
 ```bash
-gsd
+sf
 /login
 ```
 
@@ -310,14 +310,14 @@ SF auto-selects a default model after login. To switch models later:
 Open a terminal in your project and run:
 
 ```bash
-gsd
+sf
 ```
 
 SF opens an interactive agent session. From there, you have two ways to work:
 
-**`/gsd` — step mode.** Type `/gsd` and SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next. Same state machine as auto mode, but you stay in the loop. No project yet? It starts the discussion flow. Roadmap exists? It plans or executes the next step.
+**`/sf` — step mode.** Type `/sf` and SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next. Same state machine as auto mode, but you stay in the loop. No project yet? It starts the discussion flow. Roadmap exists? It plans or executes the next step.
 
-**`/gsd auto` — autonomous mode.** Type `/gsd auto` and walk away. SF researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete. Fresh context window per task. No babysitting.
+**`/sf auto` — autonomous mode.** Type `/sf auto` and walk away. SF researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete. Fresh context window per task. No babysitting.
 
 ### Two terminals, one project
 
@@ -326,75 +326,75 @@ The real workflow: run auto mode in one terminal, steer from another.
 **Terminal 1 — let it build**
 
 ```bash
-gsd
-/gsd auto
+sf
+/sf auto
 ```
 
 **Terminal 2 — steer while it works**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
+sf
+/sf discuss    # talk through architecture decisions
+/sf status     # check progress
+/sf queue      # queue the next milestone
 ```
 
-Both terminals read and write the same `.gsd/` files on disk. Your decisions in terminal 2 are picked up automatically at the next phase boundary — no need to stop auto mode.
+Both terminals read and write the same `.sf/` files on disk. Your decisions in terminal 2 are picked up automatically at the next phase boundary — no need to stop auto mode.
 
 ### Headless mode — CI and scripts
 
-`gsd headless` runs any `/gsd` command without a TUI. Designed for CI pipelines, cron jobs, and scripted automation.
+`sf headless` runs any `/sf` command without a TUI. Designed for CI pipelines, cron jobs, and scripted automation.
 
 ```bash
 # Run auto mode in CI
-gsd headless --timeout 600000
+sf headless --timeout 600000
 
 # Create and execute a milestone end-to-end
-gsd headless new-milestone --context spec.md --auto
+sf headless new-milestone --context spec.md --auto
 
 # One unit at a time (cron-friendly)
-gsd headless next
+sf headless next
 
 # Instant JSON snapshot (no LLM, ~50ms)
-gsd headless query
+sf headless query
 
 # Force a specific pipeline phase
-gsd headless dispatch plan
+sf headless dispatch plan
 ```
 
-Headless auto-responds to interactive prompts, detects completion, and exits with structured codes: `0` complete, `1` error/timeout, `2` blocked. Auto-restarts on crash with exponential backoff. Use `gsd headless query` for instant, machine-readable state inspection — returns phase, next dispatch preview, and parallel worker costs as a single JSON object without spawning an LLM session. Pair with [remote questions](./docs/user-docs/remote-questions.md) to route decisions to Slack or Discord when human input is needed.
+Headless auto-responds to interactive prompts, detects completion, and exits with structured codes: `0` complete, `1` error/timeout, `2` blocked. Auto-restarts on crash with exponential backoff. Use `sf headless query` for instant, machine-readable state inspection — returns phase, next dispatch preview, and parallel worker costs as a single JSON object without spawning an LLM session. Pair with [remote questions](./docs/user-docs/remote-questions.md) to route decisions to Slack or Discord when human input is needed.
 
-**Multi-session orchestration** — headless mode supports file-based IPC in `.gsd/parallel/` for coordinating multiple SF workers across milestones. Build orchestrators that spawn, monitor, and budget-cap a fleet of SF workers.
+**Multi-session orchestration** — headless mode supports file-based IPC in `.sf/parallel/` for coordinating multiple SF workers across milestones. Build orchestrators that spawn, monitor, and budget-cap a fleet of SF workers.
 
 ### First launch
 
-On first run, SF launches a branded setup wizard that walks you through LLM provider selection (OAuth or API key), then optional tool API keys (Brave Search, Context7, Jina, Slack, Discord). Every step is skippable — press Enter to skip any. If you have an existing Pi installation, your provider credentials (LLM and tool keys) are imported automatically. Run `gsd config` anytime to re-run the wizard.
+On first run, SF launches a branded setup wizard that walks you through LLM provider selection (OAuth or API key), then optional tool API keys (Brave Search, Context7, Jina, Slack, Discord). Every step is skippable — press Enter to skip any. If you have an existing Pi installation, your provider credentials (LLM and tool keys) are imported automatically. Run `sf config` anytime to re-run the wizard.
 
 ### Commands
 
 | Command                 | What it does                                                    |
 | ----------------------- | --------------------------------------------------------------- |
-| `/gsd`                  | Step mode — executes one unit at a time, pauses between each    |
-| `/gsd next`             | Explicit step mode (same as bare `/gsd`)                        |
-| `/gsd auto`             | Autonomous mode — researches, plans, executes, commits, repeats |
-| `/gsd quick`            | Execute a quick task with SF guarantees, skip planning overhead |
-| `/gsd stop`             | Stop auto mode gracefully                                       |
-| `/gsd steer`            | Hard-steer plan documents during execution                      |
-| `/gsd discuss`          | Discuss architecture and decisions (works alongside auto mode)  |
-| `/gsd rethink`          | Conversational project reorganization                           |
-| `/gsd mcp`              | MCP server status and connectivity                              |
-| `/gsd status`           | Progress dashboard                                              |
-| `/gsd queue`            | Queue future milestones (safe during auto mode)                 |
-| `/gsd prefs`            | Model selection, timeouts, budget ceiling                       |
-| `/gsd migrate`          | Migrate a v1 `.planning` directory to `.gsd` format             |
-| `/gsd help`             | Categorized command reference for all SF subcommands           |
-| `/gsd mode`             | Switch workflow mode (solo/team) with coordinated defaults      |
-| `/gsd forensics`        | Full-access SF debugger for auto-mode failure investigation    |
-| `/gsd cleanup`          | Archive phase directories from completed milestones             |
-| `/gsd doctor`           | Runtime health checks — issues surface across widget, visualizer, and reports |
-| `/gsd keys`             | API key manager — list, add, remove, test, rotate, doctor       |
-| `/gsd logs`             | Browse activity, debug, and metrics logs                        |
-| `/gsd export --html`    | Generate HTML report for current or completed milestone         |
+| `/sf`                  | Step mode — executes one unit at a time, pauses between each    |
+| `/sf next`             | Explicit step mode (same as bare `/sf`)                        |
+| `/sf auto`             | Autonomous mode — researches, plans, executes, commits, repeats |
+| `/sf quick`            | Execute a quick task with SF guarantees, skip planning overhead |
+| `/sf stop`             | Stop auto mode gracefully                                       |
+| `/sf steer`            | Hard-steer plan documents during execution                      |
+| `/sf discuss`          | Discuss architecture and decisions (works alongside auto mode)  |
+| `/sf rethink`          | Conversational project reorganization                           |
+| `/sf mcp`              | MCP server status and connectivity                              |
+| `/sf status`           | Progress dashboard                                              |
+| `/sf queue`            | Queue future milestones (safe during auto mode)                 |
+| `/sf prefs`            | Model selection, timeouts, budget ceiling                       |
+| `/sf migrate`          | Migrate a v1 `.planning` directory to `.sf` format             |
+| `/sf help`             | Categorized command reference for all SF subcommands           |
+| `/sf mode`             | Switch workflow mode (solo/team) with coordinated defaults      |
+| `/sf forensics`        | Full-access SF debugger for auto-mode failure investigation    |
+| `/sf cleanup`          | Archive phase directories from completed milestones             |
+| `/sf doctor`           | Runtime health checks — issues surface across widget, visualizer, and reports |
+| `/sf keys`             | API key manager — list, add, remove, test, rotate, doctor       |
+| `/sf logs`             | Browse activity, debug, and metrics logs                        |
+| `/sf export --html`    | Generate HTML report for current or completed milestone         |
 | `/worktree` (`/wt`)     | Git worktree lifecycle — create, switch, merge, remove          |
 | `/voice`                | Toggle real-time speech-to-text (macOS, Linux)                  |
 | `/exit`                 | Graceful shutdown — saves session state before exiting          |
@@ -404,13 +404,13 @@ On first run, SF launches a branded setup wizard that walks you through LLM prov
 | `Ctrl+Alt+V`            | Toggle voice transcription                                      |
 | `Ctrl+Alt+B`            | Show background shell processes                                 |
 | `Alt+V`                 | Paste clipboard image (macOS)                                   |
-| `gsd config`            | Re-run the setup wizard (LLM provider + tool keys)              |
-| `gsd update`            | Update SF to the latest version                                |
-| `gsd headless [cmd]`    | Run `/gsd` commands without TUI (CI, cron, scripts)             |
-| `gsd headless query`    | Instant JSON snapshot — state, next dispatch, costs (no LLM)    |
-| `gsd --continue` (`-c`) | Resume the most recent session for the current directory        |
-| `gsd --worktree` (`-w`) | Launch an isolated worktree session for the active milestone    |
-| `gsd sessions`          | Interactive session picker — browse and resume any saved session |
+| `sf config`            | Re-run the setup wizard (LLM provider + tool keys)              |
+| `sf update`            | Update SF to the latest version                                |
+| `sf headless [cmd]`    | Run `/sf` commands without TUI (CI, cron, scripts)             |
+| `sf headless query`    | Instant JSON snapshot — state, next dispatch, costs (no LLM)    |
+| `sf --continue` (`-c`) | Resume the most recent session for the current directory        |
+| `sf --worktree` (`-w`) | Launch an isolated worktree session for the active milestone    |
+| `sf sessions`          | Interactive session picker — browse and resume any saved session |
 
 ---
 
@@ -446,7 +446,7 @@ main:
   feat(M001/S02): API endpoints and middleware
   feat(M001/S01): data model and type system
 
-gsd/M001/S01 (deleted after merge):
+sf/M001/S01 (deleted after merge):
   feat(S01/T03): file writer with round-trip fidelity
   feat(S01/T02): markdown parser for plan files
   feat(S01/T01): core types and interfaces
@@ -466,7 +466,7 @@ The verification ladder: static checks → command execution → behavioral test
 
 ### Dashboard
 
-`Ctrl+Alt+G` or `/gsd status` opens a real-time overlay showing:
+`Ctrl+Alt+G` or `/sf status` opens a real-time overlay showing:
 
 - Current milestone, slice, and task progress
 - Auto mode elapsed time and phase
@@ -476,12 +476,12 @@ The verification ladder: static checks → command execution → behavioral test
 
 ### HTML Reports
 
-After a milestone completes, SF auto-generates a self-contained HTML report in `.gsd/reports/`. Each report includes project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base sections. No external dependencies — all CSS and JS are inlined, printable to PDF from any browser.
+After a milestone completes, SF auto-generates a self-contained HTML report in `.sf/reports/`. Each report includes project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base sections. No external dependencies — all CSS and JS are inlined, printable to PDF from any browser.
 
 An auto-generated `index.html` shows all reports with progression metrics across milestones.
 
 - **Automatic** — generated after milestone completion (configurable via `auto_report` preference)
-- **Manual** — run `/gsd export --html` anytime
+- **Manual** — run `/sf export --html` anytime
 
 ---
 
@@ -489,7 +489,7 @@ An auto-generated `index.html` shows all reports with progression metrics across
 
 ### Preferences
 
-SF preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project). Manage with `/gsd prefs`.
+SF preferences live in `~/.sf/PREFERENCES.md` (global) or `.sf/PREFERENCES.md` (project). Manage with `/sf prefs`.
 
 ```yaml
 ---
@@ -542,11 +542,11 @@ auto_report: true
 
 Place an `AGENTS.md` file in any directory to provide persistent behavioral guidance for that scope. Pi core loads `AGENTS.md` automatically (with `CLAUDE.md` as a fallback) at both user and project levels. Use these files for coding standards, architectural decisions, domain terminology, or workflow preferences.
 
-> **Note:** The legacy `agent-instructions.md` format (`~/.gsd/agent-instructions.md` and `.gsd/agent-instructions.md`) is deprecated and no longer loaded. Migrate any existing instructions to `AGENTS.md` or `CLAUDE.md`.
+> **Note:** The legacy `agent-instructions.md` format (`~/.sf/agent-instructions.md` and `.sf/agent-instructions.md`) is deprecated and no longer loaded. Migrate any existing instructions to `AGENTS.md` or `CLAUDE.md`.
 
 ### Debug Mode
 
-Start SF with `gsd --debug` to enable structured JSONL diagnostic logging. Debug logs capture dispatch decisions, state transitions, and timing data for troubleshooting auto-mode issues.
+Start SF with `sf --debug` to enable structured JSONL diagnostic logging. Debug logs capture dispatch decisions, state transitions, and timing data for troubleshooting auto-mode issues.
 
 ### Token Optimization
 
@@ -615,48 +615,48 @@ Five specialized subagents for delegated work:
 
 ## Working in teams
 
-The best practice for working in teams is to ensure unique milestone names across all branches (by using `unique_milestone_ids`) and checking in the right `.gsd/` artifacts to share valuable context between teammates.
+The best practice for working in teams is to ensure unique milestone names across all branches (by using `unique_milestone_ids`) and checking in the right `.sf/` artifacts to share valuable context between teammates.
 
 ### Suggested .gitignore setup
 
 ```bash
 # ── SF: Runtime / Ephemeral (per-developer, per-session) ──────────────────
 # Crash detection sentinel — PID lock, written per auto-mode session
-.gsd/auto.lock
+.sf/auto.lock
 # Auto-mode dispatch tracker — prevents re-running completed units (includes archived per-milestone files)
-.gsd/completed-units*.json
+.sf/completed-units*.json
 # State manifest — workflow state for recovery
-.gsd/state-manifest.json
+.sf/state-manifest.json
 # Derived state cache — regenerated from plan/roadmap files on disk
-.gsd/STATE.md
+.sf/STATE.md
 # Per-developer token/cost accumulator
-.gsd/metrics.json
+.sf/metrics.json
 # Raw JSONL session dumps — crash recovery forensics, auto-pruned
-.gsd/activity/
+.sf/activity/
 # Unit execution records — dispatch phase, timeouts, recovery tracking
-.gsd/runtime/
+.sf/runtime/
 # Git worktree working copies
-.gsd/worktrees/
+.sf/worktrees/
 # Parallel orchestration IPC and worker status
-.gsd/parallel/
+.sf/parallel/
 # SQLite database and WAL sidecars — checkpoint state, forensics data
-.gsd/gsd.db*
+.sf/sf.db*
 # Daily-rotated event journal — structured event log for forensics
-.gsd/journal/
+.sf/journal/
 # Doctor run history — diagnostic check results
-.gsd/doctor-history.jsonl
+.sf/doctor-history.jsonl
 # Workflow event log — structured event stream
-.gsd/event-log.jsonl
-# Generated HTML reports (regenerable via /gsd export --html)
-.gsd/reports/
+.sf/event-log.jsonl
+# Generated HTML reports (regenerable via /sf export --html)
+.sf/reports/
 # Session-specific interrupted-work markers
-.gsd/milestones/**/continue.md
-.gsd/milestones/**/*-CONTINUE.md
+.sf/milestones/**/continue.md
+.sf/milestones/**/*-CONTINUE.md
 ```
 
 ### Unique Milestone Names
 
-Create or amend your `.gsd/PREFERENCES.md` file within the repo to include `unique_milestone_ids: true` e.g.
+Create or amend your `.sf/PREFERENCES.md` file within the repo to include `unique_milestone_ids: true` e.g.
 
 ```markdown
 ---
@@ -665,16 +665,16 @@ unique_milestone_ids: true
 ---
 ```
 
-With the above `.gitignore` set up, the `.gsd/PREFERENCES.md` file is checked into the repo ensuring all teammates use unique milestone names to avoid collisions.
+With the above `.gitignore` set up, the `.sf/PREFERENCES.md` file is checked into the repo ensuring all teammates use unique milestone names to avoid collisions.
 
 Milestone names will now be generated with a 6 char random string appended e.g. instead of `M001` you'll get something like `M001-ush8s3`
 
-### Migrating an existing git ignored `.gsd/` folder
+### Migrating an existing git ignored `.sf/` folder
 
 1. Ensure you are not in the middle of any milestones (clean state)
-2. Update the `.gsd/` related entries in your `.gitignore` to follow the `Suggested .gitignore setup` section under `Working in teams` (ensure you are no longer blanket ignoring the whole `.gsd/` directory)
-3. Update your `.gsd/PREFERENCES.md` file within the repo as per section `Unique Milestone Names`
-4. If you want to update all your existing milestones use this prompt in SF: `I have turned on unique milestone ids, please update all old milestone ids to use this new format e.g. M001-abc123 where abc123 is a random 6 char lowercase alpha numeric string. Update all references in all .gsd file contents, file names and directory names. Validate your work once done to ensure referential integrity.`
+2. Update the `.sf/` related entries in your `.gitignore` to follow the `Suggested .gitignore setup` section under `Working in teams` (ensure you are no longer blanket ignoring the whole `.sf/` directory)
+3. Update your `.sf/PREFERENCES.md` file within the repo as per section `Unique Milestone Names`
+4. If you want to update all your existing milestones use this prompt in SF: `I have turned on unique milestone ids, please update all old milestone ids to use this new format e.g. M001-abc123 where abc123 is a random 6 char lowercase alpha numeric string. Update all references in all .sf file contents, file names and directory names. Validate your work once done to ensure referential integrity.`
 5. Commit to git
 
 ---
@@ -684,16 +684,16 @@ Milestone names will now be generated with a 6 char random string appended e.g. 
 SF is a TypeScript application that embeds the Pi coding agent SDK.
 
 ```
-gsd (CLI binary)
+sf (CLI binary)
   └─ loader.ts          Sets PI_PACKAGE_DIR, SF env vars, dynamic-imports cli.ts
       └─ cli.ts         Wires SDK managers, loads extensions, starts InteractiveMode
           ├─ headless.ts     Headless orchestrator (spawns RPC child, auto-responds, detects completion)
           ├─ onboarding.ts   First-run setup wizard (LLM provider + tool keys)
           ├─ wizard.ts       Env hydration from stored auth.json credentials
-          ├─ app-paths.ts    ~/.gsd/agent/, ~/.gsd/sessions/, auth.json
-          ├─ resource-loader.ts  Syncs bundled extensions + agents to ~/.gsd/agent/
+          ├─ app-paths.ts    ~/.sf/agent/, ~/.sf/sessions/, auth.json
+          ├─ resource-loader.ts  Syncs bundled extensions + agents to ~/.sf/agent/
           └─ src/resources/
-              ├─ extensions/gsd/    Core SF extension (auto, state, commands, ...)
+              ├─ extensions/sf/    Core SF extension (auto, state, commands, ...)
               ├─ extensions/...     21 supporting extensions
               ├─ agents/            scout, researcher, worker, javascript-pro, typescript-pro
               └─ SF-WORKFLOW.md    Manual bootstrap protocol
@@ -703,8 +703,8 @@ gsd (CLI binary)
 
 - **`pkg/` shim directory** — `PI_PACKAGE_DIR` points here (not project root) to avoid Pi's theme resolution collision with our `src/` directory. Contains only `piConfig` and theme assets.
 - **Two-file loader pattern** — `loader.ts` sets all env vars with zero SDK imports, then dynamic-imports `cli.ts` which does static SDK imports. This ensures `PI_PACKAGE_DIR` is set before any SDK code evaluates.
-- **Always-overwrite sync** — `npm update -g` takes effect immediately. Bundled extensions and agents are synced to `~/.gsd/agent/` on every launch, not just first run.
-- **State lives on disk** — `.gsd/` is the source of truth. Auto mode reads it, writes it, and advances based on what it finds. No in-memory state survives across sessions.
+- **Always-overwrite sync** — `npm update -g` takes effect immediately. Bundled extensions and agents are synced to `~/.sf/agent/` on every launch, not just first run.
+- **State lives on disk** — `.sf/` is the source of truth. Auto mode reads it, writes it, and advances based on what it finds. No in-memory state survives across sessions.
 
 ---
 
@@ -750,7 +750,7 @@ If you have a **Claude Max**, **Codex**, or **GitHub Copilot** subscription, you
 
 ### Per-Phase Model Selection
 
-In your preferences (`/gsd prefs`), assign different models to different phases:
+In your preferences (`/sf prefs`), assign different models to different phases:
 
 ```yaml
 models:
@@ -793,6 +793,6 @@ Use expensive models where quality matters (planning, complex execution) and che
 
 **The original SF showed what was possible. This version delivers it.**
 
-**`npm install -g sf-run && gsd`**
+**`npm install -g sf-run && sf`**
 
 </div>

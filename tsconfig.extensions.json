@@ -5,7 +5,19 @@
     "allowImportingTsExtensions": true,
     "allowJs": true,
     "checkJs": false,
-    "rootDir": "."
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@sf-run/pi-coding-agent": ["packages/pi-coding-agent/src/index.ts"],
+      "@sf-run/pi-ai": ["packages/pi-ai/src/index.ts"],
+      "@sf-run/pi-ai/*": ["packages/pi-ai/src/*.ts"],
+      "@sf-run/pi-agent-core": ["packages/pi-agent-core/src/index.ts"],
+      "@sf-run/pi-tui": ["packages/pi-tui/src/index.ts"],
+      "@sf-run/native": ["packages/native/src/index.ts"],
+      "@sf-run/native/*": ["packages/native/src/*/index.ts"],
+      "@singularity-forge/mcp-server": ["packages/mcp-server/src/index.ts"],
+      "@singularity-forge/rpc-client": ["packages/rpc-client/src/index.ts"]
+    }
   },
   "include": ["src/resources/extensions"],
   "exclude": []

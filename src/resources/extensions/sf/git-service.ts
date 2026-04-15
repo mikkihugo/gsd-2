@@ -36,7 +36,7 @@ import {
   nativeCommitSubject,
   _resetHasChangesCache,
 } from "./native-git-bridge.js";
-import { GSDError, SF_MERGE_CONFLICT, SF_GIT_ERROR } from "./errors.js";
+import { SFError, SF_MERGE_CONFLICT, SF_GIT_ERROR } from "./errors.js";
 import { getErrorMessage } from "./error-utils.js";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -167,7 +167,7 @@ export function buildTaskCommitMessage(ctx: TaskCommitContext): string {
  * The working tree is left in a conflicted state (no reset) so the
  * caller can dispatch a fix-merge session to resolve it.
  */
-export class MergeConflictError extends GSDError {
+export class MergeConflictError extends SFError {
   readonly conflictedFiles: string[];
   readonly strategy: "squash" | "merge";
   readonly branch: string;
@@ -219,7 +219,7 @@ export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
   ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
   ".gsd/state-manifest.json",
   ".gsd/STATE.md",
-  ".gsd/gsd.db*",
+  ".gsd/sf.db*",
   ".gsd/journal/",
   ".gsd/doctor-history.jsonl",
   ".gsd/event-log.jsonl",
@@ -281,7 +281,7 @@ export function writeIntegrationBranch(
   if (QUICK_BRANCH_RE.test(branch)) return;
   // Don't record workflow-template branches (hotfix, bugfix, spike, etc.) —
   // same root cause as quick-task branches (#2498). All templates create
-  // gsd/<templateId>/<slug> branches that are ephemeral.
+  // sf/<templateId>/<slug> branches that are ephemeral.
   if (WORKFLOW_BRANCH_RE.test(branch)) return;
   // Validate
   if (!VALID_BRANCH_NAME.test(branch)) return;
@@ -425,7 +425,7 @@ export function runGit(basePath: string, args: string[], options: { allowFailure
   } catch (error) {
     if (options.allowFailure) return "";
     const message = getErrorMessage(error);
-    throw new GSDError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
+    throw new SFError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
   }
 }
 
@@ -583,7 +583,7 @@ export class GitServiceImpl {
 
     const message = taskContext
       ? buildTaskCommitMessage(taskContext)
-      : `chore: auto-commit after ${unitType}\n\nGSD-Unit: ${unitId}`;
+      : `chore: auto-commit after ${unitType}\n\nSF-Unit: ${unitId}`;
     nativeCommit(this.basePath, message, { allowEmpty: false });
 
     // Absorb any preceding sf snapshot commits into this real commit.

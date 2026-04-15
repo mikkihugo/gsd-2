@@ -19,7 +19,7 @@ function hasProperLockfile(): boolean {
 }
 
 test("withFileLockSync: executes callback when file does not exist", () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-file-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-file-lock-test-"));
   try {
     const missingPath = join(dir, "missing.txt");
     let called = 0;
@@ -36,7 +36,7 @@ test("withFileLockSync: executes callback when file does not exist", () => {
 });
 
 test("withFileLock: executes callback when file does not exist", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-file-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-file-lock-test-"));
   try {
     const missingPath = join(dir, "missing.txt");
     let called = 0;
@@ -58,7 +58,7 @@ test("withFileLockSync: falls back to unlocked callback on ELOCKED", () => {
   }
 
   const lockfile = require("proper-lockfile");
-  const dir = mkdtempSync(join(tmpdir(), "gsd-file-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-file-lock-test-"));
   const filePath = join(dir, "locked.jsonl");
   writeFileSync(filePath, "{}\n", "utf-8");
 
@@ -83,7 +83,7 @@ test("withFileLock: falls back to unlocked callback on ELOCKED", async () => {
   }
 
   const lockfile = require("proper-lockfile");
-  const dir = mkdtempSync(join(tmpdir(), "gsd-file-lock-test-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-file-lock-test-"));
   const filePath = join(dir, "locked.jsonl");
   writeFileSync(filePath, "{}\n", "utf-8");
 

@@ -1,5 +1,5 @@
 /**
- * /gsd rate — Submit feedback on the last unit's model tier assignment.
+ * /sf rate — Submit feedback on the last unit's model tier assignment.
  * Feeds into the adaptive routing history so future dispatches improve.
  */
 
@@ -19,7 +19,7 @@ export async function handleRate(
 
   if (!rating || !VALID_RATINGS.has(rating)) {
     ctx.ui.notify(
-      "Usage: /gsd rate <over|ok|under>\n" +
+      "Usage: /sf rate <over|ok|under>\n" +
       "  over  — model was overpowered for that task (encourage cheaper)\n" +
       "  ok    — model was appropriate\n" +
       "  under — model was too weak (encourage stronger)",

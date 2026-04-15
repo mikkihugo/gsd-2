@@ -5,16 +5,16 @@
 Open a terminal in any project directory (or an empty one) and run:
 
 ```bash
-gsd
+sf
 ```
 
 SF shows a welcome screen with your version, active model, and available tool keys.
 
 ## Start a Discussion
 
-Type `/gsd` to enter step mode. SF reads the state of your project directory and determines the next logical action:
+Type `/sf` to enter step mode. SF reads the state of your project directory and determines the next logical action:
 
-- **No `.gsd/` directory** — starts a discussion flow to capture your project vision
+- **No `.sf/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
 - **Roadmap exists, slices pending** — plan the next slice or execute a task
 - **Mid-task** — resume where you left off
@@ -38,7 +38,7 @@ The key rule: **a task must fit in one AI context window.** If it can't, it beco
 Once you have a milestone and roadmap, let SF take the wheel:
 
 ```
-/gsd auto
+/sf auto
 ```
 
 SF autonomously:
@@ -55,25 +55,25 @@ The recommended approach: auto mode in one terminal, steering from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+sf
+/sf auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
-/gsd capture "add rate limiting to the API"  # fire-and-forget thought
+sf
+/sf discuss    # talk through architecture decisions
+/sf status     # check progress
+/sf queue      # queue the next milestone
+/sf capture "add rate limiting to the API"  # fire-and-forget thought
 ```
 
-Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
+Both terminals read and write the same `.sf/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
 
 ## Check Progress
 
-Press `Ctrl+Alt+G` or type `/gsd status` to see the dashboard:
+Press `Ctrl+Alt+G` or type `/sf status` to see the dashboard:
 
 - Current milestone, slice, and task
 - Elapsed time and phase
@@ -83,7 +83,7 @@ Press `Ctrl+Alt+G` or type `/gsd status` to see the dashboard:
 ## Resume a Session
 
 ```bash
-gsd --continue    # or gsd -c
+sf --continue    # or sf -c
 ```
 
 Resumes the most recent session for the current directory.
@@ -91,17 +91,17 @@ Resumes the most recent session for the current directory.
 To browse and pick from all saved sessions:
 
 ```bash
-gsd sessions
+sf sessions
 ```
 
 Shows each session's date, message count, and preview so you can choose which to resume.
 
 ## What's on Disk
 
-All state lives in `.gsd/` inside your project:
+All state lives in `.sf/` inside your project:
 
 ```
-.gsd/
+.sf/
   PROJECT.md          — what the project is
   REQUIREMENTS.md     — requirement contract
   DECISIONS.md        — architectural decisions

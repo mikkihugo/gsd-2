@@ -8,7 +8,7 @@
 import { execSync, execFileSync } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { GSDError, SF_GIT_ERROR } from "./errors.js";
+import { SFError, SF_GIT_ERROR } from "./errors.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 import { getErrorMessage } from "./error-utils.js";
 
@@ -145,7 +145,7 @@ function gitExec(basePath: string, args: string[], allowFailure = false): string
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new SFError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -160,7 +160,7 @@ function gitFileExec(basePath: string, args: string[], allowFailure = false): st
     }).trim();
   } catch {
     if (allowFailure) return "";
-    throw new GSDError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
+    throw new SFError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}`);
   }
 }
 
@@ -732,7 +732,7 @@ export function nativeAddAllWithExclusions(basePath: string, exclusions: readonl
       gitFileExec(basePath, ["add", "-u"]);
       return;
     }
-    throw new GSDError(SF_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}`);
+    throw new SFError(SF_GIT_ERROR, `git add -A with exclusions failed in ${basePath}: ${getErrorMessage(err)}`);
   }
 }
 

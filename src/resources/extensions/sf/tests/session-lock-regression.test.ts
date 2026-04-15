@@ -46,7 +46,7 @@ describe('session-lock-regression', async () => {
   // ─── 1. Basic acquire/release lifecycle ───────────────────────────────
   console.log('\n=== 1. acquire → validate → release lifecycle ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -75,7 +75,7 @@ describe('session-lock-regression', async () => {
   // ─── 2. Double release is safe ────────────────────────────────────────
   console.log('\n=== 2. double release does not throw ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -97,7 +97,7 @@ describe('session-lock-regression', async () => {
   // ─── 3. updateSessionLock preserves lock data ─────────────────────────
   console.log('\n=== 3. updateSessionLock writes metadata ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -123,7 +123,7 @@ describe('session-lock-regression', async () => {
   // ─── 4. Stale lock from dead PID → re-acquirable (#1245) ─────────────
   console.log('\n=== 4. stale lock from dead PID → re-acquirable ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -151,7 +151,7 @@ describe('session-lock-regression', async () => {
   // ─── 5. readSessionLockData with no lock → null ───────────────────────
   console.log('\n=== 5. readSessionLockData with no lock → null ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -165,7 +165,7 @@ describe('session-lock-regression', async () => {
   // ─── 6. validateSessionLock after own acquisition → true ──────────────
   console.log('\n=== 6. validateSessionLock after own acquisition → true ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -186,7 +186,7 @@ describe('session-lock-regression', async () => {
   // ─── 7. readSessionLockData with corrupt JSON → null ──────────────────
   console.log('\n=== 7. corrupt lock file → null ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -203,7 +203,7 @@ describe('session-lock-regression', async () => {
   // ─── 7b. getSessionLockStatus with missing metadata → reason surfaced ──
   console.log('\n=== 7b. missing lock metadata → structured reason ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -219,7 +219,7 @@ describe('session-lock-regression', async () => {
   // ─── 7c. getSessionLockStatus with foreign PID → reason surfaced ───────
   console.log('\n=== 7c. foreign PID in lock file → structured reason ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -246,7 +246,7 @@ describe('session-lock-regression', async () => {
   // ─── 8. Acquire after release is possible ─────────────────────────────
   console.log('\n=== 8. acquire after release → re-acquirable ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -265,7 +265,7 @@ describe('session-lock-regression', async () => {
   // ─── 9. Re-entrant acquisition without explicit release ───────────────
   console.log('\n=== 9. re-entrant acquire without explicit release ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {
@@ -287,7 +287,7 @@ describe('session-lock-regression', async () => {
   // ─── 10. Re-entrant acquisition refreshes lock artifacts ──────────────
   console.log('\n=== 10. re-entrant acquire refreshes lock artifacts ===');
   {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-session-lock-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-session-lock-'));
     mkdirSync(join(base, '.gsd'), { recursive: true });
 
     try {

@@ -1,7 +1,7 @@
 import { execFileSync } from "child_process";
 
-const binary = process.env.SF_SMOKE_BINARY || "npx";
-const args = process.env.SF_SMOKE_BINARY
+const binary = process.env.SF_SMOKE_BINARY || process.env.GSD_SMOKE_BINARY || "npx";
+const args = (process.env.SF_SMOKE_BINARY || process.env.GSD_SMOKE_BINARY)
   ? ["--version"]
   : ["sf-run", "--version"];
 

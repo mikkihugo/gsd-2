@@ -32,7 +32,7 @@ import { stopWebMode } from './web-mode.js'
 import { getProjectSessionsDir } from './project-sessions.js'
 import { markStartup, printStartupTimings } from './startup-timings.js'
 import { bootstrapRtk, SF_RTK_DISABLED_ENV, SF_RTK_DISABLED_ENV } from './rtk.js'
-import { loadEffectiveGSDPreferences } from './resources/extensions/sf/preferences.js'
+import { loadEffectiveSFPreferences } from './resources/extensions/sf/preferences.js'
 
 // ---------------------------------------------------------------------------
 // V8 compile cache — Node 22+ can cache compiled bytecode across runs,
@@ -148,7 +148,7 @@ async function doRtkBootstrap(): Promise<void> {
   // Honor SF_RTK_DISABLED (or SF_RTK_DISABLED) if already explicitly set in the environment
   // (env var takes precedence over preferences for manual override).
   if (!process.env[SF_RTK_DISABLED_ENV] && !process.env[SF_RTK_DISABLED_ENV]) {
-    const prefs = loadEffectiveGSDPreferences()
+    const prefs = loadEffectiveSFPreferences()
     const rtkEnabled = prefs?.preferences.experimental?.rtk === true
     if (!rtkEnabled) {
       process.env[SF_RTK_DISABLED_ENV] = '1'

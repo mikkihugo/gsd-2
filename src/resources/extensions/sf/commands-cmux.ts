@@ -103,7 +103,7 @@ function ensureCmuxAvailableForEnable(ctx: ExtensionCommandContext): boolean {
   const detected = detectCmuxEnvironment();
   if (detected.available) return true;
   ctx.ui.notify(
-    "cmux not detected. Install it from https://cmux.com and run gsd inside a cmux terminal.",
+    "cmux not detected. Install it from https://cmux.com and run sf inside a cmux terminal.",
     "warning",
   );
   return false;
@@ -168,7 +168,7 @@ export async function handleCmux(args: string, ctx: ExtensionCommandContext): Pr
   }
 
   ctx.ui.notify(
-    "Usage: /gsd cmux <status|on|off|notifications on|notifications off|sidebar on|sidebar off|splits on|splits off|browser on|browser off>",
+    "Usage: /sf cmux <status|on|off|notifications on|notifications off|sidebar on|sidebar off|splits on|splits off|browser on|browser off>",
     "info",
   );
 }

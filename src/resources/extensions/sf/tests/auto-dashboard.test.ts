@@ -17,13 +17,13 @@ import {
   _resetWidgetModeForTests,
 } from "../auto-dashboard.ts";
 
-const autoSource = readFileSync(join(process.cwd(), "src", "resources", "extensions", "gsd", "auto.ts"), "utf-8");
-const dashboardSource = readFileSync(join(process.cwd(), "src", "resources", "extensions", "gsd", "auto-dashboard.ts"), "utf-8");
+const autoSource = readFileSync(join(process.cwd(), "src", "resources", "extensions", "sf", "auto.ts"), "utf-8");
+const dashboardSource = readFileSync(join(process.cwd(), "src", "resources", "extensions", "sf", "auto-dashboard.ts"), "utf-8");
 
 function makeTempDir(prefix: string): string {
   return join(
     tmpdir(),
-    `gsd-auto-dashboard-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-auto-dashboard-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
 }
 

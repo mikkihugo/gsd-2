@@ -5,7 +5,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 
 /**
  * Tests for #3129: forensics reads DB for completion status instead of legacy file.
@@ -15,8 +15,8 @@ const gsdDir = join(__dirname, "..");
  * the authoritative source for completion status.
  */
 describe("forensics DB completion status (#3129)", () => {
-  const forensicsSrc = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
-  const stateSrc = readFileSync(join(gsdDir, "state.ts"), "utf-8");
+  const forensicsSrc = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
+  const stateSrc = readFileSync(join(sfDir, "state.ts"), "utf-8");
 
   // ── Primary fix: forensics queries DB for completion counts ──────────
 
@@ -90,7 +90,7 @@ describe("forensics DB completion status (#3129)", () => {
     // The last completed milestone should be in a separate field
     assert.ok(
       stateSrc.includes("lastCompletedMilestone"),
-      "GSDState must have lastCompletedMilestone field for the final milestone when phase=complete",
+      "SFState must have lastCompletedMilestone field for the final milestone when phase=complete",
     );
   });
 });

@@ -23,7 +23,7 @@ import { syncWorktreeStateBack } from "../auto-worktree.ts";
 // ─── Helpers ─────────────────────────────────────────────────────────
 
 function makeTempDir(prefix: string): string {
-  return mkdtempSync(join(tmpdir(), `gsd-sync-test-${prefix}-`));
+  return mkdtempSync(join(tmpdir(), `sf-sync-test-${prefix}-`));
 }
 
 function cleanup(...dirs: string[]): void {

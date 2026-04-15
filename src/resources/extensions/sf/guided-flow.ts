@@ -8,7 +8,7 @@
  */
 
 import type { ExtensionAPI, ExtensionContext, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 import { showNextAction } from "../shared/tui.js";
 import { loadFile, saveFile } from "./files.js";
 import { isDbAvailable, getMilestoneSlices } from "./sf-db.js";
@@ -87,7 +87,7 @@ function nextMilestoneIdReserved(existingIds: string[], uniqueEnabled: boolean):
   return id;
 }
 
-function needsPlanningFlowGate(state: GSDState): boolean {
+function needsPlanningFlowGate(state: SFState): boolean {
   return state.phase === "executing"
     || state.phase === "summarizing"
     || state.phase === "validating-milestone"
@@ -97,7 +97,7 @@ function needsPlanningFlowGate(state: GSDState): boolean {
 function runPlanningFlowGate(
   ctx: ExtensionContext,
   basePath: string,
-  state: GSDState,
+  state: SFState,
 ): boolean {
   const prefs = loadEffectiveSFPreferences()?.preferences;
   const uokFlags = resolveUokFlags(prefs);
@@ -310,7 +310,7 @@ type UIContext = ExtensionContext;
 async function dispatchWorkflow(
   pi: ExtensionAPI,
   note: string,
-  customType = "gsd-run",
+  customType = "sf-run",
   ctx?: ExtensionContext,
   unitType?: string,
 ): Promise<void> {
@@ -604,7 +604,7 @@ export async function showHeadlessMilestoneCreation(
   pendingAutoStartMap.set(basePath, { ctx, pi, basePath, milestoneId: nextId, createdAt: Date.now() });
 
   // Dispatch — headless milestone creation is a planning activity
-  await dispatchWorkflow(pi, prompt, "gsd-run", ctx, "plan-milestone");
+  await dispatchWorkflow(pi, prompt, "sf-run", ctx, "plan-milestone");
 }
 
 
@@ -707,7 +707,7 @@ async function buildDiscussSlicePrompt(
 }
 
 /**
- * /gsd discuss — show a picker of non-done slices and run a slice interview.
+ * /sf discuss — show a picker of non-done slices and run a slice interview.
  * Loops back to the picker after each discussion so the user can chain
  * multiple slice interviews in one session.
  */
@@ -718,7 +718,7 @@ export async function showDiscuss(
 ): Promise<void> {
   // Guard: no .gsd/ project
   if (!existsSync(sfRoot(basePath))) {
-    ctx.ui.notify("No SF project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No SF project found. Run /sf to start one first.", "warning");
     return;
   }
 
@@ -742,7 +742,7 @@ export async function showDiscuss(
   if (!state.activeMilestone?.id) {
     const pendingMilestones = state.registry.filter(m => m.status === "pending");
     if (pendingMilestones.length === 0) {
-      ctx.ui.notify("No active milestone. Run /gsd to create one first.", "warning");
+      ctx.ui.notify("No active milestone. Run /sf to create one first.", "warning");
       return;
     }
     await showDiscussQueuedMilestone(ctx, pi, basePath, pendingMilestones);
@@ -779,7 +779,7 @@ export async function showDiscuss(
           description: "Leave this milestone as-is and start something new.",
         },
       ],
-      notYetMessage: "Run /gsd discuss when ready to discuss this milestone.",
+      notYetMessage: "Run /sf discuss when ready to discuss this milestone.",
     });
 
     if (choice === "discuss_draft") {
@@ -794,7 +794,7 @@ export async function showDiscuss(
         ? `${basePrompt}\n\n## Prior Discussion (Draft Seed)\n\n${draftContent}`
         : basePrompt;
       pendingAutoStartMap.set(basePath, { ctx, pi, basePath, milestoneId: mid, step: false, createdAt: Date.now() });
-      await dispatchWorkflow(pi, seed, "gsd-discuss", ctx, "discuss-milestone");
+      await dispatchWorkflow(pi, seed, "sf-discuss", ctx, "discuss-milestone");
     } else if (choice === "discuss_fresh") {
       const discussMilestoneTemplates = inlineTemplate("context", "Context");
       const structuredQuestionsAvailable = getStructuredQuestionsAvailability(pi, ctx);
@@ -803,13 +803,13 @@ export async function showDiscuss(
         milestoneId: mid, milestoneTitle, inlinedTemplates: discussMilestoneTemplates, structuredQuestionsAvailable,
         commitInstruction: buildDocsCommitInstruction(`docs(${mid}): milestone context from discuss`),
         fastPathInstruction: "",
-      }), "gsd-discuss", ctx, "discuss-milestone");
+      }), "sf-discuss", ctx, "discuss-milestone");
     } else if (choice === "skip_milestone") {
       const milestoneIds = findMilestoneIds(basePath);
       const uniqueMilestoneIds = !!loadEffectiveSFPreferences()?.preferences?.unique_milestone_ids;
       const nextId = nextMilestoneIdReserved(milestoneIds, uniqueMilestoneIds);
       pendingAutoStartMap.set(basePath, { ctx, pi, basePath, milestoneId: nextId, step: false, createdAt: Date.now() });
-      await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId, `New milestone ${nextId}.`, basePath), "gsd-run", ctx, "discuss-milestone");
+      await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId, `New milestone ${nextId}.`, basePath), "sf-run", ctx, "discuss-milestone");
     }
     return;
   }
@@ -826,7 +826,7 @@ export async function showDiscuss(
   const roadmapFile = resolveMilestoneFile(basePath, mid, "ROADMAP");
   const roadmapContent = roadmapFile ? await loadFile(roadmapFile) : null;
   if (!roadmapContent && !isDbAvailable()) {
-    ctx.ui.notify("No roadmap yet for this milestone. Run /gsd to plan first.", "warning");
+    ctx.ui.notify("No roadmap yet for this milestone. Run /sf to plan first.", "warning");
     return;
   }
 
@@ -880,8 +880,8 @@ export async function showDiscuss(
       const lockData = readSessionLockData(basePath);
       const remoteAutoRunning = lockData && lockData.pid !== process.pid && isSessionLockProcessAlive(lockData);
       const nextStep = remoteAutoRunning
-        ? "Auto-mode is already running — use /gsd status to check progress."
-        : "Run /gsd to start planning.";
+        ? "Auto-mode is already running — use /sf status to check progress."
+        : "Run /sf to start planning.";
       ctx.ui.notify(
         `All ${pendingSlices.length} slices discussed. ${nextStep}`,
         "info",
@@ -925,7 +925,7 @@ export async function showDiscuss(
         "Pick a slice to interview. Context file will be written when done.",
       ],
       actions,
-      notYetMessage: "Run /gsd discuss when ready.",
+      notYetMessage: "Run /sf discuss when ready.",
     });
 
     if (choice === "not_yet") return;
@@ -957,7 +957,7 @@ export async function showDiscuss(
 
     const sqAvail = getStructuredQuestionsAvailability(pi, ctx);
     const prompt = await buildDiscussSlicePrompt(mid, chosen.id, chosen.title, basePath, { rediscuss: isRediscuss, structuredQuestionsAvailable: sqAvail });
-    await dispatchWorkflow(pi, prompt, "gsd-discuss", ctx, "discuss-slice");
+    await dispatchWorkflow(pi, prompt, "sf-discuss", ctx, "discuss-slice");
 
     // Wait for the discuss session to finish, then loop back to the picker
     await ctx.waitForIdle();
@@ -998,7 +998,7 @@ async function showDiscussQueuedMilestone(
       "Discussing will update its context file. It will not be activated.",
     ],
     actions,
-    notYetMessage: "Run /gsd discuss when ready.",
+    notYetMessage: "Run /sf discuss when ready.",
   });
 
   if (choice === "not_yet") return;
@@ -1029,7 +1029,7 @@ async function showDiscussQueuedMilestone(
           description: "Treat your first message as authoritative seed context; skip scouting",
         },
       ],
-      notYetMessage: "Run /gsd discuss when ready.",
+      notYetMessage: "Run /sf discuss when ready.",
     });
     if (mode === "not_yet") return;
     fastPath = mode === "fast";
@@ -1077,7 +1077,7 @@ async function dispatchDiscussForMilestone(
   const prompt = draftContent
     ? `${basePrompt}\n\n## Prior Discussion (Draft Seed)\n\n${draftContent}`
     : basePrompt;
-  await dispatchWorkflow(pi, prompt, "gsd-discuss", ctx, "discuss-milestone");
+  await dispatchWorkflow(pi, prompt, "sf-discuss", ctx, "discuss-milestone");
 }
 
 // ─── Workflow Entry Point ─────────────────────────────────────────────────────
@@ -1088,8 +1088,8 @@ async function dispatchDiscussForMilestone(
 /**
  * Self-heal: scan runtime records and clear stale ones left behind when
  * auto-mode crashed mid-unit. auto.ts has its own selfHealRuntimeRecords()
- * but guided-flow (manual /gsd mode) never called it — meaning stale records
- * persisted until the next /gsd auto run. This ensures the workflow entry
+ * but guided-flow (manual /sf mode) never called it — meaning stale records
+ * persisted until the next /sf auto run. This ensures the workflow entry
  * starts from a clean state regardless of how the previous session ended.
  */
 function selfHealRuntimeRecords(basePath: string, ctx: ExtensionContext): { cleared: number } {
@@ -1162,7 +1162,7 @@ async function handleMilestoneActions(
         description: "Return to the previous menu.",
       },
     ],
-    notYetMessage: "Run /gsd when ready.",
+    notYetMessage: "Run /sf when ready.",
   });
 
   if (choice === "park") {
@@ -1174,7 +1174,7 @@ async function handleMilestoneActions(
         { id: "blocked_external", label: "Blocked externally", description: "Waiting on an external dependency or decision." },
         { id: "needs_rethink", label: "Needs rethinking", description: "The approach needs to be reconsidered." },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /sf when ready.",
     });
 
     // User pressed "Not yet" / Escape — cancel the park operation
@@ -1187,7 +1187,7 @@ async function handleMilestoneActions(
 
     const success = parkMilestone(basePath, milestoneId, reasonText);
     if (success) {
-      ctx.ui.notify(`Parked ${milestoneId}. Run /gsd unpark ${milestoneId} to reactivate.`, "info");
+      ctx.ui.notify(`Parked ${milestoneId}. Run /sf unpark ${milestoneId} to reactivate.`, "info");
     } else {
       ctx.ui.notify(`Could not park ${milestoneId} — milestone not found or already parked.`, "warning");
     }
@@ -1217,7 +1217,7 @@ async function handleMilestoneActions(
     await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
       `New milestone ${nextId}.`,
       basePath
-    ), "gsd-run", ctx, "discuss-milestone");
+    ), "sf-run", ctx, "discuss-milestone");
     return true;
   }
 
@@ -1234,7 +1234,7 @@ export async function showWorkflowEntry(
   const stepMode = options?.step;
 
   // ── Clear stale milestone ID reservations from previous cancelled sessions ──
-  // Reservations only need to survive within a single /gsd interaction.
+  // Reservations only need to survive within a single /sf interaction.
   // Without this, each cancelled session permanently bumps the next ID. (#2488)
   clearReservedMilestoneIds();
 
@@ -1320,8 +1320,8 @@ export async function showWorkflowEntry(
   } else if (interrupted.classification === "recoverable") {
     if (interrupted.lock) clearLock(basePath);
     const resumeLabel = interrupted.pausedSession?.stepMode
-      ? "Resume with /gsd next"
-      : "Resume with /gsd auto";
+      ? "Resume with /sf next"
+      : "Resume with /sf auto";
     const resume = await showNextAction(ctx, {
       title: "SF — Interrupted Session Detected",
       summary: formatInterruptedSessionSummary(interrupted),
@@ -1355,8 +1355,8 @@ export async function showWorkflowEntry(
 
   if (!state.activeMilestone?.id) {
     // Guard: if a discuss session is already in flight, don't re-inject the prompt.
-    // Both /gsd and /gsd auto reach this branch when no milestone exists yet.
-    // Without this guard, every subsequent /gsd call overwrites the pending auto-start
+    // Both /sf and /sf auto reach this branch when no milestone exists yet.
+    // Without this guard, every subsequent /sf call overwrites the pending auto-start
     // and fires another dispatchWorkflow, resetting the conversation mid-interview.
     if (pendingAutoStartMap.has(basePath)) {
       // #3274: If /clear interrupted the discussion, the pending entry is stale.
@@ -1390,7 +1390,7 @@ export async function showWorkflowEntry(
           if (entries.length > 0) {
             ctx.ui.notify(
               `Milestone directory has ${entries.length} entries but none were recognized as milestones. ` +
-              `This may indicate a corrupted state or wrong working directory. Run \`/gsd doctor\` to diagnose.`,
+              `This may indicate a corrupted state or wrong working directory. Run \`/sf doctor\` to diagnose.`,
               "warning",
             );
             return;
@@ -1409,7 +1409,7 @@ export async function showWorkflowEntry(
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
         `New project, milestone ${nextId}. Do NOT read or explore .gsd/ — it's empty scaffolding.`,
         basePath
-      ), "gsd-run", ctx, "discuss-milestone");
+      ), "sf-run", ctx, "discuss-milestone");
     } else {
       const choice = await showNextAction(ctx, {
         title: "SF — Singularity Forge",
@@ -1422,7 +1422,7 @@ export async function showWorkflowEntry(
             recommended: true,
           },
         ],
-        notYetMessage: "Run /gsd when ready.",
+        notYetMessage: "Run /sf when ready.",
       });
 
       if (choice === "new_milestone") {
@@ -1430,7 +1430,7 @@ export async function showWorkflowEntry(
         await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
           `New milestone ${nextId}.`,
           basePath
-        ), "gsd-run", ctx, "discuss-milestone");
+        ), "sf-run", ctx, "discuss-milestone");
       }
     }
     return;
@@ -1457,7 +1457,7 @@ export async function showWorkflowEntry(
           description: "Review what was built.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /sf when ready.",
     });
 
     if (choice === "new_milestone") {
@@ -1469,7 +1469,7 @@ export async function showWorkflowEntry(
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
         `New milestone ${nextId}.`,
         basePath
-      ), "gsd-run", ctx, "discuss-milestone");
+      ), "sf-run", ctx, "discuss-milestone");
     } else if (choice === "status") {
       const { fireStatusViaCommand } = await import("./commands.js");
       await fireStatusViaCommand(ctx);
@@ -1503,7 +1503,7 @@ export async function showWorkflowEntry(
           description: "Leave this milestone as-is and start something new.",
         },
       ],
-      notYetMessage: "Run /gsd when ready to discuss this milestone.",
+      notYetMessage: "Run /sf when ready to discuss this milestone.",
     });
 
     if (choice === "discuss_draft") {
@@ -1518,7 +1518,7 @@ export async function showWorkflowEntry(
         ? `${basePrompt}\n\n## Prior Discussion (Draft Seed)\n\n${draftContent}`
         : basePrompt;
       pendingAutoStartMap.set(basePath, { ctx, pi, basePath, milestoneId, step: stepMode, createdAt: Date.now() });
-      await dispatchWorkflow(pi, seed, "gsd-discuss", ctx, "discuss-milestone");
+      await dispatchWorkflow(pi, seed, "sf-discuss", ctx, "discuss-milestone");
     } else if (choice === "discuss_fresh") {
       const discussMilestoneTemplates = inlineTemplate("context", "Context");
       const structuredQuestionsAvailable = getStructuredQuestionsAvailability(pi, ctx);
@@ -1527,7 +1527,7 @@ export async function showWorkflowEntry(
         milestoneId, milestoneTitle, inlinedTemplates: discussMilestoneTemplates, structuredQuestionsAvailable,
         commitInstruction: buildDocsCommitInstruction(`docs(${milestoneId}): milestone context from discuss`),
         fastPathInstruction: "",
-      }), "gsd-discuss", ctx, "discuss-milestone");
+      }), "sf-discuss", ctx, "discuss-milestone");
     } else if (choice === "skip_milestone") {
       const milestoneIds = findMilestoneIds(basePath);
       const uniqueMilestoneIds = !!loadEffectiveSFPreferences()?.preferences?.unique_milestone_ids;
@@ -1536,7 +1536,7 @@ export async function showWorkflowEntry(
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
         `New milestone ${nextId}.`,
         basePath
-      ), "gsd-run", ctx, "discuss-milestone");
+      ), "sf-run", ctx, "discuss-milestone");
     }
     return;
   }
@@ -1593,7 +1593,7 @@ export async function showWorkflowEntry(
         title: `SF — ${milestoneId}: ${milestoneTitle}`,
         summary: [hasContext ? "Context captured. Ready to create roadmap." : "New milestone — no roadmap yet."],
         actions,
-        notYetMessage: "Run /gsd when ready.",
+        notYetMessage: "Run /sf when ready.",
       });
 
       if (choice === "plan") {
@@ -1616,7 +1616,7 @@ export async function showWorkflowEntry(
             milestoneTitle,
             extraContext: [planMilestoneTemplates],
           }),
-        }), "gsd-run", ctx, "plan-milestone");
+        }), "sf-run", ctx, "plan-milestone");
       } else if (choice === "discuss") {
         const discussMilestoneTemplates = inlineTemplate("context", "Context");
         const structuredQuestionsAvailable = getStructuredQuestionsAvailability(pi, ctx);
@@ -1624,7 +1624,7 @@ export async function showWorkflowEntry(
           milestoneId, milestoneTitle, inlinedTemplates: discussMilestoneTemplates, structuredQuestionsAvailable,
           commitInstruction: buildDocsCommitInstruction(`docs(${milestoneId}): milestone context from discuss`),
           fastPathInstruction: "",
-        }), "gsd-run", ctx, "discuss-milestone");
+        }), "sf-run", ctx, "discuss-milestone");
       } else if (choice === "skip_milestone") {
         const milestoneIds = findMilestoneIds(basePath);
         const uniqueMilestoneIds = !!loadEffectiveSFPreferences()?.preferences?.unique_milestone_ids;
@@ -1633,7 +1633,7 @@ export async function showWorkflowEntry(
         await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
           `New milestone ${nextId}.`,
           basePath
-        ), "gsd-run", ctx, "discuss-milestone");
+        ), "sf-run", ctx, "discuss-milestone");
       } else if (choice === "discard_milestone") {
         const confirmed = await showConfirm(ctx, {
           title: "Discard milestone?",
@@ -1671,7 +1671,7 @@ export async function showWorkflowEntry(
         title: `SF — ${milestoneId}: ${milestoneTitle}`,
         summary: ["Roadmap exists. Ready to execute."],
         actions,
-        notYetMessage: "Run /gsd status for details.",
+        notYetMessage: "Run /sf status for details.",
       });
 
       if (choice === "auto") {
@@ -1737,7 +1737,7 @@ export async function showWorkflowEntry(
       title: `SF — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: [summaryLine],
       actions,
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /sf when ready.",
     });
 
     if (choice === "plan") {
@@ -1757,10 +1757,10 @@ export async function showWorkflowEntry(
           sliceTitle,
           extraContext: [planSliceTemplates],
         }),
-      }), "gsd-run", ctx, "plan-slice");
+      }), "sf-run", ctx, "plan-slice");
     } else if (choice === "discuss") {
       const sqAvail = getStructuredQuestionsAvailability(pi, ctx);
-      await dispatchWorkflow(pi, await buildDiscussSlicePrompt(milestoneId, sliceId, sliceTitle, basePath, { rediscuss: hasContext, structuredQuestionsAvailable: sqAvail }), "gsd-run", ctx, "discuss-slice");
+      await dispatchWorkflow(pi, await buildDiscussSlicePrompt(milestoneId, sliceId, sliceTitle, basePath, { rediscuss: hasContext, structuredQuestionsAvailable: sqAvail }), "sf-run", ctx, "discuss-slice");
     } else if (choice === "research") {
       const researchTemplates = inlineTemplate("research", "Research");
       await dispatchWorkflow(pi, loadPrompt("guided-research-slice", {
@@ -1775,7 +1775,7 @@ export async function showWorkflowEntry(
           sliceTitle,
           extraContext: [researchTemplates],
         }),
-      }), "gsd-run", ctx, "research-slice");
+      }), "sf-run", ctx, "research-slice");
     } else if (choice === "status") {
       const { fireStatusViaCommand } = await import("./commands.js");
       await fireStatusViaCommand(ctx);
@@ -1809,7 +1809,7 @@ export async function showWorkflowEntry(
           description: "Park, discard, or skip this milestone.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /sf when ready.",
     });
 
     if (choice === "complete") {
@@ -1830,7 +1830,7 @@ export async function showWorkflowEntry(
           sliceTitle,
           extraContext: [completeSliceTemplates],
         }),
-      }), "gsd-run", ctx, "complete-slice");
+      }), "sf-run", ctx, "complete-slice");
     } else if (choice === "status") {
       const { fireStatusViaCommand } = await import("./commands.js");
       await fireStatusViaCommand(ctx);
@@ -1883,7 +1883,7 @@ export async function showWorkflowEntry(
           description: "Park, discard, or skip this milestone.",
         },
       ],
-      notYetMessage: "Run /gsd when ready.",
+      notYetMessage: "Run /sf when ready.",
     });
 
     if (choice === "auto") {
@@ -1903,7 +1903,7 @@ export async function showWorkflowEntry(
             taskId,
             taskTitle,
           }),
-        }), "gsd-run", ctx, "execute-task");
+        }), "sf-run", ctx, "execute-task");
       } else {
         const executeTaskTemplates = inlineTemplate("task-summary", "Task Summary");
         await dispatchWorkflow(pi, loadPrompt("guided-execute-task", {
@@ -1920,7 +1920,7 @@ export async function showWorkflowEntry(
             taskTitle,
             extraContext: [executeTaskTemplates],
           }),
-        }), "gsd-run", ctx, "execute-task");
+        }), "sf-run", ctx, "execute-task");
       }
     } else if (choice === "status") {
       const { fireStatusViaCommand } = await import("./commands.js");

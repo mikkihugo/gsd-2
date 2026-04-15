@@ -16,7 +16,7 @@ import {
   formatDoctorIssuesForPrompt,
   formatDoctorReport,
   formatDoctorReportJson,
-  runGSDDoctor,
+  runSFDoctor,
   selectDoctorScope,
   filterDoctorIssues,
 } from "./doctor.js";
@@ -63,7 +63,7 @@ export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, 
   const content = `Read the following SF workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`;
 
   pi.sendMessage(
-    { customType: "gsd-doctor-heal", content, display: false },
+    { customType: "sf-doctor-heal", content, display: false },
     { triggerTurn: true },
   );
 }
@@ -91,7 +91,7 @@ export async function handleDoctor(args: string, ctx: ExtensionCommandContext, p
   const { jsonMode, dryRun, fixFlag, includeBuild, includeTests, mode, requestedScope } = parseDoctorArgs(args);
   const scope = await selectDoctorScope(projectRoot(), requestedScope);
   const effectiveScope = mode === "audit" ? requestedScope : scope;
-  const report = await runGSDDoctor(projectRoot(), {
+  const report = await runSFDoctor(projectRoot(), {
     fix: mode === "fix" || mode === "heal" || dryRun || fixFlag,
     dryRun,
     scope: effectiveScope,
@@ -139,7 +139,7 @@ export async function handleSkillHealth(args: string, ctx: ExtensionCommandConte
 
   const basePath = projectRoot();
 
-  // /gsd skill-health <skill-name> — detail view
+  // /sf skill-health <skill-name> — detail view
   if (args && !args.startsWith("--")) {
     const detail = formatSkillDetail(basePath, args);
     ctx.ui.notify(detail, "info");
@@ -173,7 +173,7 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
   // Strip surrounding quotes from the argument
   let text = args.trim();
   if (!text) {
-    ctx.ui.notify('Usage: /gsd capture "your thought here"', "warning");
+    ctx.ui.notify('Usage: /sf capture "your thought here"', "warning");
     return;
   }
   // Remove wrapping quotes (single or double)
@@ -181,16 +181,16 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
     text = text.slice(1, -1);
   }
   if (!text) {
-    ctx.ui.notify('Usage: /gsd capture "your thought here"', "warning");
+    ctx.ui.notify('Usage: /sf capture "your thought here"', "warning");
     return;
   }
 
   const basePath = process.cwd();
 
   // Ensure .gsd/ exists — capture should work even without a milestone
-  const gsdDir = sfRoot(basePath);
-  if (!existsSync(gsdDir)) {
-    mkdirSync(gsdDir, { recursive: true });
+  const sfDir = sfRoot(basePath);
+  if (!existsSync(sfDir)) {
+    mkdirSync(sfDir, { recursive: true });
   }
 
   const id = appendCapture(basePath, text);
@@ -243,7 +243,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
 
   pi.sendMessage(
     {
-      customType: "gsd-triage",
+      customType: "sf-triage",
       content: `Read the following SF workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`,
       display: false,
     },
@@ -274,7 +274,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
 
   if (isAutoActive()) {
     pi.sendMessage({
-      customType: "gsd-hard-steer",
+      customType: "sf-hard-steer",
       content: [
         "HARD STEER — User override registered.",
         "",
@@ -290,7 +290,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
     ctx.ui.notify(`Override registered (${overrideLoc}): "${change}". Will be applied before next task dispatch.`, "info");
   } else {
     pi.sendMessage({
-      customType: "gsd-hard-steer",
+      customType: "sf-hard-steer",
       content: [
         "HARD STEER — User override registered.",
         "",
@@ -312,7 +312,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 
   if (!typeArg || !["rule", "pattern", "lesson"].includes(typeArg)) {
     ctx.ui.notify(
-      "Usage: /gsd knowledge <rule|pattern|lesson> <description>\nExample: /gsd knowledge rule Use real DB for integration tests",
+      "Usage: /sf knowledge <rule|pattern|lesson> <description>\nExample: /sf knowledge rule Use real DB for integration tests",
       "warning",
     );
     return;
@@ -320,7 +320,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 
   const entryText = parts.slice(1).join(" ").trim();
   if (!entryText) {
-    ctx.ui.notify(`Usage: /gsd knowledge ${typeArg} <description>`, "warning");
+    ctx.ui.notify(`Usage: /sf knowledge ${typeArg} <description>`, "warning");
     return;
   }
 
@@ -338,7 +338,7 @@ export async function handleKnowledge(args: string, ctx: ExtensionCommandContext
 export async function handleRunHook(args: string, ctx: ExtensionCommandContext, pi: ExtensionAPI): Promise<void> {
   const parts = args.trim().split(/\s+/);
   if (parts.length < 3) {
-    ctx.ui.notify(`Usage: /gsd run-hook <hook-name> <unit-type> <unit-id>
+    ctx.ui.notify(`Usage: /sf run-hook <hook-name> <unit-type> <unit-id>
 
 Unit types:
   execute-task   - Task execution (unit-id: M001/S01/T01)
@@ -348,8 +348,8 @@ Unit types:
   complete-milestone - Milestone completion (unit-id: M001)
 
 Examples:
-  /gsd run-hook code-review execute-task M001/S01/T01
-  /gsd run-hook lint-check plan-slice M001/S01`, "warning");
+  /sf run-hook code-review execute-task M001/S01/T01
+  /sf run-hook lint-check plan-slice M001/S01`, "warning");
     return;
   }
 

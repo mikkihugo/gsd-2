@@ -1069,7 +1069,7 @@ Make browser-tools able to emit outputs that directly support SF slice/task comp
 
 ## Why it matters
 
-You explicitly want browser tools to power automatic verification and testing during `@agent/extensions/gsd/` use.
+You explicitly want browser tools to power automatic verification and testing during `@agent/extensions/sf/` use.
 
 ## What it enables
 

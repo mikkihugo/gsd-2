@@ -1,4 +1,4 @@
-// Regression test for #1693 — /gsd dispatch uat targets the last completed
+// Regression test for #1693 — /sf dispatch uat targets the last completed
 // slice from the roadmap instead of state.activeSlice (which has already
 // advanced to the next incomplete slice).
 
@@ -12,7 +12,7 @@ import { dispatchDirectPhase } from "../auto-direct-dispatch.ts";
 import { invalidateStateCache } from "../state.ts";
 
 function createFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-dispatch-uat-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-dispatch-uat-"));
 
   // Milestone M001 with two slices: S01 done, S02 incomplete
   const milestoneDir = join(base, ".gsd", "milestones", "M001");
@@ -111,7 +111,7 @@ test("dispatch uat targets last completed slice, not activeSlice (#1693)", async
 });
 
 test("dispatch uat warns when no completed slices exist", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-dispatch-uat-none-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-dispatch-uat-none-"));
   invalidateStateCache();
 
   const milestoneDir = join(base, ".gsd", "milestones", "M001");

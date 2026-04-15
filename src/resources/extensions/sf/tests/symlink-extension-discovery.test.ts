@@ -60,7 +60,7 @@ describe("symlink extension discovery", () => {
   let realExtDir: string;
 
   beforeEach(() => {
-    tmp = mkdtempSync(join(tmpdir(), "gsd-ext-test-"));
+    tmp = mkdtempSync(join(tmpdir(), "sf-ext-test-"));
     extDir = join(tmp, "agent", "extensions");
     realExtDir = join(tmp, "my-ext-source");
 

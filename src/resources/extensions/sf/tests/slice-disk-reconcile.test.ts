@@ -29,7 +29,7 @@ import { createTestContext } from "./test-helpers.ts";
 const { assertEq, assertTrue, report } = createTestContext();
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-slice-reconcile-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-slice-reconcile-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }
@@ -73,7 +73,7 @@ async function testMissingSlicesCauseBlock(): Promise<void> {
   console.log("\n--- Test: missing DB slices cause permanent block (pre-fix) ---");
 
   const base = createFixtureBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   try {
     openDatabase(dbPath);
@@ -151,7 +151,7 @@ async function testSliceReconciliationIdempotent(): Promise<void> {
   console.log("\n--- Test: slice reconciliation is idempotent ---");
 
   const base = createFixtureBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   try {
     openDatabase(dbPath);
@@ -193,7 +193,7 @@ async function testNoRoadmapSkipsReconciliation(): Promise<void> {
   console.log("\n--- Test: no ROADMAP file skips slice reconciliation ---");
 
   const base = createFixtureBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   try {
     openDatabase(dbPath);

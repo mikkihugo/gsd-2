@@ -88,7 +88,7 @@ export function getSliceOrchestratorState(): SliceOrchestratorState | null {
 /**
  * Start parallel execution for eligible slices within a milestone.
  *
- * For each eligible slice: create a worktree, spawn `gsd --mode json --print "/gsd auto"`
+ * For each eligible slice: create a worktree, spawn `sf --mode json --print "/sf auto"`
  * with env SF_SLICE_LOCK=<SID> + SF_MILESTONE_LOCK=<MID> + SF_PARALLEL_WORKER=1.
  */
 export async function startSliceParallel(
@@ -313,7 +313,7 @@ function resolveGsdBin(): string | null {
 
 /**
  * Spawn a worker process for a slice.
- * The worker runs `gsd --mode json --print "/gsd auto"` in the slice's worktree
+ * The worker runs `sf --mode json --print "/sf auto"` in the slice's worktree
  * with SF_SLICE_LOCK, SF_MILESTONE_LOCK, and SF_PARALLEL_WORKER set.
  */
 function spawnSliceWorker(
@@ -331,7 +331,7 @@ function spawnSliceWorker(
 
   let child: ChildProcess;
   try {
-    child = spawn(process.execPath, [binPath, "--mode", "json", "--print", "/gsd auto"], {
+    child = spawn(process.execPath, [binPath, "--mode", "json", "--print", "/sf auto"], {
       cwd: worker.worktreePath,
       env: {
         ...process.env,

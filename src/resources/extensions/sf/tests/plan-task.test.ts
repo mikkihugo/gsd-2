@@ -9,7 +9,7 @@ import { handlePlanTask } from '../tools/plan-task.ts';
 import { parseTaskPlanFile } from '../files.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-plan-task-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-plan-task-'));
   mkdirSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S02', 'tasks'), { recursive: true });
   return base;
 }
@@ -42,7 +42,7 @@ function validParams() {
 
 test('handlePlanTask writes planning state and renders task plan', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParent();
@@ -67,7 +67,7 @@ test('handlePlanTask writes planning state and renders task plan', async () => {
 
 test('handlePlanTask rejects invalid payloads', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParent();
@@ -81,7 +81,7 @@ test('handlePlanTask rejects invalid payloads', async () => {
 
 test('handlePlanTask rejects missing parent slice', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     insertMilestone({ id: 'M001', title: 'Milestone', status: 'active' });
@@ -95,7 +95,7 @@ test('handlePlanTask rejects missing parent slice', async () => {
 
 test('handlePlanTask surfaces render failures without changing parse-visible task plan state', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParent();
@@ -115,7 +115,7 @@ test('handlePlanTask surfaces render failures without changing parse-visible tas
 
 test('handlePlanTask reruns idempotently and refreshes parse-visible state', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedParent();

@@ -1,6 +1,6 @@
 /**
  * Service Tier — gating, status formatting, icon resolution, and
- * the /gsd fast command handler.
+ * the /sf fast command handler.
  *
  * Service tiers (priority/flex) are an OpenAI feature that only applies
  * to gpt-5.4 variants. This module centralizes the model-gating logic
@@ -61,9 +61,9 @@ export function formatServiceTierStatus(tier: ServiceTierSetting): string {
       "Service tier: disabled",
       "",
       "Usage:",
-      "  /gsd fast on     Set to priority (2x cost, faster)",
-      "  /gsd fast flex   Set to flex (0.5x cost, slower)",
-      "  /gsd fast off    Disable service tier",
+      "  /sf fast on     Set to priority (2x cost, faster)",
+      "  /sf fast flex   Set to flex (0.5x cost, slower)",
+      "  /sf fast off    Disable service tier",
       "",
       SERVICE_TIER_SCOPE_NOTE,
     ].join("\n");
@@ -74,9 +74,9 @@ export function formatServiceTierStatus(tier: ServiceTierSetting): string {
     `Service tier: ${label}`,
     "",
     "Usage:",
-    "  /gsd fast on     Set to priority (2x cost, faster)",
-    "  /gsd fast flex   Set to flex (0.5x cost, slower)",
-    "  /gsd fast off    Disable service tier",
+    "  /sf fast on     Set to priority (2x cost, faster)",
+    "  /sf fast flex   Set to flex (0.5x cost, slower)",
+    "  /sf fast off    Disable service tier",
     "",
     SERVICE_TIER_SCOPE_NOTE,
   ].join("\n");
@@ -157,7 +157,7 @@ async function writeGlobalServiceTier(
 // ─── Command Handler ─────────────────────────────────────────────────────────
 
 /**
- * Handle `/gsd fast [on|off|flex|status]`.
+ * Handle `/sf fast [on|off|flex|status]`.
  */
 export async function handleFast(args: string, ctx: ExtensionCommandContext): Promise<void> {
   const trimmed = args.trim().toLowerCase();
@@ -170,27 +170,27 @@ export async function handleFast(args: string, ctx: ExtensionCommandContext): Pr
 
   if (trimmed === "on") {
     await writeGlobalServiceTier(ctx, "priority");
-    ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus("priority", ctx.model?.id));
+    ctx.ui.setStatus("sf-fast", formatServiceTierFooterStatus("priority", ctx.model?.id));
     ctx.ui.notify("Service tier set to priority (2x cost, faster responses). Only affects gpt-5.4 models, regardless of provider.", "info");
     return;
   }
 
   if (trimmed === "off") {
     await writeGlobalServiceTier(ctx, undefined);
-    ctx.ui.setStatus("gsd-fast", undefined);
+    ctx.ui.setStatus("sf-fast", undefined);
     ctx.ui.notify("Service tier disabled.", "info");
     return;
   }
 
   if (trimmed === "flex") {
     await writeGlobalServiceTier(ctx, "flex");
-    ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus("flex", ctx.model?.id));
+    ctx.ui.setStatus("sf-fast", formatServiceTierFooterStatus("flex", ctx.model?.id));
     ctx.ui.notify("Service tier set to flex (0.5x cost, slower responses). Only affects gpt-5.4 models, regardless of provider.", "info");
     return;
   }
 
   ctx.ui.notify(
-    "Usage: /gsd fast [on|off|flex|status]\n\n  on    Priority tier (2x cost, faster)\n  off   Disable service tier\n  flex  Flex tier (0.5x cost, slower)\n  status Show current setting",
+    "Usage: /sf fast [on|off|flex|status]\n\n  on    Priority tier (2x cost, faster)\n  off   Disable service tier\n  flex  Flex tier (0.5x cost, slower)\n  status Show current setting",
     "warning",
   );
 }

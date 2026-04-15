@@ -18,7 +18,7 @@ import { mkdirSync, existsSync } from "node:fs";
 import { logWarning } from "./workflow-logger.js";
 import { isClosedStatus } from "./status-guards.js";
 import { deriveState } from "./state.js";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────
 
@@ -283,11 +283,11 @@ export function renderSummaryProjection(basePath: string, milestoneId: string, s
 // ─── STATE.md Projection ────────────────────────────────────────────────
 
 /**
- * Render STATE.md content from GSDState.
+ * Render STATE.md content from SFState.
  * Matches the buildStateMarkdown output format from doctor.ts exactly.
  * Pure function — no side effects.
  */
-export function renderStateContent(state: GSDState): string {
+export function renderStateContent(state: SFState): string {
   const lines: string[] = [];
   lines.push("# SF State", "");
 

@@ -45,7 +45,7 @@ import assert from 'node:assert/strict';
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTmpDir(): string {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gsd-renderer-'));
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-renderer-'));
   fs.mkdirSync(path.join(dir, '.gsd'), { recursive: true });
   return dir;
 }
@@ -245,7 +245,7 @@ test('── markdown-renderer: getArtifact accessor ──', () => {
 
 test('── markdown-renderer: renderRoadmapCheckboxes round-trip ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -297,7 +297,7 @@ test('── markdown-renderer: renderRoadmapCheckboxes round-trip ──', asyn
 
 test('── markdown-renderer: renderRoadmapCheckboxes bidirectional ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -341,7 +341,7 @@ test('── markdown-renderer: renderRoadmapCheckboxes bidirectional ──', a
 
 test('── markdown-renderer: renderPlanCheckboxes round-trip ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -387,7 +387,7 @@ test('── markdown-renderer: renderPlanCheckboxes round-trip ──', async (
 
 test('── markdown-renderer: renderPlanCheckboxes bidirectional ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -427,7 +427,7 @@ test('── markdown-renderer: renderPlanCheckboxes bidirectional ──', asyn
 
 test('── markdown-renderer: renderPlanFromDb creates parse-compatible slice plan + task plan files ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -526,7 +526,7 @@ test('── markdown-renderer: renderPlanFromDb creates parse-compatible slice 
 
 test('── markdown-renderer: renderTaskPlanFromDb throws for missing task ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -556,7 +556,7 @@ test('── markdown-renderer: renderTaskPlanFromDb throws for missing task ─
 
 test('── markdown-renderer: renderTaskSummary round-trip ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -603,7 +603,7 @@ test('── markdown-renderer: renderTaskSummary round-trip ──', async () =
 
 test('── markdown-renderer: renderTaskSummary skips empty ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -635,7 +635,7 @@ test('── markdown-renderer: renderTaskSummary skips empty ──', async () 
 
 test('── markdown-renderer: renderSliceSummary round-trip ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -688,7 +688,7 @@ test('── markdown-renderer: renderSliceSummary round-trip ──', async () 
 
 test('── markdown-renderer: renderAllFromDb produces all files ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -791,7 +791,7 @@ test('── markdown-renderer: renderAllFromDb produces all files ──', asyn
 
 test('── markdown-renderer: graceful fallback reads from disk when artifact not in DB ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -850,7 +850,7 @@ test('── markdown-renderer: stderr warning on missing content ──', async
 
 test('── markdown-renderer: detectStaleRenders finds plan checkbox mismatch ──', () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -899,7 +899,7 @@ test('── markdown-renderer: detectStaleRenders finds plan checkbox mismatch 
 
 test('── markdown-renderer: repairStaleRenders fixes plan and second detect returns empty ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -950,7 +950,7 @@ test('── markdown-renderer: repairStaleRenders fixes plan and second detect 
 
 test('── markdown-renderer: detectStaleRenders finds roadmap checkbox mismatch ──', () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -988,7 +988,7 @@ test('── markdown-renderer: detectStaleRenders finds roadmap checkbox mismat
 
 test('── markdown-renderer: detectStaleRenders finds missing task summary ──', () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -1035,7 +1035,7 @@ test('── markdown-renderer: detectStaleRenders finds missing task summary �
 
 test('── markdown-renderer: repairStaleRenders writes missing task summary ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -1090,7 +1090,7 @@ test('── markdown-renderer: repairStaleRenders writes missing task summary �
 
 test('── markdown-renderer: repairStaleRenders idempotency — fully synced returns 0 ──', async () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 
@@ -1124,7 +1124,7 @@ test('── markdown-renderer: repairStaleRenders idempotency — fully synced 
 
 test('── markdown-renderer: detectStaleRenders finds missing slice summary and UAT ──', () => {
   const tmpDir = makeTmpDir();
-  const dbPath = path.join(tmpDir, '.gsd', 'gsd.db');
+  const dbPath = path.join(tmpDir, '.gsd', 'sf.db');
   openDatabase(dbPath);
   clearAllCaches();
 

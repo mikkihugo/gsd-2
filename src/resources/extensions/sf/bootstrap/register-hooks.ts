@@ -34,7 +34,7 @@ let isFirstSession = true;
 
 async function syncServiceTierStatus(ctx: ExtensionContext): Promise<void> {
   const { getEffectiveServiceTier, formatServiceTierFooterStatus } = await import("../service-tier.js");
-  ctx.ui.setStatus("gsd-fast", formatServiceTierFooterStatus(getEffectiveServiceTier(), ctx.model?.id));
+  ctx.ui.setStatus("sf-fast", formatServiceTierFooterStatus(getEffectiveServiceTier(), ctx.model?.id));
 }
 
 export function registerHooks(pi: ExtensionAPI): void {
@@ -71,11 +71,11 @@ export function registerHooks(pi: ExtensionAPI): void {
       isFirstSession = false;
     } else {
       try {
-        const gsdBinPath = process.env.SF_BIN_PATH;
-        if (gsdBinPath) {
+        const sfBinPath = process.env.SF_BIN_PATH;
+        if (sfBinPath) {
           const { dirname } = await import("node:path");
           const { printWelcomeScreen } = await import(
-            join(dirname(gsdBinPath), "welcome-screen.js")
+            join(dirname(sfBinPath), "welcome-screen.js")
           ) as { printWelcomeScreen: (opts: { version: string; modelName?: string; provider?: string; remoteChannel?: string }) => void };
 
           let remoteChannel: string | undefined;
@@ -164,7 +164,7 @@ export function registerHooks(pi: ExtensionAPI): void {
       completedWork: `Task ${state.activeTask.id} (${state.activeTask.title}) was in progress when compaction occurred.`,
       remainingWork: "Check the task plan for remaining steps.",
       decisions: "Check task summary files for prior decisions.",
-      context: "Session was auto-compacted by Pi. Resume with /gsd.",
+      context: "Session was auto-compacted by Pi. Resume with /sf.",
       nextAction: `Resume task ${state.activeTask.id}: ${state.activeTask.title}.`,
     }));
   });
@@ -227,7 +227,7 @@ export function registerHooks(pi: ExtensionAPI): void {
     }
 
     // ── Queue-mode execution guard (#2545): block source-code mutations ──
-    // When /gsd queue is active, the agent should only create milestones,
+    // When /sf queue is active, the agent should only create milestones,
     // not execute work. Block write/edit to non-.gsd/ paths and bash commands
     // that would modify files.
     if (isQueuePhaseActive()) {

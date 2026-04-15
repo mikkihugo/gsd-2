@@ -24,7 +24,7 @@ import { createTestContext } from "./test-helpers.ts";
 const { assertEq, assertTrue, report } = createTestContext();
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-disk-reconcile-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-disk-reconcile-"));
   mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
   return base;
 }
@@ -62,7 +62,7 @@ async function main(): Promise<void> {
 
   // Set up: M001 in DB, M002 on disk only
   const base = createFixtureBase();
-  const dbPath = join(base, ".gsd", "gsd.db");
+  const dbPath = join(base, ".gsd", "sf.db");
 
   try {
     openDatabase(dbPath);

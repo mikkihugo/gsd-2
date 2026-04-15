@@ -1,5 +1,5 @@
 /**
- * gsd-learning: outcome-recorder
+ * sf-learning: outcome-recorder
  *
  * Records LLM dispatch outcomes to the `llm_task_outcomes` table.
  *
@@ -24,7 +24,7 @@
  * ## Side effects
  * - Writes rows into `llm_task_outcomes`.
  *
- * @module gsd-learning/outcome-recorder
+ * @module sf-learning/outcome-recorder
  */
 
 const REQUIRED_FIELDS = ["modelId", "provider", "unitType", "unitId", "succeeded"];

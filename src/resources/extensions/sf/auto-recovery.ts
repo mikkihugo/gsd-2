@@ -511,7 +511,7 @@ export function reconcileMergeState(
   if (conflictedFiles.length === 0) {
     // All conflicts resolved — finalize the merge/squash commit
     try {
-      const commitSha = nativeCommit(basePath, "chore(gsd): reconcile merge state");
+      const commitSha = nativeCommit(basePath, "chore(sf): reconcile merge state");
       if (commitSha) {
         const mode = hasMergeHead ? "merge" : "squash commit";
         ctx.ui.notify(`Finalized leftover ${mode} from prior session.`, "info");
@@ -525,15 +525,15 @@ export function reconcileMergeState(
     }
   } else {
     // Still conflicted — try auto-resolving .gsd/ state file conflicts (#530)
-    const gsdConflicts = conflictedFiles.filter((f) => f.startsWith(".gsd/"));
+    const sfConflicts = conflictedFiles.filter((f) => f.startsWith(".gsd/"));
     const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".gsd/"));
 
-    if (gsdConflicts.length > 0 && codeConflicts.length === 0) {
+    if (sfConflicts.length > 0 && codeConflicts.length === 0) {
       // All conflicts are in .gsd/ state files — auto-resolve by accepting theirs
       let resolved = true;
       try {
-        nativeCheckoutTheirs(basePath, gsdConflicts);
-        nativeAddPaths(basePath, gsdConflicts);
+        nativeCheckoutTheirs(basePath, sfConflicts);
+        nativeAddPaths(basePath, sfConflicts);
       } catch (e) {
         logError("recovery", `auto-resolve .gsd/ conflicts failed: ${(e as Error).message}`);
         resolved = false;
@@ -545,7 +545,7 @@ export function reconcileMergeState(
             "chore: auto-resolve .gsd/ state file conflicts",
           );
           ctx.ui.notify(
-            `Auto-resolved ${gsdConflicts.length} .gsd/ state file conflict(s) from prior merge.`,
+            `Auto-resolved ${sfConflicts.length} .gsd/ state file conflict(s) from prior merge.`,
             "info",
           );
         } catch (e) {
@@ -589,9 +589,9 @@ export function buildLoopRemediationSteps(
     case "execute-task": {
       if (!mid || !sid || !tid) break;
       return [
-        `   1. Run \`gsd undo-task ${tid}\` to reset the task state`,
+        `   1. Run \`sf undo-task ${tid}\` to reset the task state`,
         `   2. Resume auto-mode — it will re-execute the task`,
-        `   3. If the task keeps failing, run \`gsd recover\` to rebuild DB state from disk`,
+        `   3. If the task keeps failing, run \`sf recover\` to rebuild DB state from disk`,
       ].join("\n");
     }
     case "plan-slice":
@@ -603,16 +603,16 @@ export function buildLoopRemediationSteps(
           : relSliceFile(base, mid, sid, "RESEARCH");
       return [
         `   1. Write ${artifactRel} manually (or with the LLM in interactive mode)`,
-        `   2. Run \`gsd recover\` to rebuild DB state from disk`,
+        `   2. Run \`sf recover\` to rebuild DB state from disk`,
         `   3. Resume auto-mode`,
       ].join("\n");
     }
     case "complete-slice": {
       if (!mid || !sid) break;
       return [
-        `   1. Run \`gsd reset-slice ${sid}\` to reset the slice and all its tasks`,
+        `   1. Run \`sf reset-slice ${sid}\` to reset the slice and all its tasks`,
         `   2. Resume auto-mode — it will re-execute incomplete tasks and re-complete the slice`,
-        `   3. If the slice keeps failing, run \`gsd recover\` to rebuild DB state from disk`,
+        `   3. If the slice keeps failing, run \`sf recover\` to rebuild DB state from disk`,
       ].join("\n");
     }
     case "validate-milestone": {
@@ -620,7 +620,7 @@ export function buildLoopRemediationSteps(
       const artifactRel = relMilestoneFile(base, mid, "VALIDATION");
       return [
         `   1. Write ${artifactRel} with verdict: pass`,
-        `   2. Run \`gsd recover\` to rebuild DB state from disk`,
+        `   2. Run \`sf recover\` to rebuild DB state from disk`,
         `   3. Resume auto-mode`,
       ].join("\n");
     }

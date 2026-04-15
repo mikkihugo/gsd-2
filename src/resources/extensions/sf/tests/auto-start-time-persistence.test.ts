@@ -1,4 +1,4 @@
-// GSD2 — Verify autoStartTime is persisted in paused-session.json and restored on resume
+// SF2 — Verify autoStartTime is persisted in paused-session.json and restored on resume
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

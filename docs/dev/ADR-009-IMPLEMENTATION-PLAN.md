@@ -1,6 +1,6 @@
 # ADR-009 Implementation Plan
 
-**Related ADR:** [ADR-009-orchestration-kernel-refactor.md](/Users/jeremymcspadden/Github/gsd-2/docs/dev/ADR-009-orchestration-kernel-refactor.md)  
+**Related ADR:** [ADR-009-orchestration-kernel-refactor.md](/Users/jeremymcspadden/Github/sf-2/docs/dev/ADR-009-orchestration-kernel-refactor.md)  
 **Status:** Draft  
 **Date:** 2026-04-14  
 **Target Window:** 8-10 waves (incremental, no big-bang rewrite)
@@ -49,10 +49,10 @@ Goal: define typed contracts and a new orchestration spine without changing beha
 
 Primary targets:
 
-- `src/resources/extensions/gsd/auto.ts`
-- `src/resources/extensions/gsd/auto/loop.ts`
-- `src/resources/extensions/gsd/auto/types.ts`
-- `src/resources/extensions/gsd/auto/session.ts`
+- `src/resources/extensions/sf/auto.ts`
+- `src/resources/extensions/sf/auto/loop.ts`
+- `src/resources/extensions/sf/auto/types.ts`
+- `src/resources/extensions/sf/auto/session.ts`
 
 Deliverables:
 
@@ -66,11 +66,11 @@ Goal: normalize all checks into a unified gate runner.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/verification-gate.ts`
-- `src/resources/extensions/gsd/auto-verification.ts`
-- `src/resources/extensions/gsd/pre-execution-checks.ts`
-- `src/resources/extensions/gsd/post-execution-checks.ts`
-- `src/resources/extensions/gsd/milestone-validation-gates.ts`
+- `src/resources/extensions/sf/verification-gate.ts`
+- `src/resources/extensions/sf/auto-verification.ts`
+- `src/resources/extensions/sf/pre-execution-checks.ts`
+- `src/resources/extensions/sf/post-execution-checks.ts`
+- `src/resources/extensions/sf/milestone-validation-gates.ts`
 
 Deliverables:
 
@@ -84,11 +84,11 @@ Goal: enable any-model-any-phase through requirement-based selection plus policy
 
 Primary targets:
 
-- `src/resources/extensions/gsd/model-router.ts`
-- `src/resources/extensions/gsd/auto-model-selection.ts`
-- `src/resources/extensions/gsd/preferences-models.ts`
-- `src/resources/extensions/gsd/model-cost-table.ts`
-- `src/resources/extensions/gsd/custom-execution-policy.ts`
+- `src/resources/extensions/sf/model-router.ts`
+- `src/resources/extensions/sf/auto-model-selection.ts`
+- `src/resources/extensions/sf/preferences-models.ts`
+- `src/resources/extensions/sf/model-cost-table.ts`
+- `src/resources/extensions/sf/custom-execution-policy.ts`
 
 Deliverables:
 
@@ -103,11 +103,11 @@ Goal: move to one DAG scheduler contract.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/reactive-graph.ts`
-- `src/resources/extensions/gsd/slice-parallel-orchestrator.ts`
-- `src/resources/extensions/gsd/parallel-orchestrator.ts`
-- `src/resources/extensions/gsd/graph.ts`
-- `src/resources/extensions/gsd/unit-runtime.ts`
+- `src/resources/extensions/sf/reactive-graph.ts`
+- `src/resources/extensions/sf/slice-parallel-orchestrator.ts`
+- `src/resources/extensions/sf/parallel-orchestrator.ts`
+- `src/resources/extensions/sf/graph.ts`
+- `src/resources/extensions/sf/unit-runtime.ts`
 
 Deliverables:
 
@@ -121,10 +121,10 @@ Goal: guarantee git action and metadata record per turn.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/git-service.ts`
-- `src/resources/extensions/gsd/auto-post-unit.ts`
-- `src/resources/extensions/gsd/auto-unit-closeout.ts`
-- `src/resources/extensions/gsd/auto-worktree.ts`
+- `src/resources/extensions/sf/git-service.ts`
+- `src/resources/extensions/sf/auto-post-unit.ts`
+- `src/resources/extensions/sf/auto-unit-closeout.ts`
+- `src/resources/extensions/sf/auto-worktree.ts`
 
 Deliverables:
 
@@ -138,11 +138,11 @@ Goal: unify journal/activity/metrics into a causal event model.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/journal.ts`
-- `src/resources/extensions/gsd/activity-log.ts`
-- `src/resources/extensions/gsd/metrics.ts`
-- `src/resources/extensions/gsd/workflow-logger.ts`
-- `src/resources/extensions/gsd/gsd-db.ts`
+- `src/resources/extensions/sf/journal.ts`
+- `src/resources/extensions/sf/activity-log.ts`
+- `src/resources/extensions/sf/metrics.ts`
+- `src/resources/extensions/sf/workflow-logger.ts`
+- `src/resources/extensions/sf/sf-db.ts`
 
 Deliverables:
 
@@ -156,11 +156,11 @@ Goal: formal multi-round clarify/research/draft/compile flow.
 
 Primary targets:
 
-- `src/resources/extensions/gsd/guided-flow.ts`
-- `src/resources/extensions/gsd/preparation.ts`
-- `src/resources/extensions/gsd/auto/phases.ts`
-- `src/resources/extensions/gsd/auto-prompts.ts`
-- prompt templates under `src/resources/extensions/gsd/prompts/`
+- `src/resources/extensions/sf/guided-flow.ts`
+- `src/resources/extensions/sf/preparation.ts`
+- `src/resources/extensions/sf/auto/phases.ts`
+- `src/resources/extensions/sf/auto-prompts.ts`
+- prompt templates under `src/resources/extensions/sf/prompts/`
 
 Deliverables:
 
@@ -219,7 +219,7 @@ Exit criteria:
 
 Verification:
 
-- targeted tests in `src/resources/extensions/gsd/tests/*auto*`
+- targeted tests in `src/resources/extensions/sf/tests/*auto*`
 - `npm run test:unit`
 
 ## Wave 2: Gate Plane Unification
@@ -288,7 +288,7 @@ Verification:
 - `slice-parallel-orchestrator.test.ts`
 - `slice-parallel-conflict.test.ts`
 - `sidecar-queue.test.ts`
-- integration: `src/resources/extensions/gsd/tests/integration/*.test.ts`
+- integration: `src/resources/extensions/sf/tests/integration/*.test.ts`
 
 ## Wave 5: GitOps Transactions Per Turn
 
@@ -429,7 +429,7 @@ Verification:
 
 Expected schema additions:
 
-- audit projection tables in `gsd.db`
+- audit projection tables in `sf.db`
 - gate result persistence tables
 - turn transaction metadata
 

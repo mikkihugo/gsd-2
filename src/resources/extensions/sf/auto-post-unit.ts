@@ -240,15 +240,15 @@ export function detectRogueFileWrites(
 }
 
 export const STEP_COMPLETE_FALLBACK_MESSAGE =
-  "Step complete. Run /clear, then /gsd to continue (or /gsd auto to run continuously).";
+  "Step complete. Run /clear, then /sf to continue (or /sf auto to run continuously).";
 
-export function buildStepCompleteMessage(nextState: import("./types.js").GSDState): string {
+export function buildStepCompleteMessage(nextState: import("./types.js").SFState): string {
   if (nextState.phase === "complete") {
-    return "Step complete — milestone finished. Run /gsd status to review, or start the next milestone.";
+    return "Step complete — milestone finished. Run /sf status to review, or start the next milestone.";
   }
   const next = describeNextUnit(nextState);
   return `Step complete. Next: ${next.label}\n`
-    + `Run /clear, then /gsd to continue (or /gsd auto to run continuously).`;
+    + `Run /clear, then /sf to continue (or /sf auto to run continuously).`;
 }
 
 export interface PreVerificationOpts {
@@ -264,7 +264,7 @@ export interface PostUnitContext {
   lockBase: () => string;
   stopAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI, reason?: string) => Promise<void>;
   pauseAuto: (ctx?: ExtensionContext, pi?: ExtensionAPI) => Promise<void>;
-  updateProgressWidget: (ctx: ExtensionContext, unitType: string, unitId: string, state: import("./types.js").GSDState) => void;
+  updateProgressWidget: (ctx: ExtensionContext, unitType: string, unitId: string, state: import("./types.js").SFState) => void;
 }
 
 export async function autoCommitUnit(
@@ -808,7 +808,7 @@ export async function postUnitPreVerification(pctx: PostUnitContext, opts?: PreV
               s.verificationRetryCount.delete(retryKey);
               s.pendingVerificationRetry = null;
               ctx.ui.notify(
-                `Milestone ${s.currentUnit.id} verification failed after ${MAX_VERIFICATION_RETRIES} retries — worktree branch preserved. Re-run /gsd auto once blockers are resolved.`,
+                `Milestone ${s.currentUnit.id} verification failed after ${MAX_VERIFICATION_RETRIES} retries — worktree branch preserved. Re-run /sf auto once blockers are resolved.`,
                 "error",
               );
               await pauseAuto(ctx, pi);
@@ -938,8 +938,8 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
               await renderPlanCheckboxes(s.basePath, mid, sid);
             } catch (dbErr) {
               // DB unavailable — fail explicitly rather than silently reverting to markdown mutation.
-              // Use 'gsd recover' to rebuild DB state from disk if needed.
-              logError("engine", `retry state-reset failed (DB unavailable): ${(dbErr as Error).message}. Run 'gsd recover' to reconcile.`);
+              // Use 'sf recover' to rebuild DB state from disk if needed.
+              logError("engine", `retry state-reset failed (DB unavailable): ${(dbErr as Error).message}. Run 'sf recover' to reconcile.`);
             }
           }
 
@@ -1074,14 +1074,14 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
         // Log summary to stderr in existing verification output format
         const emoji = result.status === "pass" ? "✅" : result.status === "warn" ? "⚠️" : "❌";
         process.stderr.write(
-          `gsd-pre-exec: ${emoji} Pre-execution checks ${result.status} for ${mid}/${sid} (${result.durationMs}ms)\n`,
+          `sf-pre-exec: ${emoji} Pre-execution checks ${result.status} for ${mid}/${sid} (${result.durationMs}ms)\n`,
         );
 
         // Log individual check results
         for (const check of result.checks) {
           const checkEmoji = check.passed ? "✓" : check.blocking ? "✗" : "⚠";
           process.stderr.write(
-            `gsd-pre-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`,
+            `sf-pre-exec:   ${checkEmoji} [${check.category}] ${check.target}: ${check.message}\n`,
           );
         }
 
@@ -1154,7 +1154,7 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
           error: errorMessage,
           failClosed: true,
         });
-        logError("engine", `gsd-pre-exec: Pre-execution checks threw an error: ${errorMessage}`);
+        logError("engine", `sf-pre-exec: Pre-execution checks threw an error: ${errorMessage}`);
         ctx.ui.notify(
           `Pre-execution checks error: ${errorMessage} — pausing for human review`,
           "error",
@@ -1279,8 +1279,8 @@ export async function postUnitPostVerification(pctx: PostUnitContext): Promise<"
   }
 
   // Step mode → show wizard instead of dispatch.
-  // Without this notify(), /gsd in step mode finishes a unit and silently
-  // exits the loop, leaving the user with no hint to /clear and /gsd again.
+  // Without this notify(), /sf in step mode finishes a unit and silently
+  // exits the loop, leaving the user with no hint to /clear and /sf again.
   if (s.stepMode) {
     try {
       const nextState = await deriveState(s.basePath);

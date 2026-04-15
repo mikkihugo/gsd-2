@@ -1028,7 +1028,7 @@ Used manual assert pattern instead of node:assert.
 
 ## Context
 
-Working in the gsd-s01 worktree. All imports use .ts extensions.
+Working in the sf-s01 worktree. All imports use .ts extensions.
 
 ## Next Action
 
@@ -1050,7 +1050,7 @@ Run the full test suite with node --test.
   assert.ok(c.completedWork.includes('Steps 1-3 are done'), 'completedWork content');
   assert.ok(c.remainingWork.includes('Steps 4-5'), 'remainingWork content');
   assert.ok(c.decisions.includes('manual assert pattern'), 'decisions content');
-  assert.ok(c.context.includes('gsd-s01 worktree'), 'context content');
+  assert.ok(c.context.includes('sf-s01 worktree'), 'context content');
   assert.ok(c.nextAction.includes('node --test'), 'nextAction content');
 });
 

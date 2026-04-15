@@ -14,7 +14,7 @@ import {
   shouldPromptToEnableCmux,
 } from "../../cmux/index.ts";
 import { autoEnableCmuxPreferences } from "../commands-cmux.ts";
-import type { GSDState } from "../types.ts";
+import type { SFState } from "../types.ts";
 
 test("detectCmuxEnvironment requires workspace, surface, and socket", () => {
   const detected = detectCmuxEnvironment(
@@ -146,7 +146,7 @@ describe("autoEnableCmuxPreferences", () => {
 });
 
 test("buildCmuxStatusLabel and progress prefer deepest active unit", () => {
-  const state: GSDState = {
+  const state: SFState = {
     activeMilestone: { id: "M001", title: "Milestone" },
     activeSlice: { id: "S02", title: "Slice" },
     activeTask: { id: "T03", title: "Task" },
@@ -184,7 +184,7 @@ describe("createGridLayout", () => {
           return `surface-${nextId++}`;
         };
 
-        const rightCol = await createSplitFrom("gsd-surface", "right");
+        const rightCol = await createSplitFrom("sf-surface", "right");
         surfaces.push(rightCol);
         if (count === 1) return surfaces;
 
@@ -192,7 +192,7 @@ describe("createGridLayout", () => {
         surfaces.push(bottomRight);
         if (count === 2) return surfaces;
 
-        const bottomLeft = await createSplitFrom("gsd-surface", "down");
+        const bottomLeft = await createSplitFrom("sf-surface", "down");
         surfaces.push(bottomLeft);
         if (count === 3) return surfaces;
 
@@ -214,7 +214,7 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(1);
     assert.equal(surfaces.length, 1);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "sf-surface", direction: "right" },
     ]);
   });
 
@@ -223,19 +223,19 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(2);
     assert.equal(surfaces.length, 2);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "sf-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
     ]);
   });
 
-  test("3 agents creates 2x2 grid (gsd + 3 agent surfaces)", async () => {
+  test("3 agents creates 2x2 grid (sf + 3 agent surfaces)", async () => {
     const mock = makeMockClient();
     const surfaces = await mock.createGridLayout(3);
     assert.equal(surfaces.length, 3);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "sf-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
-      { source: "gsd-surface", direction: "down" },
+      { source: "sf-surface", direction: "down" },
     ]);
   });
 
@@ -244,9 +244,9 @@ describe("createGridLayout", () => {
     const surfaces = await mock.createGridLayout(4);
     assert.equal(surfaces.length, 4);
     assert.deepEqual(mock.calls, [
-      { source: "gsd-surface", direction: "right" },
+      { source: "sf-surface", direction: "right" },
       { source: "surface-1", direction: "down" },
-      { source: "gsd-surface", direction: "down" },
+      { source: "sf-surface", direction: "down" },
       { source: "surface-2", direction: "down" },
     ]);
   });

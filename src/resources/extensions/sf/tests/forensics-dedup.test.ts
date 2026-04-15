@@ -5,11 +5,11 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 
 describe("forensics dedup (#2096)", () => {
   it("forensics_dedup is in KNOWN_PREFERENCE_KEYS", () => {
-    const source = readFileSync(join(gsdDir, "preferences-types.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "preferences-types.ts"), "utf-8");
     assert.ok(source.includes('"forensics_dedup"'),
       "KNOWN_PREFERENCE_KEYS must contain forensics_dedup");
     assert.ok(source.includes("forensics_dedup?: boolean"),
@@ -17,13 +17,13 @@ describe("forensics dedup (#2096)", () => {
   });
 
   it("forensics prompt contains {{dedupSection}} placeholder", () => {
-    const prompt = readFileSync(join(gsdDir, "prompts", "forensics.md"), "utf-8");
+    const prompt = readFileSync(join(sfDir, "prompts", "forensics.md"), "utf-8");
     assert.ok(prompt.includes("{{dedupSection}}"),
       "forensics.md must contain {{dedupSection}} placeholder");
   });
 
   it("DEDUP_PROMPT_SECTION contains required search commands", async () => {
-    const source = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     assert.ok(source.includes("DEDUP_PROMPT_SECTION"), "forensics.ts must define DEDUP_PROMPT_SECTION");
     assert.ok(source.includes("gh issue list --repo singularity-forge/sf-run --state closed"));
     assert.ok(source.includes("gh pr list --repo singularity-forge/sf-run --state open"));
@@ -31,7 +31,7 @@ describe("forensics dedup (#2096)", () => {
   });
 
   it("handleForensics checks forensics_dedup preference", () => {
-    const source = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     assert.ok(source.includes("forensics_dedup"),
       "handleForensics must reference forensics_dedup preference");
     assert.ok(source.includes("dedupSection"),
@@ -39,7 +39,7 @@ describe("forensics dedup (#2096)", () => {
   });
 
   it("first-time opt-in shows when preference is undefined", () => {
-    const source = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     assert.ok(source.includes("=== undefined"),
       "first-time detection must check for undefined (not false)");
     assert.ok(source.includes("Duplicate detection available") || source.includes("duplicate detection"),
@@ -49,7 +49,7 @@ describe("forensics dedup (#2096)", () => {
 
 describe("forensics dedup ordering (#2704)", () => {
   it("{{dedupSection}} appears before Investigation Protocol in the prompt template", () => {
-    const prompt = readFileSync(join(gsdDir, "prompts", "forensics.md"), "utf-8");
+    const prompt = readFileSync(join(sfDir, "prompts", "forensics.md"), "utf-8");
     const dedupIndex = prompt.indexOf("{{dedupSection}}");
     const investigationIndex = prompt.indexOf("## Investigation Protocol");
     assert.ok(dedupIndex !== -1, "prompt must contain {{dedupSection}}");
@@ -61,7 +61,7 @@ describe("forensics dedup ordering (#2704)", () => {
   });
 
   it("DEDUP_PROMPT_SECTION contains a decision gate to skip investigation", () => {
-    const source = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     // The dedup section must instruct the agent to skip investigation when a match is found
     assert.ok(
       source.includes("Skip full investigation") || source.includes("skip full investigation") || source.includes("Skip investigation"),
@@ -70,7 +70,7 @@ describe("forensics dedup ordering (#2704)", () => {
   });
 
   it("DEDUP_PROMPT_SECTION heading reflects pre-investigation role", () => {
-    const source = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const source = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     assert.ok(
       source.includes("Pre-Investigation") || source.includes("pre-investigation"),
       "DEDUP_PROMPT_SECTION heading must indicate it runs before investigation, not just before issue creation",

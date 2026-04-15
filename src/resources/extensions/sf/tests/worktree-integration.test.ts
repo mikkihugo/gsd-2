@@ -2,7 +2,7 @@
  * Worktree Integration Tests
  *
  * Tests the full lifecycle of SF operations inside a worktree:
- * - Branch namespacing (sf/<wt>/<M>/<S> instead of gsd/<M>/<S>)
+ * - Branch namespacing (sf/<wt>/<M>/<S> instead of sf/<M>/<S>)
  * - getMainBranch returns worktree/<name> inside a worktree
  * - Parallel worktrees don't conflict on branch names
  * - State derivation works correctly inside worktrees
@@ -40,7 +40,7 @@ function run(command: string, cwd: string): string {
 
 // ─── Test repo setup ──────────────────────────────────────────────────────────
 
-const base = mkdtempSync(join(tmpdir(), "gsd-wt-integration-"));
+const base = mkdtempSync(join(tmpdir(), "sf-wt-integration-"));
 run("git init -b main", base);
 run("git config user.name 'Pi Test'", base);
 run("git config user.email 'pi@example.com'", base);
@@ -79,7 +79,7 @@ describe('worktree-integration', async () => {
   // Isolate from user's global preferences (which may have git.main_branch set).
   // Reset caches so getService() creates a fresh instance with empty preferences.
   const originalHome = process.env.HOME;
-  const fakeHome = mkdtempSync(join(tmpdir(), "gsd-fake-home-"));
+  const fakeHome = mkdtempSync(join(tmpdir(), "sf-fake-home-"));
   process.env.HOME = fakeHome;
   _clearGsdRootCache();
   _resetServiceCache();

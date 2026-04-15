@@ -35,10 +35,10 @@ test("workflow-start prompt defaults to autonomy instead of per-phase confirmati
   assert.doesNotMatch(prompt, /Gate between phases/i);
 });
 
-test("system prompt references CODEBASE.md and /gsd codebase", () => {
+test("system prompt references CODEBASE.md and /sf codebase", () => {
   const prompt = readPrompt("system");
   assert.match(prompt, /CODEBASE\.md/);
-  assert.match(prompt, /\/gsd codebase \[generate\|update\|stats\]/);
+  assert.match(prompt, /\/sf codebase \[generate\|update\|stats\]/);
   assert.match(prompt, /auto-refreshes it when tracked files change/i);
 });
 

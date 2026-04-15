@@ -1,11 +1,11 @@
 # Custom Models
 
-Define custom models and providers in `~/.gsd/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
+Define custom models and providers in `~/.sf/agent/models.json`. This lets you add models not in the default registry — self-hosted endpoints, fine-tuned models, proxies, or new provider releases.
 
 ## File Location
 
 SF looks for models.json at:
-1. `~/.gsd/agent/models.json` (primary)
+1. `~/.sf/agent/models.json` (primary)
 2. `~/.pi/agent/models.json` (fallback)
 
 The file reloads each time you open `/model` — no restart needed.
@@ -128,4 +128,4 @@ For providers not built into SF, community extensions add full provider support:
 
 | Extension | Provider | Install |
 |-----------|----------|---------|
-| `pi-dashscope` | Alibaba DashScope (Qwen3, GLM-5, etc.) | `gsd install npm:pi-dashscope` |
+| `pi-dashscope` | Alibaba DashScope (Qwen3, GLM-5, etc.) | `sf install npm:pi-dashscope` |

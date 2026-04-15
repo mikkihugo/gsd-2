@@ -320,7 +320,7 @@ Primary decomposition targets:
 - `auto.ts` -> orchestrator kernel + adapters
 - `auto-prompts.ts` -> plan compiler + prompt renderers
 - `state.ts` -> state query service + immutable state views
-- `gsd-db.ts` -> data access layer + event projection store
+- `sf-db.ts` -> data access layer + event projection store
 - `auto-post-unit.ts` / `auto-verification.ts` -> closeout gate services
 
 ## Acceptance Criteria

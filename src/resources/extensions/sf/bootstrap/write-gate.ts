@@ -440,7 +440,7 @@ export function shouldBlockQueueExecutionInSnapshot(
     if (SF_DIR_RE.test(input)) return { block: false };
     return {
       block: true,
-      reason: `Blocked: /gsd queue is a planning tool — it creates milestones, not executes work. ` +
+      reason: `Blocked: /sf queue is a planning tool — it creates milestones, not executes work. ` +
         `Cannot ${toolName} to "${input}" during queue mode. ` +
         `Write CONTEXT.md files and update PROJECT.md/QUEUE.md instead.`,
     };
@@ -451,7 +451,7 @@ export function shouldBlockQueueExecutionInSnapshot(
     if (BASH_READ_ONLY_RE.test(input)) return { block: false };
     return {
       block: true,
-      reason: `Blocked: /gsd queue is a planning tool — it creates milestones, not executes work. ` +
+      reason: `Blocked: /sf queue is a planning tool — it creates milestones, not executes work. ` +
         `Cannot run "${input.slice(0, 80)}${input.length > 80 ? "…" : ""}" during queue mode. ` +
         `Use read-only commands (cat, grep, git log, etc.) to investigate, then write planning artifacts.`,
     };
@@ -461,6 +461,6 @@ export function shouldBlockQueueExecutionInSnapshot(
   // bypass execution restrictions.
   return {
     block: true,
-    reason: `Blocked: /gsd queue is a planning tool — it creates milestones, not executes work. Unknown tools are not permitted during queue mode.`,
+    reason: `Blocked: /sf queue is a planning tool — it creates milestones, not executes work. Unknown tools are not permitted during queue mode.`,
   };
 }

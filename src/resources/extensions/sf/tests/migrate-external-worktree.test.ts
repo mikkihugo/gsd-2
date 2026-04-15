@@ -28,8 +28,8 @@ describe("migrate-external worktree guard (#2970)", () => {
   let worktreePath: string;
 
   before(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-migrate-wt-")));
-    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
+    base = realpathSync(mkdtempSync(join(tmpdir(), "sf-migrate-wt-")));
+    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "sf-state-")));
     process.env.SF_STATE_DIR = stateDir;
 
     // Create a git repo with a remote
@@ -82,7 +82,7 @@ describe("migrate-external worktree guard (#2970)", () => {
 
   test("migrateToExternalState still works on main repo", () => {
     // Create a fresh temp repo to test main repo migration path
-    const mainBase = realpathSync(mkdtempSync(join(tmpdir(), "gsd-migrate-main-")));
+    const mainBase = realpathSync(mkdtempSync(join(tmpdir(), "sf-migrate-main-")));
     try {
       run("git init -b main", mainBase);
       run('git config user.name "Test"', mainBase);

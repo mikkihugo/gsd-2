@@ -95,4 +95,4 @@ pre_dispatch_hooks: []
 
 # SF Skill Preferences
 
-See `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.
+See `~/.sf/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.

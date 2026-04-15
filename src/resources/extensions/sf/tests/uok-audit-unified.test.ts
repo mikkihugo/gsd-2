@@ -28,7 +28,7 @@ function makeMockContext(entries: unknown[]): any {
 }
 
 test("audit envelope bridges journal/activity/metrics/workflow logger into audit event log", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-"));
+  const basePath = mkdtempSync(join(tmpdir(), "sf-uok-audit-"));
   setAuditEnvelopeEnabled(true);
   try {
     emitJournalEvent(basePath, {
@@ -84,7 +84,7 @@ test("audit envelope bridges journal/activity/metrics/workflow logger into audit
 });
 
 test("audit envelope bridge is disabled when toggle is off", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-audit-off-"));
+  const basePath = mkdtempSync(join(tmpdir(), "sf-uok-audit-off-"));
   setAuditEnvelopeEnabled(false);
   try {
     emitJournalEvent(basePath, {

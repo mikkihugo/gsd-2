@@ -74,16 +74,16 @@ assertTrue(symlinkIdx >= 0, "auto-start.ts calls ensureGsdSymlink(base)");
 
 const afterSymlink = symlinkIdx >= 0 ? autoStartSrc.slice(symlinkIdx, symlinkIdx + 800) : "";
 
-// The milestones bootstrap must check milestones path, not gsdDir
-// Old (dead) code: if (!existsSync(gsdDir)) { mkdirSync(join(gsdDir, "milestones"), ...) }
+// The milestones bootstrap must check milestones path, not sfDir
+// Old (dead) code: if (!existsSync(sfDir)) { mkdirSync(join(sfDir, "milestones"), ...) }
 // Fixed code should check: if (!existsSync(milestonesPath)) or similar
 assertTrue(
   afterSymlink.includes("milestones") && afterSymlink.includes("mkdirSync"),
   "auto-start.ts creates milestones/ directory after ensureGsdSymlink (#2942)",
 );
 
-// The guard for milestones/ creation should NOT be `!existsSync(gsdDir)` —
-// that's dead code since ensureGsdSymlink already created gsdDir.
+// The guard for milestones/ creation should NOT be `!existsSync(sfDir)` —
+// that's dead code since ensureGsdSymlink already created sfDir.
 // It should check for the milestones/ dir directly.
 const mkdirRegion = afterSymlink.slice(0, afterSymlink.indexOf("mkdirSync") + 200);
 assertMatch(

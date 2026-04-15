@@ -1,7 +1,7 @@
 /**
  * SF Error Types — Typed error hierarchy for diagnostics and crash recovery.
  *
- * All SF-specific errors extend GSDError, which carries a stable `code`
+ * All SF-specific errors extend SFError, which carries a stable `code`
  * string suitable for programmatic matching. Error codes are defined as
  * constants so callers can switch on them without string-matching.
  */
@@ -18,12 +18,12 @@ export const SF_IO_ERROR = "SF_IO_ERROR";
 
 // ─── Base Error ───────────────────────────────────────────────────────────────
 
-export class GSDError extends Error {
+export class SFError extends Error {
   readonly code: string;
 
   constructor(code: string, message: string, options?: ErrorOptions) {
     super(message, options);
-    this.name = "GSDError";
+    this.name = "SFError";
     this.code = code;
   }
 }

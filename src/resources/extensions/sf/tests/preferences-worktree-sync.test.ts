@@ -59,8 +59,8 @@ test("copyPlanningArtifacts prefers canonical PREFERENCES.md with lowercase fall
 
 test("syncSfStateToWorktree copies canonical PREFERENCES.md", async () => {
   // Functional test: create a mock source and destination, call the sync
-  const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-src-"));
-  const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-dst-"));
+  const srcBase = mkdtempSync(join(tmpdir(), "sf-wt-prefs-src-"));
+  const dstBase = mkdtempSync(join(tmpdir(), "sf-wt-prefs-dst-"));
   const srcGsd = join(srcBase, ".gsd");
   const dstGsd = join(dstBase, ".gsd");
   mkdirSync(srcGsd, { recursive: true });
@@ -95,8 +95,8 @@ test("syncSfStateToWorktree copies canonical PREFERENCES.md", async () => {
 });
 
 test("syncSfStateToWorktree falls back to legacy lowercase preferences.md", async () => {
-  const srcBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-src-"));
-  const dstBase = mkdtempSync(join(tmpdir(), "gsd-wt-prefs-legacy-dst-"));
+  const srcBase = mkdtempSync(join(tmpdir(), "sf-wt-prefs-legacy-src-"));
+  const dstBase = mkdtempSync(join(tmpdir(), "sf-wt-prefs-legacy-dst-"));
   const srcGsd = join(srcBase, ".gsd");
   const dstGsd = join(dstBase, ".gsd");
   mkdirSync(srcGsd, { recursive: true });

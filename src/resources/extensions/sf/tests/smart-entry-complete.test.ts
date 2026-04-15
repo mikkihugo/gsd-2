@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 const { deriveState } = await import("../state.js");
 
 test("deriveState reports the last completed milestone when all milestone slices are done", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-smart-entry-complete-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-smart-entry-complete-"));
 
   try {
     const milestoneDir = join(base, ".gsd", "milestones", "M001");

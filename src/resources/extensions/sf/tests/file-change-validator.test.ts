@@ -16,7 +16,7 @@ function git(cwd: string, ...args: string[]): string {
 }
 
 test("validateFileChanges ignores inline descriptions in expected output paths", (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-file-change-validator-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-file-change-validator-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
   mkdirSync(join(base, "definitions"), { recursive: true });

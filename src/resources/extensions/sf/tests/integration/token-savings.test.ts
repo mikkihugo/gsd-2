@@ -144,7 +144,7 @@ A test project for validating token savings with DB-scoped content.
 
 console.log('\n=== token-savings: plan-slice prompt ≥30% character savings ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-token-savings-'));
   mkdirSync(join(base, '.gsd'), { recursive: true });
   writeFileSync(join(base, '.gsd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gsd', 'REQUIREMENTS.md'), requirementsMarkdown);
@@ -224,7 +224,7 @@ console.log('\n=== token-savings: plan-slice prompt ≥30% character savings ===
 
 console.log('\n=== token-savings: research-milestone prompt shows meaningful savings ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-token-savings-'));
   mkdirSync(join(base, '.gsd'), { recursive: true });
   writeFileSync(join(base, '.gsd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gsd', 'REQUIREMENTS.md'), requirementsMarkdown);
@@ -272,7 +272,7 @@ console.log('\n=== token-savings: research-milestone prompt shows meaningful sav
 
 console.log('\n=== token-savings: quality — correct scoping, no cross-contamination ===');
 {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-token-savings-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-token-savings-'));
   mkdirSync(join(base, '.gsd'), { recursive: true });
   writeFileSync(join(base, '.gsd', 'DECISIONS.md'), decisionsMarkdown);
   writeFileSync(join(base, '.gsd', 'REQUIREMENTS.md'), requirementsMarkdown);

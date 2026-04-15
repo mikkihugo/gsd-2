@@ -34,7 +34,7 @@ import type { UnitMetrics } from './metrics.js';
 export interface HtmlReportOptions {
   projectName: string;
   projectPath: string;
-  gsdVersion: string;
+  sfVersion: string;
   milestoneId?: string;
   indexRelPath?: string;
 }
@@ -81,7 +81,7 @@ export function generateHtmlReport(
   <div class="header-inner">
     <div class="branding">
       <span class="logo">SF</span>
-      <span class="version">v${esc(opts.gsdVersion)}</span>
+      <span class="version">v${esc(opts.sfVersion)}</span>
     </div>
     <div class="header-meta">
       <h1>${esc(opts.projectName)}${milestoneTag}</h1>
@@ -114,7 +114,7 @@ ${sections.join('\n')}
 </main>
 <footer>
   <div class="footer-inner">
-    <span>SF v${esc(opts.gsdVersion)}</span>
+    <span>SF v${esc(opts.sfVersion)}</span>
     <span class="sep">/</span>
     <span>${esc(opts.projectName)}</span>
     ${opts.milestoneId ? `<span class="sep">/</span><span class="mono">${esc(opts.milestoneId)}</span>` : ''}
@@ -1364,7 +1364,7 @@ const JS = `
   });
 })();
 (function(){
-  var saved=JSON.parse(localStorage.getItem('gsd-collapsed')||'{}');
+  var saved=JSON.parse(localStorage.getItem('sf-collapsed')||'{}');
   document.querySelectorAll('section[id]').forEach(function(sec){
     var h2=sec.querySelector('h2');
     if(!h2)return;
@@ -1380,7 +1380,7 @@ const JS = `
       toggleSection(sec,collapsed);
       btn.textContent=collapsed?'+':'-';
       saved[sec.id]=collapsed;
-      localStorage.setItem('gsd-collapsed',JSON.stringify(saved));
+      localStorage.setItem('sf-collapsed',JSON.stringify(saved));
     });
   });
   function toggleSection(sec,hide){
@@ -1395,13 +1395,13 @@ const JS = `
   if(!hr)return;
   var btn=document.createElement('button');
   btn.className='theme-toggle';
-  btn.textContent=localStorage.getItem('gsd-theme')==='light'?'Dark':'Light';
-  if(localStorage.getItem('gsd-theme')==='light')document.documentElement.classList.add('light-theme');
+  btn.textContent=localStorage.getItem('sf-theme')==='light'?'Dark':'Light';
+  if(localStorage.getItem('sf-theme')==='light')document.documentElement.classList.add('light-theme');
   btn.addEventListener('click',function(){
     document.documentElement.classList.toggle('light-theme');
     var isLight=document.documentElement.classList.contains('light-theme');
     btn.textContent=isLight?'Dark':'Light';
-    localStorage.setItem('gsd-theme',isLight?'light':'dark');
+    localStorage.setItem('sf-theme',isLight?'light':'dark');
   });
   hr.prepend(btn);
 })();

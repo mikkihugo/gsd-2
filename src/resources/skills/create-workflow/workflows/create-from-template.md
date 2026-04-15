@@ -56,16 +56,16 @@ Once the user approves:
    - All `{{ key }}` placeholders have corresponding `params` entries.
    - No `..` in `produces` paths or `iterate.source`.
 
-2. Write to `.gsd/workflow-defs/<name>.yaml`.
+2. Write to `.sf/workflow-defs/<name>.yaml`.
 
 3. Tell the user:
-   - "Definition saved to `.gsd/workflow-defs/<name>.yaml`."
-   - "Run `/gsd workflow validate <name>` to check it against the schema."
-   - "Run `/gsd workflow run <name>` to execute it."
+   - "Definition saved to `.sf/workflow-defs/<name>.yaml`."
+   - "Run `/sf workflow validate <name>` to check it against the schema."
+   - "Run `/sf workflow run <name>` to execute it."
 </phase>
 
 <success_criteria>
-- A valid YAML file exists at `.gsd/workflow-defs/<name>.yaml`
+- A valid YAML file exists at `.sf/workflow-defs/<name>.yaml`
 - The definition is a meaningful customization of the template, not a copy
 - The user has reviewed and approved the definition
 </success_criteria>

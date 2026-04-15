@@ -70,49 +70,49 @@ function matchRoute(input: string): MatchResult | null {
 
 // ─── Tests ──────────────────────────────────────────────────────────────
 
-test("/gsd do: routes 'show me progress' to status", () => {
+test("/sf do: routes 'show me progress' to status", () => {
   const match = matchRoute("show me progress");
   assert.ok(match);
   assert.equal(match.command, "status");
 });
 
-test("/gsd do: routes 'run autonomously' to auto", () => {
+test("/sf do: routes 'run autonomously' to auto", () => {
   const match = matchRoute("run autonomously");
   assert.ok(match);
   assert.equal(match.command, "auto");
 });
 
-test("/gsd do: routes 'clean up old branches' to cleanup", () => {
+test("/sf do: routes 'clean up old branches' to cleanup", () => {
   const match = matchRoute("clean up old branches");
   assert.ok(match);
   assert.equal(match.command, "cleanup");
   assert.equal(match.remainingArgs, "old branches");
 });
 
-test("/gsd do: routes 'create pr for milestone' to ship", () => {
+test("/sf do: routes 'create pr for milestone' to ship", () => {
   const match = matchRoute("create pr for milestone");
   assert.ok(match);
   assert.equal(match.command, "ship");
 });
 
-test("/gsd do: routes 'add tests for S03' to add-tests", () => {
+test("/sf do: routes 'add tests for S03' to add-tests", () => {
   const match = matchRoute("add tests for S03");
   assert.ok(match);
   assert.equal(match.command, "add-tests");
 });
 
-test("/gsd do: routes 'what is next' to next", () => {
+test("/sf do: routes 'what is next' to next", () => {
   const match = matchRoute("what's next");
   assert.ok(match);
   assert.equal(match.command, "next");
 });
 
-test("/gsd do: returns null for unrecognized input", () => {
+test("/sf do: returns null for unrecognized input", () => {
   const match = matchRoute("florbinate the gizmo");
   assert.equal(match, null);
 });
 
-test("/gsd do: prefers longer keyword match", () => {
+test("/sf do: prefers longer keyword match", () => {
   // "check health" (12 chars) should beat "health" (6 chars)
   const match = matchRoute("check health of the system");
   assert.ok(match);
@@ -120,7 +120,7 @@ test("/gsd do: prefers longer keyword match", () => {
   assert.ok(match.score >= 12);
 });
 
-test("/gsd do: routes 'session report' to session-report", () => {
+test("/sf do: routes 'session report' to session-report", () => {
   const match = matchRoute("show me the session report");
   assert.ok(match);
   assert.equal(match.command, "session-report");

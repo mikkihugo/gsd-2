@@ -12,7 +12,7 @@ import { describe, test, beforeEach, afterEach } from 'node:test';
 import assert from 'node:assert/strict';
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), "gsd-idle-recovery-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-idle-recovery-test-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }
@@ -108,7 +108,7 @@ test('writeBlockerPlaceholder: writes file for research-slice', () => {
 });
 
 test('writeBlockerPlaceholder: creates directory if missing', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-idle-recovery-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-idle-recovery-test-"));
   try {
     // Only create milestone dir, not slice dir
     mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
@@ -226,47 +226,47 @@ test('verifyExpectedArtifact: complete-slice — no roadmap file present is leni
 // ═══ buildLoopRemediationSteps ═══════════════════════════════════════════════
 
 test('buildLoopRemediationSteps: execute-task returns concrete steps', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-loop-remediation-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-loop-remediation-test-"));
   try {
     mkdirSync(join(base, ".gsd", "milestones", "M002", "slices", "S03", "tasks"), { recursive: true });
     const result = buildLoopRemediationSteps("execute-task", "M002/S03/T01", base);
     assert.ok(result !== null, "should return remediation steps");
-    assert.ok(result!.includes("gsd undo-task"), "steps include undo-task command");
+    assert.ok(result!.includes("sf undo-task"), "steps include undo-task command");
     assert.ok(result!.includes("T01"), "steps mention the task ID");
-    assert.ok(result!.includes("gsd undo-task"), "steps include gsd undo-task command");
+    assert.ok(result!.includes("sf undo-task"), "steps include sf undo-task command");
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
 });
 
 test('buildLoopRemediationSteps: plan-slice returns concrete steps', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-loop-remediation-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-loop-remediation-test-"));
   try {
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
     const result = buildLoopRemediationSteps("plan-slice", "M001/S01", base);
     assert.ok(result !== null, "should return remediation steps for plan-slice");
     assert.ok(result!.includes("S01-PLAN.md"), "steps mention the slice plan file");
-    assert.ok(result!.includes("gsd recover"), "steps include gsd recover command");
+    assert.ok(result!.includes("sf recover"), "steps include sf recover command");
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
 });
 
 test('buildLoopRemediationSteps: research-slice returns concrete steps', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-loop-remediation-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-loop-remediation-test-"));
   try {
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
     const result = buildLoopRemediationSteps("research-slice", "M001/S01", base);
     assert.ok(result !== null, "should return remediation steps for research-slice");
     assert.ok(result!.includes("S01-RESEARCH.md"), "steps mention the slice research file");
-    assert.ok(result!.includes("gsd recover"), "steps include gsd recover command");
+    assert.ok(result!.includes("sf recover"), "steps include sf recover command");
   } finally {
     rmSync(base, { recursive: true, force: true });
   }
 });
 
 test('buildLoopRemediationSteps: unknown type returns null', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-loop-remediation-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-loop-remediation-test-"));
   try {
     const result = buildLoopRemediationSteps("unknown-type", "M001/S01", base);
     assert.deepStrictEqual(result, null, "unknown type returns null");
@@ -301,7 +301,7 @@ test('writeBlockerPlaceholder: updates DB task status for execute-task (#2531)',
     const { openDatabase, closeDatabase, insertMilestone, insertSlice, insertTask, getTask, isDbAvailable } =
       await import("../../sf-db.ts");
 
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gsd", "sf.db");
     // Create the tasks directory (required for artifact path resolution)
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
 
@@ -336,7 +336,7 @@ test('writeBlockerPlaceholder: does NOT update DB for non-execute-task types', a
     const { openDatabase, closeDatabase, insertMilestone, insertSlice, getSlice, isDbAvailable } =
       await import("../../sf-db.ts");
 
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gsd", "sf.db");
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
 
     openDatabase(dbPath);
@@ -364,7 +364,7 @@ test('writeBlockerPlaceholder: updates DB slice status for complete-slice (#2653
     const { openDatabase, closeDatabase, insertMilestone, insertSlice, getSlice, isDbAvailable } =
       await import("../../sf-db.ts");
 
-    const dbPath = join(base, ".gsd", "gsd.db");
+    const dbPath = join(base, ".gsd", "sf.db");
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
 
     openDatabase(dbPath);

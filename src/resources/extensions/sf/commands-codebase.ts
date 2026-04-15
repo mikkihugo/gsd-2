@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd codebase
+ * SF Command — /sf codebase
  *
  * Generate and manage the codebase map (.gsd/CODEBASE.md).
  * Subcommands: generate, update, stats, help
@@ -18,7 +18,7 @@ import { loadEffectiveSFPreferences } from "./preferences.js";
 import type { CodebaseMapOptions } from "./codebase-generator.js";
 
 const USAGE =
-  "Usage: /gsd codebase [generate|update|stats]\n\n" +
+  "Usage: /sf codebase [generate|update|stats]\n\n" +
   "  generate [--max-files N] [--collapse-threshold N]  — Generate or regenerate CODEBASE.md\n" +
   "  update [--max-files N] [--collapse-threshold N]    — Refresh the CODEBASE.md cache immediately\n" +
   "  stats                                              — Show file count, coverage, and generation time\n" +
@@ -75,7 +75,7 @@ export async function handleCodebase(
       const existing = readCodebaseMap(basePath);
       if (!existing) {
         ctx.ui.notify(
-          "No codebase map found. Run /gsd codebase generate to create one.",
+          "No codebase map found. Run /sf codebase generate to create one.",
           "warning",
         );
         return;
@@ -127,7 +127,7 @@ export async function handleCodebase(
 function showStats(basePath: string, ctx: ExtensionCommandContext): void {
   const stats = getCodebaseMapStats(basePath);
   if (!stats.exists) {
-    ctx.ui.notify("No codebase map found. Run /gsd codebase generate to create one.", "info");
+    ctx.ui.notify("No codebase map found. Run /sf codebase generate to create one.", "info");
     return;
   }
 
@@ -142,7 +142,7 @@ function showStats(basePath: string, ctx: ExtensionCommandContext): void {
     `  Undescribed: ${stats.undescribedCount}\n` +
     `  Generated: ${stats.generatedAt ?? "unknown"}\n\n` +
     (stats.undescribedCount > 0
-      ? `Tip: Auto-refresh keeps the cache current, but /gsd codebase update forces an immediate refresh.`
+      ? `Tip: Auto-refresh keeps the cache current, but /sf codebase update forces an immediate refresh.`
       : `Coverage is complete.`),
     "info",
   );

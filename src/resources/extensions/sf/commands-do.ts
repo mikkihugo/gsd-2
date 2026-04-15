@@ -1,8 +1,8 @@
 /**
- * SF Command — /gsd do
+ * SF Command — /sf do
  *
- * Routes freeform natural language to the correct /gsd subcommand
- * using keyword matching. Falls back to /gsd quick for task-like input.
+ * Routes freeform natural language to the correct /sf subcommand
+ * using keyword matching. Falls back to /sf quick for task-like input.
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -76,12 +76,12 @@ export async function handleDo(
 ): Promise<void> {
   if (!args.trim()) {
     ctx.ui.notify(
-      "Usage: /gsd do <what you want to do>\n\n" +
+      "Usage: /sf do <what you want to do>\n\n" +
       "Examples:\n" +
-      "  /gsd do show me progress\n" +
-      "  /gsd do run autonomously\n" +
-      "  /gsd do clean up old branches\n" +
-      "  /gsd do fix the login bug",
+      "  /sf do show me progress\n" +
+      "  /sf do run autonomously\n" +
+      "  /sf do clean up old branches\n" +
+      "  /sf do fix the login bug",
       "warning",
     );
     return;
@@ -94,16 +94,16 @@ export async function handleDo(
       ? `${match.command} ${match.remainingArgs}`
       : match.command;
 
-    ctx.ui.notify(`→ /gsd ${fullCommand}`, "info");
+    ctx.ui.notify(`→ /sf ${fullCommand}`, "info");
 
     // Re-dispatch through the main dispatcher
-    const { handleGSDCommand } = await import("./commands/dispatcher.js");
-    await handleGSDCommand(fullCommand, ctx, pi);
+    const { handleSFCommand } = await import("./commands/dispatcher.js");
+    await handleSFCommand(fullCommand, ctx, pi);
     return;
   }
 
   // No keyword match → treat as quick task
-  ctx.ui.notify(`→ /gsd quick ${args}`, "info");
+  ctx.ui.notify(`→ /sf quick ${args}`, "info");
   const { handleQuick } = await import("./quick.js");
   await handleQuick(args, ctx, pi);
 }

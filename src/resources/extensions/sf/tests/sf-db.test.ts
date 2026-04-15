@@ -62,7 +62,7 @@ function withPlatform<T>(platform: NodeJS.Platform, fn: () => T): T {
 // sf-db tests
 // ═══════════════════════════════════════════════════════════════════════════
 
-describe('gsd.db', () => {
+describe('sf.db', () => {
   test('sf-db: provider detection', () => {
     const provider = getDbProvider();
     assert.ok(provider !== null, 'provider should be non-null');
@@ -493,7 +493,7 @@ describe('gsd.db', () => {
       'src-erf/Models/foo.cs, src-erf/Models/bar.cs',
       'docs/input-a.md, docs/input-b.md',
       'dist/out-a.md, dist/out-b.md',
-      'src/resources/extensions/sf/gsd.db.ts, src/resources/extensions/sf/state.ts',
+      'src/resources/extensions/sf/sf-db.ts, src/resources/extensions/sf/state.ts',
       '"decision-1"',
       'M001',
       'S01',
@@ -507,7 +507,7 @@ describe('gsd.db', () => {
     assert.deepStrictEqual(task!.expected_output, ['dist/out-a.md', 'dist/out-b.md']);
     assert.deepStrictEqual(
       task!.key_files,
-      ['src/resources/extensions/sf/gsd.db.ts', 'src/resources/extensions/sf/state.ts'],
+      ['src/resources/extensions/sf/sf-db.ts', 'src/resources/extensions/sf/state.ts'],
     );
     assert.deepStrictEqual(task!.key_decisions, ['decision-1']);
 

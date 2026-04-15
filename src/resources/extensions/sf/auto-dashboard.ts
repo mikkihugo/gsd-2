@@ -13,7 +13,7 @@ import type {
   ReadonlyFooterDataProvider,
   Theme,
 } from "@sf-run/pi-coding-agent";
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 import { getCurrentBranch } from "./worktree.js";
 import { getActiveHook } from "./post-unit-hooks.js";
 import { getLedger, getProjectTotals } from "./metrics.js";
@@ -127,7 +127,7 @@ export function unitPhaseLabel(unitType: string): string {
   }
 }
 
-function peekNext(unitType: string, state: GSDState): string {
+function peekNext(unitType: string, state: SFState): string {
   // Show active hook info in progress display
   const activeHookState = getActiveHook();
   if (activeHookState) {
@@ -156,7 +156,7 @@ function peekNext(unitType: string, state: GSDState): string {
 /**
  * Describe what the next unit will be, based on current state.
  */
-export function describeNextUnit(state: GSDState): { label: string; description: string } {
+export function describeNextUnit(state: SFState): { label: string; description: string } {
   const sid = state.activeSlice?.id;
   const sTitle = state.activeSlice?.title;
   const tid = state.activeTask?.id;
@@ -525,7 +525,7 @@ export function updateProgressWidget(
   ctx: ExtensionContext,
   unitType: string,
   unitId: string,
-  state: GSDState,
+  state: SFState,
   accessors: WidgetStateAccessors,
   tierBadge?: string,
 ): void {
@@ -575,7 +575,7 @@ export function updateProgressWidget(
   // Cache the effective service tier at widget creation time (reads preferences)
   const effectiveServiceTier = getEffectiveServiceTier();
 
-  ctx.ui.setWidget("gsd-progress", (tui, theme) => {
+  ctx.ui.setWidget("sf-progress", (tui, theme) => {
     let pulseBright = true;
     let cachedLines: string[] | undefined;
     let cachedWidth: number | undefined;

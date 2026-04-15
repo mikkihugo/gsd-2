@@ -4,7 +4,7 @@
  * Read-only TUI overlay showing the effective SF configuration:
  * token profile, model assignments, dynamic routing, git settings,
  * budget, workflow toggles, and preference file sources.
- * Opened via `/gsd show-config` or `/gsd config`.
+ * Opened via `/sf show-config` or `/sf config`.
  */
 
 import type { Theme } from "@sf-run/pi-coding-agent";
@@ -225,7 +225,7 @@ export function formatConfigText(): string {
 
 // ─── Overlay Class ────────────────────────────────────────────────────────
 
-export class GSDConfigOverlay {
+export class SFConfigOverlay {
   private tui: { requestRender: () => void };
   private theme: Theme;
   private onClose: () => void;
@@ -318,7 +318,7 @@ export class GSDConfigOverlay {
 
     allLines.push("");
     allLines.push(t.fg("muted", `  ${"\u2500".repeat(w - 4)}`));
-    allLines.push(t.fg("muted", "  esc/q close  \u2502  \u2191\u2193/jk scroll  \u2502  /gsd prefs to edit"));
+    allLines.push(t.fg("muted", "  esc/q close  \u2502  \u2191\u2193/jk scroll  \u2502  /sf prefs to edit"));
 
     // Apply scroll
     const maxScroll = Math.max(0, allLines.length - 20);

@@ -36,7 +36,7 @@ export async function handleRethink(
   const basePath = process.cwd();
   const root = sfRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No SF project found. Run /gsd init first.", "warning");
+    ctx.ui.notify("No SF project found. Run /sf init first.", "warning");
     return;
   }
 
@@ -56,7 +56,7 @@ export async function handleRethink(
 
   const commitInstruction = isGsdGitignored(basePath)
     ? "Do not commit planning artifacts — .gsd/ is gitignored in this project."
-    : 'After changes, run `git add .gsd/ && git commit -m "docs(gsd): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
+    : 'After changes, run `git add .gsd/ && git commit -m "docs(sf): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
 
   const content = loadPrompt("rethink", {
     rethinkData,
@@ -65,7 +65,7 @@ export async function handleRethink(
   });
 
   pi.sendMessage(
-    { customType: "gsd-rethink", content, display: false },
+    { customType: "sf-rethink", content, display: false },
     { triggerTurn: true },
   );
 }

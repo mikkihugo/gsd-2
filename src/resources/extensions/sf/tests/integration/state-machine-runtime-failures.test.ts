@@ -83,7 +83,7 @@ import { invalidateAllCaches } from "../../cache.ts";
 // ═══════════════════════════════════════════════════════════════════════════
 
 function makeTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-runtime-fail-"));
+  return mkdtempSync(join(tmpdir(), "sf-runtime-fail-"));
 }
 
 function createMinimalFixture(): string {
@@ -518,7 +518,7 @@ describe("filesystem race conditions", () => {
 
   test("ROADMAP deleted during derive cycle → graceful degradation", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -539,7 +539,7 @@ describe("filesystem race conditions", () => {
 
   test("CONTEXT deleted during derive → falls back gracefully", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
 
     const contextPath = join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md");
@@ -553,7 +553,7 @@ describe("filesystem race conditions", () => {
 
   test("entire slice directory deleted → derive produces valid state", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -569,7 +569,7 @@ describe("filesystem race conditions", () => {
 
   test("task PLAN file deleted between dispatch and execution → recovery dispatch", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -763,7 +763,7 @@ describe("state consistency under DB mutations", () => {
 
   test("rapid DB mutations produce consistent deriveStateFromDb results", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -794,7 +794,7 @@ describe("state consistency under DB mutations", () => {
 
   test("DB milestone status change is reflected after cache invalidation", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "complete" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete" });
@@ -820,7 +820,7 @@ describe("state consistency under DB mutations", () => {
 
   test("deriveState is idempotent: same inputs produce same outputs", async () => {
     base = createMinimalFixture();
-    openDatabase(join(base, ".gsd", "gsd.db"));
+    openDatabase(join(base, ".gsd", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Feature", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });

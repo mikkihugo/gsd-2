@@ -5,10 +5,10 @@ Step mode is SF's interactive, one-step-at-a-time workflow. You stay in the loop
 ## Starting Step Mode
 
 ```
-/gsd
+/sf
 ```
 
-SF reads the state of your `.gsd/` directory and presents a wizard showing what's completed and what's next. It then executes one unit of work and pauses.
+SF reads the state of your `.sf/` directory and presents a wizard showing what's completed and what's next. It then executes one unit of work and pauses.
 
 ## How It Works
 
@@ -16,7 +16,7 @@ Step mode adapts to your project's current state:
 
 | State | What Happens |
 |-------|-------------|
-| No `.gsd/` directory | Starts a discussion flow to capture your project vision |
+| No `.sf/` directory | Starts a discussion flow to capture your project vision |
 | Milestone exists, no roadmap | Opens a discussion or research phase for the milestone |
 | Roadmap exists, slices pending | Plans the next slice or executes the next task |
 | Mid-task | Resumes where you left off |
@@ -31,10 +31,10 @@ After each unit completes, you see results and decide what to do next. This is i
 
 Between steps, you can:
 
-- **Discuss** — `/gsd discuss` to talk through architecture decisions
-- **Skip** — `/gsd skip` to prevent a unit from being dispatched
-- **Undo** — `/gsd undo` to revert the last completed unit
-- **Switch to auto** — `/gsd auto` to let SF continue autonomously
+- **Discuss** — `/sf discuss` to talk through architecture decisions
+- **Skip** — `/sf skip` to prevent a unit from being dispatched
+- **Undo** — `/sf undo` to revert the last completed unit
+- **Switch to auto** — `/sf auto` to let SF continue autonomously
 
 ## When to Use Step Mode
 
@@ -48,7 +48,7 @@ Between steps, you can:
 Once you're comfortable with SF's approach, switch to auto mode:
 
 ```
-/gsd auto
+/sf auto
 ```
 
 You can always press **Escape** to pause auto mode and return to step-by-step control.

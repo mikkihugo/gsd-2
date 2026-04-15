@@ -60,7 +60,7 @@ dist/
 !/pkg/dist/modes/
 !/pkg/dist/core/export-html/
 .bg_shell
-.gsd*.tgz
+.sf*.tgz
 .artifacts/
 AGENTS.md
 .bg-shell/
@@ -71,14 +71,14 @@ docs/coherence-audit/
 .plans/
 
 # ── SF project state (per-worktree, never committed) ──
-.gsd/
+.sf/
 
 # ── Stale lock files (npm is canonical) ──
 pnpm-lock.yaml
 bun.lock
 
 # ── SF baseline (auto-generated) ──
-.gsd
+.sf
 
 # ── SF baseline (auto-generated) ──
-.gsd-id
+.sf-id

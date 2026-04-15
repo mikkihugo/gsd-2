@@ -22,7 +22,7 @@ You can stay hands-on with **step mode** (reviewing each step) or let SF run aut
 
 ## Key Features
 
-- **Autonomous execution** — `/gsd auto` runs research, planning, coding, testing, and committing without intervention
+- **Autonomous execution** — `/sf auto` runs research, planning, coding, testing, and committing without intervention
 - **20+ LLM providers** — Anthropic, OpenAI, Google, OpenRouter, GitHub Copilot, Amazon Bedrock, local models, and more
 - **Git isolation** — Each milestone works in its own worktree branch, merged cleanly when done
 - **Cost tracking** — Real-time token usage, budget ceilings, and automatic model downgrading
@@ -41,10 +41,10 @@ You can stay hands-on with **step mode** (reviewing each step) or let SF run aut
 npm install -g sf-run
 
 # Launch
-gsd
+sf
 
 # Start autonomous mode
-/gsd auto
+/sf auto
 ```
 
 See [Installation](getting-started/installation.md) for detailed setup instructions.
@@ -53,8 +53,8 @@ See [Installation](getting-started/installation.md) for detailed setup instructi
 
 | Mode | Command | Best For |
 |------|---------|----------|
-| **Step** | `/gsd` | Staying in the loop, reviewing each step |
-| **Auto** | `/gsd auto` | Walking away, overnight builds, batch work |
+| **Step** | `/sf` | Staying in the loop, reviewing each step |
+| **Auto** | `/sf auto` | Walking away, overnight builds, batch work |
 
 The recommended workflow: run auto mode in one terminal, steer from another. See [Step Mode](core-concepts/step-mode.md) and [Auto Mode](core-concepts/auto-mode.md).
 

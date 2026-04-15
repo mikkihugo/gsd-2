@@ -25,7 +25,7 @@ import { createWorktree } from "../worktree-manager.ts";
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-park-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-park-test-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -333,7 +333,7 @@ test('discardMilestone removes DB rows, worktree, and milestone branch', () => {
       initGitRepo(base);
       clearCaches();
 
-      assert.ok(openDatabase(join(base, '.gsd', 'gsd.db')), 'database opens');
+      assert.ok(openDatabase(join(base, '.gsd', 'sf.db')), 'database opens');
       insertMilestone({ id: 'M001', title: 'Discard me', status: 'active' });
       insertSlice({ milestoneId: 'M001', id: 'S01', title: 'Only slice', status: 'pending' });
       insertTask({ milestoneId: 'M001', sliceId: 'S01', id: 'T01', title: 'Only task', status: 'pending' });

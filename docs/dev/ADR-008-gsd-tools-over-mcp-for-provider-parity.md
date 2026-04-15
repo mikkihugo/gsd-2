@@ -3,7 +3,7 @@
 **Status:** Proposed
 **Date:** 2026-04-09
 **Deciders:** Jeremy McSpadden
-**Related:** ADR-004 (capability-aware model routing), ADR-007 (model catalog split and provider API encapsulation), `src/resources/extensions/gsd/bootstrap/db-tools.ts`, `src/resources/extensions/claude-code-cli/stream-adapter.ts`, `packages/mcp-server/src/server.ts`
+**Related:** ADR-004 (capability-aware model routing), ADR-007 (model catalog split and provider API encapsulation), `src/resources/extensions/sf/bootstrap/db-tools.ts`, `src/resources/extensions/claude-code-cli/stream-adapter.ts`, `packages/mcp-server/src/server.ts`
 
 ## Context
 
@@ -29,7 +29,7 @@ The core SF workflow tools are internal extension tools. Examples include:
 - `gsd_replan_slice`
 - `gsd_reassess_roadmap`
 
-These are registered in `src/resources/extensions/gsd/bootstrap/db-tools.ts` and related bootstrap files. SF prompts assume these tools are available during discuss, plan, and execute flows.
+These are registered in `src/resources/extensions/sf/bootstrap/db-tools.ts` and related bootstrap files. SF prompts assume these tools are available during discuss, plan, and execute flows.
 
 Separately, `packages/mcp-server/src/server.ts` exposes a different tool surface:
 

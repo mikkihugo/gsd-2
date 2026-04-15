@@ -104,7 +104,7 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
     return;
   }
 
-  ctx.ui.notify("Usage: /gsd prefs [global|project|status|wizard|setup|import-claude [global|project]]", "info");
+  ctx.ui.notify("Usage: /sf prefs [global|project|status|wizard|setup|import-claude [global|project]]", "info");
 }
 
 export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "global" | "project"): Promise<void> {

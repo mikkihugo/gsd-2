@@ -1,7 +1,7 @@
 // SF Extension — Notification Widget
 // Always-on ambient widget rendered belowEditor showing unread count and
 // the most recent notification message. Refreshes every 30 seconds.
-// Widget key: "gsd-notifications", placement: "belowEditor"
+// Widget key: "sf-notifications", placement: "belowEditor"
 
 import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 
@@ -29,10 +29,10 @@ export function initNotificationWidget(ctx: ExtensionContext): void {
   if (!ctx.hasUI) return;
 
   // String-array fallback for RPC mode
-  ctx.ui.setWidget("gsd-notifications", buildNotificationWidgetLines(), { placement: "belowEditor" });
+  ctx.ui.setWidget("sf-notifications", buildNotificationWidgetLines(), { placement: "belowEditor" });
 
   // Factory-based widget for TUI mode
-  ctx.ui.setWidget("gsd-notifications", (_tui, _theme) => {
+  ctx.ui.setWidget("sf-notifications", (_tui, _theme) => {
     let cachedLines: string[] | undefined;
 
     const refresh = () => {

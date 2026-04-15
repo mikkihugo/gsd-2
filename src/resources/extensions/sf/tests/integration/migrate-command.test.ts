@@ -10,9 +10,9 @@ import { tmpdir } from 'node:os';
 import {
   validatePlanningDirectory,
   parsePlanningDirectory,
-  transformToGSD,
+  transformToSF,
   generatePreview,
-  writeGSDDirectory,
+  writeSFDirectory,
 } from '../../migrate/index.ts';
 import { deriveState } from '../../state.ts';
 import { describe, test, beforeEach, afterEach } from 'node:test';
@@ -167,7 +167,7 @@ Depends on foundation work.
 `;
 
 function createCompleteFixture(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-cmd-test-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-cmd-test-'));
   const planning = join(base, '.planning');
   mkdirSync(planning, { recursive: true });
 
@@ -232,7 +232,7 @@ test('Path resolution: .planning used as-is when already present', () => {
   // ─── Test 3: Validation gating — non-existent path ─────────────────────
 
 test('Validation gating: non-existent path returns invalid', async () => {
-    const fakePath = join(tmpdir(), 'gsd-cmd-nonexistent-' + Date.now(), '.planning');
+    const fakePath = join(tmpdir(), 'sf-cmd-nonexistent-' + Date.now(), '.planning');
     const result = await validatePlanningDirectory(fakePath);
     assert.deepStrictEqual(result.valid, false, 'validation: non-existent path is invalid');
     assert.ok(result.issues.length > 0, 'validation: has issues for non-existent path');
@@ -256,7 +256,7 @@ test('Validation gating: valid fixture passes validation', async () => {
 
 test('Full pipeline: parse → transform → preview → write → deriveState', async () => {
     const base = createCompleteFixture();
-    const writeTarget = mkdtempSync(join(tmpdir(), 'gsd-cmd-write-'));
+    const writeTarget = mkdtempSync(join(tmpdir(), 'sf-cmd-write-'));
     try {
       const planningPath = join(base, '.planning');
 
@@ -270,7 +270,7 @@ test('Full pipeline: parse → transform → preview → write → deriveState',
       assert.ok(Object.keys(parsed.phases).length >= 2, 'pipeline: phases parsed');
 
       // (c) Transform
-      const project = transformToGSD(parsed);
+      const project = transformToSF(parsed);
       assert.ok(project.milestones.length >= 1, 'pipeline: has milestones');
       assert.ok(project.milestones[0].slices.length >= 1, 'pipeline: has slices');
 
@@ -310,16 +310,16 @@ test('Full pipeline: parse → transform → preview → write → deriveState',
       assert.deepStrictEqual(preview.requirements.total, 2, 'pipeline: preview requirements total');
 
       // (e) Write
-      const result = await writeGSDDirectory(project, writeTarget);
+      const result = await writeSFDirectory(project, writeTarget);
       assert.ok(result.paths.length > 0, 'pipeline: files written');
 
       // Key files exist
-      const gsd = join(writeTarget, '.gsd');
-      assert.ok(existsSync(join(gsd, 'PROJECT.md')), 'pipeline: PROJECT.md written');
-      assert.ok(existsSync(join(gsd, 'STATE.md')), 'pipeline: STATE.md written');
-      assert.ok(existsSync(join(gsd, 'REQUIREMENTS.md')), 'pipeline: REQUIREMENTS.md written');
+      const sf = join(writeTarget, '.gsd');
+      assert.ok(existsSync(join(sf, 'PROJECT.md')), 'pipeline: PROJECT.md written');
+      assert.ok(existsSync(join(sf, 'STATE.md')), 'pipeline: STATE.md written');
+      assert.ok(existsSync(join(sf, 'REQUIREMENTS.md')), 'pipeline: REQUIREMENTS.md written');
 
-      const m001 = join(gsd, 'milestones', 'M001');
+      const m001 = join(sf, 'milestones', 'M001');
       assert.ok(existsSync(join(m001, 'M001-ROADMAP.md')), 'pipeline: M001-ROADMAP.md written');
       assert.ok(existsSync(join(m001, 'M001-CONTEXT.md')), 'pipeline: M001-CONTEXT.md written');
 
@@ -345,7 +345,7 @@ test('Full pipeline: parse → transform → preview → write → deriveState',
   // ─── Test 6: .gsd/ exists detection ────────────────────────────────────
 
 test('.gsd/ exists detection', () => {
-    const base = mkdtempSync(join(tmpdir(), 'gsd-cmd-exists-'));
+    const base = mkdtempSync(join(tmpdir(), 'sf-cmd-exists-'));
     try {
       // No .gsd/ yet
       assert.ok(!existsSync(join(base, '.gsd')), 'exists-detection: .gsd absent initially');

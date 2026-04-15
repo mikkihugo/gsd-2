@@ -26,7 +26,7 @@ import {
 } from "../parallel-orchestrator.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-zombie-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-zombie-${randomUUID()}`);
   mkdirSync(join(base, ".gsd", "parallel"), { recursive: true });
   return base;
 }

@@ -310,7 +310,7 @@ export async function checkRuntimeHealth(
         ".gsd/activity/",
         ".gsd/runtime/",
         ".gsd/auto.lock",
-        ".gsd/gsd.db*",
+        ".gsd/sf.db*",
         ".gsd/completed-units*.json",
         ".gsd/event-log.jsonl",
       ];
@@ -472,7 +472,7 @@ export async function checkRuntimeHealth(
             code: "metrics_ledger_bloat",
             scope: "project",
             unitId: "project",
-            message: `metrics.json has ${parsed.units.length} unit entries (${fileSizeMB}MB) — threshold is ${BLOAT_UNITS_THRESHOLD}. Run /gsd doctor --fix to prune to the newest 1500 entries.`,
+            message: `metrics.json has ${parsed.units.length} unit entries (${fileSizeMB}MB) — threshold is ${BLOAT_UNITS_THRESHOLD}. Run /sf doctor --fix to prune to the newest 1500 entries.`,
             file: ".gsd/metrics.json",
             fixable: true,
           });

@@ -1,5 +1,0 @@
-[
-  {"provider": "kimi-coding",  "model": "k2p5",              "priority": 0},
-  {"provider": "ollama-cloud", "model": "kimi-k2.5:cloud",   "priority": 1},
-  {"provider": "opencode-go",  "model": "kimi-k2.5",         "priority": 2}
-]

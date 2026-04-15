@@ -28,8 +28,8 @@ describe('repo-identity-worktree', () => {
   let expectedExternalState: string;
 
   before(() => {
-    base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-repo-identity-")));
-    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
+    base = realpathSync(mkdtempSync(join(tmpdir(), "sf-repo-identity-")));
+    stateDir = realpathSync(mkdtempSync(join(tmpdir(), "sf-state-")));
     process.env.SF_STATE_DIR = stateDir;
 
     run("git init -b main", base);
@@ -103,7 +103,7 @@ test('readRepoMeta returns null for malformed metadata', () => {
 });
 
 test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed project id', () => {
-      const moveRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-repo-identity-move-")));
+      const moveRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-repo-identity-move-")));
       run("git init -b main", moveRepo);
       run('git config user.name "Pi Test"', moveRepo);
       run('git config user.email "pi@example.com"', moveRepo);
@@ -117,7 +117,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
       assert.ok(before !== null, "repo metadata exists before repo move");
       assert.deepStrictEqual(normalizePath(before!.gitRoot), normalizePath(moveRepo), "repo metadata tracks current git root before move");
 
-      const movedBaseRaw = join(tmpdir(), `gsd-repo-identity-moved-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+      const movedBaseRaw = join(tmpdir(), `sf-repo-identity-moved-${Date.now()}-${Math.random().toString(36).slice(2)}`);
       renameSync(moveRepo, movedBaseRaw);
       const movedBase = realpathSync(movedBaseRaw);
       const movedExternal = ensureGsdSymlink(movedBase);
@@ -133,7 +133,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
 });
 
 test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)', () => {
-      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-inherited-parent-")));
+      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-inherited-parent-")));
       run("git init -b main", parentRepo);
       run('git config user.name "Pi Test"', parentRepo);
       run('git config user.email "pi@example.com"', parentRepo);
@@ -150,7 +150,7 @@ test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)',
 
       assert.ok(!isInheritedRepo(parentRepo), "git root is not inherited");
 
-      const standaloneRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-inherited-standalone-")));
+      const standaloneRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-inherited-standalone-")));
       run("git init -b main", standaloneRepo);
       run('git config user.name "Pi Test"', standaloneRepo);
       run('git config user.email "pi@example.com"', standaloneRepo);
@@ -161,7 +161,7 @@ test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)',
 });
 
 test('subdirectory of parent repo gets unique identity after git init (#1639)', () => {
-      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-identity-parent-")));
+      const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-identity-parent-")));
       run("git init -b main", parentRepo);
       run('git config user.name "Pi Test"', parentRepo);
       run('git config user.email "pi@example.com"', parentRepo);
@@ -185,7 +185,7 @@ test('subdirectory of parent repo gets unique identity after git init (#1639)', 
 });
 
 test('ensureGsdSymlink from subdirectory does not create .gsd in subdir when git-root .gsd exists (#2380)', () => {
-    const repo = realpathSync(mkdtempSync(join(tmpdir(), "gsd-subdir-symlink-")));
+    const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-subdir-symlink-")));
     run("git init -b main", repo);
     run('git config user.name "Pi Test"', repo);
     run('git config user.email "pi@example.com"', repo);

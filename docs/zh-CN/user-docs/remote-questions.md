@@ -7,7 +7,7 @@
 ### Discord
 
 ```
-/gsd remote discord
+/sf remote discord
 ```
 
 配置向导会：
@@ -17,7 +17,7 @@
 3. 列出 bot 当前加入的服务器（或让你选择）
 4. 列出所选服务器中的文本频道
 5. 发送一条测试消息以确认权限
-6. 把配置保存到 `~/.gsd/PREFERENCES.md`
+6. 把配置保存到 `~/.sf/PREFERENCES.md`
 
 **Bot 要求：**
 
@@ -32,7 +32,7 @@
 ### Slack
 
 ```
-/gsd remote slack
+/sf remote slack
 ```
 
 配置向导会：
@@ -52,7 +52,7 @@
 ### Telegram
 
 ```
-/gsd remote telegram
+/sf remote telegram
 ```
 
 配置向导会：
@@ -71,7 +71,7 @@
 
 ## 配置
 
-远程提问配置保存在 `~/.gsd/PREFERENCES.md`：
+远程提问配置保存在 `~/.sf/PREFERENCES.md`：
 
 ```yaml
 remote_questions:
@@ -113,11 +113,11 @@ remote_questions:
 
 | 命令 | 说明 |
 |------|------|
-| `/gsd remote` | 显示远程提问菜单和当前状态 |
-| `/gsd remote slack` | 配置 Slack 集成 |
-| `/gsd remote discord` | 配置 Discord 集成 |
-| `/gsd remote status` | 显示当前配置和最近一次提示状态 |
-| `/gsd remote disconnect` | 移除远程提问配置 |
+| `/sf remote` | 显示远程提问菜单和当前状态 |
+| `/sf remote slack` | 配置 Slack 集成 |
+| `/sf remote discord` | 配置 Discord 集成 |
+| `/sf remote status` | 显示当前配置和最近一次提示状态 |
+| `/sf remote disconnect` | 移除远程提问配置 |
 
 ## Discord 与 Slack 功能对比
 

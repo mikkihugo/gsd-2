@@ -42,7 +42,7 @@ assertTrue(
 );
 
 const gateMatch = afterDbLifecycle.match(
-  /if\s*\(existsSync\(gsdDbPath\)\s*&&\s*!isDbAvailable\(\)\)\s*\{[\s\S]*?releaseLockAndReturn\(\);[\s\S]*?\}/,
+  /if\s*\(existsSync\(sfDbPath\)\s*&&\s*!isDbAvailable\(\)\)\s*\{[\s\S]*?releaseLockAndReturn\(\);[\s\S]*?\}/,
 );
 
 assertTrue(

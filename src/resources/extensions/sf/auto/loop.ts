@@ -195,7 +195,7 @@ export async function autoLoop(
           pi,
           `Memory pressure: heap at ${mem.heapMB}MB / ${mem.limitMB}MB (${Math.round(mem.pct * 100)}%). ` +
           `Stopping gracefully to prevent OOM kill after ${iteration} iterations. ` +
-          `Resume with /gsd auto to continue from where you left off.`,
+          `Resume with /sf auto to continue from where you left off.`,
         );
         finishTurn("stopped", "timeout", "memory-pressure");
         break;

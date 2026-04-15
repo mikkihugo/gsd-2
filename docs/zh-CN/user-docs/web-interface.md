@@ -7,7 +7,7 @@ SF 提供了基于浏览器的 Web 界面，用于项目管理、实时进度监
 ## 快速开始
 
 ```bash
-gsd --web
+sf --web
 ```
 
 这会启动一个本地 Web 服务器，并在默认浏览器中打开 SF 仪表板。
@@ -15,7 +15,7 @@ gsd --web
 ### CLI 参数（v2.42.0）
 
 ```bash
-gsd --web --host 0.0.0.0 --port 8080 --allowed-origins "https://example.com"
+sf --web --host 0.0.0.0 --port 8080 --allowed-origins "https://example.com"
 ```
 
 | 参数 | 默认值 | 说明 |

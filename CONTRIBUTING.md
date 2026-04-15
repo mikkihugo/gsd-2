@@ -53,7 +53,7 @@ git rebase origin/main
 SF uses worktree-based isolation for multi-developer work. If you're contributing with SF running, enable team mode in your project preferences:
 
 ```yaml
-# .gsd/PREFERENCES.md
+# .sf/PREFERENCES.md
 ---
 version: 1
 mode: team
@@ -147,7 +147,7 @@ The codebase is organized into these areas. All are open to contributions:
 | Agent core | `packages/pi-agent-core` | Agent orchestration — RFC required for changes |
 | Coding agent | `packages/pi-coding-agent` | The main coding agent |
 | MCP server | `packages/mcp-server` | Project state tools and MCP protocol |
-| SF extension | `src/resources/extensions/gsd/` | SF workflow — RFC required for auto-mode |
+| SF extension | `src/resources/extensions/sf/` | SF workflow — RFC required for auto-mode |
 | Other extensions | `src/resources/extensions/` | Browser, search, voice, MCP client, etc. |
 | Native engine | `native/` | Rust N-API modules (grep, git, AST, etc.) |
 | VS Code extension | `vscode-extension/` | Chat participant, sidebar, RPC integration |

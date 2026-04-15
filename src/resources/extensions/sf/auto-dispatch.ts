@@ -9,7 +9,7 @@
  * without modifying orchestration code.
  */
 
-import type { GSDState } from "./types.js";
+import type { SFState } from "./types.js";
 import type { SFPreferences } from "./preferences.js";
 import type { UatType } from "./files.js";
 import { loadFile, extractUatType, loadActiveOverrides } from "./files.js";
@@ -75,7 +75,7 @@ export interface DispatchContext {
   basePath: string;
   mid: string;
   midTitle: string;
-  state: GSDState;
+  state: SFState;
   prefs: SFPreferences | undefined;
   session?: import("./auto/session.js").AutoSession;
 }
@@ -90,7 +90,7 @@ export interface DispatchRule {
 function missingSliceStop(mid: string, phase: string): DispatchAction {
   return {
     action: "stop",
-    reason: `${mid}: phase "${phase}" has no active slice — run /gsd doctor.`,
+    reason: `${mid}: phase "${phase}" has no active slice — run /sf doctor.`,
     level: "error",
   };
 }
@@ -298,7 +298,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
         if (verdict && !isAcceptableUatVerdict(verdict, uatType)) {
           return {
             action: "stop" as const,
-            reason: `UAT verdict for ${sliceId} is "${verdict}" — blocking progression until resolved.\nReview the UAT result and update the verdict to PASS, or re-run /gsd auto after fixing.`,
+            reason: `UAT verdict for ${sliceId} is "${verdict}" — blocking progression until resolved.\nReview the UAT result and update the verdict to PASS, or re-run /sf auto after fixing.`,
             level: "warning" as const,
           };
         }
@@ -605,7 +605,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
         // Log graph metrics for observability
         const metrics = graphMetrics(graph);
         process.stderr.write(
-          `gsd-reactive: ${mid}/${sid} graph — tasks:${metrics.taskCount} edges:${metrics.edgeCount} ` +
+          `sf-reactive: ${mid}/${sid} graph — tasks:${metrics.taskCount} edges:${metrics.edgeCount} ` +
           `ready:${metrics.readySetSize} dispatching:${selected.length} ambiguous:${metrics.ambiguous}\n`,
         );
 
@@ -779,7 +779,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
       if (missingSlices.length > 0) {
         return {
           action: "stop",
-          reason: `Cannot complete milestone ${mid}: slices ${missingSlices.join(", ")} are missing SUMMARY files. Run /gsd doctor to diagnose.`,
+          reason: `Cannot complete milestone ${mid}: slices ${missingSlices.join(", ")} are missing SUMMARY files. Run /sf doctor to diagnose.`,
           level: "error",
         };
       }
@@ -896,7 +896,7 @@ export async function resolveDispatch(
   // (e.g. after reassessment modifies the roadmap and state needs re-derivation).
   return {
     action: "stop",
-    reason: `Unhandled phase "${ctx.state.phase}" — run /gsd doctor to diagnose.`,
+    reason: `Unhandled phase "${ctx.state.phase}" — run /sf doctor to diagnose.`,
     level: "warning",
     matchedRule: "<no-match>",
   };

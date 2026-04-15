@@ -23,7 +23,7 @@ Before decomposing, build your understanding:
 1. **Codebase exploration.** For small/familiar codebases, use `rg`, `find`, and targeted reads. For large or unfamiliar codebases, use `scout` to build a broad map efficiently before diving in.
 2. **Library docs.** Use `resolve_library` / `get_library_docs` for unfamiliar libraries — skip this for libraries already used in the codebase.
 3. **Skill Discovery ({{skillDiscoveryMode}}):**{{skillDiscoveryInstructions}}
-4. **Requirements analysis.** If `.gsd/REQUIREMENTS.md` exists, research against it. Identify which Active requirements are table stakes, likely omissions, overbuilt risks, or domain-standard behaviors.
+4. **Requirements analysis.** If `.sf/REQUIREMENTS.md` exists, research against it. Identify which Active requirements are table stakes, likely omissions, overbuilt risks, or domain-standard behaviors.
 
 ### Strategic Questions to Answer
 
@@ -48,7 +48,7 @@ Then:
 3. Create the roadmap: decompose into demoable vertical slices — as many as the work genuinely needs, no more. A simple feature might be 1 slice. Don't decompose for decomposition's sake.
 4. Order by risk (high-risk first)
 5. Call `sf_plan_milestone` to persist the milestone planning fields, slice rows, and **horizontal checklist** in the DB-backed planning path. Do **not** write `{{outputPath}}`, `ROADMAP.md`, or other planning artifacts manually — the planning tool owns roadmap rendering and persistence.
-6. If planning produced structural decisions (e.g. slice ordering rationale, technology choices, scope exclusions), call `sf_decision_save` for each decision — the tool auto-assigns IDs and regenerates `.gsd/DECISIONS.md` automatically.
+6. If planning produced structural decisions (e.g. slice ordering rationale, technology choices, scope exclusions), call `sf_decision_save` for each decision — the tool auto-assigns IDs and regenerates `.sf/DECISIONS.md` automatically.
 
 ## Requirement Mapping Rules
 
@@ -57,7 +57,7 @@ Then:
 - Product-facing milestones should cover launchability, primary user loop, continuity, and failure visibility when relevant.
 - A slice may support multiple requirements, but should not exist with no requirement justification unless it is clearly enabling work for a mapped requirement.
 - Include a compact coverage summary in the roadmap so omissions are mechanically visible.
-- If `.gsd/REQUIREMENTS.md` exists and an Active requirement has no credible path, surface that clearly. Do not silently ignore orphaned Active requirements.
+- If `.sf/REQUIREMENTS.md` exists and an Active requirement has no credible path, surface that clearly. Do not silently ignore orphaned Active requirements.
 
 ## Planning Doctrine
 

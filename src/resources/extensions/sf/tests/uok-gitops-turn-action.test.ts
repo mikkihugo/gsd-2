@@ -11,7 +11,7 @@ function run(cmd: string, cwd: string): string {
 }
 
 function makeRepo(): string {
-  const repo = mkdtempSync(join(tmpdir(), "gsd-uok-gitops-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-uok-gitops-"));
   run("git init", repo);
   run('git config user.email "test@example.com"', repo);
   run('git config user.name "Test User"', repo);

@@ -11,7 +11,7 @@
 import { writeFileSync, writeSync, mkdirSync, readdirSync, unlinkSync, statSync, openSync, closeSync, constants } from "node:fs";
 import { createHash } from "node:crypto";
 import { join } from "node:path";
-import { GSDError, SF_IO_ERROR } from "./errors.js";
+import { SFError, SF_IO_ERROR } from "./errors.js";
 
 const SEQ_PREFIX_RE = /^(\d+)-/;
 import type { ExtensionContext } from "@sf-run/pi-coding-agent";
@@ -98,7 +98,7 @@ function nextActivityFilePath(
     }
   }
   // Fallback: should never reach here in practice
-  throw new GSDError(SF_IO_ERROR, `Failed to find available activity log sequence in ${activityDir}`);
+  throw new SFError(SF_IO_ERROR, `Failed to find available activity log sequence in ${activityDir}`);
 }
 
 export function saveActivityLog(

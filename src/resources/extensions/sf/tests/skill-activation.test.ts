@@ -8,7 +8,7 @@ import { buildSkillActivationBlock } from "../auto-prompts.js";
 import type { SFPreferences } from "../preferences.js";
 
 function makeTempBase(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-skill-activation-"));
+  return mkdtempSync(join(tmpdir(), "sf-skill-activation-"));
 }
 
 function cleanup(base: string): void {

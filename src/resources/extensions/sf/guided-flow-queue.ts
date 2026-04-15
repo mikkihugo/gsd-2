@@ -46,9 +46,9 @@ export async function showQueue(
   basePath: string,
 ): Promise<void> {
   // ── Ensure .gsd/ exists ─────────────────────────────────────────────
-  const gsd = sfRoot(basePath);
-  if (!existsSync(gsd)) {
-    ctx.ui.notify("No SF project found. Run /gsd to start one first.", "warning");
+  const sf = sfRoot(basePath);
+  if (!existsSync(sf)) {
+    ctx.ui.notify("No SF project found. Run /sf to start one first.", "warning");
     return;
   }
 
@@ -56,7 +56,7 @@ export async function showQueue(
   const milestoneIds = findMilestoneIds(basePath);
 
   if (milestoneIds.length === 0) {
-    ctx.ui.notify("No milestones exist yet. Run /gsd to create the first one.", "warning");
+    ctx.ui.notify("No milestones exist yet. Run /sf to create the first one.", "warning");
     return;
   }
 
@@ -88,7 +88,7 @@ export async function showQueue(
           description: "Queue new milestones via discussion.",
         },
       ],
-      notYetMessage: "Run /gsd queue when ready.",
+      notYetMessage: "Run /sf queue when ready.",
     });
 
     if (choice === "reorder") {
@@ -205,7 +205,7 @@ export async function showQueueAdd(
 
   pi.sendMessage(
     {
-      customType: "gsd-queue",
+      customType: "sf-queue",
       content: prompt,
       display: false,
     },
@@ -222,7 +222,7 @@ export async function showQueueAdd(
 export async function buildExistingMilestonesContext(
   basePath: string,
   milestoneIds: string[],
-  state: import("./types.js").GSDState,
+  state: import("./types.js").SFState,
 ): Promise<string> {
   const sections: string[] = [];
 

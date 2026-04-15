@@ -23,7 +23,7 @@ const source = readFileSync(join(__dirname, '..', 'auto-post-unit.ts'), 'utf-8')
 
 describe('auto-remediate stale slice status (#3673)', () => {
   test('updateSliceStatus is imported from sf-db', () => {
-    assert.match(source, /import\s*\{[^}]*updateSliceStatus[^}]*\}\s*from\s*["']\.\/gsd.db/,
+    assert.match(source, /import\s*\{[^}]*updateSliceStatus[^}]*\}\s*from\s*["']\.\/sf.db/,
       'updateSliceStatus should be imported from sf-db');
   });
 

@@ -1,5 +1,5 @@
 /**
- * gsd-learning integration test.
+ * sf-learning integration test.
  *
  * Exercises the full blend pipeline:
  * 1. Prior: model A scores higher on the unit type

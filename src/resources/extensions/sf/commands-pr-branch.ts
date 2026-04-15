@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd pr-branch
+ * SF Command — /sf pr-branch
  *
  * Creates a clean PR branch by cherry-picking commits while stripping
  * any changes to .gsd/, .planning/, and PLAN.md paths. Useful for

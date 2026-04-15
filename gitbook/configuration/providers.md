@@ -1,6 +1,6 @@
 # Provider Setup
 
-Step-by-step setup instructions for every LLM provider SF supports. If you ran the onboarding wizard (`gsd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
+Step-by-step setup instructions for every LLM provider SF supports. If you ran the onboarding wizard (`sf config`) and picked a provider, you may already be configured — check with `/model` inside a session.
 
 ## Quick Reference
 
@@ -30,7 +30,7 @@ Step-by-step setup instructions for every LLM provider SF supports. If you ran t
 **Option A — Browser sign-in (recommended):**
 
 ```bash
-gsd config
+sf config
 # Choose "Sign in with your browser" → "Anthropic (Claude)"
 ```
 
@@ -48,7 +48,7 @@ export ANTHROPIC_API_KEY="sk-ant-..."
 export OPENAI_API_KEY="sk-..."
 ```
 
-Or run `gsd config` and choose "Paste an API key" then "OpenAI".
+Or run `sf config` and choose "Paste an API key" then "OpenAI".
 
 ### Google Gemini
 
@@ -67,7 +67,7 @@ OpenRouter aggregates 200+ models from multiple providers behind a single API ke
    ```
 3. In SF, type `/model` to select an OpenRouter model (prefixed with `openrouter/`)
 
-To add models not in the built-in list, add them to `~/.gsd/agent/models.json`. See [Custom Models](custom-models.md).
+To add models not in the built-in list, add them to `~/.sf/agent/models.json`. See [Custom Models](custom-models.md).
 
 ### Groq
 
@@ -92,7 +92,7 @@ export MISTRAL_API_KEY="..."
 Uses OAuth — sign in through the browser:
 
 ```bash
-gsd config
+sf config
 # Choose "Sign in with your browser" → "GitHub Copilot"
 ```
 
@@ -132,7 +132,7 @@ export AZURE_OPENAI_API_KEY="..."
 
 ## Local Providers
 
-Local providers run on your machine. They require a `models.json` configuration file at `~/.gsd/agent/models.json` because SF needs to know the endpoint URL and available models.
+Local providers run on your machine. They require a `models.json` configuration file at `~/.sf/agent/models.json` because SF needs to know the endpoint URL and available models.
 
 The file reloads each time you open `/model` — no restart needed.
 
@@ -149,7 +149,7 @@ The file reloads each time you open `/model` — no restart needed.
    ollama pull llama3.1:8b
    ```
 
-3. Create `~/.gsd/agent/models.json`:
+3. Create `~/.sf/agent/models.json`:
    ```json
    {
      "providers": {
@@ -175,7 +175,7 @@ The file reloads each time you open `/model` — no restart needed.
 
 1. Install [LM Studio](https://lmstudio.ai)
 2. Go to "Local Server" tab, load a model, click "Start Server" (default port 1234)
-3. Create `~/.gsd/agent/models.json`:
+3. Create `~/.sf/agent/models.json`:
    ```json
    {
      "providers": {
@@ -245,16 +245,16 @@ Any server that implements the OpenAI Chat Completions API can work with SF — 
 **Quickest path:**
 
 ```bash
-gsd config
+sf config
 # Choose "Paste an API key" → "Custom (OpenAI-compatible)"
 # Enter: base URL, API key, model ID
 ```
 
-This writes `~/.gsd/agent/models.json` for you. See [Custom Models](custom-models.md) for manual setup.
+This writes `~/.sf/agent/models.json` for you. See [Custom Models](custom-models.md) for manual setup.
 
 ## Verifying Your Setup
 
-1. Launch SF: `gsd`
+1. Launch SF: `sf`
 2. Check available models: `/model`
 3. Select your model from the picker
 4. Send a test message to confirm it responds
@@ -268,7 +268,7 @@ If the model doesn't appear, check:
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| "Authentication failed" with valid key | Key not visible to SF | Export in the same terminal, or save via `gsd config` |
+| "Authentication failed" with valid key | Key not visible to SF | Export in the same terminal, or save via `sf config` |
 | OpenRouter models not in `/model` | No API key set | Set `OPENROUTER_API_KEY` and restart |
 | Ollama returns empty responses | Server not running or model not pulled | Run `ollama serve` and `ollama pull <model>` |
 | LM Studio model ID mismatch | ID doesn't match server | Check LM Studio's server tab for the exact identifier |

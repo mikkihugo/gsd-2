@@ -16,7 +16,7 @@ import { tmpdir } from "node:os";
 import { runWorktreePostCreateHook } from "../auto-worktree.ts";
 
 function makeTmpDir(): string {
-  return mkdtempSync(join(tmpdir(), "gsd-wt-hook-test-"));
+  return mkdtempSync(join(tmpdir(), "sf-wt-hook-test-"));
 }
 
 const isWin = process.platform === "win32";

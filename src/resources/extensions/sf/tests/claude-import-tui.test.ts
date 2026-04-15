@@ -1,7 +1,7 @@
 /**
  * TUI Command Flow Tests for import-claude
  *
- * Tests R015: validates the TUI command flow for /gsd prefs import-claude.
+ * Tests R015: validates the TUI command flow for /sf prefs import-claude.
  * These tests currently use mock UI, and marketplace availability is still
  * derived from real/local marketplace roots. Follow-up work should route these
  * through portable marketplace fixtures that mirror Claude Code's
@@ -125,7 +125,7 @@ describe(
 		let prefs: Record<string, unknown>;
 
 		before(() => {
-			tempDir = mkdtempSync(join(tmpdir(), 'gsd-tui-test-'));
+			tempDir = mkdtempSync(join(tmpdir(), 'sf-tui-test-'));
 			prefsPath = join(tempDir, 'PREFERENCES.md');
 			prefs = { version: 1 };
 		});

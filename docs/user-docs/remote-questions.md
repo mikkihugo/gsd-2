@@ -7,7 +7,7 @@ Remote questions allow SF to ask for user input via Slack, Discord, or Telegram 
 ### Discord
 
 ```
-/gsd remote discord
+/sf remote discord
 ```
 
 The setup wizard:
@@ -16,7 +16,7 @@ The setup wizard:
 3. Lists servers the bot belongs to (or lets you pick)
 4. Lists text channels in the selected server
 5. Sends a test message to confirm permissions
-6. Saves the configuration to `~/.gsd/PREFERENCES.md`
+6. Saves the configuration to `~/.sf/PREFERENCES.md`
 
 **Bot requirements:**
 - A Discord bot application with a token (from [Discord Developer Portal](https://discord.com/developers/applications))
@@ -30,7 +30,7 @@ The setup wizard:
 ### Slack
 
 ```
-/gsd remote slack
+/sf remote slack
 ```
 
 The setup wizard:
@@ -48,7 +48,7 @@ The setup wizard:
 ### Telegram
 
 ```
-/gsd remote telegram
+/sf remote telegram
 ```
 
 The setup wizard:
@@ -65,7 +65,7 @@ The setup wizard:
 
 ## Configuration
 
-Remote questions are configured in `~/.gsd/PREFERENCES.md`:
+Remote questions are configured in `~/.sf/PREFERENCES.md`:
 
 ```yaml
 remote_questions:
@@ -105,11 +105,11 @@ If no response is received within `timeout_minutes`, the prompt times out and SF
 
 | Command | Description |
 |---------|-------------|
-| `/gsd remote` | Show remote questions menu and current status |
-| `/gsd remote slack` | Set up Slack integration |
-| `/gsd remote discord` | Set up Discord integration |
-| `/gsd remote status` | Show current configuration and last prompt status |
-| `/gsd remote disconnect` | Remove remote questions configuration |
+| `/sf remote` | Show remote questions menu and current status |
+| `/sf remote slack` | Set up Slack integration |
+| `/sf remote discord` | Set up Discord integration |
+| `/sf remote status` | Show current configuration and last prompt status |
+| `/sf remote disconnect` | Remove remote questions configuration |
 
 ## Discord vs Slack Feature Comparison
 

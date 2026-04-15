@@ -1,6 +1,6 @@
 # ADR-008 Implementation Plan
 
-**Related ADR:** [ADR-008-gsd-tools-over-mcp-for-provider-parity.md](/Users/jeremymcspadden/Github/gsd-2/docs/ADR-008-gsd-tools-over-mcp-for-provider-parity.md)
+**Related ADR:** [ADR-008-sf-tools-over-mcp-for-provider-parity.md](/Users/jeremymcspadden/Github/sf-2/docs/ADR-008-sf-tools-over-mcp-for-provider-parity.md)
 **Status:** Draft
 **Date:** 2026-04-09
 
@@ -36,9 +36,9 @@ Goal: separate business logic from transport registration.
 
 Targets:
 
-- `src/resources/extensions/gsd/bootstrap/db-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/query-tools.ts`
-- `src/resources/extensions/gsd/tools/complete-task.ts`
+- `src/resources/extensions/sf/bootstrap/db-tools.ts`
+- `src/resources/extensions/sf/bootstrap/query-tools.ts`
+- `src/resources/extensions/sf/tools/complete-task.ts`
 - sibling modules used by planning/summary/validation tools
 
 Deliverables:
@@ -80,7 +80,7 @@ Likely files:
 
 Decisions to make during implementation:
 
-- extend existing MCP package vs create `packages/mcp-gsd-tools-server`
+- extend existing MCP package vs create `packages/mcp-sf-tools-server`
 - canonical names only vs selected alias export
 - single combined server vs separate “session” and “workflow” server modes
 
@@ -95,7 +95,7 @@ Goal: ensure MCP mutations enforce the same rules as native tool calls.
 
 Targets:
 
-- `src/resources/extensions/gsd/bootstrap/write-gate.ts`
+- `src/resources/extensions/sf/bootstrap/write-gate.ts`
 - any current tool-call gating hooks tied to native runtime only
 - MCP wrapper layer before shared handler invocation
 
@@ -158,7 +158,7 @@ Goal: keep the workflow contract strict while removing transport assumptions fro
 
 Targets:
 
-- `src/resources/extensions/gsd/prompts/execute-task.md`
+- `src/resources/extensions/sf/prompts/execute-task.md`
 - related planning/discuss prompts that reference tool availability
 - provider and MCP docs
 
@@ -251,16 +251,16 @@ Verification:
 
 High-probability files for the first implementation:
 
-- `src/resources/extensions/gsd/bootstrap/db-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/query-tools.ts`
-- `src/resources/extensions/gsd/bootstrap/write-gate.ts`
-- `src/resources/extensions/gsd/tools/complete-task.ts`
+- `src/resources/extensions/sf/bootstrap/db-tools.ts`
+- `src/resources/extensions/sf/bootstrap/query-tools.ts`
+- `src/resources/extensions/sf/bootstrap/write-gate.ts`
+- `src/resources/extensions/sf/tools/complete-task.ts`
 - `src/resources/extensions/claude-code-cli/stream-adapter.ts`
 - `src/resources/extensions/claude-code-cli/index.ts`
 - `packages/mcp-server/src/server.ts`
 - `packages/mcp-server/src/session-manager.ts`
 - `packages/mcp-server/README.md`
-- `src/resources/extensions/gsd/prompts/execute-task.md`
+- `src/resources/extensions/sf/prompts/execute-task.md`
 
 ## Testing Strategy
 

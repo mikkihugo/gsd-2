@@ -4,7 +4,7 @@
 name: dep-upgrade
 version: 1
 requires_project: false
-artifact_dir: .gsd/workflows/upgrades/
+artifact_dir: .sf/workflows/upgrades/
 </template_meta>
 
 <purpose>

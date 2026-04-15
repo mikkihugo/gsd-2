@@ -54,7 +54,7 @@ npm install -g sf-run
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+sf config
 ```
 
 To persist the key, add the export line to `~/.zshrc`:
@@ -70,24 +70,24 @@ See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
 ```bash
 cd ~/my-project   # navigate to any project
-gsd               # start a session
+sf               # start a session
 ```
 
 **Step 7 — Verify everything works:**
 
 ```bash
-gsd --version     # prints the installed version
+sf --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
 
-> **Apple Silicon PATH fix:** If `gsd` isn't found after install, npm's global bin may not be in your PATH:
+> **Apple Silicon PATH fix:** If `sf` isn't found after install, npm's global bin may not be in your PATH:
 > ```bash
 > echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 > source ~/.zshrc
 > ```
 
-> **oh-my-zsh conflict:** The oh-my-zsh git plugin defines `alias gsd='git svn dcommit'`. Fix with `unalias gsd 2>/dev/null` in `~/.zshrc`, or use `gsd-cli` instead.
+> **oh-my-zsh conflict:** The oh-my-zsh git plugin defines `alias sf='git svn dcommit'`. Fix with `unalias sf 2>/dev/null` in `~/.zshrc`, or use `sf-cli` instead.
 
 ---
 
@@ -126,7 +126,7 @@ npm install -g sf-run
 $env:ANTHROPIC_API_KEY = "sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+sf config
 ```
 
 To persist the key permanently, add it via System Settings > Environment Variables, or run:
@@ -141,13 +141,13 @@ See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
 ```powershell
 cd C:\Users\you\my-project   # navigate to any project
-gsd                           # start a session
+sf                           # start a session
 ```
 
 **Step 7 — Verify everything works:**
 
 ```powershell
-gsd --version     # prints the installed version
+sf --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
@@ -160,7 +160,7 @@ Inside the session, type `/model` to confirm your LLM is connected.
 
 > **Windows tips:**
 > - Use **Windows Terminal** or **PowerShell** for the best experience. Command Prompt works but has limited color support.
-> - If `gsd` isn't recognized, restart your terminal. Windows needs a fresh terminal to pick up new PATH entries.
+> - If `sf` isn't recognized, restart your terminal. Windows needs a fresh terminal to pick up new PATH entries.
 > - **WSL2** also works — install WSL, then follow the Linux instructions inside your distro.
 
 ---
@@ -230,7 +230,7 @@ npm install -g sf-run
 export ANTHROPIC_API_KEY="sk-ant-..."
 
 # Option B: Use the built-in config wizard
-gsd config
+sf config
 ```
 
 To persist the key, add the export line to `~/.bashrc` (or `~/.zshrc`):
@@ -246,13 +246,13 @@ See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
 ```bash
 cd ~/my-project   # navigate to any project
-gsd               # start a session
+sf               # start a session
 ```
 
 **Step 6 — Verify everything works:**
 
 ```bash
-gsd --version     # prints the installed version
+sf --version     # prints the installed version
 ```
 
 Inside the session, type `/model` to confirm your LLM is connected.
@@ -280,21 +280,21 @@ Run SF in an isolated sandbox without installing Node.js on your host.
 
 ```bash
 git clone https://github.com/singularity-forge/sf-run.git
-cd gsd-2/docker
+cd sf-2/docker
 ```
 
 **Step 3 — Create and enter a sandbox:**
 
 ```bash
-docker sandbox create --template . --name gsd-sandbox
-docker sandbox exec -it gsd-sandbox bash
+docker sandbox create --template . --name sf-sandbox
+docker sandbox exec -it sf-sandbox bash
 ```
 
 **Step 4 — Set your API key and run SF:**
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
-gsd auto "implement the feature described in issue #42"
+sf auto "implement the feature described in issue #42"
 ```
 
 See [Docker Sandbox docs](../../docker/README.md) for full configuration, resource limits, and compose files.
@@ -317,23 +317,23 @@ Or configure per-phase models in preferences — see [Configuration](./configura
 
 ## Two Ways to Work
 
-### Step Mode — `/gsd`
+### Step Mode — `/sf`
 
-Type `/gsd` inside a session. SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
+Type `/sf` inside a session. SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
 
-- **No `.gsd/` directory** — starts a discussion flow to capture your project vision
+- **No `.sf/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
 - **Roadmap exists, slices pending** — plan the next slice or execute a task
 - **Mid-task** — resume where you left off
 
 Step mode keeps you in the loop, reviewing output between each step.
 
-### Auto Mode — `/gsd auto`
+### Auto Mode — `/sf auto`
 
-Type `/gsd auto` and walk away. SF autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
+Type `/sf auto` and walk away. SF autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
 
 ```
-/gsd auto
+/sf auto
 ```
 
 See [Auto Mode](./auto-mode.md) for full details.
@@ -347,20 +347,20 @@ Run auto mode in one terminal, steer from another.
 **Terminal 1 — let it build:**
 
 ```bash
-gsd
-/gsd auto
+sf
+/sf auto
 ```
 
 **Terminal 2 — steer while it works:**
 
 ```bash
-gsd
-/gsd discuss    # talk through architecture decisions
-/gsd status     # check progress
-/gsd queue      # queue the next milestone
+sf
+/sf discuss    # talk through architecture decisions
+/sf status     # check progress
+/sf queue      # queue the next milestone
 ```
 
-Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
+Both terminals read and write the same `.sf/` files. Decisions in terminal 2 are picked up at the next phase boundary automatically.
 
 ---
 
@@ -374,10 +374,10 @@ Milestone  →  a shippable version (4-10 slices)
 
 The iron rule: **a task must fit in one context window.** If it can't, it's two tasks.
 
-All state lives on disk in `.gsd/`:
+All state lives on disk in `.sf/`:
 
 ```
-.gsd/
+.sf/
   PROJECT.md          — what the project is right now
   REQUIREMENTS.md     — requirement contract
   DECISIONS.md        — append-only architectural decisions
@@ -398,7 +398,7 @@ All state lives on disk in `.gsd/`:
 
 SF is also available as a VS Code extension. Install from the marketplace (publisher: FluxLabs) or search for "SF" in VS Code extensions:
 
-- **`@gsd` chat participant** — talk to the agent in VS Code Chat
+- **`@sf` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage
 - **Full command palette** — start/stop agent, switch models, export sessions
 
@@ -411,7 +411,7 @@ The CLI (`sf-run`) must be installed first — the extension connects to it via 
 SF has a browser-based interface for visual project management:
 
 ```bash
-gsd --web
+sf --web
 ```
 
 See [Web Interface](./web-interface.md) for details.
@@ -421,7 +421,7 @@ See [Web Interface](./web-interface.md) for details.
 ## Resume a Session
 
 ```bash
-gsd --continue    # or gsd -c
+sf --continue    # or sf -c
 ```
 
 Resumes the most recent session for the current directory.
@@ -429,7 +429,7 @@ Resumes the most recent session for the current directory.
 Browse all saved sessions:
 
 ```bash
-gsd sessions
+sf sessions
 ```
 
 ---
@@ -445,7 +445,7 @@ npm update -g sf-run
 Or from within a session:
 
 ```
-/gsd update
+/sf update
 ```
 
 ---
@@ -454,11 +454,11 @@ Or from within a session:
 
 | Problem | Fix |
 |---------|-----|
-| `command not found: gsd` | Add npm global bin to PATH (see OS-specific notes above) |
-| `gsd` runs `git svn dcommit` | oh-my-zsh conflict — `unalias gsd` or use `gsd-cli` |
+| `command not found: sf` | Add npm global bin to PATH (see OS-specific notes above) |
+| `sf` runs `git svn dcommit` | oh-my-zsh conflict — `unalias sf` or use `sf-cli` |
 | Permission errors on `npm install -g` | Fix npm prefix (see Linux notes) or use nvm |
-| Can't connect to LLM | Check API key with `gsd config`, verify network access |
-| `gsd` hangs on start | Check Node.js version: `node --version` (need 22+) |
+| Can't connect to LLM | Check API key with `sf config`, verify network access |
+| `sf` hangs on start | Check Node.js version: `node --version` (need 22+) |
 
 For more, see [Troubleshooting](./troubleshooting.md).
 

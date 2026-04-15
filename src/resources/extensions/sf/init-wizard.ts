@@ -55,7 +55,7 @@ const DEFAULT_PREFS: ProjectPreferences = {
 
 /**
  * Run the project init wizard.
- * Called when entering a directory without .gsd/ (or via /gsd init).
+ * Called when entering a directory without .gsd/ (or via /sf init).
  */
 export async function showProjectInit(
   ctx: ExtensionCommandContext,
@@ -81,7 +81,7 @@ export async function showProjectInit(
         { id: "init_git", label: "Initialize git", description: "Create a git repo in this folder", recommended: true },
         { id: "skip_git", label: "Skip", description: "Continue without git (limited functionality)" },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /sf init when ready.",
     });
 
     if (gitChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -112,7 +112,7 @@ export async function showProjectInit(
         description: "Multiple contributors — branch-based, PR-friendly workflow",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (modeChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -140,7 +140,7 @@ export async function showProjectInit(
         { id: "accept", label: "Use these commands", description: "Accept auto-detected commands", recommended: true },
         { id: "skip", label: "Skip verification", description: "Don't verify after changes" },
       ],
-      notYetMessage: "Run /gsd init when ready.",
+      notYetMessage: "Run /sf init when ready.",
     });
 
     if (verifyChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -159,7 +159,7 @@ export async function showProjectInit(
       { id: "accept", label: "Accept defaults", description: "Use standard git settings", recommended: true },
       { id: "customize", label: "Customize", description: "Change git settings" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (gitChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -179,13 +179,13 @@ export async function showProjectInit(
       '  - "Always write tests for new code"',
       '  - "This is a monorepo, only touch packages/api"',
       "",
-      "You can always add more later via /gsd prefs project.",
+      "You can always add more later via /sf prefs project.",
     ],
     actions: [
       { id: "skip", label: "Skip for now", description: "No special instructions", recommended: true },
       { id: "add", label: "Add instructions", description: "Enter project-specific rules" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (instructionChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -216,7 +216,7 @@ export async function showProjectInit(
       { id: "accept", label: "Accept defaults", description: "Use standard settings", recommended: true },
       { id: "customize", label: "Customize", description: "Change advanced settings" },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (advancedChoice === "not_yet") return { completed: false, bootstrapped: false };
@@ -260,8 +260,8 @@ export async function showProjectInit(
     // Non-fatal — codebase map generation failure should never block project init
   }
 
-  // Write initial STATE.md so it exists before the first /gsd invocation.
-  // The explicit /gsd init path (ops.ts) returns without entering showWorkflowEntry(),
+  // Write initial STATE.md so it exists before the first /sf invocation.
+  // The explicit /sf init path (ops.ts) returns without entering showWorkflowEntry(),
   // which would otherwise generate STATE.md at guided-flow.ts:1358.
   try {
     const { deriveState } = await import("./state.js");
@@ -271,7 +271,7 @@ export async function showProjectInit(
     const state = await deriveState(basePath);
     await saveFile(resolveSfRootFile(basePath, "STATE"), buildStateMarkdown(state));
   } catch {
-    // Non-fatal — STATE.md will be regenerated on next /gsd invocation
+    // Non-fatal — STATE.md will be regenerated on next /sf invocation
   }
 
   {
@@ -320,7 +320,7 @@ export async function offerMigration(
         description: "Ignore .planning/ and create new .gsd/",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (choice === "not_yet") return "cancel";
@@ -330,7 +330,7 @@ export async function offerMigration(
 // ─── Re-init Handler ────────────────────────────────────────────────────────────
 
 /**
- * Handle /gsd init when .gsd/ already exists.
+ * Handle /sf init when .gsd/ already exists.
  * Offers preference reset without destructive milestone deletion.
  */
 export async function handleReinit(
@@ -359,11 +359,11 @@ export async function handleReinit(
         description: "Keep everything as-is",
       },
     ],
-    notYetMessage: "Run /gsd init when ready.",
+    notYetMessage: "Run /sf init when ready.",
   });
 
   if (choice === "prefs") {
-    ctx.ui.notify("Use /gsd prefs project to update project preferences.", "info");
+    ctx.ui.notify("Use /sf prefs project to update project preferences.", "info");
   }
 }
 
@@ -461,18 +461,18 @@ function bootstrapGsdDirectory(
   // Final safety check before writing any files
   assertSafeDirectory(basePath);
 
-  const gsd = sfRoot(basePath);
-  mkdirSync(join(gsd, "milestones"), { recursive: true });
-  mkdirSync(join(gsd, "runtime"), { recursive: true });
+  const sf = sfRoot(basePath);
+  mkdirSync(join(sf, "milestones"), { recursive: true });
+  mkdirSync(join(sf, "runtime"), { recursive: true });
 
   // Write PREFERENCES.md from wizard answers
   const preferencesContent = buildPreferencesFile(prefs);
-  writeFileSync(join(gsd, "PREFERENCES.md"), preferencesContent, "utf-8");
+  writeFileSync(join(sf, "PREFERENCES.md"), preferencesContent, "utf-8");
 
   // Seed CONTEXT.md with detected project signals
   const contextContent = buildContextSeed(signals);
   if (contextContent) {
-    writeFileSync(join(gsd, "CONTEXT.md"), contextContent, "utf-8");
+    writeFileSync(join(sf, "CONTEXT.md"), contextContent, "utf-8");
   }
 }
 
@@ -524,7 +524,7 @@ function buildPreferencesFile(prefs: ProjectPreferences): string {
   lines.push("");
   lines.push("# SF Project Preferences");
   lines.push("");
-  lines.push("Generated by `/gsd init`. Edit directly or use `/gsd prefs project` to modify.");
+  lines.push("Generated by `/sf init`. Edit directly or use `/sf prefs project` to modify.");
   lines.push("");
   lines.push("See `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation.");
   lines.push("");

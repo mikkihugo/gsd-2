@@ -58,7 +58,7 @@ describe("resolvePhaseArtifacts", () => {
   let tmpBase: string;
 
   beforeEach(() => {
-    tmpBase = join(tmpdir(), `gsd-learnings-test-${randomUUID()}`);
+    tmpBase = join(tmpdir(), `sf-learnings-test-${randomUUID()}`);
     mkdirSync(tmpBase, { recursive: true });
   });
 
@@ -302,7 +302,7 @@ describe("extractProjectName", () => {
   let tmpBase: string;
 
   beforeEach(() => {
-    tmpBase = join(tmpdir(), `gsd-projname-test-${randomUUID()}`);
+    tmpBase = join(tmpdir(), `sf-projname-test-${randomUUID()}`);
     mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
   });
 

@@ -22,7 +22,7 @@ import { deriveState, invalidateStateCache } from '../state.ts';
 import { invalidateAllCaches } from '../cache.ts';
 
 function createBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-cache-stale-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-cache-stale-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }

@@ -24,7 +24,7 @@ import { parseContextDependsOn } from '../../files.ts';
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-reorder-e2e-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-reorder-e2e-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -299,7 +299,7 @@ test('E2E: DB-backed path respects queue order (#2556)', async () => {
     const base = createFixtureBase();
     try {
       const { openDatabase, closeDatabase, insertMilestone, isDbAvailable } = await import('../../sf-db.ts');
-      const dbPath = join(base, '.gsd', 'gsd.db');
+      const dbPath = join(base, '.gsd', 'sf.db');
 
       // Create milestone directories (required for findMilestoneIds)
       writeMilestoneDir(base, 'M006');
@@ -313,7 +313,7 @@ test('E2E: DB-backed path respects queue order (#2556)', async () => {
         insertMilestone({ id: 'M006', title: 'Earlier', status: 'active' });
         insertMilestone({ id: 'M008', title: 'Later', status: 'active' });
 
-        // Set queue order: M008 should come FIRST (user reordered via /gsd queue)
+        // Set queue order: M008 should come FIRST (user reordered via /sf queue)
         saveQueueOrder(base, ['M008', 'M006']);
 
         // deriveState should pick M008 (queue-first), not M006 (ID-first)

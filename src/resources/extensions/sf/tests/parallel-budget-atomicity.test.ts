@@ -41,7 +41,7 @@ import type { SFPreferences } from "../preferences.ts";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-budget-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-budget-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }

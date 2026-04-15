@@ -9,7 +9,7 @@ import { registerShortcuts } from "../bootstrap/register-shortcuts.ts";
 function makeTempDir(prefix: string): string {
   const dir = join(
     tmpdir(),
-    `gsd-register-shortcuts-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    `sf-register-shortcuts-test-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;

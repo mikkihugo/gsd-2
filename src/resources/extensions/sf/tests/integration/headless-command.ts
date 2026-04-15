@@ -1,5 +1,5 @@
 /**
- * Integration test for `gsd headless` CLI subcommand
+ * Integration test for `sf headless` CLI subcommand
  *
  * Validates that the headless CLI entry point works end-to-end:
  *   1. Creates a temp dir with a complete .gsd/ project fixture
@@ -240,7 +240,7 @@ Create a file called hello.txt in the project root with the content "Hello from 
 // ── Fixture Creation ─────────────────────────────────────────────────────────
 
 function createFixture(): string {
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-headless-cmd-"));
+  const tmpDir = mkdtempSync(join(tmpdir(), "sf-headless-cmd-"));
 
   // Initialize git repo (SF requires it for branch-per-slice)
   execSync("git init -b main", { cwd: tmpDir, stdio: "pipe" });
@@ -248,8 +248,8 @@ function createFixture(): string {
   execSync('git config user.name "Test"', { cwd: tmpDir, stdio: "pipe" });
 
   // Create .gsd/ structure
-  const gsdDir = join(tmpDir, ".gsd");
-  const milestonesDir = join(gsdDir, "milestones");
+  const sfDir = join(tmpDir, ".gsd");
+  const milestonesDir = join(sfDir, "milestones");
   const m001Dir = join(milestonesDir, "M001");
   const slicesDir = join(m001Dir, "slices");
   const s01Dir = join(slicesDir, "S01");
@@ -258,8 +258,8 @@ function createFixture(): string {
   mkdirSync(tasksDir, { recursive: true });
 
   // Write fixture files
-  writeFileSync(join(gsdDir, "PROJECT.md"), FIXTURE_PROJECT_MD);
-  writeFileSync(join(gsdDir, "STATE.md"), FIXTURE_STATE_MD);
+  writeFileSync(join(sfDir, "PROJECT.md"), FIXTURE_PROJECT_MD);
+  writeFileSync(join(sfDir, "STATE.md"), FIXTURE_STATE_MD);
   writeFileSync(join(m001Dir, "M001-CONTEXT.md"), FIXTURE_CONTEXT_MD);
   writeFileSync(join(m001Dir, "M001-ROADMAP.md"), FIXTURE_ROADMAP_MD);
   writeFileSync(join(s01Dir, "S01-PLAN.md"), FIXTURE_PLAN_MD);
@@ -318,7 +318,7 @@ function parseJsonlLines(output: string): JsonlEvent[] {
 async function main(): Promise<void> {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = dirname(__filename);
-  // Resolve gsd-2 repo root (6 levels up from tests/integration/)
+  // Resolve sf-2 repo root (6 levels up from tests/integration/)
   const repoRoot = join(__dirname, "..", "..", "..", "..", "..", "..");
 
   console.log("=== SF Headless Command Integration Test ===\n");

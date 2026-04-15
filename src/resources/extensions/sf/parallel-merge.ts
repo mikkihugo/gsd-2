@@ -38,7 +38,7 @@ export type MergeOrder = "sequential" | "by-completion";
  * Returns true when milestones.status = 'complete' in the worktree's sf.db.
  */
 export function isMilestoneCompleteInWorktreeDb(basePath: string, mid: string): boolean {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "gsd.db");
+  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
   if (!existsSync(dbPath)) return false;
 
   try {
@@ -56,7 +56,7 @@ export function isMilestoneCompleteInWorktreeDb(basePath: string, mid: string): 
 
 /**
  * Discover milestone IDs with status='complete' in their worktree DB,
- * scanning .gsd/worktrees/<MID>/.gsd/gsd.db for each worktree directory.
+ * scanning .gsd/worktrees/<MID>/.gsd/sf.db for each worktree directory.
  */
 function discoverDbCompletedMilestones(basePath: string): Set<string> {
   const completed = new Set<string>();
@@ -232,7 +232,7 @@ export function formatMergeResults(results: MergeResult[]): string {
       for (const f of r.conflictFiles) {
         lines.push(`  - \`${f}\``);
       }
-      lines.push(`  Resolve conflicts manually and run \`/gsd parallel merge ${r.milestoneId}\` to retry.`);
+      lines.push(`  Resolve conflicts manually and run \`/sf parallel merge ${r.milestoneId}\` to retry.`);
     } else {
       lines.push(`- **${r.milestoneId}** — failed: ${r.error}`);
     }

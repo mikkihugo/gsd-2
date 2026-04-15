@@ -18,7 +18,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function createTmpDir(): string {
-  return realpathSync(mkdtempSync(join(tmpdir(), "gsd-activity-test-")));
+  return realpathSync(mkdtempSync(join(tmpdir(), "sf-activity-test-")));
 }
 
 function writeActivityFile(dir: string, seq: string, name: string): string {

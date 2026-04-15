@@ -117,7 +117,7 @@ describe("Enhanced Verification Integration Tests", () => {
           title: "Add validation to sf-db",
           description: `
 ## Steps
-1. Update src/resources/extensions/sf/gsd.db.ts to add validation
+1. Update src/resources/extensions/sf/sf-db.ts to add validation
 2. Read from src/resources/extensions/sf/types.ts for type definitions
 3. Update src/resources/extensions/sf/errors.ts with new error types
 4. Run tests to verify changes

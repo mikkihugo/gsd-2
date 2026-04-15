@@ -41,7 +41,7 @@ describe("worktree-bugfix", () => {
   });
 
   it("resolveGitDir returns .git directory in normal repo", () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-wt-fix-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-wt-fix-"));
     dirs.push(repo);
     initRepo(repo);
     const gitDir = resolveGitDir(repo);
@@ -50,12 +50,12 @@ describe("worktree-bugfix", () => {
   });
 
   it("resolveGitDir follows gitdir: pointer in worktree", () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-wt-fix-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-wt-fix-"));
     dirs.push(repo);
     initRepo(repo);
 
     // Simulate a worktree .git file (git worktree add creates these)
-    const wtDir = mkdtempSync(join(tmpdir(), "gsd-wt-fix-wt-"));
+    const wtDir = mkdtempSync(join(tmpdir(), "sf-wt-fix-wt-"));
     dirs.push(wtDir);
     const realGitDir = join(repo, ".git", "worktrees", "test-wt");
     mkdirSync(realGitDir, { recursive: true });
@@ -66,7 +66,7 @@ describe("worktree-bugfix", () => {
   });
 
   it("resolveGitDir returns default when .git doesn't exist", () => {
-    const noGit = mkdtempSync(join(tmpdir(), "gsd-wt-fix-"));
+    const noGit = mkdtempSync(join(tmpdir(), "sf-wt-fix-"));
     dirs.push(noGit);
     const gitDir = resolveGitDir(noGit);
     assert.ok(gitDir.endsWith(".git"), "returns default .git path");
@@ -89,7 +89,7 @@ describe("worktree-bugfix", () => {
   });
 
   it("captureIntegrationBranch is a no-op when in a worktree", () => {
-    const repo = mkdtempSync(join(tmpdir(), "gsd-wt-fix-"));
+    const repo = mkdtempSync(join(tmpdir(), "sf-wt-fix-"));
     dirs.push(repo);
     initRepo(repo);
 

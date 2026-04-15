@@ -1,5 +1,5 @@
 /**
- * gsd-learning plugin — entry point
+ * sf-learning plugin — entry point
  *
  * Wires together the four S01-S04 modules into a single registerable plugin:
  *
@@ -13,7 +13,7 @@
  *
  *   import { init } from "./index.mjs";
  *   const plugin = await init(pi, {
- *     dbPath: "~/.gsd/gsd-learning.db",
+ *     dbPath: "~/.gsd/sf-learning.db",
  *     priorsPath: "./src/data/model-benchmarks.json",
  *     weightsPath: "./src/data/unit-weights.json",
  *     nPrior: 10,
@@ -36,7 +36,7 @@
  * - Once init succeeds, the running handler is fire-and-forget — it cannot
  *   crash the dispatch path
  *
- * @module gsd-learning
+ * @module sf-learning
  */
 
 import { readFileSync } from "node:fs";
@@ -55,7 +55,7 @@ import { writeFallbackChains } from "./fallback-chain-writer.mjs";
 
 const MODULE_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const SCHEMA_PATH = resolve(MODULE_DIRECTORY, "outcome-schema.sql");
-const DEFAULT_DB_PATH = "~/.gsd/gsd-learning.db";
+const DEFAULT_DB_PATH = "~/.gsd/sf-learning.db";
 const DEFAULT_N_PRIOR = 10;
 const DEFAULT_ROLLING_DAYS = 30;
 const DEFAULT_EXPLORATION_C = 1.4;
@@ -63,7 +63,7 @@ const HOME_REGEX = /^~(?=$|\/)/;
 
 /**
  * @typedef {Object} PluginConfig
- * @property {string} [dbPath]              - default: ~/.gsd/gsd-learning.db
+ * @property {string} [dbPath]              - default: ~/.gsd/sf-learning.db
  * @property {string} [priorsPath]          - default: <plugin>/data/model-benchmarks.json
  * @property {string} [weightsPath]         - default: <plugin>/data/unit-weights.json
  * @property {number} [nPrior=10]
@@ -167,7 +167,7 @@ async function openDatabase(config) {
         const BunDatabase = await tryImportBunSqlite();
         if (!BunDatabase) {
             throw new Error(
-                "gsd-learning is running under Bun but failed to import `bun:sqlite`. This module ships with Bun itself — if this fails the Bun install is broken.",
+                "sf-learning is running under Bun but failed to import `bun:sqlite`. This module ships with Bun itself — if this fails the Bun install is broken.",
             );
         }
         return new BunDatabase(dbPath);
@@ -176,7 +176,7 @@ async function openDatabase(config) {
     const Database = await tryImportBetterSqlite();
     if (!Database) {
         throw new Error(
-            "gsd-learning needs better-sqlite3 to open the outcomes database. Install it with `npm install better-sqlite3` or `bun add better-sqlite3`, or pass a pre-opened db handle via config.db.",
+            "sf-learning needs better-sqlite3 to open the outcomes database. Install it with `npm install better-sqlite3` or `bun add better-sqlite3`, or pass a pre-opened db handle via config.db.",
         );
     }
 
@@ -217,7 +217,7 @@ function buildHookDeps(db, priors, config) {
  */
 function wrapInitError(stage, err) {
     const message = err instanceof Error ? err.message : String(err);
-    const wrapped = new Error(`gsd-learning init failed at stage "${stage}": ${message}`);
+    const wrapped = new Error(`sf-learning init failed at stage "${stage}": ${message}`);
     if (err instanceof Error && err.stack) {
         wrapped.stack = `${wrapped.message}\nCaused by: ${err.stack}`;
     }

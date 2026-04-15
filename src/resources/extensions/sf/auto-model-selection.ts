@@ -74,7 +74,7 @@ export async function selectAndApplyModel(
   /** When false (interactive/guided-flow), skip dynamic routing and use the session model.
    *  Dynamic routing only applies in auto-mode where cost optimization is expected. (#3962) */
   isAutoMode = true,
-  /** Explicit /gsd model pin captured at bootstrap for long-running auto loops. */
+  /** Explicit /sf model pin captured at bootstrap for long-running auto loops. */
   sessionModelOverride?: { provider: string; id: string } | null,
 ): Promise<ModelSelectionResult> {
   const uokFlags = resolveUokFlags(prefs);

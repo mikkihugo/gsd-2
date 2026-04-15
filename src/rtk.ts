@@ -12,9 +12,9 @@ export const RTK_VERSION = "0.33.1";
 export const SF_RTK_DISABLED_ENV = "SF_RTK_DISABLED";
 export const SF_SKIP_RTK_INSTALL_ENV = "SF_SKIP_RTK_INSTALL";
 export const SF_RTK_PATH_ENV = "SF_RTK_PATH";
-export const SF_RTK_DISABLED_ENV = "SF_RTK_DISABLED";
-export const SF_SKIP_RTK_INSTALL_ENV = "SF_SKIP_RTK_INSTALL";
-export const SF_RTK_PATH_ENV = "SF_RTK_PATH";
+export const GSD_RTK_DISABLED_ENV = "GSD_RTK_DISABLED";
+export const GSD_SKIP_RTK_INSTALL_ENV = "GSD_SKIP_RTK_INSTALL";
+export const GSD_RTK_PATH_ENV = "GSD_RTK_PATH";
 export const RTK_TELEMETRY_DISABLED_ENV = "RTK_TELEMETRY_DISABLED";
 
 const RTK_REPO = "rtk-ai/rtk";
@@ -45,11 +45,11 @@ function isTruthy(value: string | undefined): boolean {
 }
 
 export function isRtkEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return !isTruthy(env[SF_RTK_DISABLED_ENV]) && !isTruthy(env[SF_RTK_DISABLED_ENV]);
+  return !isTruthy(env[SF_RTK_DISABLED_ENV]) && !isTruthy(env[GSD_RTK_DISABLED_ENV]);
 }
 
 function resolveAppRoot(env: NodeJS.ProcessEnv = process.env): string {
-  return env.SF_HOME || join(osHomedir(), ".gsd");
+  return env.SF_HOME || env.GSD_HOME || join(osHomedir(), ".gsd");
 }
 
 export function getManagedRtkDir(env: NodeJS.ProcessEnv = process.env): string {

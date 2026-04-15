@@ -26,7 +26,7 @@ import {
 } from "../tools/workflow-tool-executors.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-workflow-executors-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-workflow-executors-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }
@@ -36,7 +36,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gsd", "sf.db"));
 }
 
 async function inProjectDir<T>(dir: string, fn: () => Promise<T>): Promise<T> {

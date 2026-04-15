@@ -1,37 +1,37 @@
 # Headless & CI Mode
 
-`gsd headless` runs SF commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
+`sf headless` runs SF commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
 
 ## Basic Usage
 
 ```bash
 # Run auto mode
-gsd headless
+sf headless
 
 # Run a single unit
-gsd headless next
+sf headless next
 
 # With timeout for CI
-gsd headless --timeout 600000 auto
+sf headless --timeout 600000 auto
 
 # Force a specific phase
-gsd headless dispatch plan
+sf headless dispatch plan
 
 # Stream all events as JSONL
-gsd headless --json auto
+sf headless --json auto
 ```
 
 ## Creating Milestones Headlessly
 
 ```bash
 # From a context file
-gsd headless new-milestone --context brief.md --auto
+sf headless new-milestone --context brief.md --auto
 
 # From inline text
-gsd headless new-milestone --context-text "Build a REST API with auth"
+sf headless new-milestone --context-text "Build a REST API with auth"
 
 # Pipe from stdin
-echo "Build a CLI tool" | gsd headless new-milestone --context -
+echo "Build a CLI tool" | sf headless new-milestone --context -
 ```
 
 ## CLI Flags
@@ -56,27 +56,27 @@ echo "Build a CLI tool" | gsd headless new-milestone --context -
 
 ## Instant State Query
 
-`gsd headless query` returns a JSON snapshot of project state — no AI session, instant response (~50ms):
+`sf headless query` returns a JSON snapshot of project state — no AI session, instant response (~50ms):
 
 ```bash
-gsd headless query | jq '.state.phase'
+sf headless query | jq '.state.phase'
 # "executing"
 
-gsd headless query | jq '.next'
+sf headless query | jq '.next'
 # {"action":"dispatch","unitType":"execute-task","unitId":"M001/S01/T03"}
 
-gsd headless query | jq '.cost.total'
+sf headless query | jq '.cost.total'
 # 4.25
 ```
 
-Any `/gsd` subcommand works as a positional argument: `gsd headless status`, `gsd headless doctor`, etc.
+Any `/sf` subcommand works as a positional argument: `sf headless status`, `sf headless doctor`, etc.
 
 ## MCP Server Mode
 
-`gsd --mode mcp` runs SF as a Model Context Protocol server over stdin/stdout, exposing all SF tools to external AI clients:
+`sf --mode mcp` runs SF as a Model Context Protocol server over stdin/stdout, exposing all SF tools to external AI clients:
 
 ```bash
-gsd --mode mcp
+sf --mode mcp
 ```
 
 Compatible with Claude Desktop, VS Code Copilot, and any MCP host.

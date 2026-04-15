@@ -5,17 +5,17 @@ SF preferences live in YAML frontmatter markdown files. You can configure them g
 ## Managing Preferences
 
 ```
-/gsd prefs              # open the global preferences wizard
-/gsd prefs project      # open the project preferences wizard
-/gsd prefs status       # show current values and where they come from
+/sf prefs              # open the global preferences wizard
+/sf prefs project      # open the project preferences wizard
+/sf prefs status       # show current values and where they come from
 ```
 
 ## Preference Files
 
 | Scope | Path | Applies To |
 |-------|------|-----------|
-| Global | `~/.gsd/PREFERENCES.md` | All projects |
-| Project | `.gsd/PREFERENCES.md` | Current project only |
+| Global | `~/.sf/PREFERENCES.md` | All projects |
+| Project | `.sf/PREFERENCES.md` | Current project only |
 
 **How they merge:**
 - **Scalar fields** (`budget_ceiling`, `token_profile`): project wins if defined
@@ -219,7 +219,7 @@ custom_instructions:
   - "Prefer functional patterns over classes"
 ```
 
-For project-specific patterns, use `.gsd/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically.
+For project-specific patterns, use `.sf/KNOWLEDGE.md` instead — it's injected into every agent prompt automatically.
 
 ### `context_pause_threshold`
 

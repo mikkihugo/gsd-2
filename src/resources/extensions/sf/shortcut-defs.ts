@@ -2,9 +2,9 @@
 
 import { formatShortcut } from "./files.js";
 
-export type GSDShortcutId = "dashboard" | "notifications" | "parallel";
+export type SFShortcutId = "dashboard" | "notifications" | "parallel";
 
-type GSDShortcutDef = {
+type SFShortcutDef = {
   key: "g" | "n" | "p";
   action: string;
   command: string;
@@ -12,23 +12,23 @@ type GSDShortcutDef = {
   hasFallback: boolean;
 };
 
-export const SF_SHORTCUTS: Record<GSDShortcutId, GSDShortcutDef> = {
+export const SF_SHORTCUTS: Record<SFShortcutId, SFShortcutDef> = {
   dashboard: {
     key: "g",
     action: "Open SF dashboard",
-    command: "/gsd status",
+    command: "/sf status",
     hasFallback: true,
   },
   notifications: {
     key: "n",
     action: "Open notification history",
-    command: "/gsd notifications",
+    command: "/sf notifications",
     hasFallback: true,
   },
   parallel: {
     key: "p",
     action: "Open parallel worker monitor",
-    command: "/gsd parallel watch",
+    command: "/sf parallel watch",
     hasFallback: false, // Ctrl+Shift+P conflicts with cycleModelBackward
   },
 };
@@ -37,20 +37,20 @@ function combo(prefix: "Ctrl+Alt+" | "Ctrl+Shift+", key: string): string {
   return `${prefix}${key.toUpperCase()}`;
 }
 
-export function primaryShortcutCombo(id: GSDShortcutId): string {
+export function primaryShortcutCombo(id: SFShortcutId): string {
   return combo("Ctrl+Alt+", SF_SHORTCUTS[id].key);
 }
 
-export function fallbackShortcutCombo(id: GSDShortcutId): string {
+export function fallbackShortcutCombo(id: SFShortcutId): string {
   return combo("Ctrl+Shift+", SF_SHORTCUTS[id].key);
 }
 
-export function shortcutPair(id: GSDShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
+export function shortcutPair(id: SFShortcutId, formatter: (combo: string) => string = (combo) => combo): string {
   const primary = formatter(primaryShortcutCombo(id));
   if (!SF_SHORTCUTS[id].hasFallback) return primary;
   return `${primary} / ${formatter(fallbackShortcutCombo(id))}`;
 }
 
-export function formattedShortcutPair(id: GSDShortcutId): string {
+export function formattedShortcutPair(id: SFShortcutId): string {
   return shortcutPair(id, formatShortcut);
 }

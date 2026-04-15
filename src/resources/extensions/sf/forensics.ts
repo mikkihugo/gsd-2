@@ -22,7 +22,7 @@ import {
   formatCost, formatTokenCount, type UnitMetrics, type MetricsLedger,
 } from "./metrics.js";
 import { readCrashLock, isLockProcessAlive, formatCrashInfo, type LockData } from "./crash-recovery.js";
-import { runGSDDoctor, formatDoctorIssuesForPrompt, type DoctorIssue } from "./doctor.js";
+import { runSFDoctor, formatDoctorIssuesForPrompt, type DoctorIssue } from "./doctor.js";
 import { verifyExpectedArtifact } from "./auto-recovery.js";
 import { deriveState } from "./state.js";
 import { isAutoActive } from "./auto.js";
@@ -97,7 +97,7 @@ interface DbCompletionCounts {
 }
 
 interface ForensicReport {
-  gsdVersion: string;
+  sfVersion: string;
   timestamp: string;
   basePath: string;
   activeMilestone: string | null;
@@ -193,7 +193,7 @@ export async function handleForensics(
   const basePath = process.cwd();
   const root = sfRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No SF state found. Run /gsd auto first.", "warning");
+    ctx.ui.notify("No SF state found. Run /sf auto first.", "warning");
     return;
   }
 
@@ -239,25 +239,25 @@ export async function handleForensics(
 
   // Derive SF source dir for prompt — fall back to ~/.gsd/agent/extensions/sf/
   // when import.meta.url resolves to the npm-global install path (Windows).
-  let gsdSourceDir = dirname(fileURLToPath(import.meta.url));
-  if (!existsSync(join(gsdSourceDir, "prompts"))) {
+  let sfSourceDir = dirname(fileURLToPath(import.meta.url));
+  if (!existsSync(join(sfSourceDir, "prompts"))) {
     const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
-    const fallback = join(sfHome, "agent", "extensions", "gsd");
-    if (existsSync(join(fallback, "prompts"))) gsdSourceDir = fallback;
+    const fallback = join(sfHome, "agent", "extensions", "sf");
+    if (existsSync(join(fallback, "prompts"))) sfSourceDir = fallback;
   }
 
   const forensicData = formatReportForPrompt(report);
   const content = loadPrompt("forensics", {
     problemDescription,
     forensicData,
-    gsdSourceDir,
+    sfSourceDir,
     dedupSection,
   });
 
   ctx.ui.notify(`Forensic report saved: ${relative(basePath, savedPath)}`, "info");
 
   pi.sendMessage(
-    { customType: "gsd-forensics", content, display: false },
+    { customType: "sf-forensics", content, display: false },
     { triggerTurn: true },
   );
 
@@ -298,7 +298,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   // 6. Run doctor
   let doctorIssues: DoctorIssue[] = [];
   try {
-    const report = await runGSDDoctor(basePath, { scope: undefined });
+    const report = await runSFDoctor(basePath, { scope: undefined });
     doctorIssues = report.issues;
   } catch { /* doctor failure is non-fatal */ }
 
@@ -321,7 +321,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   // 8. SF version — use SF_VERSION env var set by the loader at startup.
   // Extensions run from ~/.gsd/agent/extensions/sf/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
-  const gsdVersion = process.env.SF_VERSION || "unknown";
+  const sfVersion = process.env.SF_VERSION || "unknown";
 
   // 9. Scan journal for flow timeline and structured events
   const journalSummary = scanJournalForForensics(basePath);
@@ -340,7 +340,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   detectJournalAnomalies(journalSummary, anomalies);
 
   return {
-    gsdVersion,
+    sfVersion,
     timestamp: new Date().toISOString(),
     basePath,
     activeMilestone,
@@ -715,7 +715,7 @@ function detectTimeouts(traces: UnitTrace[], anomalies: ForensicAnomaly[]): void
     // Check for timeout-recovery custom messages in tool calls
     const hasTimeout = ut.trace.toolCalls.some(tc =>
       tc.name === "sendmessage" &&
-      JSON.stringify(tc.input).includes("gsd-auto-timeout-recovery"),
+      JSON.stringify(tc.input).includes("sf-auto-timeout-recovery"),
     );
     // Check for timeout keywords in last reasoning
     const reasoningTimeout = ut.trace.lastReasoning &&
@@ -904,7 +904,7 @@ function saveForensicReport(basePath: string, report: ForensicReport, problemDes
     `# SF Forensic Report`,
     ``,
     `**Generated:** ${report.timestamp}`,
-    `**SF Version:** ${report.gsdVersion}`,
+    `**SF Version:** ${report.sfVersion}`,
     `**Active Milestone:** ${report.activeMilestone ?? "none"}`,
     `**Active Slice:** ${report.activeSlice ?? "none"}`,
     `**Active Worktree:** ${report.activeWorktree ?? "none"}`,
@@ -1166,7 +1166,7 @@ function formatReportForPrompt(report: ForensicReport): string {
   } else {
     sections.push(`### Completed Keys: ${report.completedKeys.length}`);
   }
-  sections.push(`### SF Version: ${report.gsdVersion}`);
+  sections.push(`### SF Version: ${report.sfVersion}`);
   sections.push(`### Active Milestone: ${report.activeMilestone ?? "none"}`);
   sections.push(`### Active Slice: ${report.activeSlice ?? "none"}`);
   if (report.activeWorktree) {

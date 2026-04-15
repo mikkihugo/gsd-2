@@ -7,7 +7,7 @@ import test from "node:test";
 import { discoverAgents } from "../../subagent/agents.ts";
 
 function makeProjectRoot(t: test.TestContext): string {
-	const root = mkdtempSync(join(tmpdir(), "gsd-subagent-agents-"));
+	const root = mkdtempSync(join(tmpdir(), "sf-subagent-agents-"));
 	t.after(() => rmSync(root, { recursive: true, force: true }));
 	return root;
 }

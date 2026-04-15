@@ -313,8 +313,8 @@ const overlaySrc = readFileSync(overlayPath, "utf-8");
 console.log("\n=== visualizer-overlay.ts source contracts ===");
 
 assert.ok(
-  overlaySrc.includes("export class GSDVisualizerOverlay"),
-  "exports GSDVisualizerOverlay class",
+  overlaySrc.includes("export class SFVisualizerOverlay"),
+  "exports SFVisualizerOverlay class",
 );
 
 assert.ok(
@@ -434,8 +434,8 @@ assert.ok(
 );
 
 assert.ok(
-  coreHandlerSrc.includes("GSDVisualizerOverlay"),
-  "core.ts imports GSDVisualizerOverlay",
+  coreHandlerSrc.includes("SFVisualizerOverlay"),
+  "core.ts imports SFVisualizerOverlay",
 );
 
 assert.ok(

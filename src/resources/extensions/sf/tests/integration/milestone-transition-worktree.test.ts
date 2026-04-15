@@ -33,7 +33,7 @@ function run(command: string, cwd: string): string {
 }
 
 function createTempRepo(): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-mt-wt-test-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "sf-mt-wt-test-")));
   run("git init", dir);
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);

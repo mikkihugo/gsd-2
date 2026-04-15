@@ -60,7 +60,7 @@ export async function handleUndo(args: string, ctx: ExtensionCommandContext, _pi
       `  - Delete summary artifacts\n` +
       `  - Uncheck task in PLAN (if execute-task)\n` +
       `  - Attempt to revert associated git commits\n\n` +
-      `Run /gsd undo --force to confirm.`,
+      `Run /sf undo --force to confirm.`,
       "warning",
     );
     return;
@@ -210,7 +210,7 @@ export async function handleUndoTask(
 
   if (!rawId) {
     ctx.ui.notify(
-      "Usage: /gsd undo-task <taskId> [--force]\n\n" +
+      "Usage: /sf undo-task <taskId> [--force]\n\n" +
       "Accepts: T01, S01/T01, or M001/S01/T01\n" +
       "Resets the task's DB status to pending and re-renders plan checkboxes.",
       "warning",
@@ -241,7 +241,7 @@ export async function handleUndoTask(
       `  - Set task status to "pending" in DB\n` +
       `  - Delete task summary file (if exists)\n` +
       `  - Re-render plan checkboxes\n\n` +
-      `Run /gsd undo-task ${rawId} --force to confirm.`,
+      `Run /sf undo-task ${rawId} --force to confirm.`,
       "warning",
     );
     return;
@@ -289,7 +289,7 @@ export async function handleResetSlice(
 
   if (!rawId) {
     ctx.ui.notify(
-      "Usage: /gsd reset-slice <sliceId> [--force]\n\n" +
+      "Usage: /sf reset-slice <sliceId> [--force]\n\n" +
       "Accepts: S01 or M001/S01\n" +
       "Resets the slice and all its tasks, re-renders plan + roadmap checkboxes.",
       "warning",
@@ -324,7 +324,7 @@ export async function handleResetSlice(
       `  - Set slice status to "active" in DB\n` +
       `  - Delete task summary files, slice summary, and UAT files\n` +
       `  - Re-render plan + roadmap checkboxes\n\n` +
-      `Run /gsd reset-slice ${rawId} --force to confirm.`,
+      `Run /sf reset-slice ${rawId} --force to confirm.`,
       "warning",
     );
     return;

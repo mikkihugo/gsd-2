@@ -60,12 +60,12 @@ describe("complete-slice closes complete-slice-owned gates", () => {
 
   beforeEach(() => {
     dbPath = path.join(
-      fs.mkdtempSync(path.join(os.tmpdir(), "gsd-slice-gate-")),
+      fs.mkdtempSync(path.join(os.tmpdir(), "sf-slice-gate-")),
       "test.db",
     );
     openDatabase(dbPath);
 
-    basePath = fs.mkdtempSync(path.join(os.tmpdir(), "gsd-slice-gate-handler-"));
+    basePath = fs.mkdtempSync(path.join(os.tmpdir(), "sf-slice-gate-handler-"));
     const sliceDir = path.join(
       basePath, ".gsd", "milestones", "M001", "slices", "S01", "tasks",
     );

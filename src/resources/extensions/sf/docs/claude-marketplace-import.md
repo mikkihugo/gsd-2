@@ -11,14 +11,14 @@ SF can read Claude Code marketplace catalogs, inspect the plugins they reference
 The interactive entry point is:
 
 ```text
-/gsd prefs import-claude
+/sf prefs import-claude
 ```
 
 You can also choose scope explicitly:
 
 ```text
-/gsd prefs import-claude global
-/gsd prefs import-claude project
+/sf prefs import-claude global
+/sf prefs import-claude project
 ```
 
 ---
@@ -188,13 +188,13 @@ This feature has been verified in three ways:
 
 1. **Contract/unit tests** for parsing, namespacing, resolution, diagnostics, and import behavior
 2. **Portable integration-style tests** using local or cloned marketplace fixtures
-3. **Real host validation** against the installed `gsd` binary and actual Claude-managed directories on the host machine
+3. **Real host validation** against the installed `sf` binary and actual Claude-managed directories on the host machine
 
 Real host validation included:
 
-- clean startup of the installed `gsd` binary after fixing stale bad settings
+- clean startup of the installed `sf` binary after fixing stale bad settings
 - successful invocation of an imported skill (`/stinkysnake`)
-- successful execution of `/gsd prefs import-claude global`
+- successful execution of `/sf prefs import-claude global`
 - verification that imported marketplace agent directories were **not** reintroduced into `settings.packages`
 
 ---

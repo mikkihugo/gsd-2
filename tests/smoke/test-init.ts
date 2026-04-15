@@ -12,8 +12,8 @@ if (!process.stdin.isTTY && process.env.CI) {
 const tmpDir = mkdtempSync(join(tmpdir(), "gsd-smoke-init-"));
 
 try {
-  const binary = process.env.SF_SMOKE_BINARY || "npx";
-  const args = process.env.SF_SMOKE_BINARY
+  const binary = process.env.SF_SMOKE_BINARY || process.env.GSD_SMOKE_BINARY || "npx";
+  const args = (process.env.SF_SMOKE_BINARY || process.env.GSD_SMOKE_BINARY)
     ? ["init"]
     : ["sf-run", "init"];
 
@@ -21,11 +21,11 @@ try {
     encoding: "utf8",
     timeout: 30_000,
     cwd: tmpDir,
-    env: { ...process.env, SF_NON_INTERACTIVE: "1" },
+    env: { ...process.env, SF_NON_INTERACTIVE: "1", GSD_NON_INTERACTIVE: "1" },
   });
 
-  const gsdDir = join(tmpDir, ".gsd");
-  if (!existsSync(gsdDir)) {
+  const sfDir = join(tmpDir, ".gsd");
+  if (!existsSync(sfDir)) {
     console.error(`.gsd directory not created in ${tmpDir}`);
     process.exit(1);
   }

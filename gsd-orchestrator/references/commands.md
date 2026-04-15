@@ -1,10 +1,10 @@
 # SF Commands Reference
 
-All commands run as subprocesses via `gsd headless [flags] [command] [args...]`.
+All commands run as subprocesses via `sf headless [flags] [command] [args...]`.
 
 ## Global Flags
 
-These flags apply to any `gsd headless` invocation:
+These flags apply to any `sf headless` invocation:
 
 | Flag | Description |
 |------|-------------|
@@ -36,7 +36,7 @@ These flags apply to any `gsd headless` invocation:
 Autonomous mode — loop through all pending units until milestone complete or blocked.
 
 ```bash
-gsd headless --output-format json auto
+sf headless --output-format json auto
 ```
 
 ### `next`
@@ -44,7 +44,7 @@ gsd headless --output-format json auto
 Step mode — execute exactly one unit (task/slice/milestone step), then exit. Recommended for orchestrators that need decision points between steps.
 
 ```bash
-gsd headless --output-format json next
+sf headless --output-format json next
 ```
 
 ### `new-milestone`
@@ -52,10 +52,10 @@ gsd headless --output-format json next
 Create a milestone from a specification document.
 
 ```bash
-gsd headless new-milestone --context spec.md
-gsd headless new-milestone --context spec.md --auto
-gsd headless new-milestone --context-text "Build a REST API" --auto
-cat spec.md | gsd headless new-milestone --context - --auto
+sf headless new-milestone --context spec.md
+sf headless new-milestone --context spec.md --auto
+sf headless new-milestone --context-text "Build a REST API" --auto
+cat spec.md | sf headless new-milestone --context - --auto
 ```
 
 Extra flags:
@@ -68,13 +68,13 @@ Extra flags:
 Force-route to a specific phase, bypassing normal state-machine routing.
 
 ```bash
-gsd headless dispatch research
-gsd headless dispatch plan
-gsd headless dispatch execute
-gsd headless dispatch complete
-gsd headless dispatch reassess
-gsd headless dispatch uat
-gsd headless dispatch replan
+sf headless dispatch research
+sf headless dispatch plan
+sf headless dispatch execute
+sf headless dispatch complete
+sf headless dispatch reassess
+sf headless dispatch uat
+sf headless dispatch replan
 ```
 
 ### `discuss`
@@ -82,7 +82,7 @@ gsd headless dispatch replan
 Start guided milestone/slice discussion.
 
 ```bash
-gsd headless discuss
+sf headless discuss
 ```
 
 ### `stop`
@@ -90,7 +90,7 @@ gsd headless discuss
 Stop auto-mode gracefully.
 
 ```bash
-gsd headless stop
+sf headless stop
 ```
 
 ### `pause`
@@ -98,7 +98,7 @@ gsd headless stop
 Pause auto-mode (preserves state, resumable).
 
 ```bash
-gsd headless pause
+sf headless pause
 ```
 
 ## State Inspection
@@ -108,10 +108,10 @@ gsd headless pause
 **Instant JSON snapshot** — state, next dispatch, parallel costs. No LLM, ~50ms. The recommended way for orchestrators to inspect state.
 
 ```bash
-gsd headless query
-gsd headless query | jq '.state.phase'
-gsd headless query | jq '.next'
-gsd headless query | jq '.cost.total'
+sf headless query
+sf headless query | jq '.state.phase'
+sf headless query | jq '.next'
+sf headless query | jq '.cost.total'
 ```
 
 ### `status`
@@ -119,7 +119,7 @@ gsd headless query | jq '.cost.total'
 Progress dashboard (TUI overlay — useful interactively, not for parsing).
 
 ```bash
-gsd headless status
+sf headless status
 ```
 
 ### `history`
@@ -127,7 +127,7 @@ gsd headless status
 Execution history. Supports `--cost`, `--phase`, `--model`, and `limit` arguments.
 
 ```bash
-gsd headless history
+sf headless history
 ```
 
 ## Unit Control
@@ -137,7 +137,7 @@ gsd headless history
 Prevent a unit from auto-mode dispatch.
 
 ```bash
-gsd headless skip
+sf headless skip
 ```
 
 ### `undo`
@@ -145,8 +145,8 @@ gsd headless skip
 Revert last completed unit. Use `--force` to bypass confirmation.
 
 ```bash
-gsd headless undo
-gsd headless undo --force
+sf headless undo
+sf headless undo --force
 ```
 
 ### `steer <description>`
@@ -154,7 +154,7 @@ gsd headless undo --force
 Hard-steer plan documents during execution. Useful for mid-course corrections.
 
 ```bash
-gsd headless steer "Skip the blocked dependency, use mock instead"
+sf headless steer "Skip the blocked dependency, use mock instead"
 ```
 
 ### `queue`
@@ -162,7 +162,7 @@ gsd headless steer "Skip the blocked dependency, use mock instead"
 Queue and reorder future milestones.
 
 ```bash
-gsd headless queue
+sf headless queue
 ```
 
 ## Configuration & Health
@@ -172,7 +172,7 @@ gsd headless queue
 Runtime health checks with auto-fix.
 
 ```bash
-gsd headless doctor
+sf headless doctor
 ```
 
 ### `prefs`
@@ -180,7 +180,7 @@ gsd headless doctor
 Manage preferences (global/project/status/wizard/setup).
 
 ```bash
-gsd headless prefs
+sf headless prefs
 ```
 
 ### `knowledge <rule|pattern|lesson>`
@@ -188,7 +188,7 @@ gsd headless prefs
 Add persistent project knowledge.
 
 ```bash
-gsd headless knowledge "Always use UTC timestamps in API responses"
+sf headless knowledge "Always use UTC timestamps in API responses"
 ```
 
 ## Phases

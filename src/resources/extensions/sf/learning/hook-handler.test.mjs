@@ -275,7 +275,7 @@ test("registerRoutingHook: registers handler + reload command and routes a simul
     // Route the DB to a non-existent path so the lazy open returns null and
     // the handler runs in priors-only mode (no better-sqlite3 dependency).
     registerRoutingHook(pi, {
-        dbPath: "/tmp/gsd-learning-test-nonexistent.db",
+        dbPath: "/tmp/sf-learning-test-nonexistent.db",
         notify: true,
         explorationWeight: 0,
     });
@@ -285,8 +285,8 @@ test("registerRoutingHook: registers handler + reload command and routes a simul
     assert.ok(Array.isArray(handlers) && handlers.length === 1, "one before_model_select handler should be registered");
 
     // The reload command should be registered if pi exposes registerCommand.
-    assert.ok(pi.commands.has("gsd-learning-reload"), "gsd-learning-reload command should be registered");
-    const reloadCommand = pi.commands.get("gsd-learning-reload");
+    assert.ok(pi.commands.has("sf-learning-reload"), "sf-learning-reload command should be registered");
+    const reloadCommand = pi.commands.get("sf-learning-reload");
     assert.equal(typeof reloadCommand.handler, "function");
 
     // Fire a simulated event with a unit type that S01 priors ought to cover.
@@ -312,7 +312,7 @@ test("registerRoutingHook: registers handler + reload command and routes a simul
         assert.ok(typeof result === "object" && typeof result.modelId === "string", "result must be {modelId}");
         assert.ok(event.eligibleModels.includes(result.modelId), "selected model must be one of the eligibles");
         assert.equal(pi.notifications.length, 1, "exactly one notification should have fired");
-        assert.match(pi.notifications[0].message, /\[gsd-learning\] picked /);
+        assert.match(pi.notifications[0].message, /\[sf-learning\] picked /);
     }
 });
 
@@ -322,7 +322,7 @@ test("registerRoutingHook: malformed events fall through to undefined and never 
 
     const pi = makeFakePi();
     registerRoutingHook(pi, {
-        dbPath: "/tmp/gsd-learning-test-nonexistent-2.db",
+        dbPath: "/tmp/sf-learning-test-nonexistent-2.db",
         notify: false,
         explorationWeight: 0,
     });

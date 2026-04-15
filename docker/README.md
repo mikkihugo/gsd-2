@@ -31,13 +31,13 @@ Docker Sandboxes provide MicroVM isolation — each sandbox runs in a lightweigh
 
 ```bash
 # Create a sandbox from the template
-docker sandbox create --template ./docker --name gsd-sandbox
+docker sandbox create --template ./docker --name sf-sandbox
 
 # Shell into the sandbox
-docker sandbox exec -it gsd-sandbox bash
+docker sandbox exec -it sf-sandbox bash
 
 # Inside the sandbox, run SF
-gsd auto "implement the feature described in issue #42"
+sf auto "implement the feature described in issue #42"
 ```
 
 ### Option B: Docker Compose
@@ -53,15 +53,15 @@ cp docker/.env.example docker/.env
 docker compose -f docker/docker-compose.yaml up -d
 
 # 3. Shell into the container
-docker exec -it gsd-sandbox bash
+docker exec -it sf-sandbox bash
 
 # 4. Run SF inside the container
-gsd auto "implement the feature described in issue #42"
+sf auto "implement the feature described in issue #42"
 ```
 
 ## UID/GID Remapping
 
-The entrypoint handles UID/GID remapping via `PUID` and `PGID` environment variables. This avoids permission issues on bind-mounted volumes by matching the container's `gsd` user to your host UID/GID.
+The entrypoint handles UID/GID remapping via `PUID` and `PGID` environment variables. This avoids permission issues on bind-mounted volumes by matching the container's `sf` user to your host UID/GID.
 
 ```bash
 # Find your host UID/GID
@@ -75,12 +75,12 @@ Set these in your `.env` file or in the `environment` section of the compose fil
 
 The container entrypoint (`entrypoint.sh`) runs four steps on every start:
 
-1. **UID/GID remapping** — adjusts the `gsd` user to match `PUID`/`PGID`
+1. **UID/GID remapping** — adjusts the `sf` user to match `PUID`/`PGID`
 2. **Pre-create critical files** — prevents Docker bind-mount from creating directories where files are expected
 3. **Sentinel-based bootstrap** — runs `bootstrap.sh` exactly once on first boot
-4. **Drop privileges** — `exec gosu gsd` for proper PID 1 signal forwarding
+4. **Drop privileges** — `exec gosu sf` for proper PID 1 signal forwarding
 
-No hardcoded `user:` directive in compose — the entrypoint starts as root, remaps, then drops to `gsd`.
+No hardcoded `user:` directive in compose — the entrypoint starts as root, remaps, then drops to `sf`.
 
 ## Two-Terminal Workflow
 
@@ -88,12 +88,12 @@ SF's recommended workflow uses two terminals — one for auto mode, one for inte
 
 ```bash
 # Terminal 1: auto mode
-docker sandbox exec -it gsd-sandbox bash
-gsd auto "your task description"
+docker sandbox exec -it sf-sandbox bash
+sf auto "your task description"
 
 # Terminal 2: discuss / monitor
-docker sandbox exec -it gsd-sandbox bash
-gsd discuss
+docker sandbox exec -it sf-sandbox bash
+sf discuss
 ```
 
 With Docker Compose, replace `docker sandbox exec` with `docker exec`.
@@ -131,7 +131,7 @@ docker compose -f docker/docker-compose.yaml build --build-arg SF_VERSION=2.51.0
 
 ```bash
 # Docker Sandbox
-docker sandbox rm gsd-sandbox
+docker sandbox rm sf-sandbox
 
 # Docker Compose
 docker compose -f docker/docker-compose.yaml down -v

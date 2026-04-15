@@ -127,7 +127,7 @@ console.log('\n── List Templates ──');
   assert.ok(output.includes('bugfix'), 'Should list bugfix');
   assert.ok(output.includes('spike'), 'Should list spike');
   assert.ok(output.includes('hotfix'), 'Should list hotfix');
-  assert.ok(output.includes('/gsd start'), 'Should include usage hint');
+  assert.ok(output.includes('/sf start'), 'Should include usage hint');
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

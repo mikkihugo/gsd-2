@@ -11,7 +11,7 @@
  *     final-20260201T090000.html   full-project final snapshot
  *
  * Auto-triggered: after each milestone completion (when auto_report: true).
- * Manual: /gsd export --html
+ * Manual: /sf export --html
  */
 
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'node:fs';
@@ -50,7 +50,7 @@ export interface ReportsIndex {
   version: 1;
   projectName: string;
   projectPath: string;
-  gsdVersion: string;
+  sfVersion: string;
   entries: ReportEntry[];
 }
 
@@ -96,7 +96,7 @@ export interface WriteReportSnapshotArgs {
   kind: 'milestone' | 'manual' | 'final';
   projectName: string;
   projectPath: string;
-  gsdVersion: string;
+  sfVersion: string;
   // metrics
   totalCost: number;
   totalTokens: number;
@@ -129,14 +129,14 @@ export function writeReportSnapshot(args: WriteReportSnapshotArgs): string {
     version: 1,
     projectName: args.projectName,
     projectPath: args.projectPath,
-    gsdVersion: args.gsdVersion,
+    sfVersion: args.sfVersion,
     entries: [],
   };
 
   // Keep metadata fresh
   index.projectName = args.projectName;
   index.projectPath = args.projectPath;
-  index.gsdVersion = args.gsdVersion;
+  index.sfVersion = args.sfVersion;
 
   const label = args.milestoneId === 'final'
     ? 'Final Report'
@@ -174,7 +174,7 @@ export function regenerateHtmlIndex(basePath: string, index: ReportsIndex): void
 }
 
 function buildIndexHtml(index: ReportsIndex): string {
-  const { projectName, projectPath, gsdVersion, entries } = index;
+  const { projectName, projectPath, sfVersion, entries } = index;
   const generated = new Date().toISOString();
 
   // Sort oldest → newest for the progression timeline
@@ -285,7 +285,7 @@ function buildIndexHtml(index: ReportsIndex): string {
   <div class="hdr-inner">
     <div class="branding">
       <span class="logo">SF</span>
-      <span class="ver">v${esc(gsdVersion)}</span>
+      <span class="ver">v${esc(sfVersion)}</span>
     </div>
     <div class="hdr-meta">
       <h1>${esc(projectName)} <span class="hdr-subtitle">Reports</span></h1>
@@ -317,14 +317,14 @@ function buildIndexHtml(index: ReportsIndex): string {
       <h2>Progression <span class="sec-count">${entries.length}</span></h2>
       ${sorted.length > 0
         ? `<div class="cards-grid">${cardHtml}</div>`
-        : '<p class="empty">No reports generated yet. Run <code>/gsd export --html</code> or enable <code>auto_report: true</code>.</p>'}
+        : '<p class="empty">No reports generated yet. Run <code>/sf export --html</code> or enable <code>auto_report: true</code>.</p>'}
     </section>
   </main>
 </div>
 
 <footer>
   <div class="ftr-inner">
-    <span class="ftr-brand">SF v${esc(gsdVersion)}</span>
+    <span class="ftr-brand">SF v${esc(sfVersion)}</span>
     <span class="ftr-sep">—</span>
     <span>${esc(projectName)}</span>
     <span class="ftr-sep">—</span>

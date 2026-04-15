@@ -4,53 +4,53 @@
 
 | Flag | Description |
 |------|-------------|
-| `gsd` | Start a new interactive session |
-| `gsd --continue` (`-c`) | Resume the most recent session |
-| `gsd --model <id>` | Override the default model for this session |
-| `gsd --web [path]` | Start browser-based web interface |
-| `gsd --worktree` (`-w`) [name] | Start in a git worktree |
-| `gsd --no-session` | Disable session persistence |
-| `gsd --extension <path>` | Load an additional extension (repeatable) |
-| `gsd --append-system-prompt <text>` | Append text to the system prompt |
-| `gsd --tools <list>` | Comma-separated tools to enable |
-| `gsd --version` (`-v`) | Print version and exit |
-| `gsd --help` (`-h`) | Print help and exit |
-| `gsd --debug` | Enable diagnostic logging |
+| `sf` | Start a new interactive session |
+| `sf --continue` (`-c`) | Resume the most recent session |
+| `sf --model <id>` | Override the default model for this session |
+| `sf --web [path]` | Start browser-based web interface |
+| `sf --worktree` (`-w`) [name] | Start in a git worktree |
+| `sf --no-session` | Disable session persistence |
+| `sf --extension <path>` | Load an additional extension (repeatable) |
+| `sf --append-system-prompt <text>` | Append text to the system prompt |
+| `sf --tools <list>` | Comma-separated tools to enable |
+| `sf --version` (`-v`) | Print version and exit |
+| `sf --help` (`-h`) | Print help and exit |
+| `sf --debug` | Enable diagnostic logging |
 
 ## Non-Interactive Modes
 
 | Flag | Description |
 |------|-------------|
-| `gsd --print "msg"` (`-p`) | Single-shot prompt mode (no TUI) |
-| `gsd --mode <text\|json\|rpc\|mcp>` | Output mode for non-interactive use |
+| `sf --print "msg"` (`-p`) | Single-shot prompt mode (no TUI) |
+| `sf --mode <text\|json\|rpc\|mcp>` | Output mode for non-interactive use |
 
 ## Session Management
 
 | Command | Description |
 |---------|-------------|
-| `gsd sessions` | Interactive session picker — list and resume saved sessions |
-| `gsd --list-models [search]` | List available models and exit |
+| `sf sessions` | Interactive session picker — list and resume saved sessions |
+| `sf --list-models [search]` | List available models and exit |
 
 ## Configuration
 
 | Command | Description |
 |---------|-------------|
-| `gsd config` | Set up global API keys |
-| `gsd update` | Update to the latest version |
+| `sf config` | Set up global API keys |
+| `sf update` | Update to the latest version |
 
 ## Headless Mode
 
 | Flag | Description |
 |------|-------------|
-| `gsd headless` | Run without TUI |
-| `gsd headless --timeout N` | Timeout in ms (default: 300000) |
-| `gsd headless --max-restarts N` | Auto-restart on crash (default: 3) |
-| `gsd headless --json` | Stream events as JSONL |
-| `gsd headless --model ID` | Override model |
-| `gsd headless --context <file>` | Context file for `new-milestone` |
-| `gsd headless --context-text <text>` | Inline context for `new-milestone` |
-| `gsd headless --auto` | Chain into auto mode after milestone creation |
-| `gsd headless query` | Instant JSON state snapshot (~50ms) |
+| `sf headless` | Run without TUI |
+| `sf headless --timeout N` | Timeout in ms (default: 300000) |
+| `sf headless --max-restarts N` | Auto-restart on crash (default: 3) |
+| `sf headless --json` | Stream events as JSONL |
+| `sf headless --model ID` | Override model |
+| `sf headless --context <file>` | Context file for `new-milestone` |
+| `sf headless --context-text <text>` | Inline context for `new-milestone` |
+| `sf headless --auto` | Chain into auto mode after milestone creation |
+| `sf headless query` | Instant JSON state snapshot (~50ms) |
 
 ## Web Interface
 

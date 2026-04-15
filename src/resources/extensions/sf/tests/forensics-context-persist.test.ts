@@ -5,7 +5,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const gsdDir = join(__dirname, "..");
+const sfDir = join(__dirname, "..");
 
 /**
  * Test suite for #2941: Forensics report context lost on follow-up turns.
@@ -24,7 +24,7 @@ describe("forensics context persistence (#2941)", () => {
   // ─── Source-level invariant tests ──────────────────────────────────────────
 
   it("forensics.ts writes active-forensics marker after saving report", () => {
-    const src = readFileSync(join(gsdDir, "forensics.ts"), "utf-8");
+    const src = readFileSync(join(sfDir, "forensics.ts"), "utf-8");
     assert.ok(
       src.includes("active-forensics.json"),
       "forensics.ts must reference active-forensics.json marker file",
@@ -36,19 +36,19 @@ describe("forensics context persistence (#2941)", () => {
   });
 
   it("system-context.ts checks for active forensics marker in buildBeforeAgentStartResult", () => {
-    const src = readFileSync(join(gsdDir, "bootstrap", "system-context.ts"), "utf-8");
+    const src = readFileSync(join(sfDir, "bootstrap", "system-context.ts"), "utf-8");
     assert.ok(
       src.includes("active-forensics.json"),
       "system-context.ts must check for active-forensics.json marker",
     );
     assert.ok(
-      src.includes("gsd-forensics"),
-      "system-context.ts must inject gsd-forensics customType message",
+      src.includes("sf-forensics"),
+      "system-context.ts must inject sf-forensics customType message",
     );
   });
 
   it("system-context.ts exports clearForensicsMarker for cleanup", () => {
-    const src = readFileSync(join(gsdDir, "bootstrap", "system-context.ts"), "utf-8");
+    const src = readFileSync(join(sfDir, "bootstrap", "system-context.ts"), "utf-8");
     assert.ok(
       src.includes("clearForensicsMarker"),
       "system-context.ts must export clearForensicsMarker function",

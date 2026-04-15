@@ -4,7 +4,7 @@
 name: bugfix
 version: 1
 requires_project: false
-artifact_dir: .gsd/workflows/bugfixes/
+artifact_dir: .sf/workflows/bugfixes/
 </template_meta>
 
 <purpose>

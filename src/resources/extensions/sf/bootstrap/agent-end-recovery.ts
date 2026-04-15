@@ -174,7 +174,7 @@ export async function handleAgentEnd(
         ctx.ui.notify(`Network error on ${currentModelId}${errorDetail}. Retry ${attempt}/${MAX_NETWORK_RETRIES} in ${delayMs / 1000}s...`, "warning");
         setTimeout(() => {
           pi.sendMessage(
-            { customType: "gsd-auto-timeout-recovery", content: "Continue execution — retrying after transient network error.", display: false },
+            { customType: "sf-auto-timeout-recovery", content: "Continue execution — retrying after transient network error.", display: false },
             { triggerTurn: true },
           );
         }, delayMs);
@@ -204,7 +204,7 @@ export async function handleAgentEnd(
               const ok = await pi.setModel(modelToSet, { persist: persistModelChanges });
               if (ok) {
                 ctx.ui.notify(`Model error${errorDetail}. Switched to fallback: ${nextModelId} and resuming.`, "warning");
-                pi.sendMessage({ customType: "gsd-auto-timeout-recovery", content: "Continue execution.", display: false }, { triggerTurn: true });
+                pi.sendMessage({ customType: "sf-auto-timeout-recovery", content: "Continue execution.", display: false }, { triggerTurn: true });
                 return;
               }
             }
@@ -223,7 +223,7 @@ export async function handleAgentEnd(
               retryState.networkRetryCount = 0;
               retryState.currentRetryModelId = undefined;
               ctx.ui.notify(`Model error${errorDetail}. Restored session model: ${sessionModel.provider}/${sessionModel.id} and resuming.`, "warning");
-              pi.sendMessage({ customType: "gsd-auto-timeout-recovery", content: "Continue execution.", display: false }, { triggerTurn: true });
+              pi.sendMessage({ customType: "sf-auto-timeout-recovery", content: "Continue execution.", display: false }, { triggerTurn: true });
               return;
             }
           }

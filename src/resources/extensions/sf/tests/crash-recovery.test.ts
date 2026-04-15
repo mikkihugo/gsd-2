@@ -20,10 +20,10 @@ import {
   readPausedSessionMetadata,
 } from "../interrupted-session.ts";
 import { sfRoot } from "../paths.ts";
-import type { GSDState } from "../types.ts";
+import type { SFState } from "../types.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }
@@ -123,7 +123,7 @@ function writeActivityLog(base: string, entries: Record<string, unknown>[]): voi
   );
 }
 
-function makeState(phase: GSDState["phase"], activeMilestone = true): GSDState {
+function makeState(phase: SFState["phase"], activeMilestone = true): SFState {
   return {
     activeMilestone: activeMilestone ? { id: "M001", title: "Test" } : null,
     activeSlice: null,

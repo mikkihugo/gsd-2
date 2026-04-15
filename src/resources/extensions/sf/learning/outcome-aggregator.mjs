@@ -1,5 +1,5 @@
 /**
- * gsd-learning: outcome-aggregator
+ * sf-learning: outcome-aggregator
  *
  * Reads `llm_task_outcomes` and computes rolling-window stats per
  * `(model_id, unit_type)` for the Bayesian blender.
@@ -20,7 +20,7 @@
  * - `verification_pass_rate` is null when no row in the window had a
  *   non-null `verification_passed` value.
  *
- * @module gsd-learning/outcome-aggregator
+ * @module sf-learning/outcome-aggregator
  */
 
 const DEFAULT_ROLLING_DAYS = 30;

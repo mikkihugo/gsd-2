@@ -1222,7 +1222,7 @@ export function renderHealthView(
         : "all healthy";
     lines.push(`  ${th.fg("text", String(total))} skills tracked  ·  ${th.fg(issueColor, issueTag)}`);
     if (topIssue) lines.push(`  ${th.fg("warning", "⚠")} ${th.fg("dim", topIssue)}`);
-    lines.push(`  ${th.fg("dim", "→ /gsd skill-health for full report")}`);
+    lines.push(`  ${th.fg("dim", "→ /sf skill-health for full report")}`);
   }
 
   return lines;

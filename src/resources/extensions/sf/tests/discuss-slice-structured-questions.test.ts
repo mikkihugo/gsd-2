@@ -13,7 +13,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const template = readFileSync(
-  resolve(process.cwd(), 'src', 'resources', 'extensions', 'gsd', 'prompts', 'guided-discuss-slice.md'),
+  resolve(process.cwd(), 'src', 'resources', 'extensions', 'sf', 'prompts', 'guided-discuss-slice.md'),
   'utf-8',
 )
 

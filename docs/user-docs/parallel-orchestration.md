@@ -19,7 +19,7 @@ parallel:
 2. Start parallel execution:
 
 ```
-/gsd parallel start
+/sf parallel start
 ```
 
 SF scans your milestones, checks dependencies and file overlap, shows an eligibility report, and spawns workers for eligible milestones.
@@ -27,13 +27,13 @@ SF scans your milestones, checks dependencies and file overlap, shows an eligibi
 3. Monitor progress:
 
 ```
-/gsd parallel status
+/sf parallel status
 ```
 
 4. Stop when done:
 
 ```
-/gsd parallel stop
+/sf parallel stop
 ```
 
 ## How It Works
@@ -58,7 +58,7 @@ SF scans your milestones, checks dependencies and file overlap, shows an eligibi
 │  └──────────┘  └──────────┘  └──────────┘              │
 │       │              │              │                   │
 │       ▼              ▼              ▼                   │
-│  .gsd/worktrees/ .gsd/worktrees/ .gsd/worktrees/       │
+│  .sf/worktrees/ .sf/worktrees/ .sf/worktrees/       │
 │  M001/           M003/           M005/                  │
 │  (milestone/     (milestone/     (milestone/            │
 │   M001 branch)    M003 branch)    M005 branch)          │
@@ -67,7 +67,7 @@ SF scans your milestones, checks dependencies and file overlap, shows an eligibi
 
 ### Worker Isolation
 
-Each worker is a separate `gsd` process with complete isolation:
+Each worker is a separate `sf` process with complete isolation:
 
 | Resource | Isolation Method |
 |----------|-----------------|
@@ -75,15 +75,15 @@ Each worker is a separate `gsd` process with complete isolation:
 | **Git branch** | `milestone/<MID>` — one branch per milestone |
 | **State derivation** | `SF_MILESTONE_LOCK` env var — `deriveState()` only sees the assigned milestone |
 | **Context window** | Separate process — each worker has its own agent sessions |
-| **Metrics** | Each worktree has its own `.gsd/metrics.json` |
-| **Crash recovery** | Each worktree has its own `.gsd/auto.lock` |
+| **Metrics** | Each worktree has its own `.sf/metrics.json` |
+| **Crash recovery** | Each worktree has its own `.sf/auto.lock` |
 
 ### Coordination
 
 Workers and the coordinator communicate through file-based IPC:
 
-- **Session status files** (`.gsd/parallel/<MID>.status.json`) — workers write heartbeats, the coordinator reads them
-- **Signal files** (`.gsd/parallel/<MID>.signal.json`) — coordinator writes signals, workers consume them
+- **Session status files** (`.sf/parallel/<MID>.status.json`) — workers write heartbeats, the coordinator reads them
+- **Signal files** (`.sf/parallel/<MID>.signal.json`) — coordinator writes signals, workers consume them
 - **Atomic writes** — write-to-temp + rename prevents partial reads
 
 ## Eligibility Analysis
@@ -126,7 +126,7 @@ File overlaps are warnings, not blockers. Both milestones work in separate workt
 
 ## Configuration
 
-Add to `~/.gsd/PREFERENCES.md` or `.gsd/PREFERENCES.md`:
+Add to `~/.sf/PREFERENCES.md` or `.sf/PREFERENCES.md`:
 
 ```yaml
 ---
@@ -143,26 +143,26 @@ parallel:
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
-| `enabled` | boolean | `false` | Master toggle. Must be `true` for `/gsd parallel` commands to work. |
+| `enabled` | boolean | `false` | Master toggle. Must be `true` for `/sf parallel` commands to work. |
 | `max_workers` | number (1-4) | `2` | Maximum concurrent worker processes. Higher values use more memory and API budget. |
 | `budget_ceiling` | number | none | Aggregate cost ceiling in USD across all workers. When reached, no new units are dispatched. |
 | `merge_strategy` | `"per-slice"` or `"per-milestone"` | `"per-milestone"` | When worktree changes merge back to main. Per-milestone waits for the full milestone to complete. |
-| `auto_merge` | `"auto"`, `"confirm"`, `"manual"` | `"confirm"` | How merge-back is handled. `confirm` prompts before merging. `manual` requires explicit `/gsd parallel merge`. |
+| `auto_merge` | `"auto"`, `"confirm"`, `"manual"` | `"confirm"` | How merge-back is handled. `confirm` prompts before merging. `manual` requires explicit `/sf parallel merge`. |
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/gsd parallel start` | Analyze eligibility, confirm, and start workers |
-| `/gsd parallel status` | Show all workers with state, units completed, and cost |
-| `/gsd parallel stop` | Stop all workers (sends SIGTERM) |
-| `/gsd parallel stop M002` | Stop a specific milestone's worker |
-| `/gsd parallel pause` | Pause all workers (finish current unit, then wait) |
-| `/gsd parallel pause M002` | Pause a specific worker |
-| `/gsd parallel resume` | Resume all paused workers |
-| `/gsd parallel resume M002` | Resume a specific worker |
-| `/gsd parallel merge` | Merge all completed milestones back to main |
-| `/gsd parallel merge M002` | Merge a specific milestone back to main |
+| `/sf parallel start` | Analyze eligibility, confirm, and start workers |
+| `/sf parallel status` | Show all workers with state, units completed, and cost |
+| `/sf parallel stop` | Stop all workers (sends SIGTERM) |
+| `/sf parallel stop M002` | Stop a specific milestone's worker |
+| `/sf parallel pause` | Pause all workers (finish current unit, then wait) |
+| `/sf parallel pause M002` | Pause a specific worker |
+| `/sf parallel resume` | Resume all paused workers |
+| `/sf parallel resume M002` | Resume a specific worker |
+| `/sf parallel merge` | Merge all completed milestones back to main |
+| `/sf parallel merge M002` | Merge a specific milestone back to main |
 
 ## Signal Lifecycle
 
@@ -200,13 +200,13 @@ When milestones complete, their worktree changes need to merge back to main.
 
 ### Conflict Handling
 
-1. `.gsd/` state files (STATE.md, metrics.json, etc.) — **auto-resolved** by accepting the milestone branch version
-2. Code conflicts — **stop and report**. The merge halts, showing which files conflict. Resolve manually and retry with `/gsd parallel merge <MID>`.
+1. `.sf/` state files (STATE.md, metrics.json, etc.) — **auto-resolved** by accepting the milestone branch version
+2. Code conflicts — **stop and report**. The merge halts, showing which files conflict. Resolve manually and retry with `/sf parallel merge <MID>`.
 
 ### Example
 
 ```
-/gsd parallel merge
+/sf parallel merge
 
 # Merge Results
 
@@ -214,7 +214,7 @@ When milestones complete, their worktree changes need to merge back to main.
 - **M003** — CONFLICT (2 file(s)):
   - `src/types.ts`
   - `src/middleware.ts`
-  Resolve conflicts manually and run `/gsd parallel merge M003` to retry.
+  Resolve conflicts manually and run `/sf parallel merge M003` to retry.
 ```
 
 ## Budget Management
@@ -229,11 +229,11 @@ When `budget_ceiling` is set, the coordinator tracks aggregate cost across all w
 
 ### Doctor Integration
 
-`/gsd doctor` detects parallel session issues:
+`/sf doctor` detects parallel session issues:
 
-- **Stale parallel sessions** — Worker process died without cleanup. Doctor finds `.gsd/parallel/*.status.json` files with dead PIDs or expired heartbeats and removes them.
+- **Stale parallel sessions** — Worker process died without cleanup. Doctor finds `.sf/parallel/*.status.json` files with dead PIDs or expired heartbeats and removes them.
 
-Run `/gsd doctor --fix` to clean up automatically.
+Run `/sf doctor --fix` to clean up automatically.
 
 ### Stale Detection
 
@@ -255,12 +255,12 @@ The coordinator runs stale detection during `refreshWorkerStatuses()` and automa
 | **Budget ceiling** | Aggregate cost enforcement across all workers |
 | **Signal-based shutdown** | Graceful stop via file signals + SIGTERM |
 | **Doctor integration** | Detects and cleans up orphaned sessions |
-| **Conflict-aware merge** | Stops on code conflicts, auto-resolves `.gsd/` state conflicts |
+| **Conflict-aware merge** | Stops on code conflicts, auto-resolves `.sf/` state conflicts |
 
 ## File Layout
 
 ```
-.gsd/
+.sf/
 ├── parallel/                    # Coordinator ↔ worker IPC
 │   ├── M002.status.json         # Worker heartbeat + progress
 │   ├── M002.signal.json         # Coordinator → worker signals
@@ -268,7 +268,7 @@ The coordinator runs stale detection during `refreshWorkerStatuses()` and automa
 │   └── M003.signal.json
 ├── worktrees/                   # Git worktrees (one per milestone)
 │   ├── M002/                    # M002's isolated checkout
-│   │   ├── .gsd/                # M002's own state files
+│   │   ├── .sf/                # M002's own state files
 │   │   │   ├── auto.lock
 │   │   │   ├── metrics.json
 │   │   │   └── milestones/
@@ -278,7 +278,7 @@ The coordinator runs stale detection during `refreshWorkerStatuses()` and automa
 └── ...
 ```
 
-Both `.gsd/parallel/` and `.gsd/worktrees/` are gitignored — they're runtime-only coordination files that never get committed.
+Both `.sf/parallel/` and `.sf/worktrees/` are gitignored — they're runtime-only coordination files that never get committed.
 
 ## Troubleshooting
 
@@ -288,22 +288,22 @@ Set `parallel.enabled: true` in your preferences file.
 
 ### "No milestones are eligible for parallel execution"
 
-All milestones are either complete or blocked by dependencies. Check `/gsd queue` to see milestone status and dependency chains.
+All milestones are either complete or blocked by dependencies. Check `/sf queue` to see milestone status and dependency chains.
 
 ### Worker crashed — how to recover
 
 Workers now persist their state to disk automatically. If a worker process dies, the coordinator detects the dead PID via heartbeat expiry and marks the worker as crashed. On restart, the worker picks up from disk state — crash recovery, worktree re-entry, and completed-unit tracking carry over from the crashed session.
 
-1. Run `/gsd doctor --fix` to clean up stale sessions
-2. Run `/gsd parallel status` to see current state
-3. Re-run `/gsd parallel start` to spawn new workers for remaining milestones
+1. Run `/sf doctor --fix` to clean up stale sessions
+2. Run `/sf parallel status` to see current state
+3. Re-run `/sf parallel start` to spawn new workers for remaining milestones
 
 ### Merge conflicts after parallel completion
 
-1. Run `/gsd parallel merge` to see which milestones have conflicts
-2. Resolve conflicts in the worktree at `.gsd/worktrees/<MID>/`
-3. Retry with `/gsd parallel merge <MID>`
+1. Run `/sf parallel merge` to see which milestones have conflicts
+2. Resolve conflicts in the worktree at `.sf/worktrees/<MID>/`
+3. Retry with `/sf parallel merge <MID>`
 
 ### Workers seem stuck
 
-Check if budget ceiling was reached: `/gsd parallel status` shows per-worker costs. Increase `parallel.budget_ceiling` or remove it to continue.
+Check if budget ceiling was reached: `/sf parallel status` shows per-worker costs. Increase `parallel.budget_ceiling` or remove it to continue.

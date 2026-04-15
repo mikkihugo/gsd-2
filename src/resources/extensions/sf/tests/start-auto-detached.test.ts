@@ -3,10 +3,10 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const gsdDir = resolve(import.meta.dirname, "..");
+const sfDir = resolve(import.meta.dirname, "..");
 
 function readGsdFile(relativePath: string): string {
-  return readFileSync(resolve(gsdDir, relativePath), "utf-8");
+  return readFileSync(resolve(sfDir, relativePath), "utf-8");
 }
 
 test("command entrypoints use startAutoDetached instead of awaiting startAuto (#3733)", () => {

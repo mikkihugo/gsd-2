@@ -18,7 +18,7 @@ describe("isSafeToAutoResolve", () => {
   test("returns true for .gsd/ prefixed paths", () => {
     assert.ok(isSafeToAutoResolve(".gsd/STATE.md"));
     assert.ok(isSafeToAutoResolve(".gsd/milestones/M001/CONTEXT.md"));
-    assert.ok(isSafeToAutoResolve(".gsd/gsd.db"));
+    assert.ok(isSafeToAutoResolve(".gsd/sf.db"));
   });
 
   // ─── Build artifact patterns ─────────────────────────────────────────────

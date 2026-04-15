@@ -13,7 +13,7 @@ export async function checkEngineHealth(
   issues: DoctorIssue[],
   fixesApplied: string[],
 ): Promise<void> {
-  const dbPath = join(basePath, ".gsd", "gsd.db");
+  const dbPath = join(basePath, ".gsd", "sf.db");
 
   if (!isDbAvailable() && existsSync(dbPath)) {
     issues.push({
@@ -22,7 +22,7 @@ export async function checkEngineHealth(
       scope: "project",
       unitId: "project",
       message: "Database unavailable — using filesystem state derivation (degraded mode). State queries may be slower and less reliable.",
-      file: ".gsd/gsd.db",
+      file: ".gsd/sf.db",
       fixable: false,
     });
   }

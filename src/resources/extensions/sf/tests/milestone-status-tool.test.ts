@@ -1,4 +1,4 @@
-// GSD2 — Tests for sf_milestone_status read-only query tool
+// SF2 — Tests for sf_milestone_status read-only query tool
 
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -25,7 +25,7 @@ function makeMockPi() {
 }
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-query-tool-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-query-tool-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }
@@ -35,7 +35,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  openDatabase(join(base, ".gsd", "gsd.db"));
+  openDatabase(join(base, ".gsd", "sf.db"));
 }
 
 async function executeToolInDir(tool: any, params: Record<string, unknown>, dir: string) {
@@ -183,7 +183,7 @@ test("sf_milestone_status returns not-found for missing milestone", async () => 
 
 test("sf_milestone_status handles missing DB gracefully", async () => {
   // Create a directory without .gsd/ to ensure ensureDbOpen has nothing to open
-  const base = join(tmpdir(), `gsd-no-db-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-no-db-${randomUUID()}`);
   mkdirSync(base, { recursive: true });
   closeDatabase(); // ensure no prior DB is open
   try {

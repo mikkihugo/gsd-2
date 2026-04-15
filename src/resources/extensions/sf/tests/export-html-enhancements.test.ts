@@ -9,7 +9,7 @@ function mockOpts(overrides: Partial<HtmlReportOptions> = {}): HtmlReportOptions
   return {
     projectName: "TestProject",
     projectPath: "/tmp/test",
-    gsdVersion: "2.28.0",
+    sfVersion: "2.28.0",
     ...overrides,
   };
 }
@@ -322,13 +322,13 @@ test("Feature 9: timeline filter JS is included", () => {
 test("Feature 10: collapsible sections JS is included", () => {
   const html = generateHtmlReport(mockData(), mockOpts());
   assert.ok(html.includes("sec-toggle"), "should contain section toggle class");
-  assert.ok(html.includes("gsd-collapsed"), "should reference localStorage key for collapsed state");
+  assert.ok(html.includes("sf-collapsed"), "should reference localStorage key for collapsed state");
 });
 
 test("Feature 11: dark/light theme toggle JS is included", () => {
   const html = generateHtmlReport(mockData(), mockOpts());
   assert.ok(html.includes("theme-toggle"), "should contain theme toggle class");
-  assert.ok(html.includes("gsd-theme"), "should reference localStorage key for theme");
+  assert.ok(html.includes("sf-theme"), "should reference localStorage key for theme");
   assert.ok(html.includes("light-theme"), "should reference light-theme class");
 });
 

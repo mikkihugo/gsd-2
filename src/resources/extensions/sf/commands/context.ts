@@ -16,10 +16,10 @@ export interface GsdDispatchContext {
  * Typed error for when SF is run outside a valid project directory.
  * Command handlers catch this to show a friendly message instead of a raw exception.
  */
-export class GSDNoProjectError extends Error {
+export class SFNoProjectError extends Error {
   constructor(reason: string) {
     super(reason);
-    this.name = "GSDNoProjectError";
+    this.name = "SFNoProjectError";
   }
 }
 
@@ -35,7 +35,7 @@ export function projectRoot(): string {
   const pathToCheck = root !== cwd ? cwd : root;
   const result = validateDirectory(pathToCheck);
   if (result.severity === "blocked") {
-    throw new GSDNoProjectError(result.reason ?? "SF must be run inside a project directory.");
+    throw new SFNoProjectError(result.reason ?? "SF must be run inside a project directory.");
   }
   return root;
 }
@@ -58,7 +58,7 @@ export async function guardRemoteSession(
   if (process.env.SF_WEB_BRIDGE_TUI === "1") {
     ctx.ui.notify(
       `Another auto-mode session (PID ${remote.pid}) is running on this project (${unitLabel}). ` +
-      `Stop it first with /gsd stop, or use /gsd steer to redirect it.`,
+      `Stop it first with /sf stop, or use /sf steer to redirect it.`,
       "warning",
     );
     return false;
@@ -80,7 +80,7 @@ export async function guardRemoteSession(
       {
         id: "steer",
         label: "Steer the session",
-        description: "Use /gsd steer <instruction> to redirect the running session.",
+        description: "Use /sf steer <instruction> to redirect the running session.",
       },
       {
         id: "stop",
@@ -93,7 +93,7 @@ export async function guardRemoteSession(
         description: "Start a new session, terminating the existing one.",
       },
     ],
-    notYetMessage: "Run /gsd when ready.",
+    notYetMessage: "Run /sf when ready.",
   });
 
   if (choice === "status") {
@@ -102,8 +102,8 @@ export async function guardRemoteSession(
   }
   if (choice === "steer") {
     ctx.ui.notify(
-      "Use /gsd steer <instruction> to redirect the running auto-mode session.\n" +
-      "Example: /gsd steer Use Postgres instead of SQLite",
+      "Use /sf steer <instruction> to redirect the running auto-mode session.\n" +
+      "Example: /sf steer Use Postgres instead of SQLite",
       "info",
     );
     return false;

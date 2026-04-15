@@ -1,4 +1,4 @@
-# @gsd-build/mcp-server
+# @sf-build/mcp-server
 
 MCP server exposing SF orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
 
@@ -13,14 +13,14 @@ This package now exposes two tool surfaces:
 ## Installation
 
 ```bash
-npm install @gsd-build/mcp-server
+npm install @sf-build/mcp-server
 ```
 
 Or with the monorepo workspace:
 
 ```bash
 # Already available as a workspace package
-npx gsd-mcp-server
+npx sf-mcp-server
 ```
 
 ## Configuration
@@ -32,11 +32,11 @@ Add to your project's `.mcp.json`:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "sf": {
       "command": "npx",
-      "args": ["gsd-mcp-server"],
+      "args": ["sf-mcp-server"],
       "env": {
-        "SF_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/sf"
       }
     }
   }
@@ -48,8 +48,8 @@ Or if installed globally:
 ```json
 {
   "mcpServers": {
-    "gsd": {
-      "command": "gsd-mcp-server"
+    "sf": {
+      "command": "sf-mcp-server"
     }
   }
 }
@@ -62,11 +62,11 @@ Add to `.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
-    "gsd": {
+    "sf": {
       "command": "npx",
-      "args": ["gsd-mcp-server"],
+      "args": ["sf-mcp-server"],
       "env": {
-        "SF_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/sf"
       }
     }
   }
@@ -133,7 +133,7 @@ Start a SF auto-mode session for a project directory.
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `projectDir` | `string` | ✅ | Absolute path to the project directory |
-| `command` | `string` | | Command to send (default: `"/gsd auto"`) |
+| `command` | `string` | | Command to send (default: `"/sf auto"`) |
 | `model` | `string` | | Model ID override |
 | `bare` | `boolean` | | Run in bare mode (skip user config) |
 
@@ -231,21 +231,21 @@ Resolve a pending blocker in a session by sending a response to the blocked UI r
 
 | Variable | Description |
 |----------|-------------|
-| `SF_CLI_PATH` | Absolute path to the SF CLI binary. If not set, the server resolves `gsd` via `which`. |
+| `SF_CLI_PATH` | Absolute path to the SF CLI binary. If not set, the server resolves `sf` via `which`. |
 | `SF_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared SF workflow executor module used by workflow mutation tools. |
 
-The server also hydrates supported model-provider and tool credentials from `~/.gsd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
+The server also hydrates supported model-provider and tool credentials from `~/.sf/agent/auth.json` on startup. Keys saved through `/sf config` or `/sf keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
 
 ## Architecture
 
 ```
 ┌─────────────────┐     stdio      ┌──────────────────┐
-│  MCP Client     │ ◄────────────► │  @gsd-build/mcp-server │
+│  MCP Client     │ ◄────────────► │  @sf-build/mcp-server │
 │  (Claude Code,  │    JSON-RPC    │                  │
 │   Cursor, etc.) │                │  SessionManager  │
 └─────────────────┘                │       │          │
                                    │       ▼          │
-                                   │  @gsd-build/rpc-client │
+                                   │  @sf-build/rpc-client │
                                    │       │          │
                                    │       ▼          │
                                    │  SF CLI (child  │
@@ -253,9 +253,9 @@ The server also hydrates supported model-provider and tool credentials from `~/.
                                    └──────────────────┘
 ```
 
-- **@gsd-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
+- **@sf-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
 - **SessionManager** — Manages RpcClient lifecycle. One session per project directory. Tracks events in a ring buffer (last 50), detects blockers, accumulates cost.
-- **@gsd-build/rpc-client** — Low-level RPC client that spawns and communicates with the SF CLI process via JSON-RPC over stdio.
+- **@sf-build/rpc-client** — Low-level RPC client that spawns and communicates with the SF CLI process via JSON-RPC over stdio.
 
 ## License
 

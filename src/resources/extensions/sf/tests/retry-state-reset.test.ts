@@ -21,7 +21,7 @@ import { parseUnitId } from "../unit-id.ts";
 // ─── Fixture Helpers ───────────────────────────────────────────────────────
 
 function createRetryFixture(): { base: string; cleanup: () => void } {
-  const base = mkdtempSync(join(tmpdir(), "gsd-retry-reset-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-retry-reset-"));
 
   // Create the .gsd structure for M001/S01/T01
   const milestonesTasksDir = join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
@@ -247,7 +247,7 @@ test('Full retry reset: all steps combined', () => {
 // Test: Reset is idempotent — no crash when artifacts are already missing
 // ═══════════════════════════════════════════════════════════════════════════
 test('Retry reset: idempotent when artifacts already missing', () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-retry-idempotent-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-retry-idempotent-"));
   try {
     // Create minimal structure — NO summary, NO retry artifact, NO plan
     mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });

@@ -21,7 +21,7 @@ describe("rewrite-docs circuit breaker persistence (#2203)", () => {
   let tempBase: string;
 
   beforeEach(() => {
-    tempBase = mkdtempSync(join(tmpdir(), "gsd-rewrite-test-"));
+    tempBase = mkdtempSync(join(tmpdir(), "sf-rewrite-test-"));
     // Create .gsd/ directory so sfRoot resolves to it
     mkdirSync(join(tempBase, ".gsd", "runtime"), { recursive: true });
   });

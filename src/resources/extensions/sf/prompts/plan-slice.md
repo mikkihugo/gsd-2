@@ -45,8 +45,8 @@ Narrate your decomposition reasoning — why you're grouping work this way, what
 Then:
 0. If `REQUIREMENTS.md` was preloaded above, identify which Active requirements the roadmap says this slice owns or supports. These are the requirements this plan must deliver — every owned requirement needs at least one task that directly advances it, and verification must prove the requirement is met.
 1. Read the templates:
-   - `~/.gsd/agent/extensions/sf/templates/plan.md`
-   - `~/.gsd/agent/extensions/sf/templates/task-plan.md`
+   - `~/.sf/agent/extensions/sf/templates/plan.md`
+   - `~/.sf/agent/extensions/sf/templates/task-plan.md`
 2. {{skillActivation}} Record the installed skills you expect executors to use in each task plan's `skills_used` frontmatter.
 3. Define slice-level verification — the objective stopping condition for this slice:
    - For non-trivial slices: plan actual test files with real assertions. Name the files.
@@ -77,7 +77,7 @@ Then:
     - **Scope sanity:** Target 2–5 steps and 3–8 files per task. 10+ steps or 12+ files — must split. Each task must be completable in a single fresh context window.
     - **Feature completeness:** Every task produces real, user-facing progress — not just internal scaffolding.
     - **Quality gate coverage:** For non-trivial slices, Threat Surface and Requirement Impact sections are present and specific (not placeholder text). For non-trivial tasks, Failure Modes, Load Profile, and Negative Tests are addressed in the task plan.
-10. If planning produced structural decisions, append them to `.gsd/DECISIONS.md`
+10. If planning produced structural decisions, append them to `.sf/DECISIONS.md`
 11. {{commitInstruction}}
 
 The slice directory and tasks/ subdirectory already exist. Do NOT mkdir. All work stays in your working directory: `{{workingDirectory}}`.

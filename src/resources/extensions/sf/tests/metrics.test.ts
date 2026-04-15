@@ -200,7 +200,7 @@ test("old UnitMetrics without budget fields work with all aggregation functions"
 // ── Disk I/O ─────────────────────────────────────────────────────────────────
 
 test("initMetrics creates ledger, snapshotUnitMetrics persists across resets", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-test-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-test-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
 
   try {
@@ -255,7 +255,7 @@ test("initMetrics creates ledger, snapshotUnitMetrics persists across resets", (
 // ── snapshotUnitMetrics idempotency ──────────────────────────────────────────
 
 test("snapshotUnitMetrics deduplicates entries with same type+id+startedAt", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-dedup-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-dedup-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
   try {
     initMetrics(tmpBase);
@@ -300,7 +300,7 @@ test("snapshotUnitMetrics deduplicates entries with same type+id+startedAt", () 
 });
 
 test("snapshotUnitMetrics handles simulated idle-watchdog duplicate pattern", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-watchdog-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-watchdog-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
   try {
     initMetrics(tmpBase);
@@ -338,7 +338,7 @@ test("snapshotUnitMetrics handles simulated idle-watchdog duplicate pattern", ()
 // ── toolCall block counting ─────────────────────────────────────────────────
 
 test("snapshotUnitMetrics counts toolCall blocks correctly (#1713)", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-toolcall-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-toolcall-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
 
   try {
@@ -386,7 +386,7 @@ test("snapshotUnitMetrics counts toolCall blocks correctly (#1713)", () => {
 // ── #1943 — Duplicate metrics entries from idle watchdog ──────────────────────
 
 test("#1943 initMetrics deduplicates entries loaded from a corrupted disk ledger", () => {
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-dedup-load-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-dedup-load-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
 
   try {
@@ -476,7 +476,7 @@ test("#1943 getProjectTotals reports correct cost after dedup (no 35% inflation)
   );
 
   // After loading through initMetrics (which should dedup), totals should be correct
-  const tmpBase = mkdtempSync(join(tmpdir(), "gsd-metrics-cost-inflation-"));
+  const tmpBase = mkdtempSync(join(tmpdir(), "sf-metrics-cost-inflation-"));
   mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
   try {
     resetMetrics();

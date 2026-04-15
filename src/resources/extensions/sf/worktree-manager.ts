@@ -18,7 +18,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, resolve, sep } from "node:path";
-import { GSDError, SF_PARSE_ERROR, SF_STALE_STATE, SF_LOCK_HELD, SF_GIT_ERROR, SF_MERGE_CONFLICT } from "./errors.js";
+import { SFError, SF_PARSE_ERROR, SF_STALE_STATE, SF_LOCK_HELD, SF_GIT_ERROR, SF_MERGE_CONFLICT } from "./errors.js";
 import { logWarning } from "./workflow-logger.js";
 import {
   nativeBranchDelete,
@@ -143,7 +143,7 @@ export function isInsideWorktreesDir(basePath: string, targetPath: string): bool
 export function createWorktree(basePath: string, name: string, opts: { branch?: string; startPoint?: string; reuseExistingBranch?: boolean } = {}): WorktreeInfo {
   // Validate name: alphanumeric, hyphens, underscores only
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    throw new GSDError(SF_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
+    throw new SFError(SF_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
   }
 
   const wtPath = worktreePath(basePath, name);
@@ -159,7 +159,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       logWarning("reconcile", `Removing stale worktree directory (no .git file): ${wtPath}`, { worktree: name });
       rmSync(wtPath, { recursive: true, force: true });
     } else {
-      throw new GSDError(SF_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
+      throw new SFError(SF_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
     }
   }
 
@@ -183,7 +183,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
     const branchInUse = worktreeEntries.some(entry => entry.branch === branch);
 
     if (branchInUse) {
-      throw new GSDError(
+      throw new SFError(
         SF_LOCK_HELD,
         `Branch "${branch}" is already in use by another worktree. ` +
         `Remove the existing worktree first with /worktree remove ${name}.`,
@@ -455,7 +455,7 @@ export function removeWorktree(
         // The stash is created in the worktree before it's torn down.
         try {
           execFileSync(
-            "git", ["stash", "push", "-m", "gsd: auto-stash submodule changes before worktree teardown"],
+            "git", ["stash", "push", "-m", "sf: auto-stash submodule changes before worktree teardown"],
             { cwd: resolvedWtPath, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
           );
           logWarning("reconcile", `Stashed uncommitted submodule changes before worktree teardown`, { worktree: name, path: resolvedWtPath });
@@ -510,7 +510,7 @@ export function removeWorktree(
     // worktree remove), force-remove the git internal worktree metadata first,
     // then remove the filesystem directory. Without this, the .git/worktrees/<name>
     // lock prevents rmSync from cleaning up, and the orphaned worktree directory
-    // causes every subsequent `/gsd auto` to re-enter the stale worktree.
+    // causes every subsequent `/sf auto` to re-enter the stale worktree.
     if (existsSync(resolvedWtPath)) {
       try {
         const wtInternalDir = join(basePath, ".git", "worktrees", name);
@@ -574,7 +574,7 @@ const SKIP_EXACT = [
 /** File prefixes to skip (for wildcard patterns like completed-units*.json, sf.db*). */
 const SKIP_PREFIXES = [
   ".gsd/completed-units",
-  ".gsd/gsd.db",
+  ".gsd/sf.db",
 ];
 
 function shouldSkipPath(filePath: string): boolean {
@@ -611,7 +611,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
  * Diff the .gsd/ directory between the worktree branch and main branch.
  * Returns a summary of added, modified, and removed SF artifacts.
  */
-export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
+export function diffWorktreeSF(basePath: string, name: string): WorktreeDiffSummary {
   const branch = worktreeBranchName(name);
   const mainBranch = nativeDetectMainBranch(basePath);
 
@@ -657,7 +657,7 @@ export function diffWorktreeNumstat(basePath: string, name: string): FileLineSta
  * Get the full diff content for .gsd/ between the worktree branch and main.
  * Returns the raw unified diff for LLM consumption.
  */
-export function getWorktreeGSDDiff(basePath: string, name: string): string {
+export function getWorktreeSFDiff(basePath: string, name: string): string {
   const branch = worktreeBranchName(name);
   const mainBranch = nativeDetectMainBranch(basePath);
 
@@ -698,12 +698,12 @@ export function mergeWorktreeToMain(basePath: string, name: string, commitMessag
   const current = nativeGetCurrentBranch(basePath);
 
   if (current !== mainBranch) {
-    throw new GSDError(SF_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
+    throw new SFError(SF_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
   }
 
   const result = nativeMergeSquash(basePath, branch);
   if (!result.success) {
-    throw new GSDError(SF_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
+    throw new SFError(SF_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
   }
 
   nativeCommit(basePath, commitMessage);

@@ -431,12 +431,12 @@ test("formatDoctorFindings shows findings with appropriate icons", () => {
 // ─── Regression #3891 — alibaba-coding-plan missing from PROVIDER_REGISTRY ───────
 //
 // Before this fix, `alibaba-coding-plan` was not in PROVIDER_REGISTRY, causing
-// `/gsd keys add alibaba-coding-plan` to silently fail (provider not found).
+// `/sf keys add alibaba-coding-plan` to silently fail (provider not found).
 // alibaba-dashscope is the new standalone provider added in the same PR.
 
 test("regression #3891 — alibaba-coding-plan is in PROVIDER_REGISTRY", () => {
   const provider = findProvider("alibaba-coding-plan");
-  assert.ok(provider, "alibaba-coding-plan must be in PROVIDER_REGISTRY for /gsd keys add to work");
+  assert.ok(provider, "alibaba-coding-plan must be in PROVIDER_REGISTRY for /sf keys add to work");
   assert.equal(provider.id, "alibaba-coding-plan");
   assert.equal(provider.category, "llm");
   assert.equal(provider.envVar, "ALIBABA_API_KEY");
@@ -444,7 +444,7 @@ test("regression #3891 — alibaba-coding-plan is in PROVIDER_REGISTRY", () => {
 
 test("alibaba-dashscope is in PROVIDER_REGISTRY", () => {
   const provider = findProvider("alibaba-dashscope");
-  assert.ok(provider, "alibaba-dashscope must be in PROVIDER_REGISTRY for /gsd keys add to work");
+  assert.ok(provider, "alibaba-dashscope must be in PROVIDER_REGISTRY for /sf keys add to work");
   assert.equal(provider.id, "alibaba-dashscope");
   assert.equal(provider.category, "llm");
   assert.equal(provider.envVar, "DASHSCOPE_API_KEY");

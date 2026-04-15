@@ -22,7 +22,7 @@ test("completing-milestone dispatch rule exists", () => {
 });
 
 test("completing-milestone blocks when VALIDATION verdict is needs-remediation (#2675)", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-remediation-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-remediation-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
 
   try {
@@ -67,7 +67,7 @@ test("completing-milestone blocks when VALIDATION verdict is needs-remediation (
 });
 
 test("completing-milestone proceeds normally when VALIDATION verdict is pass (#2675 guard)", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-remediation-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-remediation-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
 
   try {

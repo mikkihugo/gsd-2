@@ -4,101 +4,101 @@
 
 | Command | Description |
 |---------|-------------|
-| `/gsd` | Step mode — execute one unit at a time |
-| `/gsd auto` | Autonomous mode — research, plan, execute, commit, repeat |
-| `/gsd quick` | Quick task with SF guarantees but no full planning |
-| `/gsd stop` | Stop auto mode gracefully |
-| `/gsd pause` | Pause auto mode (preserves state) |
-| `/gsd steer` | Modify plan documents during execution |
-| `/gsd discuss` | Discuss architecture and decisions |
-| `/gsd status` | Progress dashboard |
-| `/gsd widget` | Cycle dashboard widget: full / small / min / off |
-| `/gsd queue` | Queue and reorder future milestones |
-| `/gsd capture` | Fire-and-forget thought capture |
-| `/gsd triage` | Manually trigger capture triage |
-| `/gsd dispatch` | Dispatch a specific phase directly |
-| `/gsd history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
-| `/gsd forensics` | Full debugger for auto-mode failures |
-| `/gsd cleanup` | Clean up state files and stale worktrees |
-| `/gsd visualize` | Open workflow visualizer |
-| `/gsd export --html` | Generate HTML report for current milestone |
-| `/gsd export --html --all` | Generate reports for all milestones |
-| `/gsd update` | Update SF to the latest version |
-| `/gsd knowledge` | Add persistent project knowledge |
-| `/gsd fast` | Toggle service tier for supported models |
-| `/gsd rate` | Rate last unit's model tier (over/ok/under) |
-| `/gsd changelog` | Show release notes |
-| `/gsd logs` | Browse activity and debug logs |
-| `/gsd remote` | Control remote auto-mode |
-| `/gsd help` | Show all available commands |
+| `/sf` | Step mode — execute one unit at a time |
+| `/sf auto` | Autonomous mode — research, plan, execute, commit, repeat |
+| `/sf quick` | Quick task with SF guarantees but no full planning |
+| `/sf stop` | Stop auto mode gracefully |
+| `/sf pause` | Pause auto mode (preserves state) |
+| `/sf steer` | Modify plan documents during execution |
+| `/sf discuss` | Discuss architecture and decisions |
+| `/sf status` | Progress dashboard |
+| `/sf widget` | Cycle dashboard widget: full / small / min / off |
+| `/sf queue` | Queue and reorder future milestones |
+| `/sf capture` | Fire-and-forget thought capture |
+| `/sf triage` | Manually trigger capture triage |
+| `/sf dispatch` | Dispatch a specific phase directly |
+| `/sf history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
+| `/sf forensics` | Full debugger for auto-mode failures |
+| `/sf cleanup` | Clean up state files and stale worktrees |
+| `/sf visualize` | Open workflow visualizer |
+| `/sf export --html` | Generate HTML report for current milestone |
+| `/sf export --html --all` | Generate reports for all milestones |
+| `/sf update` | Update SF to the latest version |
+| `/sf knowledge` | Add persistent project knowledge |
+| `/sf fast` | Toggle service tier for supported models |
+| `/sf rate` | Rate last unit's model tier (over/ok/under) |
+| `/sf changelog` | Show release notes |
+| `/sf logs` | Browse activity and debug logs |
+| `/sf remote` | Control remote auto-mode |
+| `/sf help` | Show all available commands |
 
 ## Configuration & Diagnostics
 
 | Command | Description |
 |---------|-------------|
-| `/gsd prefs` | Preferences wizard |
-| `/gsd mode` | Switch workflow mode (solo/team) |
-| `/gsd config` | Re-run provider setup wizard |
-| `/gsd keys` | API key manager |
-| `/gsd doctor` | Runtime health checks with auto-fix |
-| `/gsd inspect` | Show database diagnostics |
-| `/gsd init` | Project init wizard |
-| `/gsd setup` | Global setup status |
-| `/gsd skill-health` | Skill lifecycle dashboard |
-| `/gsd hooks` | Show configured hooks |
-| `/gsd migrate` | Migrate v1 `.planning` to `.gsd` format |
+| `/sf prefs` | Preferences wizard |
+| `/sf mode` | Switch workflow mode (solo/team) |
+| `/sf config` | Re-run provider setup wizard |
+| `/sf keys` | API key manager |
+| `/sf doctor` | Runtime health checks with auto-fix |
+| `/sf inspect` | Show database diagnostics |
+| `/sf init` | Project init wizard |
+| `/sf setup` | Global setup status |
+| `/sf skill-health` | Skill lifecycle dashboard |
+| `/sf hooks` | Show configured hooks |
+| `/sf migrate` | Migrate v1 `.planning` to `.sf` format |
 
 ## Milestone Management
 
 | Command | Description |
 |---------|-------------|
-| `/gsd new-milestone` | Create a new milestone |
-| `/gsd skip` | Prevent a unit from auto-mode dispatch |
-| `/gsd undo` | Revert last completed unit |
-| `/gsd undo-task` | Reset a specific task's completion state |
-| `/gsd reset-slice` | Reset a slice and all its tasks |
-| `/gsd park` | Park a milestone (skip without deleting) |
-| `/gsd unpark` | Reactivate a parked milestone |
+| `/sf new-milestone` | Create a new milestone |
+| `/sf skip` | Prevent a unit from auto-mode dispatch |
+| `/sf undo` | Revert last completed unit |
+| `/sf undo-task` | Reset a specific task's completion state |
+| `/sf reset-slice` | Reset a slice and all its tasks |
+| `/sf park` | Park a milestone (skip without deleting) |
+| `/sf unpark` | Reactivate a parked milestone |
 
 ## Parallel Orchestration
 
 | Command | Description |
 |---------|-------------|
-| `/gsd parallel start` | Analyze and start parallel workers |
-| `/gsd parallel status` | Show worker state and progress |
-| `/gsd parallel stop [MID]` | Stop workers |
-| `/gsd parallel pause [MID]` | Pause workers |
-| `/gsd parallel resume [MID]` | Resume workers |
-| `/gsd parallel merge [MID]` | Merge completed milestones |
+| `/sf parallel start` | Analyze and start parallel workers |
+| `/sf parallel status` | Show worker state and progress |
+| `/sf parallel stop [MID]` | Stop workers |
+| `/sf parallel pause [MID]` | Pause workers |
+| `/sf parallel resume [MID]` | Resume workers |
+| `/sf parallel merge [MID]` | Merge completed milestones |
 
 ## Workflow Templates
 
 | Command | Description |
 |---------|-------------|
-| `/gsd start` | Start a workflow template |
-| `/gsd start resume` | Resume an in-progress workflow |
-| `/gsd templates` | List available templates |
-| `/gsd templates info <name>` | Show template details |
+| `/sf start` | Start a workflow template |
+| `/sf start resume` | Resume an in-progress workflow |
+| `/sf templates` | List available templates |
+| `/sf templates info <name>` | Show template details |
 
 ## Custom Workflows
 
 | Command | Description |
 |---------|-------------|
-| `/gsd workflow new` | Create a workflow definition |
-| `/gsd workflow run <name>` | Start a workflow run |
-| `/gsd workflow list` | List workflow runs |
-| `/gsd workflow validate <name>` | Validate a workflow YAML |
-| `/gsd workflow pause` | Pause workflow auto-mode |
-| `/gsd workflow resume` | Resume paused workflow |
+| `/sf workflow new` | Create a workflow definition |
+| `/sf workflow run <name>` | Start a workflow run |
+| `/sf workflow list` | List workflow runs |
+| `/sf workflow validate <name>` | Validate a workflow YAML |
+| `/sf workflow pause` | Pause workflow auto-mode |
+| `/sf workflow resume` | Resume paused workflow |
 
 ## Extensions
 
 | Command | Description |
 |---------|-------------|
-| `/gsd extensions list` | List all extensions |
-| `/gsd extensions enable <id>` | Enable an extension |
-| `/gsd extensions disable <id>` | Disable an extension |
-| `/gsd extensions info <id>` | Show extension details |
+| `/sf extensions list` | List all extensions |
+| `/sf extensions enable <id>` | Enable an extension |
+| `/sf extensions disable <id>` | Disable an extension |
+| `/sf extensions info <id>` | Show extension details |
 
 ## GitHub Sync
 
@@ -122,7 +122,7 @@
 ## In-Session Update
 
 ```
-/gsd update
+/sf update
 ```
 
 Checks npm for a newer version and installs it without leaving the session.

@@ -1,4 +1,4 @@
-// GSD2 — Regression test for broken resource-loader import path
+// SF2 — Regression test for broken resource-loader import path
 // Ensures auto.ts imports resource-loader via package resolution, not a
 // relative path that breaks when deployed to ~/.gsd/agent/extensions/sf/.
 

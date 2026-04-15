@@ -33,9 +33,9 @@ function cloneRepo(repo: string, dest: string): void {
 }
 
 export function getMarketplaceFixtures(testFileDir: string): { available: boolean; skipReason?: string; fixtures?: MarketplaceFixtureSet } {
-  const gsd2Root = resolve(testFileDir, '../../../../..');
-  const localClaudeSkillsPath = resolve(gsd2Root, '../claude_skills');
-  const localClaudePluginsOfficialPath = resolve(gsd2Root, '../claude-plugins-official');
+  const sf2Root = resolve(testFileDir, '../../../../..');
+  const localClaudeSkillsPath = resolve(sf2Root, '../claude_skills');
+  const localClaudePluginsOfficialPath = resolve(sf2Root, '../claude-plugins-official');
 
   if (existsSync(localClaudeSkillsPath) && existsSync(localClaudePluginsOfficialPath)) {
     return {
@@ -64,7 +64,7 @@ export function getMarketplaceFixtures(testFileDir: string): { available: boolea
   }
 
   try {
-    const fixtureRoot = mkdtempSync(join(tmpdir(), 'gsd-marketplace-fixtures-'));
+    const fixtureRoot = mkdtempSync(join(tmpdir(), 'sf-marketplace-fixtures-'));
     const clonedClaudeSkillsPath = join(fixtureRoot, 'claude_skills');
     const clonedClaudePluginsOfficialPath = join(fixtureRoot, 'claude-plugins-official');
 

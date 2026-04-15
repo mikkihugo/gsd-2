@@ -17,7 +17,7 @@ import {
 } from "../workflow-logger.ts";
 
 function createTempProject(): string {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-wflog-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-wflog-test-"));
   mkdirSync(join(tmp, ".gsd"), { recursive: true });
   return tmp;
 }
@@ -82,7 +82,7 @@ describe("workflow-logger audit persistence", () => {
       fn: "saveDecisionToDb",
       tool: "sf_decision_save",
       error: "SQLITE_BUSY: database is locked",
-      file: "/home/user/project/gsd.db",
+      file: "/home/user/project/sf.db",
     });
     const lines = readAuditLines(tmp);
     assert.equal(lines.length, 1);

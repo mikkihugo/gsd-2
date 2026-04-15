@@ -247,7 +247,7 @@ If you need a final scope reflection, fold it into the depth summary or roadmap 
 
 ## Focused Research
 
-For a new project or any project that does not yet have `.gsd/REQUIREMENTS.md`, do a focused research pass before roadmap creation.
+For a new project or any project that does not yet have `.sf/REQUIREMENTS.md`, do a focused research pass before roadmap creation.
 
 Research is advisory, not auto-binding. Use the discussion output to identify:
 - table stakes the product space usually expects
@@ -262,7 +262,7 @@ For multi-milestone visions, research should cover the full landscape, not just 
 
 ## Capability Contract
 
-Before writing a roadmap, produce or update `.gsd/REQUIREMENTS.md`.
+Before writing a roadmap, produce or update `.sf/REQUIREMENTS.md`.
 
 Use it as the project's explicit capability contract.
 
@@ -313,16 +313,16 @@ If the user raises a substantive objection, adjust the roadmap. Otherwise, prese
 ### Naming Convention
 
 Directories use bare IDs. Files use ID-SUFFIX format. Titles live inside file content, not in names.
-- Milestone dir: `.gsd/milestones/{{milestoneId}}/`
+- Milestone dir: `.sf/milestones/{{milestoneId}}/`
 - Milestone files: `{{milestoneId}}-CONTEXT.md`, `{{milestoneId}}-ROADMAP.md`
 - Slice dirs: `S01/`, `S02/`, etc.
 
 ### Single Milestone
 
 Once the user is satisfied, in a single pass:
-1. `mkdir -p .gsd/milestones/{{milestoneId}}/slices`
-2. Write or update `.gsd/PROJECT.md` — use the **Project** output template below. Describe what the project is, its current state, and list the milestone sequence.
-3. Write or update `.gsd/REQUIREMENTS.md` — use the **Requirements** output template below. Confirm requirement states, ownership, and traceability before roadmap creation.
+1. `mkdir -p .sf/milestones/{{milestoneId}}/slices`
+2. Write or update `.sf/PROJECT.md` — use the **Project** output template below. Describe what the project is, its current state, and list the milestone sequence.
+3. Write or update `.sf/REQUIREMENTS.md` — use the **Requirements** output template below. Confirm requirement states, ownership, and traceability before roadmap creation.
 **Depth-Preservation Guidance for context.md:**
 When writing context.md, preserve the user's exact terminology, emphasis, and specific framing from the discussion. Do not paraphrase user nuance into generic summaries. If the user said "craft feel," write "craft feel" — not "high-quality user experience." If they emphasized a specific constraint or negative requirement, carry that emphasis through verbatim. The context file is downstream agents' only window into this conversation — flattening specifics into generics loses the signal that shaped every decision.
 
@@ -336,7 +336,7 @@ These sections are in addition to whatever other context the discussion surfaced
 
 4. Write `{{contextPath}}` — use the **Context** output template below. Preserve key risks, unknowns, existing codebase constraints, integration points, and relevant requirements surfaced during discussion.
 5. Call `sf_plan_milestone` to create the roadmap. Decompose into demoable vertical slices with risk, depends, demo sentences, proof strategy, verification classes, milestone definition of done, requirement coverage, and a boundary map. If the milestone crosses multiple runtime boundaries, include an explicit final integration slice that proves the assembled system works end-to-end in a real environment. Use the **Roadmap** output template below to structure the tool call parameters.
-6. For each architectural or pattern decision made during discussion, call `sf_decision_save` — the tool auto-assigns IDs and regenerates `.gsd/DECISIONS.md` automatically.
+6. For each architectural or pattern decision made during discussion, call `sf_decision_save` — the tool auto-assigns IDs and regenerates `.sf/DECISIONS.md` automatically.
 7. {{commitInstruction}}
 
 After writing the files, say exactly: "Milestone {{milestoneId}} ready." — nothing else. Auto-mode will start automatically.
@@ -347,10 +347,10 @@ Once the user confirms the milestone split:
 
 #### Phase 1: Shared artifacts
 
-1. For each milestone, call `sf_milestone_generate_id` to get its ID — never invent milestone IDs manually. Then `mkdir -p .gsd/milestones/<ID>/slices`.
-2. Write `.gsd/PROJECT.md` — use the **Project** output template below.
-3. Write `.gsd/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
-4. For any architectural or pattern decisions made during discussion, call `sf_decision_save` — the tool auto-assigns IDs and regenerates `.gsd/DECISIONS.md` automatically.
+1. For each milestone, call `sf_milestone_generate_id` to get its ID — never invent milestone IDs manually. Then `mkdir -p .sf/milestones/<ID>/slices`.
+2. Write `.sf/PROJECT.md` — use the **Project** output template below.
+3. Write `.sf/REQUIREMENTS.md` — use the **Requirements** output template below. Capture Active, Deferred, Out of Scope, and any already Validated requirements. Later milestones may have provisional ownership where slice plans do not exist yet.
+4. For any architectural or pattern decisions made during discussion, call `sf_decision_save` — the tool auto-assigns IDs and regenerates `.sf/DECISIONS.md` automatically.
 
 #### Phase 2: Primary milestone
 
@@ -376,8 +376,8 @@ If a milestone has no dependencies, omit the frontmatter. The dependency chain f
 For each remaining milestone **one at a time, in sequence**, decide the most likely readiness mode from the evidence you already have, then present the three options below to the user. **If `{{structuredQuestionsAvailable}}` is `true`:** use `ask_user_questions`. **If `{{structuredQuestionsAvailable}}` is `false`:** present the options as a plain-text numbered list and ask the user to type their choice. **Non-bypassable:** If the user does not respond, gives an ambiguous answer, or the tool fails, you MUST re-ask — never rationalize past the block or auto-select a readiness mode. Present three options:
 
 - **"Discuss now"** — The user wants to conduct a focused discussion for this milestone in the current session, while the context from the broader discussion is still fresh. Proceed with a focused discussion for this milestone (reflection → investigation → questioning → depth verification). When the discussion concludes, write a full `CONTEXT.md`. Then move to the gate for the next milestone.
-- **"Write draft for later"** — This milestone has seed material from the current conversation but needs its own dedicated discussion in a future session. Write a `CONTEXT-DRAFT.md` capturing the seed material (what was discussed, key ideas, provisional scope, open questions). Mark it clearly as a draft, not a finalized context. **What happens downstream:** When auto-mode reaches this milestone, it pauses and notifies the user: "M00x has draft context — needs discussion. Run /gsd." The `/gsd` wizard shows a "Discuss from draft" option that seeds the new discussion with this draft, so nothing from the current conversation is lost. After the dedicated discussion produces a full CONTEXT.md, the draft file is automatically deleted.
-- **"Just queue it"** — This milestone is identified but intentionally left without context. No context file is written — the directory already exists from Phase 1. **What happens downstream:** When auto-mode reaches this milestone, it pauses and notifies the user to run /gsd. The wizard starts a full discussion from scratch.
+- **"Write draft for later"** — This milestone has seed material from the current conversation but needs its own dedicated discussion in a future session. Write a `CONTEXT-DRAFT.md` capturing the seed material (what was discussed, key ideas, provisional scope, open questions). Mark it clearly as a draft, not a finalized context. **What happens downstream:** When auto-mode reaches this milestone, it pauses and notifies the user: "M00x has draft context — needs discussion. Run /sf." The `/sf` wizard shows a "Discuss from draft" option that seeds the new discussion with this draft, so nothing from the current conversation is lost. After the dedicated discussion produces a full CONTEXT.md, the draft file is automatically deleted.
+- **"Just queue it"** — This milestone is identified but intentionally left without context. No context file is written — the directory already exists from Phase 1. **What happens downstream:** When auto-mode reaches this milestone, it pauses and notifies the user to run /sf. The wizard starts a full discussion from scratch.
 
 **When "Discuss now" is chosen — Technical Assumption Verification is MANDATORY:**
 
@@ -395,7 +395,7 @@ Each context file (full or draft) should be rich enough that a future agent enco
 
 #### Milestone Gate Tracking (MANDATORY for multi-milestone)
 
-After EVERY Phase 3 gate decision, immediately write or update `.gsd/DISCUSSION-MANIFEST.json` with the cumulative state. This file is mechanically validated by the system before auto-mode starts — if gates are incomplete, auto-mode will NOT start.
+After EVERY Phase 3 gate decision, immediately write or update `.sf/DISCUSSION-MANIFEST.json` with the cumulative state. This file is mechanically validated by the system before auto-mode starts — if gates are incomplete, auto-mode will NOT start.
 
 ```json
 {

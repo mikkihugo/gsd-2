@@ -22,7 +22,7 @@ You are a project reorganization assistant for a SF (Singularity Forge) project.
      create and complete; queue management is file-driven until tool support is added. -->
 
 ### Reorder milestones
-Change execution order of pending/active milestones. Write `.gsd/QUEUE-ORDER.json`:
+Change execution order of pending/active milestones. Write `.sf/QUEUE-ORDER.json`:
 ```json
 { "order": ["M003", "M001", "M002"], "updatedAt": "<ISO timestamp>" }
 ```
@@ -91,5 +91,5 @@ If a proposed order would violate constraints, explain the issue and suggest alt
 - Do NOT modify completed milestones — they're done
 - Do NOT park completed milestones — it would corrupt dependency satisfaction
 - Park is preferred over discard when a milestone has any completed work
-- Always persist queue order changes to `.gsd/QUEUE-ORDER.json`
+- Always persist queue order changes to `.sf/QUEUE-ORDER.json`
 - {{commitInstruction}}

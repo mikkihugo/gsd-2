@@ -5,31 +5,31 @@ SF is a TypeScript application built on the [Pi SDK](https://github.com/badlogic
 ## System Structure
 
 ```
-gsd (CLI binary)
+sf (CLI binary)
   └─ loader.ts          Sets PI_PACKAGE_DIR, SF env vars, dynamic-imports cli.ts
       └─ cli.ts         Wires SDK managers, loads extensions, starts InteractiveMode
           ├─ onboarding.ts   First-run setup wizard (LLM provider + tool keys)
           ├─ wizard.ts       Env hydration from stored auth.json credentials
-          ├─ app-paths.ts    ~/.gsd/agent/, ~/.gsd/sessions/, auth.json
-          ├─ resource-loader.ts  Syncs bundled extensions + agents to ~/.gsd/agent/
+          ├─ app-paths.ts    ~/.sf/agent/, ~/.sf/sessions/, auth.json
+          ├─ resource-loader.ts  Syncs bundled extensions + agents to ~/.sf/agent/
           └─ src/resources/
-              ├─ extensions/gsd/    Core SF extension
+              ├─ extensions/sf/    Core SF extension
               ├─ extensions/...     23 supporting extensions
               ├─ agents/            scout, researcher, worker
               ├─ AGENTS.md          Agent routing instructions
               └─ SF-WORKFLOW.md    Manual bootstrap protocol
 
-gsd headless              Headless mode — CI/cron orchestration via RPC child process
-gsd --mode mcp            MCP server mode — exposes tools over stdin/stdout
+sf headless              Headless mode — CI/cron orchestration via RPC child process
+sf --mode mcp            MCP server mode — exposes tools over stdin/stdout
 
-vscode-extension/         VS Code extension — chat participant (@gsd), sidebar dashboard, RPC integration
+vscode-extension/         VS Code extension — chat participant (@sf), sidebar dashboard, RPC integration
 ```
 
 ## Key Design Decisions
 
 ### State Lives on Disk
 
-`.gsd/` is the sole source of truth. Auto mode reads it, writes it, and advances based on what it finds. No in-memory state survives across sessions. This enables crash recovery, multi-terminal steering, and session resumption.
+`.sf/` is the sole source of truth. Auto mode reads it, writes it, and advances based on what it finds. No in-memory state survives across sessions. This enables crash recovery, multi-terminal steering, and session resumption.
 
 ### Two-File Loader Pattern
 
@@ -41,7 +41,7 @@ vscode-extension/         VS Code extension — chat participant (@gsd), sidebar
 
 ### Always-Overwrite Sync
 
-Bundled extensions and agents are synced to `~/.gsd/agent/` on every launch, not just first run. This means `npm update -g` takes effect immediately.
+Bundled extensions and agents are synced to `~/.sf/agent/` on every launch, not just first run. This means `npm update -g` takes effect immediately.
 
 ### Lazy Provider Loading
 

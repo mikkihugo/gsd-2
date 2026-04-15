@@ -2,7 +2,7 @@
  * stash-queued-context-files.test.ts — Regression test for #2505.
  *
  * When mergeMilestoneToMain runs `git stash push --include-untracked`,
- * untracked `.gsd/milestones/M<queued>/` directories created by `/gsd queue`
+ * untracked `.gsd/milestones/M<queued>/` directories created by `/sf queue`
  * are swept into the stash. If stash pop fails (conflict on tracked files),
  * the queued milestone CONTEXT files are permanently lost.
  *
@@ -36,7 +36,7 @@ let fakeHome: string;
 
 test.before(() => {
   originalHome = process.env.HOME;
-  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fake-home-")));
+  fakeHome = realpathSync(mkdtempSync(join(tmpdir(), "sf-fake-home-")));
   process.env.HOME = fakeHome;
   _clearGsdRootCache();
   _resetServiceCache();
@@ -167,7 +167,7 @@ test("#2505: mergeMilestoneToMain preserves queued CONTEXT files (not swept into
     run("git checkout milestone/M015", wtPath);
     run(`git merge --no-ff "${sliceBranch}" -m "merge S01"`, wtPath);
 
-    // Simulate `/gsd queue` creating queued milestone CONTEXT files at the
+    // Simulate `/sf queue` creating queued milestone CONTEXT files at the
     // project root. These are untracked, and in repos with tracked .gsd/
     // files they are NOT gitignored.
     const m013Dir = join(repo, ".gsd", "milestones", "M013");

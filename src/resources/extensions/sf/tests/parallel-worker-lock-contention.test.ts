@@ -75,22 +75,22 @@ describe("parallel-worker-lock-contention (#2184)", () => {
   });
 
   // ─── Bug 1b: effectiveLockTarget returns per-milestone directory ─────────
-  test("Bug 1b: effectiveLockTarget returns gsdDir without parallel env", () => {
+  test("Bug 1b: effectiveLockTarget returns sfDir without parallel env", () => {
     delete process.env.SF_PARALLEL_WORKER;
-    const gsdDir = "/tmp/test/.gsd";
-    assert.equal(effectiveLockTarget(gsdDir), gsdDir);
+    const sfDir = "/tmp/test/.gsd";
+    assert.equal(effectiveLockTarget(sfDir), sfDir);
   });
 
   test("Bug 1b: effectiveLockTarget returns parallel/<MID> in parallel mode", () => {
     process.env.SF_PARALLEL_WORKER = "1";
     process.env.SF_MILESTONE_LOCK = "M003";
-    const gsdDir = "/tmp/test/.gsd";
-    assert.equal(effectiveLockTarget(gsdDir), join(gsdDir, "parallel", "M003"));
+    const sfDir = "/tmp/test/.gsd";
+    assert.equal(effectiveLockTarget(sfDir), join(sfDir, "parallel", "M003"));
   });
 
   // ─── Bug 1c: Two parallel workers acquire independent locks ──────────────
   test("Bug 1c: parallel workers use per-milestone lock files, not shared auto.lock", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-lock-"));
+    const base = mkdtempSync(join(tmpdir(), "sf-parallel-lock-"));
     mkdirSync(join(base, ".gsd"), { recursive: true });
 
     try {
@@ -102,16 +102,16 @@ describe("parallel-worker-lock-contention (#2184)", () => {
       assert.ok(r1.acquired, "M001 worker acquires lock");
 
       // Verify the lock file is per-milestone
-      const gsdDir = sfRoot(base);
-      const m001LockFile = join(gsdDir, "auto-M001.lock");
+      const sfDir = sfRoot(base);
+      const m001LockFile = join(sfDir, "auto-M001.lock");
       assert.ok(existsSync(m001LockFile), "auto-M001.lock exists");
 
       // The shared auto.lock should NOT exist
-      const sharedLockFile = join(gsdDir, "auto.lock");
+      const sharedLockFile = join(sfDir, "auto.lock");
       assert.ok(!existsSync(sharedLockFile), "shared auto.lock does NOT exist");
 
       // The per-milestone lock target directory should exist
-      const m001LockTarget = join(gsdDir, "parallel", "M001");
+      const m001LockTarget = join(sfDir, "parallel", "M001");
       assert.ok(existsSync(m001LockTarget), "parallel/M001 directory exists");
 
       releaseSessionLock(base);
@@ -127,7 +127,7 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 1d: crash-recovery uses per-milestone lock file ─────────────────
   test("Bug 1d: crash-recovery writeLock/readCrashLock uses per-milestone lock in parallel mode", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-parallel-crash-"));
+    const base = mkdtempSync(join(tmpdir(), "sf-parallel-crash-"));
     mkdirSync(join(base, ".gsd"), { recursive: true });
 
     try {
@@ -136,8 +136,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
       writeLock(base, "execute-task", "M002/S01/T01");
 
-      const gsdDir = sfRoot(base);
-      const lockFile = join(gsdDir, "auto-M002.lock");
+      const sfDir = sfRoot(base);
+      const lockFile = join(sfDir, "auto-M002.lock");
       assert.ok(existsSync(lockFile), "crash-recovery writes auto-M002.lock");
 
       const data = readCrashLock(base);
@@ -155,8 +155,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 3: syncProjectRootToWorktree skips same-path symlinks ───────────
   test("Bug 3: syncProjectRootToWorktree skips when .gsd resolves to same path (symlink)", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-symlink-sync-"));
-    const externalGsd = join(base, "external-gsd");
+    const base = mkdtempSync(join(tmpdir(), "sf-symlink-sync-"));
+    const externalGsd = join(base, "external-sf");
     const projectRoot = join(base, "project");
     const worktreePath = join(base, "worktree");
 
@@ -200,7 +200,7 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
   // ─── Bug 3b: sync still works when paths are different ───────────────────
   test("Bug 3b: syncProjectRootToWorktree copies when .gsd paths are different", () => {
-    const base = mkdtempSync(join(tmpdir(), "gsd-diff-sync-"));
+    const base = mkdtempSync(join(tmpdir(), "sf-diff-sync-"));
     const projectRoot = join(base, "project");
     const worktreePath = join(base, "worktree");
 

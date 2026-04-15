@@ -10,7 +10,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { runGSDDoctor } from "../../doctor.ts";
+import { runSFDoctor } from "../../doctor.ts";
 
 function makeTmp(name: string): string {
   const dir = join(tmpdir(), `doctor-deferral-${name}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -19,8 +19,8 @@ function makeTmp(name: string): string {
 }
 
 function buildScaffold(base: string) {
-  const gsd = join(base, ".gsd");
-  const m = join(gsd, "milestones", "M001");
+  const sf = join(base, ".gsd");
+  const m = join(sf, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
 
@@ -62,7 +62,7 @@ test("doctor does not report any reconciliation issue codes", async (t) => {
 
   buildScaffold(tmp);
 
-  const report = await runGSDDoctor(tmp, { fix: true, fixLevel: "task" });
+  const report = await runSFDoctor(tmp, { fix: true, fixLevel: "task" });
 
   const REMOVED_CODES = [
     "task_done_missing_summary",

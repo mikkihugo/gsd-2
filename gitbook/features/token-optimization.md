@@ -91,9 +91,9 @@ SF tracks success and failure of tier assignments over time. If a model tier's f
 Submit manual feedback with:
 
 ```
-/gsd rate over    # model was overpowered — use cheaper next time
-/gsd rate ok      # model was appropriate
-/gsd rate under   # model was too weak — use stronger next time
+/sf rate over    # model was overpowered — use cheaper next time
+/sf rate ok      # model was appropriate
+/sf rate under   # model was too weak — use stronger next time
 ```
 
 ## Observation Masking

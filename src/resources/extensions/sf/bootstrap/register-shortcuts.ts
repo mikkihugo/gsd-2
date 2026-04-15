@@ -4,8 +4,8 @@ import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 import { Key } from "@sf-run/pi-tui";
 
-import { GSDDashboardOverlay } from "../dashboard-overlay.js";
-import { GSDNotificationOverlay } from "../notification-overlay.js";
+import { SFDashboardOverlay } from "../dashboard-overlay.js";
+import { SFNotificationOverlay } from "../notification-overlay.js";
 import { ParallelMonitorOverlay } from "../parallel-monitor-overlay.js";
 import { SF_SHORTCUTS } from "../shortcut-defs.js";
 import { projectRoot } from "../commands/context.js";
@@ -22,11 +22,11 @@ export function registerShortcuts(pi: ExtensionAPI): void {
   const openDashboardOverlay = async (ctx: ExtensionContext) => {
     const basePath = projectRoot();
     if (!existsSync(join(basePath, ".gsd"))) {
-      ctx.ui.notify("No .gsd/ directory found. Run /gsd to start.", "info");
+      ctx.ui.notify("No .gsd/ directory found. Run /sf to start.", "info");
       return;
     }
     await ctx.ui.custom<boolean>(
-      (tui, theme, _kb, done) => new GSDDashboardOverlay(tui, theme, () => done(true)),
+      (tui, theme, _kb, done) => new SFDashboardOverlay(tui, theme, () => done(true)),
       {
         overlay: true,
         overlayOptions,
@@ -36,7 +36,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
 
   const openNotificationsOverlay = async (ctx: ExtensionContext) => {
     await ctx.ui.custom<boolean>(
-      (tui, theme, _kb, done) => new GSDNotificationOverlay(tui, theme, () => done(true)),
+      (tui, theme, _kb, done) => new SFNotificationOverlay(tui, theme, () => done(true)),
       {
         overlay: true,
         overlayOptions: {
@@ -54,7 +54,7 @@ export function registerShortcuts(pi: ExtensionAPI): void {
     const basePath = projectRoot();
     const parallelDir = join(basePath, ".gsd", "parallel");
     if (!existsSync(parallelDir)) {
-      ctx.ui.notify("No parallel workers found. Run /gsd parallel start first.", "info");
+      ctx.ui.notify("No parallel workers found. Run /sf parallel start first.", "info");
       return;
     }
     await ctx.ui.custom<boolean>(
@@ -94,5 +94,5 @@ export function registerShortcuts(pi: ExtensionAPI): void {
   });
 
   // No Ctrl+Shift+P fallback — conflicts with cycleModelBackward (shift+ctrl+p).
-  // Use Ctrl+Alt+P or /gsd parallel watch instead.
+  // Use Ctrl+Alt+P or /sf parallel watch instead.
 }

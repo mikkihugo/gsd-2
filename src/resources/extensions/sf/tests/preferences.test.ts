@@ -23,7 +23,7 @@ import {
 } from "../preferences.ts";
 import { formatConfiguredModel, toPersistedModelId } from "../commands-prefs-wizard.ts";
 import { _resetLogs, peekLogs } from "../workflow-logger.ts";
-import type { SFPreferences, GSDModelConfigV2, GSDPhaseModelConfig } from "../preferences.ts";
+import type { SFPreferences, SFModelConfigV2, SFPhaseModelConfig } from "../preferences.ts";
 
 // ── Git preferences ──────────────────────────────────────────────────────────
 
@@ -344,11 +344,11 @@ test("parses OpenRouter model config with org/model IDs and fallbacks", () => {
   const content = `---\nversion: 1\nmodels:\n  research:\n    model: moonshotai/kimi-k2.5\n    fallbacks:\n      - qwen/qwen3.5-397b-a17b\n  planning:\n    model: deepseek/deepseek-r1-0528\n    fallbacks:\n      - moonshotai/kimi-k2.5\n      - deepseek/deepseek-v3.2\n  execution:\n    model: qwen/qwen3-coder\n    fallbacks:\n      - qwen/qwen3-coder-next\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const research = models.research as GSDPhaseModelConfig;
+  const models = prefs!.models as SFModelConfigV2;
+  const research = models.research as SFPhaseModelConfig;
   assert.equal(research.model, "moonshotai/kimi-k2.5");
   assert.deepEqual(research.fallbacks, ["qwen/qwen3.5-397b-a17b"]);
-  const execution = models.execution as GSDPhaseModelConfig;
+  const execution = models.execution as SFPhaseModelConfig;
   assert.deepEqual(execution.fallbacks, ["qwen/qwen3-coder-next"]);
 });
 
@@ -356,8 +356,8 @@ test("parses model IDs with colons (OpenRouter :free, :exacto)", () => {
   const content = `---\nmodels:\n  execution:\n    model: qwen/qwen3-coder\n    fallbacks:\n      - qwen/qwen3-coder:free\n      - qwen/qwen3-coder:exacto\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as SFModelConfigV2;
+  const execution = models.execution as SFPhaseModelConfig;
   assert.deepEqual(execution.fallbacks, ["qwen/qwen3-coder:free", "qwen/qwen3-coder:exacto"]);
 });
 
@@ -365,7 +365,7 @@ test("parses legacy string-per-phase model config", () => {
   const content = `---\nmodels:\n  research: claude-opus-4-6\n  execution: claude-sonnet-4-6\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
+  const models = prefs!.models as SFModelConfigV2;
   assert.equal(models.research, "claude-opus-4-6");
   assert.equal(models.execution, "claude-sonnet-4-6");
 });
@@ -374,8 +374,8 @@ test("strips inline YAML comments from values", () => {
   const content = `---\nmodels:\n  execution:\n    model: qwen/qwen3-coder  # fast\n    fallbacks:\n      - minimax/minimax-m2.5  # backup\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as SFModelConfigV2;
+  const execution = models.execution as SFPhaseModelConfig;
   assert.equal(execution.model, "qwen/qwen3-coder");
   assert.deepEqual(execution.fallbacks, ["minimax/minimax-m2.5"]);
 });
@@ -384,8 +384,8 @@ test("handles Windows CRLF line endings", () => {
   const content = "---\r\nmodels:\r\n  execution:\r\n    model: qwen/qwen3-coder\r\n---\r\n";
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as SFModelConfigV2;
+  const execution = models.execution as SFPhaseModelConfig;
   assert.equal(execution.model, "qwen/qwen3-coder");
 });
 
@@ -393,8 +393,8 @@ test("handles model config with explicit provider field", () => {
   const content = `---\nmodels:\n  execution:\n    model: claude-opus-4-6\n    provider: bedrock\n    fallbacks:\n      - claude-sonnet-4-6\n---\n`;
   const prefs = parsePreferencesMarkdown(content);
   assert.notEqual(prefs, null);
-  const models = prefs!.models as GSDModelConfigV2;
-  const execution = models.execution as GSDPhaseModelConfig;
+  const models = prefs!.models as SFModelConfigV2;
+  const execution = models.execution as SFPhaseModelConfig;
   assert.equal(execution.model, "claude-opus-4-6");
   assert.equal(execution.provider, "bedrock");
 });
@@ -555,8 +555,8 @@ test("experimental.rtk parses correctly from preferences markdown", () => {
 test("loadEffectiveSFPreferences preserves experimental prefs across global+project merge", () => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.SF_HOME;
-  const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-project-"));
-  const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-home-"));
+  const tempProject = mkdtempSync(join(tmpdir(), "sf-prefs-project-"));
+  const tempGsdHome = mkdtempSync(join(tmpdir(), "sf-prefs-home-"));
 
   try {
     mkdirSync(join(tempProject, ".gsd"), { recursive: true });

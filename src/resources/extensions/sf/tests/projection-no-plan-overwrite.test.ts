@@ -19,7 +19,7 @@ import { resolve } from 'node:path'
 // Use process.cwd() based resolution instead of import.meta.url
 // to avoid tsx test runner path resolution issues
 const src = readFileSync(
-  resolve(process.cwd(), 'src', 'resources', 'extensions', 'gsd', 'workflow-projections.ts'),
+  resolve(process.cwd(), 'src', 'resources', 'extensions', 'sf', 'workflow-projections.ts'),
   'utf-8',
 )
 

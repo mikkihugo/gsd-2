@@ -16,8 +16,8 @@ export {
 } from "./bootstrap/write-gate.js";
 
 export default async function registerExtension(pi: ExtensionAPI) {
-  // Always register the core /gsd command first, in isolation.
-  // This ensures /gsd is available even if the full bootstrap (shortcuts,
+  // Always register the core /sf command first, in isolation.
+  // This ensures /sf is available even if the full bootstrap (shortcuts,
   // tools, hooks) fails — e.g. due to a Windows-specific import error.
   const { registerSFCommand } = await import("./commands/index.js");
   registerSFCommand(pi);
@@ -31,7 +31,7 @@ export default async function registerExtension(pi: ExtensionAPI) {
     const { logWarning } = await import("./workflow-logger.js");
     logWarning(
       "bootstrap",
-      `Extension setup partially failed — /gsd commands are available but shortcuts/tools may be missing: ${err instanceof Error ? err.message : String(err)}`,
+      `Extension setup partially failed — /sf commands are available but shortcuts/tools may be missing: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 }

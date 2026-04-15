@@ -7,7 +7,7 @@ Remote questions let SF ask for your input via Slack, Discord, or Telegram when 
 ### Discord
 
 ```
-/gsd remote discord
+/sf remote discord
 ```
 
 The wizard prompts for your bot token, validates it, lets you pick a server and channel, sends a test message, and saves the config.
@@ -20,7 +20,7 @@ The wizard prompts for your bot token, validates it, lets you pick a server and 
 ### Slack
 
 ```
-/gsd remote slack
+/sf remote slack
 ```
 
 **Bot requirements:**
@@ -31,7 +31,7 @@ The wizard prompts for your bot token, validates it, lets you pick a server and 
 ### Telegram
 
 ```
-/gsd remote telegram
+/sf remote telegram
 ```
 
 **Bot requirements:**
@@ -74,12 +74,12 @@ If no response arrives within `timeout_minutes`, SF continues with a timeout res
 
 | Command | Description |
 |---------|-------------|
-| `/gsd remote` | Show menu and current status |
-| `/gsd remote slack` | Set up Slack |
-| `/gsd remote discord` | Set up Discord |
-| `/gsd remote telegram` | Set up Telegram |
-| `/gsd remote status` | Show current config |
-| `/gsd remote disconnect` | Remove configuration |
+| `/sf remote` | Show menu and current status |
+| `/sf remote slack` | Set up Slack |
+| `/sf remote discord` | Set up Discord |
+| `/sf remote telegram` | Set up Telegram |
+| `/sf remote status` | Show current config |
+| `/sf remote disconnect` | Remove configuration |
 
 ## Troubleshooting
 

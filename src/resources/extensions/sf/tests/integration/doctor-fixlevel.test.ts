@@ -14,7 +14,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import test from "node:test";
 import assert from "node:assert/strict";
-import { runGSDDoctor } from "../../doctor.ts";
+import { runSFDoctor } from "../../doctor.ts";
 import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../../sf-db.ts";
 
 function makeTmp(name: string): string {
@@ -30,8 +30,8 @@ function makeTmp(name: string): string {
  * reconciliation issue codes.
  */
 function buildScaffold(base: string) {
-  const gsd = join(base, ".gsd");
-  const m = join(gsd, "milestones", "M001");
+  const sf = join(base, ".gsd");
+  const m = join(sf, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
 
@@ -83,7 +83,7 @@ test("fixLevel:task — no reconciliation issue codes are reported", async (t) =
 
   buildScaffold(tmp);
 
-  const report = await runGSDDoctor(tmp, { fix: true, fixLevel: "task" });
+  const report = await runSFDoctor(tmp, { fix: true, fixLevel: "task" });
 
   const codes = report.issues.map(i => i.code);
   for (const removed of REMOVED_CODES) {
@@ -97,7 +97,7 @@ test("fixLevel:all — no reconciliation issue codes are reported", async (t) =>
 
   buildScaffold(tmp);
 
-  const report = await runGSDDoctor(tmp, { fix: true });
+  const report = await runSFDoctor(tmp, { fix: true });
 
   const codes = report.issues.map(i => i.code);
   for (const removed of REMOVED_CODES) {
@@ -123,8 +123,8 @@ test("legacy roadmap fallback: future slices are treated as pending, active slic
   // Force the legacy parser branch.
   try { closeDatabase(); } catch { /* noop */ }
 
-  const gsd = join(tmp, ".gsd");
-  const m = join(gsd, "milestones", "M001");
+  const sf = join(tmp, ".gsd");
+  const m = join(sf, "milestones", "M001");
   const s01 = join(m, "slices", "S01", "tasks");
   mkdirSync(s01, { recursive: true });
 
@@ -153,7 +153,7 @@ test("legacy roadmap fallback: future slices are treated as pending, active slic
 
   // Active slice exists in state/registry but has no directory yet — this should
   // still be reported as a real error, while future untouched slices should be skipped.
-  const report = await runGSDDoctor(tmp, { scope: "M001" });
+  const report = await runSFDoctor(tmp, { scope: "M001" });
   const missingSliceDirUnits = report.issues
     .filter(i => i.code === "missing_slice_dir")
     .map(i => i.unitId)
@@ -184,8 +184,8 @@ test("db skipped slices do not report missing directories", async (t) => {
     rmSync(tmp, { recursive: true, force: true });
   });
 
-  const gsd = join(tmp, ".gsd");
-  const m = join(gsd, "milestones", "M001");
+  const sf = join(tmp, ".gsd");
+  const m = join(sf, "milestones", "M001");
   mkdirSync(m, { recursive: true });
 
   writeFileSync(join(m, "M001-ROADMAP.md"), `# M001: Test
@@ -196,11 +196,11 @@ test("db skipped slices do not report missing directories", async (t) => {
   > Intentionally skipped
 `);
 
-  openDatabase(join(gsd, "gsd.db"));
+  openDatabase(join(sf, "sf.db"));
   insertMilestone({ id: "M001", title: "Test", status: "active" });
   insertSlice({ id: "S05", milestoneId: "M001", title: "Skipped Slice", status: "skipped", sequence: 5 });
 
-  const report = await runGSDDoctor(tmp, { scope: "M001" });
+  const report = await runSFDoctor(tmp, { scope: "M001" });
   const missingDirIssues = report.issues.filter(
     i =>
       (i.code === "missing_slice_dir" || i.code === "missing_tasks_dir") &&
@@ -232,8 +232,8 @@ test("fixLevel:all — delimiter_in_title still fixable", async (t) => {
   const tmp = makeTmp("delimiter-fix");
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
-  const gsd = join(tmp, ".gsd");
-  const m = join(gsd, "milestones", "M001");
+  const sf = join(tmp, ".gsd");
+  const m = join(sf, "milestones", "M001");
   const s = join(m, "slices", "S01", "tasks");
   mkdirSync(s, { recursive: true });
 
@@ -255,7 +255,7 @@ test("fixLevel:all — delimiter_in_title still fixable", async (t) => {
 - [ ] **T01: Do stuff** \`est:5m\`
 `);
 
-  const report = await runGSDDoctor(tmp, { fix: true });
+  const report = await runSFDoctor(tmp, { fix: true });
 
   // The milestone-level delimiter is auto-fixed, but the report may or may not include it
   // depending on whether it was fixed successfully. Just verify it ran without crashing.

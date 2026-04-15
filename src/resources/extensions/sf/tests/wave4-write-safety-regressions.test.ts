@@ -12,7 +12,7 @@ import { saveJsonFile, loadJsonFile } from "../json-persistence.js";
 
 describe("saveJsonFile atomic write", () => {
   test("writes JSON file correctly", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-json-test-"));
+    const tmp = mkdtempSync(join(tmpdir(), "sf-json-test-"));
     try {
       const file = join(tmp, "test.json");
       saveJsonFile(file, { key: "value" });
@@ -24,7 +24,7 @@ describe("saveJsonFile atomic write", () => {
   });
 
   test("no .tmp file left after successful write", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-json-test-"));
+    const tmp = mkdtempSync(join(tmpdir(), "sf-json-test-"));
     try {
       const file = join(tmp, "test.json");
       saveJsonFile(file, { data: 123 });
@@ -37,7 +37,7 @@ describe("saveJsonFile atomic write", () => {
   });
 
   test("concurrent writes don't corrupt data", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-json-test-"));
+    const tmp = mkdtempSync(join(tmpdir(), "sf-json-test-"));
     try {
       const file = join(tmp, "shared.json");
       // Write two different values rapidly — both should succeed without corruption
@@ -51,7 +51,7 @@ describe("saveJsonFile atomic write", () => {
   });
 
   test("round-trip through loadJsonFile", () => {
-    const tmp = mkdtempSync(join(tmpdir(), "gsd-json-test-"));
+    const tmp = mkdtempSync(join(tmpdir(), "sf-json-test-"));
     try {
       const file = join(tmp, "roundtrip.json");
       const data = { items: [1, 2, 3], name: "test" };

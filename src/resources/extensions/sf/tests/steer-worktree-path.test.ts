@@ -1,5 +1,5 @@
 // SF Extension - Steer Worktree Path Resolution Test
-// Regression test for #3476: /gsd steer must write overrides to the worktree .gsd/,
+// Regression test for #3476: /sf steer must write overrides to the worktree .gsd/,
 // not the project root .gsd/, when a worktree is active.
 
 import { describe, test, beforeEach, afterEach } from "node:test";
@@ -15,7 +15,7 @@ describe("steer worktree path resolution (#3476)", () => {
   let worktreePath: string;
 
   beforeEach(() => {
-    projectRoot = mkdtempSync(join(tmpdir(), "gsd-steer-wt-"));
+    projectRoot = mkdtempSync(join(tmpdir(), "sf-steer-wt-"));
     mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
 
     // Simulate a worktree with its own .gsd directory

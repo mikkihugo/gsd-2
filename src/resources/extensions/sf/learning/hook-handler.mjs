@@ -1,7 +1,7 @@
 /**
- * gsd-learning: before_model_select hook handler
+ * sf-learning: before_model_select hook handler
  *
- * Called by gsd's auto-model-selection.js (line 121-141) before capability
+ * Called by sf's auto-model-selection.js (line 121-141) before capability
  * scoring runs. If we return {modelId}, it overrides pi-ai's own dispatch
  * path — our Bayesian-blended ranking wins.
  *
@@ -10,7 +10,7 @@
  *   ranking over the eligible models for the unit type
  * - Decide whether to override (return {modelId}) or fall through (return
  *   undefined) so pi-ai's existing capability scoring still runs as fallback
- * - Never crash gsd's dispatch path: any internal error is caught, logged,
+ * - Never crash sf's dispatch path: any internal error is caught, logged,
  *   and translated into a fallthrough
  *
  * ## Fallthrough semantics
@@ -31,7 +31,7 @@
  * - None on the database (read-only path). May call `deps.opts.log` once per
  *   invocation if a logger is supplied.
  *
- * @module gsd-learning/hook-handler
+ * @module sf-learning/hook-handler
  */
 
 import { aggregateAllForUnitType } from "./outcome-aggregator.mjs";
@@ -129,7 +129,7 @@ function safeLog(log, message) {
  */
 function formatDecisionLog(ranked, unitType) {
     if (ranked.length === 0) {
-        return `[gsd-learning] ${unitType}: no eligible models after ranking`;
+        return `[sf-learning] ${unitType}: no eligible models after ranking`;
     }
     const winner = ranked[TOP_RANKED_INDEX];
     const runnerUp = ranked[1];
@@ -138,9 +138,9 @@ function formatDecisionLog(ranked, unitType) {
         .map((entry) => `${entry.modelId}=${entry.finalScore.toFixed(1)}`)
         .join(", ");
     if (runnerUp) {
-        return `[gsd-learning] ${unitType}: blend picked ${winner.modelId} over ${runnerUp.modelId} (${summary})`;
+        return `[sf-learning] ${unitType}: blend picked ${winner.modelId} over ${runnerUp.modelId} (${summary})`;
     }
-    return `[gsd-learning] ${unitType}: blend picked ${winner.modelId} (${summary})`;
+    return `[sf-learning] ${unitType}: blend picked ${winner.modelId} (${summary})`;
 }
 
 /**
@@ -205,7 +205,7 @@ export function createBeforeModelSelectHandler(deps) {
         } catch (err) {
             safeLog(
                 log,
-                `[gsd-learning] hook handler error (falling through): ${err?.message ?? String(err)}`,
+                `[sf-learning] hook handler error (falling through): ${err?.message ?? String(err)}`,
             );
             return undefined;
         }

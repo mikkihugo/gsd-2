@@ -8,7 +8,7 @@ import { randomUUID } from "node:crypto";
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-backlog-test-${randomUUID()}`);
+  const base = join(tmpdir(), `sf-backlog-test-${randomUUID()}`);
   mkdirSync(join(base, ".gsd"), { recursive: true });
   return base;
 }

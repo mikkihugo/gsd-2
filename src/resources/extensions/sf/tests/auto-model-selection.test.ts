@@ -16,8 +16,8 @@ function makeTempDir(prefix: string): string {
 test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models section is absent", () => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.SF_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const tempProject = makeTempDir("sf-routing-project-");
+  const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gsd"), { recursive: true });
@@ -59,8 +59,8 @@ test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models 
 test("resolvePreferredModelConfig falls back to auto start model when heavy tier is absent", () => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.SF_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const tempProject = makeTempDir("sf-routing-project-");
+  const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gsd"), { recursive: true });
@@ -101,8 +101,8 @@ test("resolvePreferredModelConfig falls back to auto start model when heavy tier
 test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", () => {
   const originalCwd = process.cwd();
   const originalGsdHome = process.env.SF_HOME;
-  const tempProject = makeTempDir("gsd-routing-project-");
-  const tempGsdHome = makeTempDir("gsd-routing-home-");
+  const tempProject = makeTempDir("sf-routing-project-");
+  const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
     mkdirSync(join(tempProject, ".gsd"), { recursive: true });
@@ -205,8 +205,8 @@ test("model change notify in selectAndApplyModel is gated behind verbose flag", 
   // The Model [phase] [tier] notification should only fire when verbose=true.
   // The dashboard header already shows the active model, so the notification
   // is redundant noise during auto-mode (#3719).
-  const gsdDir = join(__dirname, "..");
-  const src = readFileSync(join(gsdDir, "auto-model-selection.ts"), "utf-8");
+  const sfDir = join(__dirname, "..");
+  const src = readFileSync(join(sfDir, "auto-model-selection.ts"), "utf-8");
 
   // Find the block where setModel succeeds (appliedModel = model) and
   // verify notify is inside an `if (verbose)` guard.

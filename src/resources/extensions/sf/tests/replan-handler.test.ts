@@ -20,7 +20,7 @@ import { handleReplanSlice } from '../tools/replan-slice.ts';
 import { parsePlan } from '../parsers-legacy.ts';
 
 function makeTmpBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-replan-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-replan-'));
   mkdirSync(join(base, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'tasks'), { recursive: true });
   return base;
 }
@@ -98,7 +98,7 @@ function validReplanParams() {
 
 test('handleReplanSlice rejects invalid payloads (missing milestoneId)', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks();
@@ -113,7 +113,7 @@ test('handleReplanSlice rejects invalid payloads (missing milestoneId)', async (
 
 test('handleReplanSlice rejects structural violation: updating a completed task', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'pending' });
@@ -145,7 +145,7 @@ test('handleReplanSlice rejects structural violation: updating a completed task'
 
 test('handleReplanSlice rejects structural violation: removing a completed task', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'pending' });
@@ -166,7 +166,7 @@ test('handleReplanSlice rejects structural violation: removing a completed task'
 
 test('handleReplanSlice succeeds when modifying only incomplete tasks', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'pending', t03Status: 'pending' });
@@ -246,7 +246,7 @@ test('handleReplanSlice succeeds when modifying only incomplete tasks', async ()
 
 test('handleReplanSlice cache invalidation: re-parsing PLAN.md reflects mutations', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'pending', t03Status: 'pending' });
@@ -295,7 +295,7 @@ test('handleReplanSlice cache invalidation: re-parsing PLAN.md reflects mutation
 
 test('handleReplanSlice is idempotent: calling twice with same params succeeds', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'pending', t03Status: 'pending' });
@@ -333,7 +333,7 @@ test('handleReplanSlice is idempotent: calling twice with same params succeeds',
 
 test('handleReplanSlice returns missing parent slice error', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     insertMilestone({ id: 'M001', title: 'Milestone', status: 'active' });
@@ -349,7 +349,7 @@ test('handleReplanSlice returns missing parent slice error', async () => {
 
 test('handleReplanSlice rejects task with status "done" (alias for complete)', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'done', t02Status: 'pending' });
@@ -381,7 +381,7 @@ test('handleReplanSlice rejects task with status "done" (alias for complete)', a
 
 test('handleReplanSlice returns structured error payloads with actionable messages', async () => {
   const base = makeTmpBase();
-  openDatabase(join(base, '.gsd', 'gsd.db'));
+  openDatabase(join(base, '.gsd', 'sf.db'));
 
   try {
     seedSliceWithTasks({ t01Status: 'complete', t02Status: 'complete', t03Status: 'pending' });

@@ -10,18 +10,18 @@ import { setLogBasePath, logWarning } from "../workflow-logger.js";
 /**
  * Resolve the correct DB path for the current working directory.
  * If `basePath` is inside a `.gsd/worktrees/<MID>/` directory, returns
- * the project root's `.gsd/gsd.db` (shared WAL — R012). Otherwise
- * returns `<basePath>/.gsd/gsd.db`.
+ * the project root's `.gsd/sf.db` (shared WAL — R012). Otherwise
+ * returns `<basePath>/.gsd/sf.db`.
  */
 export function resolveProjectRootDbPath(basePath: string): string {
   // Detect worktree: look for `.gsd/worktrees/` in the path segments.
   // A worktree path looks like: /project/root/.gsd/worktrees/M001/...
-  // We need to resolve back to /project/root/.gsd/gsd.db
+  // We need to resolve back to /project/root/.gsd/sf.db
   const marker = `${sep}.gsd${sep}worktrees${sep}`;
   const idx = basePath.indexOf(marker);
   if (idx !== -1) {
     const projectRoot = basePath.slice(0, idx);
-    return join(projectRoot, ".gsd", "gsd.db");
+    return join(projectRoot, ".gsd", "sf.db");
   }
 
   // Also handle forward-slash paths on all platforms
@@ -29,11 +29,11 @@ export function resolveProjectRootDbPath(basePath: string): string {
   const fwdIdx = basePath.indexOf(fwdMarker);
   if (fwdIdx !== -1) {
     const projectRoot = basePath.slice(0, fwdIdx);
-    return join(projectRoot, ".gsd", "gsd.db");
+    return join(projectRoot, ".gsd", "sf.db");
   }
 
   // External-state layout: ~/.gsd/projects/<hash>/worktrees/<MID>/...
-  // Resolve to ~/.gsd/projects/<hash>/gsd.db (the canonical project DB) (#2952).
+  // Resolve to ~/.gsd/projects/<hash>/sf.db (the canonical project DB) (#2952).
   // Must be checked before the generic symlink-resolved handler: both match
   // /.gsd/projects/<hash>/worktrees/ but require different resolution targets.
   const extRe = /[/\\]\.gsd[/\\]projects[/\\][a-f0-9]+[/\\]worktrees(?:[/\\]|$)/;
@@ -43,7 +43,7 @@ export function resolveProjectRootDbPath(basePath: string): string {
     // Find the "/worktrees" portion within the match and slice up to it
     const wtIdx = matchStr.search(/[/\\]worktrees(?:[/\\]|$)/);
     const projectStateRoot = basePath.slice(0, extMatch.index + wtIdx);
-    return join(projectStateRoot, "gsd.db");
+    return join(projectStateRoot, "sf.db");
   }
 
   // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/M001/...
@@ -56,7 +56,7 @@ export function resolveProjectRootDbPath(basePath: string): string {
     const worktreeSeg = `${sep}worktrees${sep}`;
     if (afterProjects.includes(worktreeSeg)) {
       const projectRoot = basePath.slice(0, symlinkIdx);
-      return join(projectRoot, ".gsd", "gsd.db");
+      return join(projectRoot, ".gsd", "sf.db");
     }
   }
 
@@ -67,21 +67,21 @@ export function resolveProjectRootDbPath(basePath: string): string {
     const afterProjects = basePath.slice(fwdSymlinkIdx + fwdSymlinkMarker.length);
     if (afterProjects.includes("/worktrees/")) {
       const projectRoot = basePath.slice(0, fwdSymlinkIdx);
-      return join(projectRoot, ".gsd", "gsd.db");
+      return join(projectRoot, ".gsd", "sf.db");
     }
   }
 
 
-  return join(basePath, ".gsd", "gsd.db");
+  return join(basePath, ".gsd", "sf.db");
 }
 
 export async function ensureDbOpen(basePath: string = process.cwd()): Promise<boolean> {
   try {
     const db = await import("../sf-db.js");
     const dbPath = resolveProjectRootDbPath(basePath);
-    const gsdDir = join(basePath, ".gsd");
+    const sfDir = join(basePath, ".gsd");
 
-    // Derive the project root from the DB path (strip .gsd/gsd.db)
+    // Derive the project root from the DB path (strip .gsd/sf.db)
     const projectRoot = join(dbPath, "..", "..");
 
     // Open existing DB file (may be at project root for worktrees)
@@ -92,10 +92,10 @@ export async function ensureDbOpen(basePath: string = process.cwd()): Promise<bo
     }
 
     // No DB file — create + migrate from Markdown if .gsd/ has content
-    if (existsSync(gsdDir)) {
-      const hasDecisions = existsSync(join(gsdDir, "DECISIONS.md"));
-      const hasRequirements = existsSync(join(gsdDir, "REQUIREMENTS.md"));
-      const hasMilestones = existsSync(join(gsdDir, "milestones"));
+    if (existsSync(sfDir)) {
+      const hasDecisions = existsSync(join(sfDir, "DECISIONS.md"));
+      const hasRequirements = existsSync(join(sfDir, "REQUIREMENTS.md"));
+      const hasMilestones = existsSync(join(sfDir, "milestones"));
       if (hasDecisions || hasRequirements || hasMilestones) {
         const opened = db.openDatabase(dbPath);
         if (opened) {

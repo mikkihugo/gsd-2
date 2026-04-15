@@ -59,7 +59,7 @@ function warnDeprecatedAgentInstructions(): void {
       console.warn(
         `[SF] DEPRECATED: ${path} is no longer loaded. ` +
         `Migrate your instructions to AGENTS.md (or CLAUDE.md) in the same directory. ` +
-        `See https://github.com/gsd-build/SF/issues/1492`,
+        `See https://github.com/sf-build/SF/issues/1492`,
       );
     }
   }
@@ -84,7 +84,7 @@ export async function buildBeforeAgentStartResult(
     if (autoEnableCmuxPreferences()) {
       loadedPreferences = loadEffectiveSFPreferences();
       ctx.ui.notify(
-        "cmux detected — auto-enabled. Run /gsd cmux off to disable.",
+        "cmux detected — auto-enabled. Run /sf cmux off to disable.",
         "info",
       );
     }
@@ -161,7 +161,7 @@ export async function buildBeforeAgentStartResult(
         const content = rawContent.length > MAX_CODEBASE_CHARS
           ? rawContent.slice(0, MAX_CODEBASE_CHARS) + "\n\n*(truncated — see .gsd/CODEBASE.md for full map)*"
           : rawContent;
-        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when SF detects tracked file changes; use /gsd codebase stats for status)]\n\n${content}`;
+        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when SF detects tracked file changes; use /sf codebase stats for status)]\n\n${content}`;
       }
     } catch (e) {
       logWarning("bootstrap", `CODEBASE file read failed: ${(e as Error).message}`);
@@ -193,9 +193,9 @@ export async function buildBeforeAgentStartResult(
 
   // Determine which context message to inject (guided execute takes priority)
   const contextMessage = injection
-    ? { customType: "gsd-guided-context", content: injection, display: false as const }
+    ? { customType: "sf-guided-context", content: injection, display: false as const }
     : forensicsInjection
-      ? { customType: "gsd-forensics", content: forensicsInjection, display: false as const }
+      ? { customType: "sf-forensics", content: forensicsInjection, display: false as const }
       : null;
 
   return {

@@ -1,10 +1,10 @@
 # Auto Mode
 
-Auto mode is SF's autonomous execution engine. Run `/gsd auto`, walk away, come back to built software with clean git history.
+Auto mode is SF's autonomous execution engine. Run `/sf auto`, walk away, come back to built software with clean git history.
 
 ## How It Works
 
-Auto mode is a **state machine driven by files on disk**. It reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode reads disk state again and dispatches the next unit.
+Auto mode is a **state machine driven by files on disk**. It reads `.sf/STATE.md`, determines the next unit of work, creates a fresh agent session, injects a focused prompt with all relevant context pre-inlined, and lets the LLM execute. When the LLM finishes, auto mode reads disk state again and dispatches the next unit.
 
 ### The Loop
 
@@ -47,7 +47,7 @@ The amount of context inlined is controlled by your [token profile](./token-opti
 
 SF isolates milestone work using one of three modes (configured via `git.isolation` in preferences):
 
-- **`worktree`** (default): Each milestone runs in its own git worktree at `.gsd/worktrees/<MID>/` on a `milestone/<MID>` branch. All slice work commits sequentially — no branch switching, no merge conflicts mid-milestone. When the milestone completes, it's squash-merged to main as one clean commit.
+- **`worktree`** (default): Each milestone runs in its own git worktree at `.sf/worktrees/<MID>/` on a `milestone/<MID>` branch. All slice work commits sequentially — no branch switching, no merge conflicts mid-milestone. When the milestone completes, it's squash-merged to main as one clean commit.
 - **`branch`**: Work happens in the project root on a `milestone/<MID>` branch. Useful for submodule-heavy repos where worktrees don't work well.
 - **`none`**: Work happens directly on your current branch. No worktree, no milestone branch. Ideal for hot-reload workflows where file isolation breaks dev tooling.
 
@@ -59,9 +59,9 @@ When your project has independent milestones, you can run them simultaneously. E
 
 ### Crash Recovery
 
-A lock file tracks the current unit. If the session dies, the next `/gsd auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
+A lock file tracks the current unit. If the session dies, the next `/sf auto` reads the surviving session file, synthesizes a recovery briefing from every tool call that made it to disk, and resumes with full context.
 
-**Headless auto-restart (v2.26):** When running `gsd headless auto`, crashes trigger automatic restart with exponential backoff (5s → 10s → 30s cap, default 3 attempts). Configure with `--max-restarts N`. SIGINT/SIGTERM bypasses restart. Combined with crash recovery, this enables true overnight "run until done" execution.
+**Headless auto-restart (v2.26):** When running `sf headless auto`, crashes trigger automatic restart with exponential backoff (5s → 10s → 30s cap, default 3 attempts). Configure with `--max-restarts N`. SIGINT/SIGTERM bypasses restart. Combined with crash recovery, this enables true overnight "run until done" execution.
 
 ### Provider Error Recovery
 
@@ -95,16 +95,16 @@ The sliding-window approach reduces false positives on legitimate retries (e.g.,
 
 ### Post-Mortem Investigation (v2.40)
 
-`/gsd forensics` is a full-access SF debugger for post-mortem analysis of auto-mode failures. It provides:
+`/sf forensics` is a full-access SF debugger for post-mortem analysis of auto-mode failures. It provides:
 
 - **Anomaly detection** — structured identification of stuck loops, cost spikes, timeouts, missing artifacts, and crashes with severity levels
 - **Unit traces** — last 10 unit executions with error details and execution times
 - **Metrics analysis** — cost, token counts, and execution time breakdowns
-- **Doctor integration** — includes structural health issues from `/gsd doctor`
+- **Doctor integration** — includes structural health issues from `/sf doctor`
 - **LLM-guided investigation** — an agent session with full tool access to investigate root causes
 
 ```
-/gsd forensics [optional problem description]
+/sf forensics [optional problem description]
 ```
 
 See [Troubleshooting](./troubleshooting.md) for more on diagnosing issues.
@@ -164,13 +164,13 @@ Auto-mode pauses before each slice, presenting the slice context for discussion.
 
 ### HTML Reports (v2.26)
 
-After a milestone completes, SF auto-generates a self-contained HTML report in `.gsd/reports/`. Reports include project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base. No external dependencies — all CSS and JS are inlined.
+After a milestone completes, SF auto-generates a self-contained HTML report in `.sf/reports/`. Reports include project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base. No external dependencies — all CSS and JS are inlined.
 
 ```yaml
 auto_report: true    # enabled by default
 ```
 
-Generate manually anytime with `/gsd export --html`, or generate reports for all milestones at once with `/gsd export --html --all` (v2.28).
+Generate manually anytime with `/sf export --html`, or generate reports for all milestones at once with `/sf export --html --all` (v2.28).
 
 ### Failure Recovery (v2.28)
 
@@ -190,7 +190,7 @@ This linear flow is easier to debug, uses less memory (no recursive call stack),
 
 ### Real-Time Health Visibility (v2.40)
 
-Doctor issues (from `/gsd doctor`) now surface in real time across three places:
+Doctor issues (from `/sf doctor`) now surface in real time across three places:
 
 - **Dashboard widget** — health indicator with issue count and severity
 - **Workflow visualizer** — issues shown in the status panel
@@ -213,7 +213,7 @@ See [Configuration](./configuration.md) for skill routing preferences.
 ### Start
 
 ```
-/gsd auto
+/sf auto
 ```
 
 ### Pause
@@ -223,7 +223,7 @@ Press **Escape**. The conversation is preserved. You can interact with the agent
 ### Resume
 
 ```
-/gsd auto
+/sf auto
 ```
 
 Auto mode reads disk state and picks up where it left off.
@@ -231,7 +231,7 @@ Auto mode reads disk state and picks up where it left off.
 ### Stop
 
 ```
-/gsd stop
+/sf stop
 ```
 
 Stops auto mode gracefully. Can be run from a different terminal.
@@ -239,7 +239,7 @@ Stops auto mode gracefully. Can be run from a different terminal.
 ### Steer
 
 ```
-/gsd steer
+/sf steer
 ```
 
 Hard-steer plan documents during execution without stopping the pipeline. Changes are picked up at the next phase boundary.
@@ -247,7 +247,7 @@ Hard-steer plan documents during execution without stopping the pipeline. Change
 ### Capture
 
 ```
-/gsd capture "add rate limiting to API endpoints"
+/sf capture "add rate limiting to API endpoints"
 ```
 
 Fire-and-forget thought capture. Captures are triaged automatically between tasks. See [Captures & Triage](./captures-triage.md).
@@ -255,14 +255,14 @@ Fire-and-forget thought capture. Captures are triaged automatically between task
 ### Visualize
 
 ```
-/gsd visualize
+/sf visualize
 ```
 
 Open the workflow visualizer — interactive tabs for progress, dependencies, metrics, and timeline. See [Workflow Visualizer](./visualizer.md).
 
 ## Dashboard
 
-`Ctrl+Alt+G` or `/gsd status` shows real-time progress:
+`Ctrl+Alt+G` or `/sf status` shows real-time progress:
 
 - Current milestone, slice, and task
 - Auto mode elapsed time and phase

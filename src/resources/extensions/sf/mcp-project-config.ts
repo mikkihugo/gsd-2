@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 import { assertSafeDirectory } from "./validate-directory.js";
 import { detectWorkflowMcpLaunchConfig } from "./workflow-mcp.js";
 
-export const SF_WORKFLOW_MCP_SERVER_NAME = "gsd-workflow";
-export const SF_WORKFLOW_MCP_SERVER_NAME = SF_WORKFLOW_MCP_SERVER_NAME;
+export const SF_WORKFLOW_MCP_SERVER_NAME = "sf-workflow";
+export const GSD_WORKFLOW_MCP_SERVER_NAME = SF_WORKFLOW_MCP_SERVER_NAME;
 
 export interface ProjectMcpServerConfig {
   command?: string;
@@ -50,15 +50,15 @@ export function buildProjectWorkflowMcpServerConfig(
   env: NodeJS.ProcessEnv = process.env,
 ): ProjectMcpServerConfig {
   const resolvedProjectRoot = resolve(projectRoot);
-  const gsdCliPath = resolveBundledGsdCliPath(env);
+  const sfCliPath = resolveBundledGsdCliPath(env);
   const launch = detectWorkflowMcpLaunchConfig(resolvedProjectRoot, {
     ...env,
-    ...(gsdCliPath ? { SF_CLI_PATH: gsdCliPath, SF_BIN_PATH: gsdCliPath } : {}),
+    ...(sfCliPath ? { SF_CLI_PATH: sfCliPath, SF_BIN_PATH: sfCliPath } : {}),
   });
 
   if (!launch) {
     throw new Error(
-      "Unable to resolve the SF workflow MCP server. Build this checkout or install gsd-mcp-server on PATH.",
+      "Unable to resolve the SF workflow MCP server. Build this checkout or install sf-mcp-server on PATH.",
     );
   }
 

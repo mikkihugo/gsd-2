@@ -26,7 +26,7 @@ test("forensics prompt requires gh CLI with --repo singularity-forge/sf-run for 
   // Must contain the exact gh CLI command with the correct repo flag
   assert.match(
     prompt,
-    /gh issue create --repo gsd-build\/gsd-2/,
+    /gh issue create --repo sf-build\/sf-2/,
     "Prompt must specify gh issue create --repo singularity-forge/sf-run",
   );
 });

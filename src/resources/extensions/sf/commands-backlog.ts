@@ -1,5 +1,5 @@
 /**
- * SF Command — /gsd backlog
+ * SF Command — /sf backlog
  *
  * Structured backlog management with 999.x numbering.
  * Items stored in .gsd/BACKLOG.md as markdown checklist.
@@ -74,7 +74,7 @@ function nextBacklogId(items: BacklogItem[]): string {
 async function listBacklog(basePath: string, ctx: ExtensionCommandContext): Promise<void> {
   const items = parseBacklog(basePath);
   if (items.length === 0) {
-    ctx.ui.notify("Backlog is empty. Add items with /gsd backlog add <title>", "info");
+    ctx.ui.notify("Backlog is empty. Add items with /sf backlog add <title>", "info");
     return;
   }
 
@@ -91,7 +91,7 @@ async function listBacklog(basePath: string, ctx: ExtensionCommandContext): Prom
 
 async function addBacklogItem(basePath: string, title: string, ctx: ExtensionCommandContext): Promise<void> {
   if (!title) {
-    ctx.ui.notify("Usage: /gsd backlog add <title>", "warning");
+    ctx.ui.notify("Usage: /sf backlog add <title>", "warning");
     return;
   }
 
@@ -112,7 +112,7 @@ async function promoteBacklogItem(
   pi: ExtensionAPI,
 ): Promise<void> {
   if (!itemId) {
-    ctx.ui.notify("Usage: /gsd backlog promote <id>\nExample: /gsd backlog promote 999.1", "warning");
+    ctx.ui.notify("Usage: /sf backlog promote <id>\nExample: /sf backlog promote 999.1", "warning");
     return;
   }
 
@@ -139,7 +139,7 @@ async function promoteBacklogItem(
 
 async function removeBacklogItem(basePath: string, itemId: string, ctx: ExtensionCommandContext): Promise<void> {
   if (!itemId) {
-    ctx.ui.notify("Usage: /gsd backlog remove <id>", "warning");
+    ctx.ui.notify("Usage: /sf backlog remove <id>", "warning");
     return;
   }
 

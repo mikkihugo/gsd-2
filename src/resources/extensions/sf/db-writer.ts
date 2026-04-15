@@ -13,7 +13,7 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import type { Decision, Requirement } from './types.js';
 import { resolveSfRootFile } from './paths.js';
 import { saveFile } from './files.js';
-import { GSDError, SF_STALE_STATE, SF_IO_ERROR } from './errors.js';
+import { SFError, SF_STALE_STATE, SF_IO_ERROR } from './errors.js';
 import { logWarning, logError } from './workflow-logger.js';
 import { invalidateStateCache } from './state.js';
 import { clearPathCache } from './paths.js';
@@ -288,7 +288,7 @@ export async function saveRequirementToDb(
     // Atomic ID assignment + insert inside a transaction.
     const id = db.transaction(() => {
       const adapter = db._getAdapter();
-      if (!adapter) throw new GSDError(SF_STALE_STATE, "sf-db: No database open");
+      if (!adapter) throw new SFError(SF_STALE_STATE, "sf-db: No database open");
 
       const row = adapter
         .prepare('SELECT MAX(CAST(SUBSTR(id, 2) AS INTEGER)) as max_num FROM requirements')
@@ -396,7 +396,7 @@ export async function saveDecisionToDb(
     // parallel calls from racing on the same MAX(id) value.
     const id = db.transaction(() => {
       const adapter = db._getAdapter();
-      if (!adapter) throw new GSDError(SF_STALE_STATE, "sf-db: No database open");
+      if (!adapter) throw new SFError(SF_STALE_STATE, "sf-db: No database open");
 
       const row = adapter
         .prepare('SELECT MAX(CAST(SUBSTR(id, 2) AS INTEGER)) as max_num FROM decisions')
@@ -677,10 +677,10 @@ export async function saveArtifactToDb(
     const db = await import('./sf-db.js');
 
     // Guard against path traversal before any reads/writes
-    const gsdDir = resolve(basePath, '.gsd');
+    const sfDir = resolve(basePath, '.gsd');
     const fullPath = resolve(basePath, '.gsd', opts.path);
-    if (!fullPath.startsWith(gsdDir)) {
-      throw new GSDError(SF_IO_ERROR, `saveArtifactToDb: path escapes .gsd/ directory: ${opts.path}`);
+    if (!fullPath.startsWith(sfDir)) {
+      throw new SFError(SF_IO_ERROR, `saveArtifactToDb: path escapes .gsd/ directory: ${opts.path}`);
     }
 
     // Shrinkage guard: if the file already exists and the new content is

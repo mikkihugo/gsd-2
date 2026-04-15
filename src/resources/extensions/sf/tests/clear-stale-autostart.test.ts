@@ -3,7 +3,7 @@
  *
  * Verify that guided-flow.ts adds a createdAt timestamp to pending auto-start
  * entries and implements a staleness check (30s age guard) so that /clear
- * interrupted discussions don't permanently block future /gsd invocations.
+ * interrupted discussions don't permanently block future /sf invocations.
  */
 
 import { describe, test } from "node:test";

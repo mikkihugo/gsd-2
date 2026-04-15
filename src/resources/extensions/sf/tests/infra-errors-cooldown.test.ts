@@ -1,4 +1,4 @@
-// gsd / infra-errors cooldown detection tests
+// sf / infra-errors cooldown detection tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from "node:test";

@@ -19,7 +19,7 @@ import {
 } from '../unit-ownership.ts';
 
 function makeTmpBase(): string {
-  return mkdtempSync(join(tmpdir(), 'gsd-ownership-'));
+  return mkdtempSync(join(tmpdir(), 'sf-ownership-'));
 }
 
 function cleanup(base: string): void {

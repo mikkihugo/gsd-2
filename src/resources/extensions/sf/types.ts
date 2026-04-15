@@ -233,7 +233,7 @@ export interface RequirementCounts {
   total: number;
 }
 
-export interface GSDState {
+export interface SFState {
   activeMilestone: ActiveRef | null;
   activeSlice: ActiveRef | null;
   activeTask: ActiveRef | null;

@@ -18,7 +18,7 @@ function resolveGsdExtensionDir(): string {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
   if (existsSync(join(moduleDir, "workflow-templates"))) return moduleDir;
   const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
-  const agentGsdDir = join(sfHome, "agent", "extensions", "gsd");
+  const agentGsdDir = join(sfHome, "agent", "extensions", "sf");
   if (existsSync(join(agentGsdDir, "workflow-templates"))) return agentGsdDir;
   return moduleDir;
 }
@@ -205,8 +205,8 @@ export function listTemplates(): string {
     lines.push("");
   }
 
-  lines.push("Usage: /gsd start <template> [description]");
-  lines.push("       /gsd templates info <name>");
+  lines.push("Usage: /sf start <template> [description]");
+  lines.push("       /sf templates info <name>");
 
   return lines.join("\n");
 }

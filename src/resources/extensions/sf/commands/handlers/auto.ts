@@ -11,7 +11,7 @@ import { findMilestoneIds } from "../../milestone-id-utils.js";
 
 /**
  * Parse --yolo flag and optional file path from the auto command string.
- * Supports: `/gsd auto --yolo path/to/file.md` or `/gsd auto -y path/to/file.md`
+ * Supports: `/sf auto --yolo path/to/file.md` or `/sf auto -y path/to/file.md`
  */
 function parseYoloFlag(trimmed: string): { yoloSeedFile: string | null; rest: string } {
   const yoloRe = /(?:--yolo|-y)\s+("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|\S+)/;
@@ -133,7 +133,7 @@ export async function handleAutoCommand(trimmed: string, ctx: ExtensionCommandCo
   if (trimmed === "pause") {
     if (!isAutoActive()) {
       if (isAutoPaused()) {
-        ctx.ui.notify("Auto-mode is already paused. /gsd auto to resume.", "info");
+        ctx.ui.notify("Auto-mode is already paused. /sf auto to resume.", "info");
       } else {
         ctx.ui.notify("Auto-mode is not running.", "info");
       }

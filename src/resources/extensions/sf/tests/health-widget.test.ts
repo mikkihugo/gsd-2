@@ -68,13 +68,13 @@ test("detectHealthWidgetProjectState: milestone without metrics returns active",
 
 test("buildHealthLines: none state shows onboarding copy", (t) => {
   assert.deepEqual(buildHealthLines(activeData({ projectState: "none" })), [
-    "  SF  No project loaded — run /gsd to start",
+    "  SF  No project loaded — run /sf to start",
   ]);
 });
 
 test("buildHealthLines: initialized state shows continue setup copy", (t) => {
   assert.deepEqual(buildHealthLines(activeData({ projectState: "initialized" })), [
-    "  SF  Project initialized — run /gsd to continue setup",
+    "  SF  Project initialized — run /sf to continue setup",
   ]);
 });
 
@@ -220,5 +220,5 @@ test("session_start bootstraps the health widget alongside notifications", async
   } as any);
 
   assert.ok(widgets.includes("sf-health"), "health widget is bootstrapped");
-  assert.ok(widgets.includes("gsd-notifications"), "notification widget still boots");
+  assert.ok(widgets.includes("sf-notifications"), "notification widget still boots");
 });

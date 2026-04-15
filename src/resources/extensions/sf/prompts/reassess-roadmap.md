@@ -34,8 +34,8 @@ Ask yourself:
 - Are the boundary contracts in the boundary map still accurate given what was actually built?
 - Should any remaining slices be reordered, merged, split, or adjusted based on concrete evidence?
 - Did assumptions in remaining slice descriptions turn out wrong?
-- If `.gsd/REQUIREMENTS.md` exists: did this slice validate, invalidate, defer, block, or newly surface requirements?
-- If `.gsd/REQUIREMENTS.md` exists: does the remaining roadmap still provide credible coverage for Active requirements, including launchability, primary user loop, continuity, and failure visibility where relevant?
+- If `.sf/REQUIREMENTS.md` exists: did this slice validate, invalidate, defer, block, or newly surface requirements?
+- If `.sf/REQUIREMENTS.md` exists: does the remaining roadmap still provide credible coverage for Active requirements, including launchability, primary user loop, continuity, and failure visibility where relevant?
 - Are the Threat Surface and Requirement Impact sections in completed slice plans still accurate for remaining slices?
 - Did this slice's Operational Readiness reveal monitoring gaps that remaining slices should address?
 - Should any Horizontal Checklist items be updated based on what was actually built?
@@ -59,10 +59,10 @@ Use `sf_reassess_roadmap` with `verdict: "roadmap-confirmed"`, an empty `sliceCh
 
 **Persist changes through `sf_reassess_roadmap`.** Pass: `milestoneId`, `completedSliceId`, `verdict` (e.g. "roadmap-adjusted"), `assessment` (text explaining the decision), and `sliceChanges` with `modified` (array of sliceId, title, risk, depends, demo), `added` (same shape), `removed` (array of slice ID strings). The tool structurally enforces preservation of completed slices, writes the assessment to the DB, re-renders `{{roadmapPath}}`, and renders `{{assessmentPath}}`.
 
-If `.gsd/REQUIREMENTS.md` exists and requirement ownership or status changed, update it.
+If `.sf/REQUIREMENTS.md` exists and requirement ownership or status changed, update it.
 
 {{commitInstruction}}
 
-**DB access safety:** Do NOT query `.gsd/gsd.db` directly via `sqlite3` or `node -e require('better-sqlite3')`. Use `sf_milestone_status` to read current milestone and slice state. All roadmap mutations go through `sf_reassess_roadmap` — the tool writes to the DB and re-renders ROADMAP.md atomically.
+**DB access safety:** Do NOT query `.sf/sf.db` directly via `sqlite3` or `node -e require('better-sqlite3')`. Use `sf_milestone_status` to read current milestone and slice state. All roadmap mutations go through `sf_reassess_roadmap` — the tool writes to the DB and re-renders ROADMAP.md atomically.
 
 When done, say: "Roadmap reassessed."

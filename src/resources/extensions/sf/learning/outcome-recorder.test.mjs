@@ -1,5 +1,5 @@
 /**
- * gsd-learning: outcome-recorder + outcome-aggregator tests
+ * sf-learning: outcome-recorder + outcome-aggregator tests
  *
  * Uses node:test with a minimal in-memory fake `db` that mimics the
  * better-sqlite3 surface (`prepare(sql).run/get/all`, `exec`,

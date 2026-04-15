@@ -102,11 +102,11 @@ function setupTestEnvironment(): void {
   mkdirSync(tempDir, { recursive: true });
   
   // Create .gsd directory structure
-  const gsdDir = join(tempDir, ".gsd");
-  mkdirSync(gsdDir, { recursive: true });
+  const sfDir = join(tempDir, ".gsd");
+  mkdirSync(sfDir, { recursive: true });
   
   // Create milestones directory structure
-  const milestonesDir = join(gsdDir, "milestones", "M001", "slices", "S01", "tasks");
+  const milestonesDir = join(sfDir, "milestones", "M001", "slices", "S01", "tasks");
   mkdirSync(milestonesDir, { recursive: true });
   
   // Change cwd so loadEffectiveSFPreferences finds our PREFERENCES.md
@@ -116,7 +116,7 @@ function setupTestEnvironment(): void {
   _clearGsdRootCache();
   
   // Initialize DB
-  dbPath = join(gsdDir, "gsd.db");
+  dbPath = join(sfDir, "sf.db");
   openDatabase(dbPath);
 }
 

@@ -1,5 +1,5 @@
 /**
- * /gsd migrate — one-shot migration from .planning to .gsd
+ * /sf migrate — one-shot migration from .planning to .gsd
  *
  * Thin UX orchestrator: resolves paths, runs the validate → parse → transform →
  * preview → write pipeline, and shows confirmation UI via showNextAction.
@@ -18,9 +18,9 @@ import { showNextAction } from "../../shared/tui.js";
 import {
   validatePlanningDirectory,
   parsePlanningDirectory,
-  transformToGSD,
+  transformToSF,
   generatePreview,
-  writeGSDDirectory,
+  writeSFDirectory,
 } from "./index.js";
 
 import type { MigrationPreview } from "./writer.js";
@@ -68,7 +68,7 @@ function dispatchReview(
 
   pi.sendMessage(
     {
-      customType: "gsd-migrate-review",
+      customType: "sf-migrate-review",
       content: prompt,
       display: false,
     },
@@ -99,7 +99,7 @@ export async function handleMigrate(
     ctx.ui.notify(
       `Directory not found: ${sourcePath}\n\n` +
       'Migration converts a .planning/ directory (from older SF versions) into .gsd/ format.\n' +
-      'If you are starting a new project, use /gsd:new-project instead.\n' +
+      'If you are starting a new project, use /sf:new-project instead.\n' +
       'If migrating, ensure the path contains a .planning/ directory.',
       "error",
     );
@@ -129,7 +129,7 @@ export async function handleMigrate(
 
   // ── Parse → Transform → Preview ───────────────────────────────────────────
   const parsed = await parsePlanningDirectory(sourcePath);
-  const project = transformToGSD(parsed);
+  const project = transformToSF(parsed);
   const preview = generatePreview(project);
 
   // ── Build preview text ─────────────────────────────────────────────────────
@@ -168,7 +168,7 @@ export async function handleMigrate(
         description: "Exit without writing anything",
       },
     ],
-    notYetMessage: "Run /gsd migrate again when ready.",
+    notYetMessage: "Run /sf migrate again when ready.",
   });
 
   if (choice !== "confirm") {
@@ -179,7 +179,7 @@ export async function handleMigrate(
   // ── Write ──────────────────────────────────────────────────────────────────
   ctx.ui.notify("Writing .gsd directory…", "info");
 
-  const result = await writeGSDDirectory(project, process.cwd());
+  const result = await writeSFDirectory(project, process.cwd());
   const sfPath = sfRoot(process.cwd());
 
   ctx.ui.notify(
@@ -210,7 +210,7 @@ export async function handleMigrate(
         description: "Trust the migration output as-is",
       },
     ],
-    notYetMessage: "Run /gsd migrate again to re-migrate, or review .gsd manually.",
+    notYetMessage: "Run /sf migrate again to re-migrate, or review .gsd manually.",
   });
 
   if (reviewChoice === "review") {

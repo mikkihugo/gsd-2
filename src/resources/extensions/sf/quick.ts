@@ -1,5 +1,5 @@
 /**
- * SF Quick Mode — /gsd quick <task>
+ * SF Quick Mode — /sf quick <task>
  * Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
  *
  * Lightweight task execution with SF guarantees (atomic commits, state
@@ -168,7 +168,7 @@ export async function handleQuick(
   // Validate: .gsd/ must exist
   if (!existsSync(root)) {
     ctx.ui.notify(
-      "No .gsd/ directory found. Run /gsd to initialize a project first.",
+      "No .gsd/ directory found. Run /sf to initialize a project first.",
       "error",
     );
     return;
@@ -178,7 +178,7 @@ export async function handleQuick(
   let description = args.trim();
   if (!description) {
     ctx.ui.notify(
-      "Usage: /gsd quick <task description>\n\nExample: /gsd quick fix login button not responding on mobile",
+      "Usage: /sf quick <task description>\n\nExample: /sf quick fix login button not responding on mobile",
       "info",
     );
     return;
@@ -253,7 +253,7 @@ export async function handleQuick(
 
   pi.sendMessage(
     {
-      customType: "gsd-quick-task",
+      customType: "sf-quick-task",
       content: prompt,
       display: false,
     },

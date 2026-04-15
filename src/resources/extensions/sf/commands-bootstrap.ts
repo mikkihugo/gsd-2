@@ -2,10 +2,10 @@ import { importExtensionModule, type ExtensionAPI, type ExtensionCommandContext 
 
 const TOP_LEVEL_SUBCOMMANDS = [
   { cmd: "help", desc: "Categorized command reference with descriptions" },
-  { cmd: "next", desc: "Explicit step mode (same as /gsd)" },
+  { cmd: "next", desc: "Explicit step mode (same as /sf)" },
   { cmd: "auto", desc: "Autonomous mode — research, plan, execute, commit, repeat" },
   { cmd: "stop", desc: "Stop auto mode gracefully" },
-  { cmd: "pause", desc: "Pause auto-mode (preserves state, /gsd auto to resume)" },
+  { cmd: "pause", desc: "Pause auto-mode (preserves state, /sf auto to resume)" },
   { cmd: "status", desc: "Progress dashboard" },
   { cmd: "visualize", desc: "Open workflow visualizer" },
   { cmd: "queue", desc: "Queue and reorder future milestones" },
@@ -251,13 +251,13 @@ function getGsdArgumentCompletions(prefix: string) {
   return null;
 }
 
-export function registerLazyGSDCommand(pi: ExtensionAPI): void {
-  pi.registerCommand("gsd", {
+export function registerLazySFCommand(pi: ExtensionAPI): void {
+  pi.registerCommand("sf", {
     description: "SF — Singularity Forge",
     getArgumentCompletions: getGsdArgumentCompletions,
     handler: async (args: string, ctx: ExtensionCommandContext) => {
-      const { handleGSDCommand } = await importExtensionModule<typeof import("./commands.js")>(import.meta.url, "./commands.js");
-      await handleGSDCommand(args, ctx, pi);
+      const { handleSFCommand } = await importExtensionModule<typeof import("./commands.js")>(import.meta.url, "./commands.js");
+      await handleSFCommand(args, ctx, pi);
     },
   });
 }

@@ -1,9 +1,9 @@
 // Structural contracts for SF extension bootstrap isolation.
 //
-// The /gsd command must survive failures in the full extension bootstrap
+// The /sf command must survive failures in the full extension bootstrap
 // (register-extension.ts). This guards against the regression where a
 // Windows-specific import failure in register-shortcuts.ts silently
-// prevented /gsd from being registered at all (#4168, #4172).
+// prevented /sf from being registered at all (#4168, #4172).
 
 import { describe, test } from "node:test";
 import assert from "node:assert/strict";
@@ -18,7 +18,7 @@ const registerExtSrc = readFileSync(
   "utf-8",
 );
 
-// ─── index.ts: core /gsd command must be registered before full bootstrap ─────
+// ─── index.ts: core /sf command must be registered before full bootstrap ─────
 
 describe("index.ts bootstrap isolation", () => {
   test("imports registerSFCommand from commands/index.js separately", () => {
@@ -29,15 +29,15 @@ describe("index.ts bootstrap isolation", () => {
   });
 
   test("calls registerSFCommand before importing register-extension.js", () => {
-    const gsdCommandCallPos = indexSrc.indexOf("registerSFCommand(pi)");
+    const sfCommandCallPos = indexSrc.indexOf("registerSFCommand(pi)");
     const bootstrapImportPos = indexSrc.indexOf(
       './bootstrap/register-extension.js"',
     );
 
-    assert.ok(gsdCommandCallPos >= 0, "must call registerSFCommand(pi)");
+    assert.ok(sfCommandCallPos >= 0, "must call registerSFCommand(pi)");
     assert.ok(bootstrapImportPos >= 0, "must import register-extension.js");
     assert.ok(
-      gsdCommandCallPos < bootstrapImportPos,
+      sfCommandCallPos < bootstrapImportPos,
       "registerSFCommand(pi) must be called BEFORE importing register-extension.js",
     );
   });
@@ -65,7 +65,7 @@ describe("index.ts bootstrap isolation", () => {
     );
     assert.ok(
       indexSrc.includes("Extension setup partially failed"),
-      "warning message must indicate partial failure with /gsd still available",
+      "warning message must indicate partial failure with /sf still available",
     );
   });
 });

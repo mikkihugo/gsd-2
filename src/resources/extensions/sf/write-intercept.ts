@@ -25,8 +25,8 @@ const BLOCKED_PATTERNS: RegExp[] = [
   // Also match resolved symlink paths under ~/.gsd/projects/ (Pitfall #6)
   /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
   // sf.db and WAL/SHM files — single-writer WAL connection managed by engine (#3625)
-  /(^|[/\\])\.gsd[/\\]gsd\.db(-wal|-shm)?$/i,
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]gsd\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gsd[/\\]sf\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]sf\.db(-wal|-shm)?$/i,
 ];
 
 /**
@@ -45,11 +45,11 @@ const BASH_STATE_PATTERNS: RegExp[] = [
   // dd output to STATE.md
   /\bdd\b.*of=\S*STATE\.md/i,
   // Direct DB access via sqlite3/sql.js/better-sqlite3 targeting sf.db (#3625)
-  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*gsd\.db/i,
-  /\bgsd\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
+  /\b(sqlite3|sql\.js|better-sqlite3|node:sqlite)\b.*sf\.db/i,
+  /\bsf\.db\b.*\b(sqlite3|sql\.js|better-sqlite3)\b/i,
   // Shell writes targeting sf.db files
-  /[>|]+\s*\S*gsd\.db/i,
-  /\b(cp|mv|dd)\b.*gsd\.db/i,
+  /[>|]+\s*\S*sf\.db/i,
+  /\b(cp|mv|dd)\b.*sf\.db/i,
 ];
 
 /**
@@ -90,7 +90,7 @@ function matchesBlockedPattern(path: string): boolean {
  * Error message returned when an agent attempts to directly write an authoritative .gsd/ state file.
  * Directs the agent to use engine tool calls instead.
  */
-export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/gsd.db are blocked. Use engine tool calls instead:
+export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/sf.db are blocked. Use engine tool calls instead:
 - To complete a task: call sf_complete_task(milestone_id, slice_id, task_id, summary)
 - To complete a slice: call sf_complete_slice(milestone_id, slice_id, summary, uat_result)
 - To save a decision: call sf_save_decision(scope, decision, choice, rationale)

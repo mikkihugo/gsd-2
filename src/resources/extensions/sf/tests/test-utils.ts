@@ -45,7 +45,7 @@ export function git(cwd: string, ...args: string[]): string {
  * @param prefix - Optional prefix for the temp directory name
  * @returns absolute path to the temp repo
  */
-export function makeTempRepo(prefix: string = "gsd-test-"): string {
+export function makeTempRepo(prefix: string = "sf-test-"): string {
   const dir = mkdtempSync(join(tmpdir(), prefix));
   git(dir, "init");
   git(dir, "config", "user.email", "test@test.com");
@@ -64,7 +64,7 @@ export function makeTempRepo(prefix: string = "gsd-test-"): string {
  * @param prefix - Optional prefix for the temp directory name
  * @returns absolute path to the temp directory
  */
-export function makeTempDir(prefix: string = "gsd-test-"): string {
+export function makeTempDir(prefix: string = "sf-test-"): string {
   return mkdtempSync(join(tmpdir(), prefix));
 }
 

@@ -258,7 +258,7 @@ function _push(
   // Always forward to stderr so terminal watchers see it (see module header for policy)
   const prefix = severity === "error" ? "ERROR" : "WARN";
   const ctxStr = context ? ` ${JSON.stringify(context)}` : "";
-  _writeStderr(`[gsd:${component}] ${prefix}: ${message}${ctxStr}\n`);
+  _writeStderr(`[sf:${component}] ${prefix}: ${message}${ctxStr}\n`);
 
   // Persist to notification store (both warnings and errors)
   try {
@@ -268,7 +268,7 @@ function _push(
       "workflow-logger",
     );
   } catch (notifErr) {
-    _writeStderr(`[gsd:workflow-logger] notification-store append failed: ${(notifErr as Error).message}\n`);
+    _writeStderr(`[sf:workflow-logger] notification-store append failed: ${(notifErr as Error).message}\n`);
   }
 
   // Buffer for auto-loop to drain
@@ -296,7 +296,7 @@ function _push(
       );
     } catch (auditEmitErr) {
       // Best-effort: unified audit projection must never block workflow logger.
-      _writeStderr(`[gsd:workflow-logger] unified-audit emit failed: ${(auditEmitErr as Error).message}\n`);
+      _writeStderr(`[sf:workflow-logger] unified-audit emit failed: ${(auditEmitErr as Error).message}\n`);
     }
   }
 
@@ -311,7 +311,7 @@ function _push(
       appendFileSync(join(auditDir, "audit-log.jsonl"), JSON.stringify(sanitized) + "\n", "utf-8");
     } catch (auditErr) {
       // Best-effort — never let audit write failures bubble up
-      _writeStderr(`[gsd:audit] failed to persist log entry: ${(auditErr as Error).message}\n`);
+      _writeStderr(`[sf:audit] failed to persist log entry: ${(auditErr as Error).message}\n`);
     }
   }
 }

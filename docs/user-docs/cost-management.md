@@ -12,11 +12,11 @@ Every unit's metrics are captured automatically:
 - **Tool calls** — number of tool invocations
 - **Message counts** — assistant and user messages
 
-Data is stored in `.gsd/metrics.json` and survives across sessions.
+Data is stored in `.sf/metrics.json` and survives across sessions.
 
 ### Viewing Costs
 
-**Dashboard:** `Ctrl+Alt+G` or `/gsd status` shows real-time cost breakdown.
+**Dashboard:** `Ctrl+Alt+G` or `/sf status` shows real-time cost breakdown.
 
 **Aggregations available:**
 - By phase (research, planning, execution, completion, reassessment)
@@ -85,9 +85,9 @@ See [Token Optimization](./token-optimization.md) for details.
 ## Tips
 
 - Start with `balanced` profile and a generous `budget_ceiling` to establish baseline costs
-- Check `/gsd status` after a few slices to see per-slice cost averages
+- Check `/sf status` after a few slices to see per-slice cost averages
 - Switch to `budget` profile for well-understood, repetitive work
 - Use `quality` only when architectural decisions are being made
 - Per-phase model selection lets you use Opus only for planning while keeping execution on Sonnet
 - Enable `dynamic_routing` for automatic model downgrading on simple tasks — see [Dynamic Model Routing](./dynamic-model-routing.md)
-- Use `/gsd visualize` → Metrics tab to see where your budget is going
+- Use `/sf visualize` → Metrics tab to see where your budget is going

@@ -232,7 +232,7 @@ Partial overrides are deep-merged with built-in defaults. This uses the same `mo
 
 ### Profile Versioning
 
-Built-in capability profiles are maintained alongside the existing `MODEL_CAPABILITY_TIER` and `MODEL_COST_PER_1K_INPUT` tables in `model-router.ts`. When the `@gsd/pi-ai` model catalog is updated with new models, the capability profile table must be updated in the same PR. A linting rule should flag any model present in `MODEL_CAPABILITY_TIER` but missing from `MODEL_CAPABILITY_PROFILES`.
+Built-in capability profiles are maintained alongside the existing `MODEL_CAPABILITY_TIER` and `MODEL_COST_PER_1K_INPUT` tables in `model-router.ts`. When the `@sf/pi-ai` model catalog is updated with new models, the capability profile table must be updated in the same PR. A linting rule should flag any model present in `MODEL_CAPABILITY_TIER` but missing from `MODEL_CAPABILITY_PROFILES`.
 
 Profiles are versioned implicitly by SF release. The existing `models.json` `modelOverrides` mechanism allows users to correct stale defaults immediately without waiting for a SF update.
 

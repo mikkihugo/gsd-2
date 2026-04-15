@@ -1,6 +1,6 @@
 // SF Extension — Notification History Overlay
 // Scrollable panel showing all persisted notifications with severity filtering.
-// Toggled with Ctrl+Alt+N (⌃⌥N on macOS), Ctrl+Shift+N fallback, or /gsd notifications.
+// Toggled with Ctrl+Alt+N (⌃⌥N on macOS), Ctrl+Shift+N fallback, or /sf notifications.
 
 import type { Theme } from "@sf-run/pi-coding-agent";
 import { truncateToWidth, visibleWidth, matchesKey, Key } from "@sf-run/pi-tui";
@@ -70,7 +70,7 @@ function notificationSignature(entries: readonly NotificationEntry[]): string {
     .join("\n");
 }
 
-export class GSDNotificationOverlay {
+export class SFNotificationOverlay {
   private tui: { requestRender: () => void };
   private theme: Theme;
   private onClose: () => void;

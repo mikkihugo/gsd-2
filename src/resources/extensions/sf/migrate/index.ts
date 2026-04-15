@@ -3,8 +3,8 @@
 export { handleMigrate } from './command.js';
 export { parsePlanningDirectory } from './parser.js';
 export { validatePlanningDirectory } from './validator.js';
-export { transformToGSD } from './transformer.js';
-export { writeGSDDirectory } from './writer.js';
+export { transformToSF } from './transformer.js';
+export { writeSFDirectory } from './writer.js';
 export type { WrittenFiles, MigrationPreview } from './writer.js';
 export { generatePreview } from './preview.js';
 export type {
@@ -31,12 +31,12 @@ export type {
   ValidationIssue,
   ValidationSeverity,
   // Output types (SF-2 format)
-  GSDProject,
-  GSDMilestone,
-  GSDSlice,
-  GSDTask,
-  GSDRequirement,
-  GSDSliceSummaryData,
-  GSDTaskSummaryData,
-  GSDBoundaryEntry,
+  SFProject,
+  SFMilestone,
+  SFSlice,
+  SFTask,
+  SFRequirement,
+  SFSliceSummaryData,
+  SFTaskSummaryData,
+  SFBoundaryEntry,
 } from './types.js';

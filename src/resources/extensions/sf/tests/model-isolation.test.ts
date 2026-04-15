@@ -2,7 +2,7 @@
  * Tests for model config isolation between concurrent instances (#650, #1065),
  * session-scoped model precedence behavior including manual session override,
  * SF preferences override of settings.json defaults (#3517), and custom
- * provider precedence over PREFERENCES.md when set via `/gsd model` (#4122).
+ * provider precedence over PREFERENCES.md when set via `/sf model` (#4122).
  */
 
 import { describe, it, beforeEach, afterEach } from "node:test";
@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 // ─── Test helpers ─────────────────────────────────────────────────────────────
 
 function makeTmpDir(suffix: string): string {
-  const dir = join(tmpdir(), `gsd-test-650-${suffix}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+  const dir = join(tmpdir(), `sf-test-650-${suffix}-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -237,8 +237,8 @@ describe("custom provider session model overrides PREFERENCES.md (#4122)", () =>
       ?? (ctxModel ? { provider: ctxModel.provider, id: ctxModel.id } : null);
   }
 
-  it("custom provider from /gsd model wins over PREFERENCES.md built-in default", () => {
-    // User runs `/gsd model ollama/llama3.1:8b`, then `/gsd auto`.
+  it("custom provider from /sf model wins over PREFERENCES.md built-in default", () => {
+    // User runs `/sf model ollama/llama3.1:8b`, then `/sf auto`.
     // PREFERENCES.md still has the project-template claude-code default.
     const ctxModel = { provider: "ollama", id: "llama3.1:8b" };
     const preferredModel = { provider: "claude-code", id: "claude-sonnet-4-6" };

@@ -5,7 +5,7 @@ SF includes a browser-based interface for project management and real-time progr
 ## Quick Start
 
 ```bash
-gsd --web
+sf --web
 ```
 
 This starts a local web server and opens the dashboard in your default browser.
@@ -13,7 +13,7 @@ This starts a local web server and opens the dashboard in your default browser.
 ## CLI Flags
 
 ```bash
-gsd --web --host 0.0.0.0 --port 8080 --allowed-origins "https://example.com"
+sf --web --host 0.0.0.0 --port 8080 --allowed-origins "https://example.com"
 ```
 
 | Flag | Default | Description |

@@ -14,14 +14,14 @@ SF can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milest
    github:
      enabled: true
      repo: "owner/repo"              # auto-detected from git remote if omitted
-     labels: [gsd, auto-generated]   # labels for created items
+     labels: [sf, auto-generated]   # labels for created items
    ```
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/github-sync bootstrap` | Initial setup — creates GitHub Milestones, Issues, and draft PRs from current `.gsd/` state |
+| `/github-sync bootstrap` | Initial setup — creates GitHub Milestones, Issues, and draft PRs from current `.sf/` state |
 | `/github-sync status` | Show sync mapping counts (milestones, slices, tasks) |
 
 ## How It Works
@@ -31,7 +31,7 @@ SF can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milest
 - Tasks → GitHub Issue checklists
 - Completed slices → Draft PRs
 
-Sync mapping is persisted in `.gsd/.github-sync.json`. The sync is rate-limit aware — it skips when the GitHub API rate limit is low.
+Sync mapping is persisted in `.sf/.github-sync.json`. The sync is rate-limit aware — it skips when the GitHub API rate limit is low.
 
 ## Configuration
 
@@ -39,6 +39,6 @@ Sync mapping is persisted in `.gsd/.github-sync.json`. The sync is rate-limit aw
 github:
   enabled: true
   repo: "owner/repo"
-  labels: [gsd, auto-generated]
+  labels: [sf, auto-generated]
   project: "Project ID"           # optional: GitHub Project board
 ```

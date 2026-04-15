@@ -30,7 +30,7 @@ test("uok model policy builds requirement vectors from unit metadata", () => {
 });
 
 test("uok model policy enforces provider/api/tool constraints and emits decision audit events", () => {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-uok-model-policy-"));
+  const basePath = mkdtempSync(join(tmpdir(), "sf-uok-model-policy-"));
   try {
     mkdirSync(join(basePath, ".gsd"), { recursive: true });
     registerToolCompatibility("screenshot", { producesImages: true });

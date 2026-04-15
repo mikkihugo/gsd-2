@@ -165,7 +165,7 @@ This graduated approach preserves model quality for the most complex work while 
 
 ## Adaptive Learning (Routing History)
 
-SF tracks the success and failure of each tier assignment over time and adjusts future classifications accordingly. This is opt-in — it happens automatically and persists in `.gsd/routing-history.json`.
+SF tracks the success and failure of each tier assignment over time and adjusts future classifications accordingly. This is opt-in — it happens automatically and persists in `.sf/routing-history.json`.
 
 ### How It Works
 
@@ -176,12 +176,12 @@ SF tracks the success and failure of each tier assignment over time and adjusts 
 
 ### User Feedback
 
-Use `/gsd rate` to submit feedback on the last completed unit's model tier:
+Use `/sf rate` to submit feedback on the last completed unit's model tier:
 
 ```
-/gsd rate over    # model was overpowered — encourage cheaper next time
-/gsd rate ok      # model was appropriate — no adjustment
-/gsd rate under   # model was too weak — encourage stronger next time
+/sf rate over    # model was overpowered — encourage cheaper next time
+/sf rate ok      # model was appropriate — no adjustment
+/sf rate under   # model was too weak — encourage stronger next time
 ```
 
 Feedback signals are weighted 2× compared to automatic outcomes. Requires dynamic routing to be active (the last unit must have tier data).
@@ -190,7 +190,7 @@ Feedback signals are weighted 2× compared to automatic outcomes. Requires dynam
 
 ```bash
 # Routing history is stored per-project
-.gsd/routing-history.json
+.sf/routing-history.json
 
 # Clear history to reset adaptive learning
 # (happens via the routing-history module API)
@@ -309,7 +309,7 @@ Individual tool results that exceed `tool_result_max_chars` (default: 800) are t
 
 *Introduced in v2.59.0*
 
-When auto-mode transitions between phases (research → planning → execution), structured JSON anchors are written to `.gsd/milestones/<mid>/anchors/<phase>.json`. Downstream prompt builders inject these anchors so the next phase inherits intent, decisions, blockers, and next steps without re-inferring from artifact files.
+When auto-mode transitions between phases (research → planning → execution), structured JSON anchors are written to `.sf/milestones/<mid>/anchors/<phase>.json`. Downstream prompt builders inject these anchors so the next phase inherits intent, decisions, blockers, and next steps without re-inferring from artifact files.
 
 This reduces context drift — the 65% of enterprise agent failures caused by agents losing track of prior decisions across phase boundaries.
 

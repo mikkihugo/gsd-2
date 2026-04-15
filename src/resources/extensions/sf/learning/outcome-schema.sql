@@ -1,4 +1,4 @@
--- gsd-learning: llm_task_outcomes
+-- sf-learning: llm_task_outcomes
 -- Records per-unit LLM dispatch outcomes for Bayesian learning.
 -- Shape is compatible with ace-coder's approved 2026-03-06 design so
 -- cross-project data sharing can happen later without migration pain.

@@ -16,7 +16,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 const src = readFileSync(
-  resolve(process.cwd(), 'src', 'resources', 'extensions', 'gsd', 'pre-execution-checks.ts'),
+  resolve(process.cwd(), 'src', 'resources', 'extensions', 'sf', 'pre-execution-checks.ts'),
   'utf-8',
 )
 

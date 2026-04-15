@@ -9,7 +9,7 @@ SF supports multi-user workflows where several developers work on the same repos
 The simplest way to configure SF for team use is to set `mode: team` in your project preferences. This enables unique milestone IDs, push branches, and pre-merge checks in one setting:
 
 ```yaml
-# .gsd/PREFERENCES.md (project-level, committed to git)
+# .sf/PREFERENCES.md (project-level, committed to git)
 ---
 version: 1
 mode: team
@@ -26,23 +26,23 @@ Share planning artifacts (milestones, roadmaps, decisions) while keeping runtime
 
 ```bash
 # ── SF: Runtime / Ephemeral (per-developer, per-session) ──────
-.gsd/auto.lock
-.gsd/completed-units.json
-.gsd/STATE.md
-.gsd/metrics.json
-.gsd/activity/
-.gsd/runtime/
-.gsd/worktrees/
-.gsd/milestones/**/continue.md
-.gsd/milestones/**/*-CONTINUE.md
+.sf/auto.lock
+.sf/completed-units.json
+.sf/STATE.md
+.sf/metrics.json
+.sf/activity/
+.sf/runtime/
+.sf/worktrees/
+.sf/milestones/**/continue.md
+.sf/milestones/**/*-CONTINUE.md
 ```
 
 **What gets shared** (committed to git):
-- `.gsd/PREFERENCES.md` — project preferences
-- `.gsd/PROJECT.md` — living project description
-- `.gsd/REQUIREMENTS.md` — requirement contract
-- `.gsd/DECISIONS.md` — architectural decisions
-- `.gsd/milestones/` — roadmaps, plans, summaries, research
+- `.sf/PREFERENCES.md` — project preferences
+- `.sf/PROJECT.md` — living project description
+- `.sf/REQUIREMENTS.md` — requirement contract
+- `.sf/DECISIONS.md` — architectural decisions
+- `.sf/milestones/` — roadmaps, plans, summaries, research
 
 **What stays local** (gitignored):
 - Lock files, metrics, state cache, runtime records, worktrees, activity logs
@@ -50,7 +50,7 @@ Share planning artifacts (milestones, roadmaps, decisions) while keeping runtime
 ### 3. Commit the Preferences
 
 ```bash
-git add .gsd/PREFERENCES.md
+git add .sf/PREFERENCES.md
 git commit -m "chore: enable SF team workflow"
 ```
 
@@ -63,21 +63,21 @@ git:
   commit_docs: false
 ```
 
-This adds `.gsd/` to `.gitignore` entirely and keeps all artifacts local. The developer gets the benefits of structured planning without affecting teammates who don't use SF.
+This adds `.sf/` to `.gitignore` entirely and keeps all artifacts local. The developer gets the benefits of structured planning without affecting teammates who don't use SF.
 
 ## Migrating an Existing Project
 
-If you have an existing project with `.gsd/` blanket-ignored:
+If you have an existing project with `.sf/` blanket-ignored:
 
 1. Ensure no milestones are in progress (clean state)
 2. Update `.gitignore` to use the selective pattern above
-3. Add `unique_milestone_ids: true` to `.gsd/PREFERENCES.md`
+3. Add `unique_milestone_ids: true` to `.sf/PREFERENCES.md`
 4. Optionally rename existing milestones to use unique IDs:
    ```
    I have turned on unique milestone ids, please update all old milestone
    ids to use this new format e.g. M001-abc123 where abc123 is a random
    6 char lowercase alpha numeric string. Update all references in all
-   .gsd file contents, file names and directory names. Validate your work
+   .sf file contents, file names and directory names. Validate your work
    once done to ensure referential integrity.
    ```
 5. Commit
@@ -86,7 +86,7 @@ If you have an existing project with `.gsd/` blanket-ignored:
 
 Multiple developers can run auto mode simultaneously on different milestones. Each developer:
 
-- Gets their own worktree (`.gsd/worktrees/<MID>/`, gitignored)
+- Gets their own worktree (`.sf/worktrees/<MID>/`, gitignored)
 - Works on a unique `milestone/<MID>` branch
 - Squash-merges to main independently
 

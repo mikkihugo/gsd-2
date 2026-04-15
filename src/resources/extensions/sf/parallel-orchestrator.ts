@@ -560,10 +560,10 @@ function createMilestoneWorktree(basePath: string, milestoneId: string): string 
 
 /**
  * Spawn a worker process for a milestone.
- * The worker runs `gsd headless --json auto` in the milestone's worktree
+ * The worker runs `sf headless --json auto` in the milestone's worktree
  * with SF_MILESTONE_LOCK set to isolate state derivation.
  *
- * IMPORTANT: We use `headless --json auto` instead of `--print "/gsd auto"`.
+ * IMPORTANT: We use `headless --json auto` instead of `--print "/sf auto"`.
  * --print mode calls session.prompt() which returns immediately after the
  * extension command handler fires, because auto-mode's ctx.newSession()
  * resets the session and unblocks the outer prompt() await. This causes

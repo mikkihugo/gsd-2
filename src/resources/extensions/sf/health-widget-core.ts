@@ -29,7 +29,7 @@ export function detectHealthWidgetProjectState(basePath: string): HealthWidgetPr
   if (!existsSync(sfRoot(basePath))) return "none";
 
   const { state } = detectProjectState(basePath);
-  return state === "v2-gsd" ? "active" : "initialized";
+  return state === "v2-sf" ? "active" : "initialized";
 }
 
 function formatCost(n: number): string {
@@ -65,11 +65,11 @@ function truncateMessage(msg: string, maxLen: number): string {
  */
 export function buildHealthLines(data: HealthWidgetData): string[] {
   if (data.projectState === "none") {
-    return ["  SF  No project loaded — run /gsd to start"];
+    return ["  SF  No project loaded — run /sf to start"];
   }
 
   if (data.projectState === "initialized") {
-    return ["  SF  Project initialized — run /gsd to continue setup"];
+    return ["  SF  Project initialized — run /sf to continue setup"];
   }
 
   const parts: string[] = [];

@@ -10,7 +10,7 @@ export function resolve(specifier, context, nextResolve) {
     if (tsSpecifier.includes('/packages/pi-ai') && !tsSpecifier.endsWith('.ts')) {
         tsSpecifier = tsSpecifier.replace(/\/packages\/pi-ai$/, '/packages/pi-ai/src/index.ts');
     } else if (!tsSpecifier.includes('/src/') && !tsSpecifier.endsWith('.ts')) {
-        // Fallback for other gsd packages like pi-coding-agent, pi-tui, pi-agent-core
+        // Fallback for other sf packages like pi-coding-agent, pi-tui, pi-agent-core
         tsSpecifier = tsSpecifier.replace(/\/packages\/([^\/]+)$/, '/packages/$1/src/index.ts');
     } else if (!tsSpecifier.endsWith('.ts') && !tsSpecifier.endsWith('.js') && !tsSpecifier.endsWith('.mjs')) {
         tsSpecifier += '/index.ts';

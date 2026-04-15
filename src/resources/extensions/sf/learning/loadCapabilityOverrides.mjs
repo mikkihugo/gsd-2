@@ -1,5 +1,5 @@
 /**
- * loadCapabilityOverrides.mjs — Slice S01 of gsd-learning.
+ * loadCapabilityOverrides.mjs — Slice S01 of sf-learning.
  *
  * Loads model-benchmarks.json + unit-weights.json from src/data/ and synthesizes
  * the 7-dimension capability profile format pi-ai's MODEL_CAPABILITY_PROFILES uses.
@@ -38,7 +38,7 @@
  * dimension has no benchmark data at all, it returns 0 (the blender will treat that
  * as "no signal" and lean on observed outcomes once they exist).
  *
- * No dependencies on pi-ai or gsd internals. Reads only the two JSON files in src/data/.
+ * No dependencies on pi-ai or sf internals. Reads only the two JSON files in src/data/.
  */
 
 import { readFile } from "node:fs/promises";

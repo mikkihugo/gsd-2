@@ -28,13 +28,13 @@ function findWorktreeSegment(normalizedPath) {
   const directMarker = "/.gsd/worktrees/";
   const idx = normalizedPath.indexOf(directMarker);
   if (idx !== -1) {
-    return { gsdIdx: idx, afterWorktrees: idx + directMarker.length };
+    return { sfIdx: idx, afterWorktrees: idx + directMarker.length };
   }
   // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/<name>
   const symlinkRe = /\/\.gsd\/projects\/[a-f0-9]+\/worktrees\//;
   const match = normalizedPath.match(symlinkRe);
   if (match && match.index !== undefined) {
-    return { gsdIdx: match.index, afterWorktrees: match.index + match[0].length };
+    return { sfIdx: match.index, afterWorktrees: match.index + match[0].length };
   }
   return null;
 }
@@ -45,36 +45,36 @@ function resolveProjectRoot(basePath) {
   if (!seg) return basePath;
   // Return the original path up to the /.gsd/ boundary
   const sep = basePath.includes("\\") ? "\\" : "/";
-  const gsdMarker = `${sep}.gsd${sep}`;
-  const gsdIdx = basePath.indexOf(gsdMarker);
-  if (gsdIdx !== -1) return basePath.slice(0, gsdIdx);
-  return basePath.slice(0, seg.gsdIdx);
+  const sfMarker = `${sep}.gsd${sep}`;
+  const sfIdx = basePath.indexOf(sfMarker);
+  if (sfIdx !== -1) return basePath.slice(0, sfIdx);
+  return basePath.slice(0, seg.sfIdx);
 }
 
 // ── Set up the filesystem layout ────────────────────────────────────────
 
 const HASH = "abc123def456";
 const TEST_ROOT = mkdtempSync(join(tmpdir(), "gsd-repro-"));
-const USER_GSD = process.env.SF_HOME || join(TEST_ROOT, ".gsd");
+const USER_SF = process.env.SF_HOME || join(TEST_ROOT, ".gsd");
 const USER_HOME = homedir();
-const PROJECT_GSD_STORAGE = `${USER_GSD}/projects/${HASH}`;
+const PROJECT_SF_STORAGE = `${USER_SF}/projects/${HASH}`;
 const PROJECT_DIR = mkdtempSync(join(tmpdir(), "myproject-"));
-const PROJECT_GSD_LINK = `${PROJECT_DIR}/.gsd`;
+const PROJECT_SF_LINK = `${PROJECT_DIR}/.gsd`;
 
 console.log("=== Setting up filesystem layout ===\n");
 
 // 1. Create user-level SF structure
-mkdirSync(`${PROJECT_GSD_STORAGE}/worktrees/M001`, { recursive: true });
-mkdirSync(`${PROJECT_GSD_STORAGE}/milestones`, { recursive: true });
-console.log(`Created: ${PROJECT_GSD_STORAGE}/worktrees/M001`);
+mkdirSync(`${PROJECT_SF_STORAGE}/worktrees/M001`, { recursive: true });
+mkdirSync(`${PROJECT_SF_STORAGE}/milestones`, { recursive: true });
+console.log(`Created: ${PROJECT_SF_STORAGE}/worktrees/M001`);
 
 // 2. Create project directory
 mkdirSync(PROJECT_DIR, { recursive: true });
 console.log(`Created: ${PROJECT_DIR}`);
 
 // 3. Create symlink: project/.gsd → user-level storage
-symlinkSync(PROJECT_GSD_STORAGE, PROJECT_GSD_LINK);
-console.log(`Symlink: ${PROJECT_GSD_LINK} → ${PROJECT_GSD_STORAGE}`);
+symlinkSync(PROJECT_SF_STORAGE, PROJECT_SF_LINK);
+console.log(`Symlink: ${PROJECT_SF_LINK} → ${PROJECT_SF_STORAGE}`);
 
 // 4. Init git in project dir
 execSync("git init -b main", { cwd: PROJECT_DIR, stdio: "pipe" });
@@ -145,10 +145,10 @@ console.log(`\n=== Root Cause Detail ===\n`);
 const seg = findWorktreeSegment(resolvedPath);
 if (seg) {
   console.log(`findWorktreeSegment() matched:`);
-  console.log(`  gsdIdx:         ${seg.gsdIdx}`);
+  console.log(`  sfIdx:         ${seg.sfIdx}`);
   console.log(`  afterWorktrees: ${seg.afterWorktrees}`);
-  console.log(`  Path before /.gsd/: "${resolvedPath.slice(0, seg.gsdIdx)}"`);
-  console.log(`  This is: ${resolvedPath.slice(0, seg.gsdIdx) === USER_HOME ? "THE HOME DIRECTORY (bug!)" : "some other directory"}`);
+  console.log(`  Path before /.gsd/: "${resolvedPath.slice(0, seg.sfIdx)}"`);
+  console.log(`  This is: ${resolvedPath.slice(0, seg.sfIdx) === USER_HOME ? "THE HOME DIRECTORY (bug!)" : "some other directory"}`);
   
   // Show which regex matched
   const directMarker = "/.gsd/worktrees/";

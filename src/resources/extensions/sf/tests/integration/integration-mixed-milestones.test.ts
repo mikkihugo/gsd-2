@@ -28,7 +28,7 @@ import assert from 'node:assert/strict';
 // ─── Fixture Helpers ──────────────────────────────────────────────────────
 
 function createFixtureBase(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-integration-mixed-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-integration-mixed-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   return base;
 }
@@ -67,7 +67,7 @@ function run(command: string, cwd: string): string {
 }
 
 function createGitRepo(): string {
-  const base = mkdtempSync(join(tmpdir(), 'gsd-integration-git-'));
+  const base = mkdtempSync(join(tmpdir(), 'sf-integration-git-'));
   mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
   run('git init -b main', base);
   run("git config user.name 'Integration Test'", base);

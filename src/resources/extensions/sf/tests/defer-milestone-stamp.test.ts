@@ -11,7 +11,7 @@ import { executeTriageResolutions } from "../triage-resolution.ts";
 import { appendCapture, markCaptureResolved, loadAllCaptures } from "../captures.ts";
 
 test("defer captures without milestone ID are stamped as executed (#3542)", async () => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-stamp-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-stamp-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
   try {
     appendCapture(base, "Improve error messages");

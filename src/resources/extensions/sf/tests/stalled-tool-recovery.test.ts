@@ -67,7 +67,7 @@ function makeMockPi() {
 
 {
   console.log("\n=== #1855: recoverTimedOutUnit succeeds with valid RecoveryContext ===");
-  const base = mkdtempSync(join(tmpdir(), "gsd-stalled-tool-test-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-stalled-tool-test-"));
   mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(base, ".gsd", "runtime", "units"), { recursive: true });
 

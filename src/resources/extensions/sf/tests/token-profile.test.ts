@@ -75,12 +75,12 @@ test("preferences: SFPreferences includes phases field", () => {
   );
 });
 
-test("preferences: GSDModelConfig includes subagent field", () => {
+test("preferences: SFModelConfig includes subagent field", () => {
   // Check both v1 and v2 configs
-  const v1Match = preferencesSrc.match(/interface GSDModelConfig\s*\{[^}]*subagent/);
-  assert.ok(v1Match, "GSDModelConfig should have subagent field");
-  const v2Match = preferencesSrc.match(/interface GSDModelConfigV2\s*\{[^}]*subagent/);
-  assert.ok(v2Match, "GSDModelConfigV2 should have subagent field");
+  const v1Match = preferencesSrc.match(/interface SFModelConfig\s*\{[^}]*subagent/);
+  assert.ok(v1Match, "SFModelConfig should have subagent field");
+  const v2Match = preferencesSrc.match(/interface SFModelConfigV2\s*\{[^}]*subagent/);
+  assert.ok(v2Match, "SFModelConfigV2 should have subagent field");
 });
 
 test("preferences: KNOWN_PREFERENCE_KEYS includes token_profile and phases", () => {

@@ -243,7 +243,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
           const result = abortAndReset(basePath);
           fixesApplied.push(`pre-dispatch: cleaned merge state (${result.cleaned.join(", ")})`);
         } catch {
-          issues.push(`Corrupt git state: ${blockers.join(", ")}. Run /gsd doctor fix.`);
+          issues.push(`Corrupt git state: ${blockers.join(", ")}. Run /sf doctor fix.`);
         }
       }
     }
@@ -286,7 +286,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
           );
         } else if (resolution.recordedBranch && resolution.status === "missing") {
           issues.push(
-            `${resolution.reason} Restore the branch or update the integration branch before dispatching. Run /gsd doctor for details.`,
+            `${resolution.reason} Restore the branch or update the integration branch before dispatching. Run /sf doctor for details.`,
           );
         }
       }
@@ -346,7 +346,7 @@ export async function preDispatchHealthGate(basePath: string): Promise<PreDispat
   if (issues.length > 0) {
     return {
       proceed: false,
-      reason: `Pre-dispatch health check failed:\n${issues.map(i => `  - ${i}`).join("\n")}\nRun /gsd doctor fix to resolve.`,
+      reason: `Pre-dispatch health check failed:\n${issues.map(i => `  - ${i}`).join("\n")}\nRun /sf doctor fix to resolve.`,
       issues,
       fixesApplied,
     };

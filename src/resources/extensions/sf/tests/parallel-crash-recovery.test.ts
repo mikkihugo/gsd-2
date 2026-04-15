@@ -29,7 +29,7 @@ import { writeSessionStatus, readAllSessionStatuses, removeSessionStatus } from 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeTempDir(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-crash-recovery-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-crash-recovery-"));
   mkdirSync(join(dir, ".gsd"), { recursive: true });
   return dir;
 }

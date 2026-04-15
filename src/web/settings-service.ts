@@ -69,7 +69,7 @@ export async function collectSettingsData(projectCwdOverride?: string): Promise<
     'const metricsMod = await import(pathToFileURL(process.env.SF_SETTINGS_METRICS_MODULE).href);',
 
     // 1. Effective preferences (may be null if no preferences files exist)
-    'const loaded = prefsMod.loadEffectiveGSDPreferences();',
+    'const loaded = prefsMod.loadEffectiveSFPreferences();',
     'let preferences = null;',
     'if (loaded) {',
     '  const p = loaded.preferences;',

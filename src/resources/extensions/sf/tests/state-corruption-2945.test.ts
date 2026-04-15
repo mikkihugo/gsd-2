@@ -30,7 +30,7 @@ import type { AutoSession } from "../auto/session.ts";
 // ─── Fixture helpers ────────────────────────────────────────────────────────
 
 function tempDbPath(): string {
-  const dir = mkdtempSync(join(tmpdir(), "gsd-2945-"));
+  const dir = mkdtempSync(join(tmpdir(), "sf-2945-"));
   return join(dir, "test.db");
 }
 
@@ -45,7 +45,7 @@ function cleanupDb(dbPath: string): void {
 }
 
 function createTempProject(): { basePath: string } {
-  const basePath = mkdtempSync(join(tmpdir(), "gsd-2945-project-"));
+  const basePath = mkdtempSync(join(tmpdir(), "sf-2945-project-"));
   mkdirSync(join(basePath, ".gsd", "milestones", "M001"), { recursive: true });
   return { basePath };
 }

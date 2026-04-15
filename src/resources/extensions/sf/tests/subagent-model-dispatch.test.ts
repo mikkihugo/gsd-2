@@ -161,14 +161,14 @@ test("auto-dispatch: passes model to buildGateEvaluatePrompt", () => {
 
 test("buildReactiveExecutePrompt: output contains model string when subagentModel provided", async (t) => {
   const { buildReactiveExecutePrompt } = await import("../auto-prompts.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-reactive-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-subagent-model-reactive-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
 
-  const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-  mkdirSync(join(gsd, "tasks"), { recursive: true });
+  const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+  mkdirSync(join(sf, "tasks"), { recursive: true });
 
   writeFileSync(
-    join(gsd, "S01-PLAN.md"),
+    join(sf, "S01-PLAN.md"),
     [
       "# S01: Test Slice",
       "",
@@ -184,7 +184,7 @@ test("buildReactiveExecutePrompt: output contains model string when subagentMode
   );
 
   writeFileSync(
-    join(gsd, "tasks", "T01-PLAN.md"),
+    join(sf, "tasks", "T01-PLAN.md"),
     [
       "# T01: Task One",
       "",
@@ -214,14 +214,14 @@ test("buildReactiveExecutePrompt: output contains model string when subagentMode
 
 test("buildReactiveExecutePrompt: no model instruction when subagentModel omitted", async (t) => {
   const { buildReactiveExecutePrompt } = await import("../auto-prompts.ts");
-  const repo = mkdtempSync(join(tmpdir(), "gsd-subagent-model-none-"));
+  const repo = mkdtempSync(join(tmpdir(), "sf-subagent-model-none-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
 
-  const gsd = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
-  mkdirSync(join(gsd, "tasks"), { recursive: true });
+  const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+  mkdirSync(join(sf, "tasks"), { recursive: true });
 
   writeFileSync(
-    join(gsd, "S01-PLAN.md"),
+    join(sf, "S01-PLAN.md"),
     [
       "# S01: Test Slice",
       "",
@@ -237,7 +237,7 @@ test("buildReactiveExecutePrompt: no model instruction when subagentModel omitte
   );
 
   writeFileSync(
-    join(gsd, "tasks", "T01-PLAN.md"),
+    join(sf, "tasks", "T01-PLAN.md"),
     [
       "# T01: Task One",
       "",

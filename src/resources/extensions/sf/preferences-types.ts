@@ -141,7 +141,7 @@ export interface SFSkillRule {
  * Model configuration for a single phase.
  * Supports primary model with optional fallbacks for resilience.
  */
-export interface GSDPhaseModelConfig {
+export interface SFPhaseModelConfig {
   /** Primary model ID (e.g., "claude-opus-4-6") */
   model: string;
   /** Provider name to disambiguate when the same model ID exists across providers (e.g., "bedrock", "anthropic") */
@@ -152,9 +152,9 @@ export interface GSDPhaseModelConfig {
 
 /**
  * Legacy model config -- simple string per phase.
- * Kept for backward compatibility; will be migrated to GSDModelConfigV2 on load.
+ * Kept for backward compatibility; will be migrated to SFModelConfigV2 on load.
  */
-export interface GSDModelConfig {
+export interface SFModelConfig {
   research?: string;
   planning?: string;
   discuss?: string;
@@ -169,15 +169,15 @@ export interface GSDModelConfig {
  * Extended model config with per-phase fallback support.
  * Each phase can specify a primary model and ordered fallbacks.
  */
-export interface GSDModelConfigV2 {
-  research?: string | GSDPhaseModelConfig;
-  planning?: string | GSDPhaseModelConfig;
-  discuss?: string | GSDPhaseModelConfig;
-  execution?: string | GSDPhaseModelConfig;
-  execution_simple?: string | GSDPhaseModelConfig;
-  completion?: string | GSDPhaseModelConfig;
-  validation?: string | GSDPhaseModelConfig;
-  subagent?: string | GSDPhaseModelConfig;
+export interface SFModelConfigV2 {
+  research?: string | SFPhaseModelConfig;
+  planning?: string | SFPhaseModelConfig;
+  discuss?: string | SFPhaseModelConfig;
+  execution?: string | SFPhaseModelConfig;
+  execution_simple?: string | SFPhaseModelConfig;
+  completion?: string | SFPhaseModelConfig;
+  validation?: string | SFPhaseModelConfig;
+  subagent?: string | SFPhaseModelConfig;
 }
 
 /** Normalized model selection with resolved fallbacks */
@@ -261,7 +261,7 @@ export interface ExperimentalPreferences {
   rtk?: boolean;
 }
 
-/** Configuration for the codebase map generator (/gsd codebase). */
+/** Configuration for the codebase map generator (/sf codebase). */
 export interface CodebaseMapPreferences {
   /** Additional directory/file patterns to exclude (e.g. ["docs/", "fixtures/"]). Merged with built-in defaults. */
   exclude_patterns?: string[];
@@ -279,7 +279,7 @@ export interface SFPreferences {
   avoid_skills?: string[];
   skill_rules?: SFSkillRule[];
   custom_instructions?: string[];
-  models?: GSDModelConfig | GSDModelConfigV2;
+  models?: SFModelConfig | SFModelConfigV2;
   /** Persist model changes to default provider/model. Default: true. */
   persist_model_changes?: boolean;
   skill_discovery?: SkillDiscoveryMode;
@@ -325,14 +325,14 @@ export interface SFPreferences {
   github?: GitHubSyncConfig;
   /** OpenAI service tier preference. "priority" = 2x cost, faster. "flex" = 0.5x cost, slower. Only affects gpt-5.4 models. */
   service_tier?: "priority" | "flex";
-  /** Opt-in: search existing issues and PRs before filing from /gsd forensics. Uses additional AI tokens. */
+  /** Opt-in: search existing issues and PRs before filing from /sf forensics. Uses additional AI tokens. */
   forensics_dedup?: boolean;
   /** Opt-in: show per-prompt and cumulative session token cost in the footer. Default: false. */
   show_token_cost?: boolean;
   /**
    * Minutes without a commit before flagging uncommitted changes as stale.
    * When the threshold is exceeded and the working tree is dirty, doctor will
-   * auto-commit a safety snapshot tagged with `[gsd safety]`. Default: 30.
+   * auto-commit a safety snapshot tagged with `[sf safety]`. Default: 30.
    * Set to 0 to disable.
    */
   stale_commit_threshold_minutes?: number;
@@ -341,7 +341,7 @@ export interface SFPreferences {
    * See the preferences reference for details on each feature.
    */
   experimental?: ExperimentalPreferences;
-  /** Configuration for the codebase map generator (/gsd codebase). */
+  /** Configuration for the codebase map generator (/sf codebase). */
   codebase?: CodebaseMapPreferences;
   /** Slice-level parallelism within a milestone. Disabled by default. */
   slice_parallel?: { enabled?: boolean; max_workers?: number };

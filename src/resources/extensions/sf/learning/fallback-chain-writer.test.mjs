@@ -8,7 +8,7 @@
  *   #4 — project-level settings.json with a `fallback` block must surface
  *         a warning via deps.opts.log
  *
- * @module gsd-learning/fallback-chain-writer.test
+ * @module sf-learning/fallback-chain-writer.test
  */
 
 import test from "node:test";
@@ -20,7 +20,7 @@ import { join } from "node:path";
 import { writeFallbackChains } from "./fallback-chain-writer.mjs";
 
 function makeTempSettingsDir() {
-    const dir = mkdtempSync(join(tmpdir(), "gsd-chain-writer-"));
+    const dir = mkdtempSync(join(tmpdir(), "sf-chain-writer-"));
     const settingsPath = join(dir, "settings.json");
     writeFileSync(settingsPath, JSON.stringify({ enabledModels: [] }, null, 2));
     return { dir, settingsPath };
@@ -230,7 +230,7 @@ test("writeFallbackChains logs a warning when enabledModels is missing or empty"
 
 test("writeFallbackChains warns via log when project-level .gsd/agent/settings.json shadows fallback", () => {
     // Create a fake project cwd with a .gsd/agent/settings.json containing a fallback block.
-    const projectDir = mkdtempSync(join(tmpdir(), "gsd-proj-"));
+    const projectDir = mkdtempSync(join(tmpdir(), "sf-proj-"));
     const projectSettingsDir = join(projectDir, ".gsd", "agent");
     mkdirSync(projectSettingsDir, { recursive: true });
     const projectSettingsPath = join(projectSettingsDir, "settings.json");
@@ -334,7 +334,7 @@ test("hardcoded main chain coexists with blender-computed per-unit-type chains",
 });
 
 test("writeFallbackChains does NOT warn when cwd is the parent of the global settings file (false-positive guard)", () => {
-    // Regression: when gsd is invoked from $HOME, detectProjectSettingsShadow
+    // Regression: when sf is invoked from $HOME, detectProjectSettingsShadow
     // used to probe `$HOME/.gsd/agent/settings.json` — which IS the global
     // settings file itself. It then warned that the global file was shadowing
     // its own write. Surfaced 2026-04-15 in notifications.jsonl as
@@ -342,7 +342,7 @@ test("writeFallbackChains does NOT warn when cwd is the parent of the global set
     //
     // Fix: detectProjectSettingsShadow compares the resolved project path to
     // the global settingsPath and bails early when they match.
-    const fakeHome = mkdtempSync(join(tmpdir(), "gsd-fakehome-"));
+    const fakeHome = mkdtempSync(join(tmpdir(), "sf-fakehome-"));
     const globalSettingsDir = join(fakeHome, ".gsd", "agent");
     mkdirSync(globalSettingsDir, { recursive: true });
     const globalSettingsPath = join(globalSettingsDir, "settings.json");
@@ -377,7 +377,7 @@ test("writeFallbackChains does NOT warn when cwd is the parent of the global set
 });
 
 test("writeFallbackChains does NOT warn when project settings has no fallback block", () => {
-    const projectDir = mkdtempSync(join(tmpdir(), "gsd-proj-"));
+    const projectDir = mkdtempSync(join(tmpdir(), "sf-proj-"));
     const projectSettingsDir = join(projectDir, ".gsd", "agent");
     mkdirSync(projectSettingsDir, { recursive: true });
     writeFileSync(join(projectSettingsDir, "settings.json"), JSON.stringify({ defaultProvider: "kimi-coding" }));

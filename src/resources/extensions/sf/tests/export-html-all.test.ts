@@ -11,9 +11,9 @@ test("handleExport --html --all generates reports for milestones missing from th
   // and the deduplication logic via loadReportsIndex + milestone filtering
   const { loadReportsIndex } = await import("../reports.js");
 
-  const tmp = join(tmpdir(), `gsd-export-all-test-${Date.now()}`);
-  const gsdDir = join(tmp, ".gsd");
-  const reportsDir = join(gsdDir, "reports");
+  const tmp = join(tmpdir(), `sf-export-all-test-${Date.now()}`);
+  const sfDir = join(tmp, ".gsd");
+  const reportsDir = join(sfDir, "reports");
   mkdirSync(reportsDir, { recursive: true });
 
   // No existing reports — loadReportsIndex returns null
@@ -25,7 +25,7 @@ test("handleExport --html --all generates reports for milestones missing from th
     version: 1,
     projectName: "test-project",
     projectPath: tmp,
-    gsdVersion: "2.27.0",
+    sfVersion: "2.27.0",
     entries: [
       {
         filename: "M001-2026-01-01T00-00-00.html",
@@ -95,10 +95,10 @@ test("export completions include --html and --html --all", async () => {
   };
 
   registerSFCommand(pi as any);
-  const gsd = commands.get("gsd");
-  assert.ok(gsd, "should register /gsd command");
+  const sf = commands.get("sf");
+  assert.ok(sf, "should register /sf command");
 
-  const completions = gsd.getArgumentCompletions("export --");
+  const completions = sf.getArgumentCompletions("export --");
   const labels = completions.map((c: any) => c.label);
   assert.ok(labels.includes("--html"), "completions should include --html");
   assert.ok(labels.includes("--html --all"), "completions should include --html --all");

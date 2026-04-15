@@ -26,12 +26,12 @@ test("filterDoctorIssues keeps project and environment issues in scoped reports"
 });
 
 test("checkEngineHealth reports db_unavailable when sf.db exists but the DB is closed", async (t) => {
-  const base = mkdtempSync(join(tmpdir(), "gsd-doctor-db-unavailable-"));
+  const base = mkdtempSync(join(tmpdir(), "sf-doctor-db-unavailable-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
-  const gsdDir = join(base, ".gsd");
-  mkdirSync(gsdDir, { recursive: true });
-  writeFileSync(join(gsdDir, "gsd.db"), "");
+  const sfDir = join(base, ".gsd");
+  mkdirSync(sfDir, { recursive: true });
+  writeFileSync(join(sfDir, "sf.db"), "");
 
   const issues: any[] = [];
   await checkEngineHealth(base, issues, []);
@@ -39,5 +39,5 @@ test("checkEngineHealth reports db_unavailable when sf.db exists but the DB is c
   const dbIssue = issues.find((issue) => issue.code === "db_unavailable");
   assert.ok(dbIssue, "doctor should surface degraded DB mode when a DB file exists");
   assert.equal(dbIssue.unitId, "project");
-  assert.equal(dbIssue.file, ".gsd/gsd.db");
+  assert.equal(dbIssue.file, ".gsd/sf.db");
 });

@@ -42,9 +42,9 @@ import { validatePreferences } from "./preferences-validation.js";
 export type {
   WorkflowMode,
   SFSkillRule,
-  GSDPhaseModelConfig,
-  GSDModelConfig,
-  GSDModelConfigV2,
+  SFPhaseModelConfig,
+  SFModelConfig,
+  SFModelConfigV2,
   ResolvedModelConfig,
   SkillDiscoveryMode,
   AutoSupervisorConfig,
@@ -58,9 +58,6 @@ export type {
   SkillResolution,
   SkillResolutionReport,
 } from "./preferences-types.js";
-
-export type SFPreferences = SFPreferences;
-export type LoadedSFPreferences = LoadedSFPreferences;
 
 // ─── Re-exports: validation ─────────────────────────────────────────────────
 export { validatePreferences } from "./preferences-validation.js";
@@ -110,7 +107,7 @@ function globalPreferencesPath(): string {
 }
 
 function legacyGlobalPreferencesPath(): string {
-  return join(homedir(), ".pi", "agent", "gsd-preferences.md");
+  return join(homedir(), ".pi", "agent", "sf-preferences.md");
 }
 
 function projectPreferencesPath(): string {
@@ -129,24 +126,12 @@ export function getGlobalSFPreferencesPath(): string {
   return globalPreferencesPath();
 }
 
-export function getGlobalSFPreferencesPath(): string {
-  return getGlobalSFPreferencesPath();
-}
-
 export function getLegacyGlobalSFPreferencesPath(): string {
   return legacyGlobalPreferencesPath();
 }
 
-export function getLegacyGlobalSFPreferencesPath(): string {
-  return getLegacyGlobalSFPreferencesPath();
-}
-
 export function getProjectSFPreferencesPath(): string {
   return projectPreferencesPath();
-}
-
-export function getProjectSFPreferencesPath(): string {
-  return getProjectSFPreferencesPath();
 }
 
 // ─── Loading ────────────────────────────────────────────────────────────────
@@ -157,17 +142,9 @@ export function loadGlobalSFPreferences(): LoadedSFPreferences | null {
     ?? loadPreferencesFile(legacyGlobalPreferencesPath(), "global");
 }
 
-export function loadGlobalSFPreferences(): LoadedSFPreferences | null {
-  return loadGlobalSFPreferences();
-}
-
 export function loadProjectSFPreferences(): LoadedSFPreferences | null {
   return loadPreferencesFile(projectPreferencesPath(), "project")
     ?? loadPreferencesFile(projectPreferencesPathUppercase(), "project");
-}
-
-export function loadProjectSFPreferences(): LoadedSFPreferences | null {
-  return loadProjectSFPreferences();
 }
 
 export function loadEffectiveSFPreferences(): LoadedSFPreferences | null {
@@ -215,10 +192,6 @@ export function loadEffectiveSFPreferences(): LoadedSFPreferences | null {
   }
 
   return result;
-}
-
-export function loadEffectiveSFPreferences(): LoadedSFPreferences | null {
-  return loadEffectiveSFPreferences();
 }
 
 function loadPreferencesFile(path: string, scope: "global" | "project"): LoadedSFPreferences | null {

@@ -66,7 +66,7 @@ function allBranches(cwd: string): string[] {
  * Returns { repo, featureBranch } with HEAD on the feature branch.
  */
 function createFeatureBranchRepo(featureBranch: string): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-fb-lifecycle-")));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), "sf-fb-lifecycle-")));
   run("git init", dir);
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);

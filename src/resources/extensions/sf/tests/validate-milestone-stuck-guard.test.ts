@@ -60,7 +60,7 @@ function setupTestEnvironment(): void {
   process.chdir(tempDir);
   _clearGsdRootCache();
 
-  dbPath = join(tempDir, ".gsd", "gsd.db");
+  dbPath = join(tempDir, ".gsd", "sf.db");
   openDatabase(dbPath);
   invalidateAllCaches();
 }
