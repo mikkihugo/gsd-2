@@ -5,7 +5,7 @@ import { GripVertical, Loader2 } from "lucide-react"
 import { MainSessionTerminal } from "@/components/sf/main-session-terminal"
 import { ShellTerminal } from "@/components/sf/shell-terminal"
 import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
-import { useGSDWorkspaceState } from "@/lib/sf-workspace-store"
+import { useSFWorkspaceState } from "@/lib/sf-workspace-store"
 import { derivePendingWorkflowCommandLabel } from "@/lib/workflow-action-execution"
 
 export function DualTerminal() {
@@ -14,7 +14,7 @@ export function DualTerminal() {
   const rootRef = useRef<HTMLDivElement>(null)
   const isDragging = useRef(false)
   const [terminalFontSize] = useTerminalFontSize()
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
   const pendingCommandLabel = derivePendingWorkflowCommandLabel({
     commandInFlight: workspace.commandInFlight,
@@ -107,9 +107,9 @@ export function DualTerminal() {
           <ShellTerminal
             className="h-full"
             command="gsd"
-            sessionPrefix="gsd-interactive"
+            sessionPrefix="sf-interactive"
             fontSize={terminalFontSize}
-            hideInitialGsdHeader
+            hideInitialSfHeader
             projectCwd={projectCwd}
           />
         </div>

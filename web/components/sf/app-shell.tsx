@@ -21,13 +21,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import {
-  GSDWorkspaceProvider,
+  SFWorkspaceProvider,
   getCurrentScopeLabel,
   getProjectDisplayName,
   getStatusPresentation,
   getVisibleWorkspaceError,
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useSFWorkspaceState,
+  useSFWorkspaceActions,
 } from "@/lib/sf-workspace-store"
 import { ChatMode } from "@/components/sf/chat-mode"
 import { ScopeBadge } from "@/components/sf/scope-badge"
@@ -60,8 +60,8 @@ function WorkspaceChrome() {
   const [projectsPanelOpen, setProjectsPanelOpen] = useState(false)
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [mobileMilestoneOpen, setMobileMilestoneOpen] = useState(false)
-  const workspace = useGSDWorkspaceState()
-  const { refreshBoot } = useGSDWorkspaceActions()
+  const workspace = useSFWorkspaceState()
+  const { refreshBoot } = useSFWorkspaceActions()
 
   const status = getStatusPresentation(workspace)
   const projectPath = workspace.boot?.project.cwd
@@ -146,8 +146,8 @@ function WorkspaceChrome() {
     const handler = () => {
       setActiveView("files")
     }
-    window.addEventListener("gsd:open-file", handler)
-    return () => window.removeEventListener("gsd:open-file", handler)
+    window.addEventListener("sf:open-file", handler)
+    return () => window.removeEventListener("sf:open-file", handler)
   }, [])
 
   // Listen for cross-component view navigation events (e.g. /gsd visualize dispatch)
@@ -157,8 +157,8 @@ function WorkspaceChrome() {
         handleViewChange(e.detail.view)
       }
     }
-    window.addEventListener("gsd:navigate-view", handler as EventListener)
-    return () => window.removeEventListener("gsd:navigate-view", handler as EventListener)
+    window.addEventListener("sf:navigate-view", handler as EventListener)
+    return () => window.removeEventListener("sf:navigate-view", handler as EventListener)
   }, [handleViewChange])
 
   // Listen for projects panel toggle (sidebar icon, or programmatic)
@@ -242,8 +242,8 @@ function WorkspaceChrome() {
     !isConnecting &&
     activeView === "dashboard" &&
     detection != null &&
-    detection.kind !== "active-gsd" &&
-    detection.kind !== "empty-gsd"
+    detection.kind !== "active-sf" &&
+    detection.kind !== "empty-sf"
 
   // --- Unauthenticated gate ---
   // Render a clear recovery screen before any workspace chrome is mounted so
@@ -547,7 +547,7 @@ function WorkspaceChrome() {
   )
 }
 
-export function GSDAppShell() {
+export function SFAppShell() {
   // Extract the auth token from the URL fragment on first render.
   // Must happen before any API calls fire.
   getAuthToken()
@@ -596,10 +596,10 @@ function ProjectAwareWorkspace() {
   }
 
   return (
-    <GSDWorkspaceProvider store={activeStore}>
+    <SFWorkspaceProvider store={activeStore}>
       <DevOverridesProvider>
         <WorkspaceChrome />
       </DevOverridesProvider>
-    </GSDWorkspaceProvider>
+    </SFWorkspaceProvider>
   )
 }

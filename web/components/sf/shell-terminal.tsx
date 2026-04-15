@@ -5,7 +5,7 @@ import { useTheme } from "next-themes"
 import { Plus, X, TerminalSquare, Loader2, ImagePlus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { validateImageFile } from "@/lib/image-utils"
-import { filterInitialGsdHeader } from "@/lib/initial-gsd-header-filter"
+import { filterInitialSfHeader } from "@/lib/initial-sf-header-filter"
 import { buildProjectAbsoluteUrl, buildProjectPath } from "@/lib/project-url"
 import { authFetch, appendAuthParam } from "@/lib/auth"
 import { getXtermOptions, getXtermTheme } from "@/lib/xterm-theme"
@@ -34,7 +34,7 @@ interface ShellTerminalProps {
   sessionPrefix?: string
   hideSidebar?: boolean
   fontSize?: number
-  hideInitialGsdHeader?: boolean
+  hideInitialSfHeader?: boolean
   projectCwd?: string
 }
 
@@ -113,7 +113,7 @@ interface TerminalInstanceProps {
   commandArgs?: string[]
   isDark: boolean
   fontSize?: number
-  hideInitialGsdHeader?: boolean
+  hideInitialSfHeader?: boolean
   projectCwd?: string
   onConnectionChange: (connected: boolean) => void
 }
@@ -125,7 +125,7 @@ function TerminalInstance({
   commandArgs,
   isDark,
   fontSize,
-  hideInitialGsdHeader = false,
+  hideInitialSfHeader = false,
   projectCwd,
   onConnectionChange,
 }: TerminalInstanceProps) {
@@ -137,7 +137,7 @@ function TerminalInstance({
   const flushingRef = useRef(false)
   const resizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const onConnectionChangeRef = useRef(onConnectionChange)
-  const initialHeaderSettledRef = useRef(!hideInitialGsdHeader)
+  const initialHeaderSettledRef = useRef(!hideInitialSfHeader)
   const initialHeaderBufferRef = useRef("")
   const commandArgsKey = (commandArgs ?? []).join("\u0000")
   const [hasOutput, setHasOutput] = useState(false)
@@ -188,9 +188,9 @@ function TerminalInstance({
   }, [onConnectionChange])
 
   useEffect(() => {
-    initialHeaderSettledRef.current = !hideInitialGsdHeader
+    initialHeaderSettledRef.current = !hideInitialSfHeader
     initialHeaderBufferRef.current = ""
-  }, [hideInitialGsdHeader, sessionId])
+  }, [hideInitialSfHeader, sessionId])
 
   // Update xterm theme when isDark changes
   useEffect(() => {
@@ -291,9 +291,9 @@ function TerminalInstance({
           } else if (msg.type === "output" && msg.data) {
             let output = msg.data
 
-            if (hideInitialGsdHeader && !initialHeaderSettledRef.current) {
+            if (hideInitialSfHeader && !initialHeaderSettledRef.current) {
               initialHeaderBufferRef.current += output
-              const filtered = filterInitialGsdHeader(initialHeaderBufferRef.current)
+              const filtered = filterInitialSfHeader(initialHeaderBufferRef.current)
 
               if (filtered.status === "needs-more") {
                 return
@@ -341,7 +341,7 @@ function TerminalInstance({
       termRef.current = null
       fitAddonRef.current = null
     }
-  }, [sessionId, command, commandArgs, commandArgsKey, fontSize, hideInitialGsdHeader, isDark, projectCwd, sendInput, sendResize])
+  }, [sessionId, command, commandArgs, commandArgsKey, fontSize, hideInitialSfHeader, isDark, projectCwd, sendInput, sendResize])
 
   // Focus on click
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -477,7 +477,7 @@ function deriveProjectScopedSessionId(
   sessionPrefix?: string,
   command?: string,
 ): string {
-  const base = sessionPrefix ?? (command ? "gsd-default" : "default")
+  const base = sessionPrefix ?? (command ? "sf-default" : "default")
   if (!projectCwd) return base
   return `${base}:${projectCwd}`
 }
@@ -489,7 +489,7 @@ export function ShellTerminal({
   sessionPrefix,
   hideSidebar = false,
   fontSize,
-  hideInitialGsdHeader = false,
+  hideInitialSfHeader = false,
   projectCwd,
 }: ShellTerminalProps) {
   const { resolvedTheme } = useTheme()
@@ -662,7 +662,7 @@ export function ShellTerminal({
             commandArgs={tab.id === defaultId ? commandArgs : undefined}
             isDark={isDark}
             fontSize={fontSize}
-            hideInitialGsdHeader={hideInitialGsdHeader}
+            hideInitialSfHeader={hideInitialSfHeader}
             projectCwd={projectCwd}
             onConnectionChange={(c) => updateConnection(tab.id, c)}
           />

@@ -23,7 +23,7 @@ import {
   AlertCircle,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useGSDWorkspaceState, buildProjectUrl } from "@/lib/sf-workspace-store"
+import { useSFWorkspaceState, buildProjectUrl } from "@/lib/sf-workspace-store"
 import type {
   VisualizerData,
   VisualizerSlice,
@@ -1163,7 +1163,7 @@ function VisualizerTabList() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function VisualizerView() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
   const [data, setData] = useState<VisualizerData | null>(null)
   const [loading, setLoading] = useState(true)

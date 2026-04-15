@@ -44,8 +44,8 @@ import {
   getCurrentScopeLabel,
   getLiveWorkspaceIndex,
   getLiveAutoDashboard,
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useSFWorkspaceState,
+  useSFWorkspaceActions,
   buildPromptCommand,
 } from "@/lib/sf-workspace-store"
 import { getMilestoneStatus, getSliceStatus, getTaskStatus, type ItemStatus } from "@/lib/workspace-status"
@@ -74,7 +74,7 @@ interface NavRailProps {
 }
 
 export function NavRail({ activeView, onViewChange, isConnecting = false }: NavRailProps) {
-  const { openCommandSurface } = useGSDWorkspaceActions()
+  const { openCommandSurface } = useSFWorkspaceActions()
   const manager = useProjectStoreManager()
   const activeProjectCwd = useSyncExternalStore(manager.subscribe, manager.getSnapshot, manager.getSnapshot)
   const [exitDialogOpen, setExitDialogOpen] = useState(false)
@@ -314,8 +314,8 @@ function ExitDialog({
 /* ─── Milestone Explorer (right sidebar) ─── */
 
 export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: { isConnecting?: boolean; width?: number; onCollapse?: () => void }) {
-  const workspace = useGSDWorkspaceState()
-  const { openCommandSurface, setCommandSurfaceSection, sendCommand } = useGSDWorkspaceActions()
+  const workspace = useSFWorkspaceState()
+  const { openCommandSurface, setCommandSurfaceSection, sendCommand } = useSFWorkspaceActions()
   const [expandedMilestones, setExpandedMilestones] = useState<string[]>([])
   const [expandedSlices, setExpandedSlices] = useState<string[]>([])
 
@@ -334,7 +334,7 @@ export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: {
     const gsdPrefix = `${projectCwd}/.gsd/`
     if (!absolutePath.startsWith(gsdPrefix)) return
     const relativePath = absolutePath.slice(gsdPrefix.length)
-    window.dispatchEvent(new CustomEvent("gsd:open-file", { detail: { root: "gsd", path: relativePath } }))
+    window.dispatchEvent(new CustomEvent("sf:open-file", { detail: { root: "gsd", path: relativePath } }))
   }
 
   const workflowAction = deriveWorkflowAction({
@@ -624,8 +624,8 @@ export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: {
 /* ─── Collapsed Milestone Sidebar (icon-only rail) ─── */
 
 export function CollapsedMilestoneSidebar({ onExpand }: { onExpand: () => void }) {
-  const workspace = useGSDWorkspaceState()
-  const { sendCommand } = useGSDWorkspaceActions()
+  const workspace = useSFWorkspaceState()
+  const { sendCommand } = useSFWorkspaceActions()
 
   const liveWorkspace = getLiveWorkspaceIndex(workspace)
   const milestones = liveWorkspace?.milestones ?? []
@@ -715,7 +715,7 @@ export function Sidebar({ activeView, onViewChange, isConnecting = false, mobile
 /* ─── Mobile Nav Panel (full-width labels for touch) ─── */
 
 function MobileNavPanel({ activeView, onViewChange, isConnecting = false }: NavRailProps) {
-  const { openCommandSurface } = useGSDWorkspaceActions()
+  const { openCommandSurface } = useSFWorkspaceActions()
   const { theme, setTheme } = useTheme()
 
   const cycleTheme = () => {

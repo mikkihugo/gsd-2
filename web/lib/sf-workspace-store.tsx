@@ -4118,7 +4118,7 @@ export class SFWorkspaceStore {
           ),
         })
         window.dispatchEvent(
-          new CustomEvent("gsd:navigate-view", { detail: { view: outcome.view } }),
+          new CustomEvent("sf:navigate-view", { detail: { view: outcome.view } }),
         )
         return outcome
       }
@@ -5227,10 +5227,10 @@ export class SFWorkspaceStore {
   }
 }
 
-const WorkspaceStoreContext = createContext<GSDWorkspaceStore | null>(null)
+const WorkspaceStoreContext = createContext<SFWorkspaceStore | null>(null)
 
-export function GSDWorkspaceProvider({ children, store: externalStore }: { children: ReactNode; store?: GSDWorkspaceStore }) {
-  const [internalStore] = useState(() => new GSDWorkspaceStore())
+export function SFWorkspaceProvider({ children, store: externalStore }: { children: ReactNode; store?: SFWorkspaceStore }) {
+  const [internalStore] = useState(() => new SFWorkspaceStore())
   const store = externalStore ?? internalStore
 
   useEffect(() => {
@@ -5244,21 +5244,21 @@ export function GSDWorkspaceProvider({ children, store: externalStore }: { child
   return <WorkspaceStoreContext.Provider value={store}>{children}</WorkspaceStoreContext.Provider>
 }
 
-function useWorkspaceStore(): GSDWorkspaceStore {
+function useWorkspaceStore(): SFWorkspaceStore {
   const store = useContext(WorkspaceStoreContext)
   if (!store) {
-    throw new Error("useWorkspaceStore must be used within GSDWorkspaceProvider")
+    throw new Error("useWorkspaceStore must be used within SFWorkspaceProvider")
   }
   return store
 }
 
-export function useGSDWorkspaceState(): WorkspaceStoreState {
+export function useSFWorkspaceState(): WorkspaceStoreState {
   const store = useWorkspaceStore()
   return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot)
 }
 
-export function useGSDWorkspaceActions(): Pick<
-  GSDWorkspaceStore,
+export function useSFWorkspaceActions(): Pick<
+  SFWorkspaceStore,
   | "sendCommand"
   | "submitInput"
   | "clearTerminalLines"

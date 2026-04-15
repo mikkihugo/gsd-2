@@ -60,9 +60,9 @@
       "types": "./dist/diff/index.d.ts",
       "default": "./dist/diff/index.js"
     },
-    "./gsd-parser": {
-      "types": "./dist/gsd-parser/index.d.ts",
-      "default": "./dist/gsd-parser/index.js"
+    "./forge-parser": {
+      "types": "./dist/forge-parser/index.d.ts",
+      "default": "./dist/forge-parser/index.js"
     },
     "./highlight": {
       "types": "./dist/highlight/index.d.ts",

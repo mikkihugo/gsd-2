@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Circle, Play, AlertTriangle, ChevronRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { getLiveWorkspaceIndex, useGSDWorkspaceState, type RiskLevel } from "@/lib/sf-workspace-store"
+import { getLiveWorkspaceIndex, useSFWorkspaceState, type RiskLevel } from "@/lib/sf-workspace-store"
 import { getMilestoneStatus, getSliceStatus, type ItemStatus } from "@/lib/workspace-status"
 
 const StatusIcon = ({
@@ -39,7 +39,7 @@ const RiskBadge = ({ risk }: { risk: RiskLevel }) => {
 }
 
 export function Roadmap() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const liveWorkspace = getLiveWorkspaceIndex(workspace)
   const milestones = liveWorkspace?.milestones ?? []
   const activeScope = liveWorkspace?.active ?? {}

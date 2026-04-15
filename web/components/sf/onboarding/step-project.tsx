@@ -21,7 +21,7 @@ import { authFetch } from "@/lib/auth"
 
 // ─── Types ──────────────────────────────────────────────────────────
 
-type ProjectDetectionKind = "active-gsd" | "empty-gsd" | "v1-legacy" | "brownfield" | "blank"
+type ProjectDetectionKind = "active-sf" | "empty-sf" | "v1-legacy" | "brownfield" | "blank"
 
 interface ProjectDetectionSignals {
   hasGsdFolder: boolean
@@ -56,8 +56,8 @@ interface ProjectMetadata {
 // ─── Helpers ────────────────────────────────────────────────────────
 
 const KIND_STYLE: Record<ProjectDetectionKind, { label: string; color: string; icon: typeof Layers }> = {
-  "active-gsd": { label: "Active", color: "text-success", icon: Layers },
-  "empty-gsd": { label: "Initialized", color: "text-info", icon: FolderOpen },
+  "active-sf": { label: "Active", color: "text-success", icon: Layers },
+  "empty-sf": { label: "Initialized", color: "text-info", icon: FolderOpen },
   brownfield: { label: "Existing", color: "text-warning", icon: GitBranch },
   "v1-legacy": { label: "Legacy", color: "text-warning", icon: GitBranch },
   blank: { label: "New", color: "text-muted-foreground", icon: Sparkles },
@@ -203,9 +203,9 @@ export function StepProject({ onFinish, onBack, onBeforeSwitch }: StepProjectPro
 
   const noDevRoot = !loading && !devRoot
 
-  // Sort: active-gsd first, then by name
+  // Sort: active-sf first, then by name
   const sortedProjects = [...projects].sort((a, b) => {
-    const kindOrder: Record<ProjectDetectionKind, number> = { "active-gsd": 0, "empty-gsd": 1, brownfield: 2, "v1-legacy": 3, blank: 4 }
+    const kindOrder: Record<ProjectDetectionKind, number> = { "active-sf": 0, "empty-sf": 1, brownfield: 2, "v1-legacy": 3, blank: 4 }
     const ka = kindOrder[a.kind] ?? 5
     const kb = kindOrder[b.kind] ?? 5
     if (ka !== kb) return ka - kb
@@ -287,7 +287,7 @@ export function StepProject({ onFinish, onBack, onBeforeSwitch }: StepProjectPro
                   {/* Icon */}
                   <div className={cn(
                     "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg mt-0.5",
-                    project.kind === "active-gsd" ? "bg-success/10" : "bg-foreground/[0.04]",
+                    project.kind === "active-sf" ? "bg-success/10" : "bg-foreground/[0.04]",
                   )}>
                     {isSwitching ? (
                       <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
@@ -320,14 +320,14 @@ export function StepProject({ onFinish, onBack, onBeforeSwitch }: StepProjectPro
                       </div>
                     )}
 
-                    {/* Row 3: progress info (for active-gsd projects) */}
+                    {/* Row 3: progress info (for active-sf projects) */}
                     {progress && (
                       <div className="mt-1.5 text-[11px] text-muted-foreground">
                         {progress}
                       </div>
                     )}
 
-                    {/* Row 4: milestone bar (for active-gsd with milestones) */}
+                    {/* Row 4: milestone bar (for active-sf with milestones) */}
                     {project.progress && project.progress.milestonesTotal > 0 && (
                       <div className="mt-2 flex items-center gap-2">
                         <div className="h-1 flex-1 overflow-hidden rounded-full bg-foreground/[0.06]">

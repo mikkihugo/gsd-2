@@ -68,7 +68,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
         primaryCommand: "/gsd",
       }
 
-    // active-gsd and empty-gsd shouldn't reach here, but handle gracefully
+    // active-sf and empty-sf shouldn't reach here, but handle gracefully
     default:
       return {
         icon: <Folder className="h-8 w-8 text-foreground" strokeWidth={1.5} />,

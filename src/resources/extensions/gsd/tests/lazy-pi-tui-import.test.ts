@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-test("shared/mod.ts has no import from "@sf-run/pi-tui", () => {
+test('shared/mod.ts has no import from "@sf-run/pi-tui"', () => {
   const src = readFileSync(join(__dirname, "../../shared/mod.ts"), "utf-8");
-  assert.ok(!src.includes("@sf-run/pi-tui"), "mod.ts must not import "@sf-run/pi-tui");
+  assert.ok(!src.includes("@sf-run/pi-tui"), 'mod.ts must not import "@sf-run/pi-tui"');
 });

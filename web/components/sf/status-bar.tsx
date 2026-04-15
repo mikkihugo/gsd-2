@@ -13,7 +13,7 @@ import {
   getModelLabel,
   getStatusPresentation,
   getVisibleWorkspaceError,
-  useGSDWorkspaceState,
+  useSFWorkspaceState,
 } from "@/lib/sf-workspace-store"
 import {
   formatCost as formatProjectCost,
@@ -38,7 +38,7 @@ function toneClass(tone: ReturnType<typeof getStatusPresentation>["tone"]): stri
 }
 
 export function StatusBar() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const status = getStatusPresentation(workspace)
   const liveWorkspace = getLiveWorkspaceIndex(workspace)
   const auto = getLiveAutoDashboard(workspace)

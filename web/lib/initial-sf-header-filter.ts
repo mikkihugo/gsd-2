@@ -106,7 +106,7 @@ function isLogoLine(line: string | undefined): boolean {
  * PTY pane often does. This filter removes only the initial branded banner from
  * the PTY attach stream so both panes start on real terminal content.
  */
-export function filterInitialGsdHeader(raw: string): InitialGsdHeaderFilterResult {
+export function filterInitialSfHeader(raw: string): InitialGsdHeaderFilterResult {
   const { plainText, rawOffsetsByPlainIndex } = indexVisibleText(raw)
   if (!plainText) {
     return { status: 'needs-more', text: '' }

@@ -113,7 +113,7 @@ export {
   extractAllSections,
   batchParseGsdFiles,
   parseRoadmapFile,
-} from "./gsd-parser/index.js";
+} from "./forge-parser/index.js";
 export type {
   BatchParseResult,
   FrontmatterResult,
@@ -122,7 +122,7 @@ export type {
   NativeRoadmapSlice,
   ParsedGsdFile,
   SectionResult,
-} from "./gsd-parser/index.js";
+} from "./forge-parser/index.js";
 
 export { truncateTail, truncateHead, truncateOutput } from "./truncate/index.js";
 export type { TruncateResult, TruncateOutputResult } from "./truncate/index.js";

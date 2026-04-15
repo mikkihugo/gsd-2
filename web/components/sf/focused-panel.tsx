@@ -19,8 +19,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import {
   type PendingUiRequest,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
+  useSFWorkspaceActions,
+  useSFWorkspaceState,
 } from "@/lib/sf-workspace-store"
 import { cn } from "@/lib/utils"
 
@@ -252,8 +252,8 @@ function RequestBody({
 }
 
 export function FocusedPanel() {
-  const workspace = useGSDWorkspaceState()
-  const { respondToUiRequest, dismissUiRequest } = useGSDWorkspaceActions()
+  const workspace = useSFWorkspaceState()
+  const { respondToUiRequest, dismissUiRequest } = useSFWorkspaceActions()
 
   const pending = workspace.pendingUiRequests
   const isOpen = pending.length > 0

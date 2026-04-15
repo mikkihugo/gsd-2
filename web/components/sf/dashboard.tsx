@@ -14,8 +14,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
-  useGSDWorkspaceState,
-  useGSDWorkspaceActions,
+  useSFWorkspaceState,
+  useSFWorkspaceActions,
   buildPromptCommand,
   buildProjectUrl,
   formatDuration,
@@ -111,8 +111,8 @@ interface DashboardProps {
 }
 
 export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {}) {
-  const state = useGSDWorkspaceState()
-  const { sendCommand } = useGSDWorkspaceActions()
+  const state = useSFWorkspaceState()
+  const { sendCommand } = useSFWorkspaceActions()
   const boot = state.boot
   const workspace = getLiveWorkspaceIndex(state)
   const auto = getLiveAutoDashboard(state)
@@ -204,8 +204,8 @@ export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {
   const showWelcome =
     !isConnecting &&
     detection &&
-    detection.kind !== "active-gsd" &&
-    detection.kind !== "empty-gsd"
+    detection.kind !== "active-sf" &&
+    detection.kind !== "empty-sf"
 
   if (showWelcome) {
     return (

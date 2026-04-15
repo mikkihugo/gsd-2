@@ -21,7 +21,7 @@ import {
   Bot,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useGSDWorkspaceState, buildProjectUrl } from "@/lib/sf-workspace-store"
+import { useSFWorkspaceState, buildProjectUrl } from "@/lib/sf-workspace-store"
 import { authFetch } from "@/lib/auth"
 import { FileContentViewer } from "@/components/sf/file-content-viewer"
 import { ChatPane } from "@/components/sf/chat-mode"
@@ -34,7 +34,7 @@ let pendingFileRequest: { root: RootMode; path: string } | null = null
 
 // Set up the global event listener once (module-level, not component-level)
 if (typeof window !== "undefined") {
-  window.addEventListener("gsd:open-file", (e: Event) => {
+  window.addEventListener("sf:open-file", (e: Event) => {
     const detail = (e as CustomEvent<{ root: RootMode; path: string }>).detail
     if (detail?.root && detail?.path) {
       pendingFileRequest = { root: detail.root, path: detail.path }
@@ -472,7 +472,7 @@ function tabLabel(tab: OpenTab): string {
 type LeftPanel = "tree" | "agent"
 
 export function FilesView() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
 
   const [activeRoot, setActiveRoot] = useState<RootMode>("gsd")
@@ -705,8 +705,8 @@ export function FilesView() {
       pendingFileRequest = null // clear since we're handling it directly
       void processFileOpen(detail.root, detail.path)
     }
-    window.addEventListener("gsd:open-file", handler)
-    return () => window.removeEventListener("gsd:open-file", handler)
+    window.addEventListener("sf:open-file", handler)
+    return () => window.removeEventListener("sf:open-file", handler)
   }, [processFileOpen])
 
   const handleToggleDir = useCallback((path: string) => {

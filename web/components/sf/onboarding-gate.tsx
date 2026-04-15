@@ -5,12 +5,12 @@ import { AnimatePresence, motion } from "motion/react"
 import Image from "next/image"
 import {
   type WorkspaceOnboardingProviderState,
-  useGSDWorkspaceActions,
-  useGSDWorkspaceState,
+  useSFWorkspaceActions,
+  useSFWorkspaceState,
 } from "@/lib/sf-workspace-store"
 import { useDevOverrides } from "@/lib/dev-overrides"
 import { useUserMode, type UserMode } from "@/lib/use-user-mode"
-import { navigateToGSDView } from "@/lib/workflow-action-execution"
+import { navigateToSFView } from "@/lib/workflow-action-execution"
 import { cn } from "@/lib/utils"
 
 import { StepWelcome } from "./onboarding/step-welcome"
@@ -82,7 +82,7 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
 // ─── Main Component ─────────────────────────────────────────────────
 
 export function OnboardingGate() {
-  const workspace = useGSDWorkspaceState()
+  const workspace = useSFWorkspaceState()
   const {
     refreshOnboarding,
     saveApiKey,
@@ -90,7 +90,7 @@ export function OnboardingGate() {
     submitProviderFlowInput,
     cancelProviderFlow,
     refreshBoot,
-  } = useGSDWorkspaceActions()
+  } = useSFWorkspaceActions()
   const devOverrides = useDevOverrides()
 
   const onboarding = workspace.boot?.onboarding
@@ -289,7 +289,7 @@ export function OnboardingGate() {
                   }}
                   onFinish={() => {
                     const mode = selectedMode ?? userMode
-                    navigateToGSDView("dashboard")
+                    navigateToSFView("dashboard")
                     void refreshBoot()
                   }}
                 />
