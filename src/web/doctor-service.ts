@@ -63,7 +63,7 @@ export async function collectDoctorData(scope?: string, projectCwdOverride?: str
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/doctor.ts")
   const doctorModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(doctorModulePath))) {
@@ -113,7 +113,7 @@ export async function applyDoctorFixes(scope?: string, projectCwdOverride?: stri
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/doctor.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/doctor.ts")
   const doctorModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(doctorModulePath))) {

@@ -32,7 +32,7 @@ import { stopWebMode } from './web-mode.js'
 import { getProjectSessionsDir } from './project-sessions.js'
 import { markStartup, printStartupTimings } from './startup-timings.js'
 import { bootstrapRtk, GSD_RTK_DISABLED_ENV } from './rtk.js'
-import { loadEffectiveGSDPreferences } from './resources/extensions/gsd/preferences.js'
+import { loadEffectiveGSDPreferences } from './resources/extensions/sf/preferences.js'
 
 // ---------------------------------------------------------------------------
 // V8 compile cache — Node 22+ can cache compiled bytecode across runs,

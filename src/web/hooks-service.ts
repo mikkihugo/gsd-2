@@ -25,7 +25,7 @@ export async function collectHooksData(projectCwdOverride?: string): Promise<Hoo
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/post-unit-hooks.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/post-unit-hooks.ts")
   const hooksModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(hooksModulePath))) {

@@ -27,11 +27,11 @@ export async function collectSettingsData(projectCwdOverride?: string): Promise<
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const prefsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/preferences.ts")
-  const routerResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/model-router.ts")
-  const budgetResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/context-budget.ts")
-  const historyResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/routing-history.ts")
-  const metricsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/metrics.ts")
+  const prefsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/preferences.ts")
+  const routerResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/model-router.ts")
+  const budgetResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/context-budget.ts")
+  const historyResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/routing-history.ts")
+  const metricsResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/metrics.ts")
 
   const prefsPath = prefsResolution.modulePath
   const routerPath = routerResolution.modulePath

@@ -24,7 +24,7 @@ const DEFAULT_TIMEOUT_MS = 30_000
 export interface ModuleSpec {
   /** Environment variable name the child process reads to find this module. */
   envKey: string
-  /** Path relative to packageRoot (e.g. "src/resources/extensions/gsd/doctor.ts"). */
+  /** Path relative to packageRoot (e.g. "src/resources/extensions/sf/doctor.ts"). */
   relativePath: string
 }
 

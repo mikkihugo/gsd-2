@@ -18,7 +18,7 @@ import { createJiti } from '@mariozechner/jiti'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import type { GSDState } from './resources/extensions/gsd/types.js'
+import type { GSDState } from './resources/extensions/sf/types.js'
 import { resolveBundledSourceResource } from './bundled-resource-path.js'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })

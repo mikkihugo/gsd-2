@@ -24,7 +24,7 @@ export async function collectCleanupData(projectCwdOverride?: string): Promise<C
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/native-git-bridge.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/native-git-bridge.ts")
   const cleanupModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(cleanupModulePath))) {
@@ -114,7 +114,7 @@ export async function executeCleanup(
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/native-git-bridge.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/native-git-bridge.ts")
   const cleanupModulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(cleanupModulePath))) {

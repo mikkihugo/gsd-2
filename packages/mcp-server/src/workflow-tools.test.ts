@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { randomUUID } from "node:crypto";
 
-import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/gsd/gsd-db.ts";
+import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/sf/gsd-db.ts";
 import { registerWorkflowTools, WORKFLOW_TOOL_NAMES } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {
@@ -363,7 +363,7 @@ describe("workflow MCP tools", () => {
             title: "Add planning bridge",
             description: "Implement the shared executor path.",
             estimate: "15m",
-            files: ["src/resources/extensions/gsd/tools/workflow-tool-executors.ts"],
+            files: ["src/resources/extensions/sf/tools/workflow-tool-executors.ts"],
             verify: "node --test",
             inputs: ["ROADMAP.md"],
             expectedOutput: ["S01-PLAN.md", "T01-PLAN.md"],

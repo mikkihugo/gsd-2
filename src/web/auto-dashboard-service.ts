@@ -115,7 +115,7 @@ export async function collectAuthoritativeAutoDashboardData(
   const testModulePath = env[TEST_AUTO_DASHBOARD_MODULE_ENV];
   const moduleResolution = testModulePath
     ? { modulePath: testModulePath, useCompiledJs: false }
-    : resolveSubprocessModule(packageRoot, "resources/extensions/gsd/auto.ts", checkExists);
+    : resolveSubprocessModule(packageRoot, "resources/extensions/sf/auto.ts", checkExists);
   const autoModulePath = moduleResolution.modulePath;
 
   if (!moduleResolution.useCompiledJs && (!checkExists(resolveTsLoader) || !checkExists(autoModulePath))) {

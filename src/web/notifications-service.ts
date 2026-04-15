@@ -34,7 +34,7 @@ export async function collectNotificationsData(projectCwdOverride?: string): Pro
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/notification-store.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/notification-store.ts")
   const modulePath = moduleResolution.modulePath
 
   if (!moduleResolution.useCompiledJs && (!existsSync(resolveTsLoader) || !existsSync(modulePath))) {
@@ -97,7 +97,7 @@ export async function clearNotificationsData(projectCwdOverride?: string): Promi
   const { packageRoot, projectCwd } = config
 
   const resolveTsLoader = resolveTsLoaderPath(packageRoot)
-  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/gsd/notification-store.ts")
+  const moduleResolution = resolveSubprocessModule(packageRoot, "resources/extensions/sf/notification-store.ts")
   const modulePath = moduleResolution.modulePath
 
   if (moduleResolution.useCompiledJs && !existsSync(modulePath)) {
