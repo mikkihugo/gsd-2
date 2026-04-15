@@ -72,6 +72,7 @@ docs/coherence-audit/
 
 # ── SF project state (per-worktree, never committed) ──
 .sf/
+.gsd/
 
 # ── Stale lock files (npm is canonical) ──
 pnpm-lock.yaml
