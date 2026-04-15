@@ -182,13 +182,13 @@ if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy 
 // On Windows without Developer Mode or admin rights, symlinkSync will throw even for
 // 'junction' type — so we fall back to cpSync (a full directory copy) which works
 // everywhere without elevated permissions.
-const gsdScopeDir = join(gsdNodeModules, '@gsd')
+const sfRunScopeDir = join(gsdNodeModules, '@sf-run')
 const packagesDir = join(gsdRoot, 'packages')
 const wsPackages = ['native', 'pi-agent-core', 'pi-ai', 'pi-coding-agent', 'pi-tui']
 try {
-  if (!existsSync(gsdScopeDir)) mkdirSync(gsdScopeDir, { recursive: true })
+  if (!existsSync(sfRunScopeDir)) mkdirSync(sfRunScopeDir, { recursive: true })
   for (const pkg of wsPackages) {
-    const target = join(gsdScopeDir, pkg)
+    const target = join(sfRunScopeDir, pkg)
     const source = join(packagesDir, pkg)
     if (!existsSync(source) || existsSync(target)) continue
     try {
@@ -205,7 +205,7 @@ try {
 // symlink+copy attempts, emit a clear diagnostic instead of a cryptic
 // ERR_MODULE_NOT_FOUND from deep inside cli.js.
 const criticalPackages = ['pi-coding-agent']
-const missingPackages = criticalPackages.filter(pkg => !existsSync(join(gsdScopeDir, pkg)))
+const missingPackages = criticalPackages.filter(pkg => !existsSync(join(sfRunScopeDir, pkg)))
 if (missingPackages.length > 0) {
   const missing = missingPackages.map(p => `@sf-run/${p}`).join(', ')
   process.stderr.write(
