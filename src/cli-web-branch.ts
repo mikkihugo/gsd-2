@@ -122,7 +122,7 @@ export function migrateLegacyFlatSessions(baseSessionsDir: string, projectSessio
 
 function emitWebModeFailure(stderr: WritableLike, status: WebModeLaunchStatus): void {
   if (status.ok) return
-  stderr.write(`[forge] Web mode launch failed: ${status.failureReason}\n`)
+  stderr.write(`[forge] Web mode launch failed: ${(status as any).failureReason}\n`)
 }
 
 /**

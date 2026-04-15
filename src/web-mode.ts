@@ -362,7 +362,7 @@ function formatLaunchStatus(status: WebModeLaunchStatus): string {
     return `[forge] Web mode startup: status=started cwd=${status.cwd} port=${status.port} host=${status.hostPath} kind=${status.hostKind} url=${status.url}\n`
   }
 
-  return `[forge] Web mode startup: status=failed cwd=${status.cwd} port=${status.port ?? 'n/a'} host=${status.hostPath ?? 'unresolved'} kind=${status.hostKind} reason=${status.failureReason}\n`
+  return `[forge] Web mode startup: status=failed cwd=${status.cwd} port=${status.port ?? 'n/a'} host=${status.hostPath ?? 'unresolved'} kind=${status.hostKind} reason=${(status as any).failureReason}\n`
 }
 
 function emitLaunchStatus(stderr: WritableLike, status: WebModeLaunchStatus): void {
