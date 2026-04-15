@@ -569,12 +569,12 @@ export async function main(args: string[]) {
 	sessionOptions.authStorage = authStorage;
 	sessionOptions.modelRegistry = modelRegistry;
 	sessionOptions.resourceLoader = resourceLoader;
-	// One-shot/print mode must never mutate the persisted defaultProvider/defaultModel:
-	// a verification run like `gsd -p --model longcat/X "reply ok"` should use model X
-	// for that invocation only, not silently change the global default (#4251).
-	if (!isInteractive) {
-		sessionOptions.persistModelChanges = false;
-	}
+	// Persistence of defaultProvider/defaultModel to settings.json is an
+	// interactive-only opt-in. AgentSessionConfig.persistModelChanges defaults
+	// to false (#4251) so SDK consumers and one-shot/print/rpc/mcp invocations
+	// never silently mutate the global default. Interactive CLI launches
+	// explicitly opt in so user model picks still persist.
+	sessionOptions.persistModelChanges = isInteractive;
 
 	// Handle CLI --api-key as runtime override (not persisted)
 	if (parsed.apiKey) {

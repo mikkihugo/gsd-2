@@ -44,14 +44,36 @@ test("AgentSessionConfig exposes persistModelChanges flag (#4251)", () => {
 	);
 });
 
-test("AgentSession stores persistModelChanges and defaults it to true (#4251)", () => {
+test("AgentSession stores persistModelChanges and defaults it to false (#4251)", () => {
 	assert.ok(
 		agentSessionSource.includes("private _persistModelChanges: boolean"),
 		"AgentSession should store _persistModelChanges",
 	);
 	assert.ok(
-		agentSessionSource.includes("this._persistModelChanges = config.persistModelChanges ?? true"),
-		"constructor must default persistModelChanges to true so interactive behavior is preserved",
+		agentSessionSource.includes("this._persistModelChanges = config.persistModelChanges ?? false"),
+		"constructor must default persistModelChanges to false so SDK consumers don't silently mutate user settings; interactive CLI entry points explicitly opt in",
+	);
+});
+
+test("gsd src/cli.ts interactive branch opts into persistence (#4251)", () => {
+	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");
+	// Interactive createAgentSession call lives after the print-mode branch.
+	const interactiveCreateIdx = gsdCliSource.indexOf("createAgentSession({", printGuardIdx + 10);
+	// Skip the print-mode createAgentSession (already found by earlier tests);
+	// walk forward to the next one.
+	const nextCreateIdx = gsdCliSource.indexOf("createAgentSession({", interactiveCreateIdx + 10);
+	assert.ok(nextCreateIdx >= 0, "missing interactive createAgentSession call in src/cli.ts");
+	const interactiveBlock = gsdCliSource.slice(nextCreateIdx, nextCreateIdx + 800);
+	assert.ok(
+		interactiveBlock.includes("persistModelChanges: true"),
+		"interactive createAgentSession must explicitly pass persistModelChanges: true so user model picks still persist after the default was inverted to false (#4251)",
+	);
+});
+
+test("main.ts sets persistModelChanges = isInteractive (#4251)", () => {
+	assert.ok(
+		mainSource.includes("sessionOptions.persistModelChanges = isInteractive"),
+		"main.ts should set persistModelChanges to isInteractive — true for interactive, false for print/rpc/mcp — now that the AgentSession default is false",
 	);
 });
 
@@ -80,18 +102,10 @@ test("CreateAgentSessionOptions forwards persistModelChanges to AgentSession (#4
 	);
 });
 
-test("main.ts disables model-change persistence in one-shot / print mode (#4251)", () => {
-	assert.ok(
-		mainSource.includes("sessionOptions.persistModelChanges = false"),
-		"main.ts should set persistModelChanges=false when not interactive",
-	);
-	const gateIdx = mainSource.indexOf("sessionOptions.persistModelChanges = false");
-	const guardIdx = mainSource.lastIndexOf("if (!isInteractive)", gateIdx);
-	assert.ok(
-		guardIdx >= 0 && guardIdx < gateIdx,
-		"persistModelChanges=false must be guarded by !isInteractive so interactive mode still persists user model choice",
-	);
-});
+// Note: the previous guard `if (!isInteractive) persistModelChanges = false`
+// has been replaced by an unconditional `persistModelChanges = isInteractive`
+// assignment, now that the AgentSessionConfig default is false. The assertion
+// moved to the "main.ts sets persistModelChanges = isInteractive" test below.
 
 test("gsd src/cli.ts print-mode createAgentSession passes persistModelChanges: false (#4251)", () => {
 	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");

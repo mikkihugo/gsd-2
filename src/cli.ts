@@ -718,6 +718,10 @@ const resourceLoadPromise = resourceLoader.reload()
 await resourceLoadPromise
 markStartup('resourceLoader.reload')
 
+// Interactive mode explicitly opts into persistence so user model picks (via
+// /model, Ctrl+P, interactive selector) write back to settings.json. The
+// AgentSessionConfig.persistModelChanges default is false (#4251) so SDK
+// consumers don't silently mutate user settings; CLI interactive paths opt in.
 const { session, extensionsResult, modelFallbackMessage: interactiveFallbackMsg } = await createAgentSession({
   authStorage,
   modelRegistry,
@@ -725,6 +729,7 @@ const { session, extensionsResult, modelFallbackMessage: interactiveFallbackMsg 
   sessionManager,
   resourceLoader,
   isClaudeCodeReady: () => modelRegistry.isProviderRequestReady('claude-code'),
+  persistModelChanges: true,
 })
 markStartup('createAgentSession')
 

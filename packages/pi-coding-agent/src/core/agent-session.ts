@@ -304,15 +304,19 @@ export class AgentSession {
 	private _baseSystemPrompt = "";
 
 	// Whether model changes should write defaultProvider/defaultModel to settings.json.
-	// Set to false for one-shot/print mode so `gsd -p --model X` never mutates the
-	// persisted default (#4251). Default true preserves interactive behavior.
+	// Defaults to false — callers must explicitly opt into persistence. This is the
+	// safe default for SDK consumers: a third party building on @gsd/pi-coding-agent
+	// should not silently mutate the user's global settings just by switching models.
+	// Interactive CLI entry points (gsd wrapper's interactive branch and pi main's
+	// isInteractive branch) explicitly set this to true so user model picks still
+	// persist. One-shot/print/rpc/mcp leave it false. (#4251)
 	private _persistModelChanges: boolean;
 
 	constructor(config: AgentSessionConfig) {
 		this.agent = config.agent;
 		this.sessionManager = config.sessionManager;
 		this.settingsManager = config.settingsManager;
-		this._persistModelChanges = config.persistModelChanges ?? true;
+		this._persistModelChanges = config.persistModelChanges ?? false;
 		this._scopedModels = config.scopedModels ?? [];
 		this._resourceLoader = config.resourceLoader;
 		this._customTools = config.customTools ?? [];
