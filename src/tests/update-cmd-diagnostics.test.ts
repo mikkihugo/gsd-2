@@ -44,7 +44,7 @@ test("resolveInstallCommand returns bun command when running under Bun (#4145)",
   const orig = (process.versions as Record<string, string | undefined>).bun;
   try {
     (process.versions as Record<string, string | undefined>).bun = "1.0.0";
-    assert.equal(resolveInstallCommand("gsd-pi@latest"), "bun add -g gsd-pi@latest");
+    assert.equal(resolveInstallCommand("sf-run@latest"), "bun add -g sf-run@latest");
   } finally {
     if (orig === undefined) {
       delete (process.versions as Record<string, string | undefined>).bun;
@@ -59,7 +59,7 @@ test("resolveInstallCommand returns npm command when not running under Bun (#414
   const orig = (process.versions as Record<string, string | undefined>).bun;
   try {
     delete (process.versions as Record<string, string | undefined>).bun;
-    assert.equal(resolveInstallCommand("gsd-pi@latest"), "npm install -g gsd-pi@latest");
+    assert.equal(resolveInstallCommand("sf-run@latest"), "npm install -g sf-run@latest");
   } finally {
     if (orig !== undefined) {
       (process.versions as Record<string, string | undefined>).bun = orig;

@@ -65,13 +65,13 @@ export function registerHooks(pi: ExtensionAPI): void {
     try {
       const { loadEffectiveGSDPreferences } = await import("../preferences.js");
       const prefs = loadEffectiveGSDPreferences();
-      process.env.GSD_SHOW_TOKEN_COST = prefs?.preferences.show_token_cost ? "1" : "";
+      process.env.SF_SHOW_TOKEN_COST = prefs?.preferences.show_token_cost ? "1" : "";
     } catch { /* non-fatal */ }
     if (isFirstSession) {
       isFirstSession = false;
     } else {
       try {
-        const gsdBinPath = process.env.GSD_BIN_PATH;
+        const gsdBinPath = process.env.SF_BIN_PATH;
         if (gsdBinPath) {
           const { dirname } = await import("node:path");
           const { printWelcomeScreen } = await import(
@@ -85,7 +85,7 @@ export function registerHooks(pi: ExtensionAPI): void {
             if (rc) remoteChannel = rc.channel;
           } catch { /* non-fatal */ }
 
-          printWelcomeScreen({ version: process.env.GSD_VERSION || "0.0.0", remoteChannel });
+          printWelcomeScreen({ version: process.env.SF_VERSION || "0.0.0", remoteChannel });
         }
       } catch { /* non-fatal */ }
     }

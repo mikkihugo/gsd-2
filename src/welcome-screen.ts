@@ -1,5 +1,5 @@
 /**
- * GSD Welcome Screen
+ * SF Welcome Screen
  *
  * Two-panel bar layout: full-width accent bars at top/bottom (matching the
  * auto-mode progress widget style), logo left (fixed width), info right.
@@ -10,7 +10,7 @@ import { execFileSync } from 'node:child_process'
 import os from 'node:os'
 import chalk from 'chalk'
 import stripAnsi from 'strip-ansi'
-import { GSD_LOGO } from './logo.js'
+import { SF_LOGO } from './logo.js'
 
 export interface WelcomeScreenOptions {
   version: string
@@ -58,7 +58,7 @@ export function printWelcomeScreen(opts: WelcomeScreenOptions): void {
 
   // Narrow terminal fallback
   if (termWidth < 70) {
-    process.stderr.write(`\n  Get Shit Done v${version}\n  ${shortCwd}\n\n`)
+    process.stderr.write(`\n  Singularity Forge v${version}\n  ${shortCwd}\n\n`)
     return
   }
 
@@ -72,10 +72,10 @@ export function printWelcomeScreen(opts: WelcomeScreenOptions): void {
   const H = '─', DV = '│', DS = '├'
 
   // ── Left rows: blank + 6 logo lines + blank (8 total) ───────────────────────
-  const leftRows = ['', ...GSD_LOGO, '']
+  const leftRows = ['', ...SF_LOGO, '']
 
   // ── Right rows (8 total, null = divider) ────────────────────────────────────
-  const titleLeft  = `  ${chalk.bold('Get Shit Done')}`
+  const titleLeft  = `  ${chalk.bold('Singularity Forge')}`
   const titleRight = chalk.dim(`v${version}`)
   const titleFill  = RIGHT_INNER - visLen(titleLeft) - visLen(titleRight)
   const titleRow   = titleLeft + ' '.repeat(Math.max(1, titleFill)) + titleRight

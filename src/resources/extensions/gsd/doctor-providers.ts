@@ -1,5 +1,5 @@
 /**
- * GSD Doctor — Provider & Integration Health Checks
+ * SF Doctor — Provider & Integration Health Checks
  *
  * Fast, deterministic checks for external service configuration.
  * Checks key presence in auth.json and environment variables — no HTTP calls,
@@ -261,7 +261,7 @@ function checkLlmProviders(): ProviderCheckResult[] {
         category: "llm",
         status: "warning",
         message: `${label} — all credentials backed off (rate limited)`,
-        detail: `GSD will retry automatically`,
+        detail: `SF will retry automatically`,
         required: true,
       });
     } else {

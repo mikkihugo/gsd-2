@@ -50,7 +50,7 @@ test("git.merge_to_main produces deprecation warning", () => {
 test("getIsolationMode defaults to none when preferences have no isolation setting", () => {
   // Validate the default via validatePreferences: when no isolation is set,
   // preferences.git.isolation is undefined, and getIsolationMode returns "none".
-  // Default changed from "worktree" to "none" so GSD works out of the box
+  // Default changed from "worktree" to "none" so SF works out of the box
   // without PREFERENCES.md (#2480).
   const { preferences } = validatePreferences({});
   assert.equal(preferences.git?.isolation, undefined, "no isolation in empty prefs");
@@ -482,7 +482,7 @@ test("unrecognized format warning is emitted at most once (#2373)", () => {
 });
 
 test("parsePreferencesMarkdown parses heading+list format without frontmatter (#2036)", () => {
-  // A GSD agent recovery session wrote preferences in markdown heading+list
+  // A SF agent recovery session wrote preferences in markdown heading+list
   // format instead of YAML frontmatter. Since the heading+list fallback parser
   // was added, this format is now handled gracefully.
   const content = "## Git\n\n- isolation: none\n";
@@ -554,7 +554,7 @@ test("experimental.rtk parses correctly from preferences markdown", () => {
 
 test("loadEffectiveGSDPreferences preserves experimental prefs across global+project merge", () => {
   const originalCwd = process.cwd();
-  const originalGsdHome = process.env.GSD_HOME;
+  const originalGsdHome = process.env.SF_HOME;
   const tempProject = mkdtempSync(join(tmpdir(), "gsd-prefs-project-"));
   const tempGsdHome = mkdtempSync(join(tmpdir(), "gsd-prefs-home-"));
 
@@ -585,7 +585,7 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
       "utf-8",
     );
 
-    process.env.GSD_HOME = tempGsdHome;
+    process.env.SF_HOME = tempGsdHome;
     process.chdir(tempProject);
 
     const loaded = loadEffectiveGSDPreferences();
@@ -594,8 +594,8 @@ test("loadEffectiveGSDPreferences preserves experimental prefs across global+pro
     assert.equal(loaded!.preferences.git?.isolation, "none");
   } finally {
     process.chdir(originalCwd);
-    if (originalGsdHome === undefined) delete process.env.GSD_HOME;
-    else process.env.GSD_HOME = originalGsdHome;
+    if (originalGsdHome === undefined) delete process.env.SF_HOME;
+    else process.env.SF_HOME = originalGsdHome;
     rmSync(tempProject, { recursive: true, force: true });
     rmSync(tempGsdHome, { recursive: true, force: true });
   }

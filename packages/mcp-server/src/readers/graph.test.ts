@@ -1,4 +1,4 @@
-// GSD MCP Server — knowledge graph reader tests
+// SF MCP Server — knowledge graph reader tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, it, before, after, beforeEach, afterEach } from 'node:test';
@@ -36,7 +36,7 @@ function writeFixture(base: string, relPath: string, content: string): void {
 
 function makeProjectWithArtifacts(projectDir: string): void {
   writeFixture(projectDir, '.gsd/STATE.md', [
-    '# GSD State',
+    '# SF State',
     '',
     '**Active Milestone:** M001: Auth System',
     '**Active Slice:** S01: Login flow',

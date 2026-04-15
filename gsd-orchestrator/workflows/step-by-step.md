@@ -1,6 +1,6 @@
 # Step-by-Step Execution
 
-Run GSD one unit at a time with decision points between steps. Use this when you need
+Run SF one unit at a time with decision points between steps. Use this when you need
 control over execution — budget enforcement, progress reporting, conditional logic,
 or the ability to steer mid-build.
 

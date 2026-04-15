@@ -1,8 +1,8 @@
 /**
  * dev-workflow-engine.ts — DevWorkflowEngine implementation.
  *
- * Implements WorkflowEngine by delegating to existing GSD state derivation
- * and dispatch logic. This is the "dev" engine — it wraps the current GSD
+ * Implements WorkflowEngine by delegating to existing SF state derivation
+ * and dispatch logic. This is the "dev" engine — it wraps the current SF
  * auto-mode behavior behind the engine-polymorphic interface.
  */
 
@@ -24,7 +24,7 @@ import { loadEffectiveGSDPreferences } from "./preferences.js";
 // ─── Bridge: DispatchAction → EngineDispatchAction ────────────────────────
 
 /**
- * Map a GSD-specific DispatchAction (which carries `matchedRule`, `unitType`,
+ * Map a SF-specific DispatchAction (which carries `matchedRule`, `unitType`,
  * etc.) to the engine-generic EngineDispatchAction discriminated union.
  *
  * Exported for unit testing.
@@ -101,7 +101,7 @@ export class DevWorkflowEngine implements WorkflowEngine {
 
   getDisplayMetadata(state: EngineState): DisplayMetadata {
     return {
-      engineLabel: "GSD Dev",
+      engineLabel: "SF Dev",
       currentPhase: state.phase,
       progressSummary: `${state.currentMilestoneId ?? "no milestone"} / ${state.activeSliceId ?? "—"} / ${state.activeTaskId ?? "—"}`,
       stepCount: null,

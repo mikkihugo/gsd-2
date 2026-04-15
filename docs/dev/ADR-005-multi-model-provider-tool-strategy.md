@@ -7,7 +7,7 @@
 
 ## Context
 
-PR #2755 lands capability-aware model routing (ADR-004), extending the router from a one-dimensional complexity-tier system to a two-dimensional system that scores models across 7 capability dimensions. GSD can now intelligently pick the best model for a task from a heterogeneous pool.
+PR #2755 lands capability-aware model routing (ADR-004), extending the router from a one-dimensional complexity-tier system to a two-dimensional system that scores models across 7 capability dimensions. SF can now intelligently pick the best model for a task from a heterogeneous pool.
 
 But model selection is only one piece of the multi-model puzzle. The system faces structural gaps as users configure diverse provider pools:
 

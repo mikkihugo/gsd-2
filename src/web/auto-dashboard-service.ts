@@ -7,9 +7,9 @@ import type { AutoDashboardData } from "./bridge-service.ts";
 import { resolveSubprocessModule, buildSubprocessPrefixArgs } from "./ts-subprocess-flags.ts";
 
 const AUTO_DASHBOARD_MAX_BUFFER = 1024 * 1024;
-const TEST_AUTO_DASHBOARD_MODULE_ENV = "GSD_WEB_TEST_AUTO_DASHBOARD_MODULE";
-const TEST_AUTO_DASHBOARD_FALLBACK_ENV = "GSD_WEB_TEST_USE_FALLBACK_AUTO_DASHBOARD";
-const AUTO_DASHBOARD_MODULE_ENV = "GSD_AUTO_DASHBOARD_MODULE";
+const TEST_AUTO_DASHBOARD_MODULE_ENV = "SF_WEB_TEST_AUTO_DASHBOARD_MODULE";
+const TEST_AUTO_DASHBOARD_FALLBACK_ENV = "SF_WEB_TEST_USE_FALLBACK_AUTO_DASHBOARD";
+const AUTO_DASHBOARD_MODULE_ENV = "SF_AUTO_DASHBOARD_MODULE";
 
 export interface AutoDashboardServiceOptions {
   execPath?: string;
@@ -163,7 +163,7 @@ export async function collectAuthoritativeAutoDashboardData(
 
         try {
           const parsed = JSON.parse(stdout) as AutoDashboardData;
-          const projectCwd = env.GSD_WEB_PROJECT_CWD || "";
+          const projectCwd = env.SF_WEB_PROJECT_CWD || "";
           const reconciled = projectCwd
             ? reconcileWithDiskState(parsed, projectCwd, checkExists)
             : parsed;

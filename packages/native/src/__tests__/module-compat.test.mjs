@@ -33,7 +33,7 @@ describe("@sf-run/native module compatibility (#2861)", () => {
 
   test("package.json should explicitly declare type: commonjs", () => {
     // When installed as a dependency under a parent with "type": "module"
-    // (e.g. gsd-pi), an absent "type" field would inherit the parent's
+    // (e.g. sf-run), an absent "type" field would inherit the parent's
     // ESM setting. Explicit "commonjs" overrides this.
     assert.equal(
       pkg.type,

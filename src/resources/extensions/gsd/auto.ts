@@ -1,5 +1,5 @@
 /**
- * GSD Auto Mode — Fresh Session Per Unit
+ * SF Auto Mode — Fresh Session Per Unit
  *
  * State machine driven by .gsd/ files on disk. Each "unit" of work
  * (plan slice, execute task, complete slice) gets a fresh session via
@@ -258,20 +258,20 @@ const STATE_REBUILD_MIN_INTERVAL_MS = 30_000;
 
 function captureProjectRootEnv(projectRoot: string): void {
   if (!s.projectRootEnvCaptured) {
-    s.hadProjectRootEnv = Object.prototype.hasOwnProperty.call(process.env, "GSD_PROJECT_ROOT");
-    s.previousProjectRootEnv = process.env.GSD_PROJECT_ROOT ?? null;
+    s.hadProjectRootEnv = Object.prototype.hasOwnProperty.call(process.env, "SF_PROJECT_ROOT");
+    s.previousProjectRootEnv = process.env.SF_PROJECT_ROOT ?? null;
     s.projectRootEnvCaptured = true;
   }
-  process.env.GSD_PROJECT_ROOT = projectRoot;
+  process.env.SF_PROJECT_ROOT = projectRoot;
 }
 
 function restoreProjectRootEnv(): void {
   if (!s.projectRootEnvCaptured) return;
 
   if (s.hadProjectRootEnv && s.previousProjectRootEnv !== null) {
-    process.env.GSD_PROJECT_ROOT = s.previousProjectRootEnv;
+    process.env.SF_PROJECT_ROOT = s.previousProjectRootEnv;
   } else {
-    delete process.env.GSD_PROJECT_ROOT;
+    delete process.env.SF_PROJECT_ROOT;
   }
 
   s.previousProjectRootEnv = null;
@@ -281,15 +281,15 @@ function restoreProjectRootEnv(): void {
 
 function captureMilestoneLockEnv(milestoneId: string | null): void {
   if (!s.milestoneLockEnvCaptured) {
-    s.hadMilestoneLockEnv = Object.prototype.hasOwnProperty.call(process.env, "GSD_MILESTONE_LOCK");
-    s.previousMilestoneLockEnv = process.env.GSD_MILESTONE_LOCK ?? null;
+    s.hadMilestoneLockEnv = Object.prototype.hasOwnProperty.call(process.env, "SF_MILESTONE_LOCK");
+    s.previousMilestoneLockEnv = process.env.SF_MILESTONE_LOCK ?? null;
     s.milestoneLockEnvCaptured = true;
   }
 
   if (milestoneId) {
-    process.env.GSD_MILESTONE_LOCK = milestoneId;
+    process.env.SF_MILESTONE_LOCK = milestoneId;
   } else {
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.SF_MILESTONE_LOCK;
   }
 }
 
@@ -297,9 +297,9 @@ function restoreMilestoneLockEnv(): void {
   if (!s.milestoneLockEnvCaptured) return;
 
   if (s.hadMilestoneLockEnv && s.previousMilestoneLockEnv !== null) {
-    process.env.GSD_MILESTONE_LOCK = s.previousMilestoneLockEnv;
+    process.env.SF_MILESTONE_LOCK = s.previousMilestoneLockEnv;
   } else {
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.SF_MILESTONE_LOCK;
   }
 
   s.previousMilestoneLockEnv = null;
@@ -349,7 +349,7 @@ export function shouldUseWorktreeIsolation(): boolean {
 
 /**
  * Model captured at auto-mode start. Used to prevent model bleed between
- * concurrent GSD instances sharing the same global settings.json (#650).
+ * concurrent SF instances sharing the same global settings.json (#650).
  * When preferences don't specify a model for a unit type, this ensures
  * the session's original model is re-applied instead of reading from
  * the shared global settings (which another instance may have overwritten).
@@ -477,7 +477,7 @@ export function markToolEnd(toolCallId: string): void {
 
 /**
  * Record a tool invocation error on the current session (#2883).
- * Called from tool_execution_end when a GSD tool fails with isError.
+ * Called from tool_execution_end when a SF tool fails with isError.
  * Only stores the error if it matches the tool-invocation-error pattern
  * (malformed/truncated JSON), not normal business-logic errors.
  */
@@ -658,8 +658,8 @@ function handleLostSessionLock(
   const message =
     lockStatus?.failureReason === "pid-mismatch"
       ? lockStatus.existingPid
-        ? `Session lock (${lockFilePath}) moved to PID ${lockStatus.existingPid} — another GSD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
-        : `Session lock (${lockFilePath}) moved to a different process — another GSD process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
+        ? `Session lock (${lockFilePath}) moved to PID ${lockStatus.existingPid} — another SF process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
+        : `Session lock (${lockFilePath}) moved to a different process — another SF process appears to have taken over. Stopping gracefully.${recoverySuggestion}`
       : lockStatus?.failureReason === "missing-metadata"
         ? `Session lock metadata (${lockFilePath}) disappeared, so ownership could not be confirmed. Stopping gracefully.${recoverySuggestion}`
         : lockStatus?.failureReason === "compromised"
@@ -1463,13 +1463,13 @@ export async function startAuto(
     restoreHookState(s.basePath);
     // Re-sync managed resources on resume so long-lived auto sessions pick up
     // bundled extension updates before resume-time verification/state logic runs.
-    // GSD_PKG_ROOT is set by loader.ts and points to the gsd-pi package root.
+    // SF_PKG_ROOT is set by loader.ts and points to the sf-run package root.
     // The relative import ("../../../resource-loader.js") only works from the source
     // tree; deployed extensions live at ~/.gsd/agent/extensions/gsd/ where the
     // relative path resolves to ~/.gsd/agent/resource-loader.js which doesn't exist.
-    // Using GSD_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
-    const agentDir = process.env.GSD_CODING_AGENT_DIR || join(process.env.GSD_HOME || homedir(), ".gsd", "agent");
-    const pkgRoot = process.env.GSD_PKG_ROOT;
+    // Using SF_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
+    const agentDir = process.env.SF_CODING_AGENT_DIR || join(process.env.SF_HOME || homedir(), ".gsd", "agent");
+    const pkgRoot = process.env.SF_PKG_ROOT;
     const resourceLoaderPath = pkgRoot
       ? pathToFileURL(join(pkgRoot, "dist", "resource-loader.js")).href
       : new URL("../../../resource-loader.js", import.meta.url).href;

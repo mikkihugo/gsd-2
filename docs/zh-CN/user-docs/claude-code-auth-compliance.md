@@ -13,9 +13,9 @@ Anthropic 当前公开的指导原则边界非常清晰：
 对于 GSD2，安全路径应当是：
 
 1. 把本地 Claude Code 视为一个外部、已认证的运行时。
-2. 永远不要让 GSD 用户通过 GSD 托管的 Anthropic OAuth 去登录 Claude 订阅。
+2. 永远不要让 SF 用户通过 SF 托管的 Anthropic OAuth 去登录 Claude 订阅。
 3. 永远不要把 Claude.ai 的订阅 OAuth 凭据交换成 bearer token，然后冒充 Claude Code 直接调用 Anthropic API。
-4. 如果 GSD 需要直接访问 Anthropic API，则必须要求使用 Claude Console API key、Bedrock、Vertex 或其他被明确支持的 provider 路径。
+4. 如果 SF 需要直接访问 Anthropic API，则必须要求使用 Claude Console API key、Bedrock、Vertex 或其他被明确支持的 provider 路径。
 
 ## Anthropic 明确允许的内容
 
@@ -67,9 +67,9 @@ Anthropic 的消费条款还额外加入两项限制：
 
 对 GSD2 的含义：
 
-- 由 GSD 托管的 Anthropic 订阅 OAuth 流程属于高风险
-- 在 GSD 自己的 API client 中复用用户 Claude 订阅凭据属于高风险
-- 任何会让 Anthropic 误以为请求来自 Claude Code、但实际上来自 GSD 基础设施的流程，都越界了
+- 由 SF 托管的 Anthropic 订阅 OAuth 流程属于高风险
+- 在 SF 自己的 API client 中复用用户 Claude 订阅凭据属于高风险
+- 任何会让 Anthropic 误以为请求来自 Claude Code、但实际上来自 SF 基础设施的流程，都越界了
 
 ## 当前 GSD2 发现
 
@@ -84,7 +84,7 @@ Anthropic 的消费条款还额外加入两项限制：
 - `src/cli.ts`
   当检测到本地 CLI 可用时，会把用户从 `anthropic` 迁移到 `claude-code`
 
-这些方向是正确的，因为此时 GSD 使用的是用户自己本地安装的 Claude Code，作为已认证的 Anthropic surface。
+这些方向是正确的，因为此时 SF 使用的是用户自己本地安装的 Claude Code，作为已认证的 Anthropic surface。
 
 ### 中高风险部分 —— 已解决
 
@@ -106,7 +106,7 @@ Anthropic 的消费条款还额外加入两项限制：
   - 其他 Anthropic 文档明确支持的原生流程
 - GSD2 不得为终端用户实现自己的 Anthropic 订阅 OAuth 流程
 - GSD2 不得持久化 Anthropic 订阅 OAuth token，供后续 API 调用使用
-- GSD2 不得使用由 GSD 获取的订阅 OAuth tokens 来发送 Anthropic API 流量
+- GSD2 不得使用由 SF 获取的订阅 OAuth tokens 来发送 Anthropic API 流量
 - GSD2 可以支持 Anthropic 直接访问，但仅限以下方式：
   - `ANTHROPIC_API_KEY`
   - 保存在 auth storage 中的 Claude Console API keys
@@ -122,8 +122,8 @@ Anthropic 的消费条款还额外加入两项限制：
 2. 把 Web onboarding 中的 Anthropic 改为只支持 API key
 3. 当 `claude auth status` 成功时，继续保留 `claude-code` 作为推荐路径
 4. 增加明确的 UI 文案：
-   - “Claude 订阅用户：请登录本地 Claude Code app / CLI，而不是 GSD。”
-5. 阻止任何把 Anthropic OAuth 凭据转换成 GSD 托管请求 API 认证的迁移或代码路径
+   - “Claude 订阅用户：请登录本地 Claude Code app / CLI，而不是 SF。”
+5. 阻止任何把 Anthropic OAuth 凭据转换成 SF 托管请求 API 认证的迁移或代码路径
 
 这是让仓库与 Anthropic 当前公开指导对齐的最快路径。
 
@@ -159,10 +159,10 @@ Anthropic 的消费条款还额外加入两项限制：
 
 如果某个拟议中的 GSD2 特性需要访问 Anthropic，先问一个问题：
 
-“GSD 是以 GSD 的身份调用 Anthropic，还是 GSD 只是把工作委派给用户本地已认证的 Claude Code 运行时？”
+“SF 是以 SF 的身份调用 Anthropic，还是 SF 只是把工作委派给用户本地已认证的 Claude Code 运行时？”
 
-- 如果 GSD 是以 GSD 的身份调用 Anthropic：必须要求 API key 或受支持的云认证
-- 如果 GSD 只是委派给本地 Claude Code：可以接受，前提是 GSD 自身不会拦截、生成或重放订阅凭据
+- 如果 SF 是以 SF 的身份调用 Anthropic：必须要求 API key 或受支持的云认证
+- 如果 SF 只是委派给本地 Claude Code：可以接受，前提是 SF 自身不会拦截、生成或重放订阅凭据
 
 ## 审查过的来源
 

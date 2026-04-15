@@ -48,7 +48,7 @@ export type DoctorIssueCode =
   // Git / worktree integrity checks
   | "integration_branch_missing"
   | "worktree_directory_orphaned"
-  // GSD state structural checks
+  // SF state structural checks
   | "circular_slice_dependency"
   | "orphaned_slice_directory"
   | "missing_slice_dir"

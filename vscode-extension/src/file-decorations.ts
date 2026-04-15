@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import type { AgentEvent, GsdClient } from "./gsd-client.js";
 
 /**
- * Badges files in the VS Code explorer that GSD has written or edited
+ * Badges files in the VS Code explorer that SF has written or edited
  * during the current session.
  */
 export class GsdFileDecorationProvider implements vscode.FileDecorationProvider, vscode.Disposable {
@@ -48,7 +48,7 @@ export class GsdFileDecorationProvider implements vscode.FileDecorationProvider,
 		if (this.modifiedUris.has(uri.toString())) {
 			return {
 				badge: "G",
-				tooltip: "Modified by GSD",
+				tooltip: "Modified by SF",
 				color: new vscode.ThemeColor("gitDecoration.modifiedResourceForeground"),
 			};
 		}

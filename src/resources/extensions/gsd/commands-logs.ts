@@ -286,7 +286,7 @@ async function handleLogsList(basePath: string, ctx: ExtensionCommandContext): P
 
   if (activities.length === 0 && debugLogs.length === 0) {
     ctx.ui.notify(
-      "No logs found.\n\nActivity logs are created during auto-mode.\nDebug logs require GSD_DEBUG=1.",
+      "No logs found.\n\nActivity logs are created during auto-mode.\nDebug logs require SF_DEBUG=1.",
       "info",
     );
     return;
@@ -347,7 +347,7 @@ async function handleLogsList(basePath: string, ctx: ExtensionCommandContext): P
   }
 
   lines.push("");
-  lines.push("Tip: Enable debug logging with GSD_DEBUG=1 before /gsd auto");
+  lines.push("Tip: Enable debug logging with SF_DEBUG=1 before /gsd auto");
 
   ctx.ui.notify(lines.join("\n"), "info");
 }
@@ -416,7 +416,7 @@ async function handleLogsDebug(basePath: string, ctx: ExtensionCommandContext, i
 
   if (debugLogs.length === 0) {
     ctx.ui.notify(
-      "No debug logs found.\n\nEnable debug logging: GSD_DEBUG=1 gsd auto",
+      "No debug logs found.\n\nEnable debug logging: SF_DEBUG=1 gsd auto",
       "info",
     );
     return;

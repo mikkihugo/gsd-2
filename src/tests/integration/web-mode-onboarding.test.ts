@@ -193,9 +193,9 @@ function configureBridgeRuntime(
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], optionsArg: Record<string, unknown>) {
       void command;
@@ -448,7 +448,7 @@ test("fresh gsd --web browser onboarding stays locked on failed validation and u
     tempHome,
     browserLogPath,
     env: {
-      GSD_WEB_TEST_FAKE_API_KEY_VALIDATION: "1",
+      SF_WEB_TEST_FAKE_API_KEY_VALIDATION: "1",
       ANTHROPIC_API_KEY: "",
       OPENAI_API_KEY: "",
       GOOGLE_API_KEY: "",

@@ -26,7 +26,7 @@ export { runEnvironmentChecks, runFullEnvironmentChecks, formatEnvironmentReport
 export { computeProgressScore, computeProgressScoreWithContext, formatProgressLine, formatProgressReport, type ProgressScore, type ProgressLevel } from "./progress-score.js";
 
 /**
- * Characters that are used as delimiters in GSD state management documents
+ * Characters that are used as delimiters in SF state management documents
  * and should not appear in milestone or slice titles.
  *
  * - "\u2014" (em dash, U+2014): used as a display separator in STATE.md and other docs.
@@ -40,7 +40,7 @@ const TITLE_DELIMITER_RE = /[\u2014\u2013\/]/; // em dash, en dash, forward slas
 
 /**
  * Check whether a milestone or slice title contains characters that conflict
- * with GSD's state document delimiter conventions.
+ * with SF's state document delimiter conventions.
  * Returns a human-readable description of the problem, or null if the title is safe.
  */
 export function validateTitle(title: string): string | null {
@@ -48,7 +48,7 @@ export function validateTitle(title: string): string | null {
     const found: string[] = [];
     if (/[\u2014\u2013]/.test(title)) found.push("em/en dash (\u2014 or \u2013)");
     if (/\//.test(title)) found.push("forward slash (/)");
-    return `title contains ${found.join(" and ")}, which conflict with GSD state document delimiters`;
+    return `title contains ${found.join(" and ")}, which conflict with SF state document delimiters`;
   }
   return null;
 }
@@ -91,7 +91,7 @@ function validatePreferenceShape(preferences: GSDPreferences): string[] {
 /** Build STATE.md content from derived state. Exported for guided-flow pre-dispatch rebuild (#3475). */
 export function buildStateMarkdown(state: Awaited<ReturnType<typeof deriveState>>): string {
   const lines: string[] = [];
-  lines.push("# GSD State", "");
+  lines.push("# SF State", "");
 
   const activeMilestone = state.activeMilestone
     ? `${state.activeMilestone.id}: ${state.activeMilestone.title}`
@@ -352,7 +352,7 @@ export async function runGSDDoctor(basePath: string, options?: { fix?: boolean; 
         code: "invalid_preferences",
         scope: "project",
         unitId: "project",
-        message: `GSD preferences invalid: ${issue}`,
+        message: `SF preferences invalid: ${issue}`,
         file: prefs.path,
         fixable: false,
       });

@@ -181,7 +181,7 @@ export function StepRemote({ onBack, onNext }: StepRemoteProps) {
           Remote notifications
         </h2>
         <p className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-          Get notified when GSD needs your input. Connect a chat channel and
+          Get notified when SF needs your input. Connect a chat channel and
           the agent pings you instead of waiting silently.
         </p>
       </motion.div>

@@ -1,5 +1,5 @@
 /**
- * state-machine-edge-cases.test.ts — Gap-filling tests for the GSD state
+ * state-machine-edge-cases.test.ts — Gap-filling tests for the SF state
  * machine covering failure modes, boundary conditions, and edge cases NOT
  * covered by the existing state-machine-live-validation.test.ts suite.
  *
@@ -15,7 +15,7 @@
  *    replan loop cap)
  */
 
-// GSD State Machine Edge Case Tests
+// SF State Machine Edge Case Tests
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

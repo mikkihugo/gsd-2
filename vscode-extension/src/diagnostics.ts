@@ -92,7 +92,7 @@ export class GsdDiagnosticBridge implements vscode.Disposable {
 	}
 
 	/**
-	 * Add a GSD diagnostic (agent finding) to a file.
+	 * Add a SF diagnostic (agent finding) to a file.
 	 * Can be used to surface agent review findings in the Problems panel.
 	 */
 	addFinding(
@@ -103,11 +103,11 @@ export class GsdDiagnosticBridge implements vscode.Disposable {
 	): void {
 		const existing = this.collection.get(uri) ?? [];
 		const diagnostic = new vscode.Diagnostic(range, message, severity);
-		diagnostic.source = "GSD Agent";
+		diagnostic.source = "SF Agent";
 		this.collection.set(uri, [...existing, diagnostic]);
 	}
 
-	/** Clear all GSD diagnostics */
+	/** Clear all SF diagnostics */
 	clearFindings(): void {
 		this.collection.clear();
 	}

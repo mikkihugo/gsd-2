@@ -42,7 +42,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen();
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot save decision." }],
+        content: [{ type: "text" as const, text: "Error: SF database is not available. Cannot save decision." }],
         details: { operation: "save_decision", error: "db_unavailable" } as any,
       };
     }
@@ -78,9 +78,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_decision_save",
     label: "Save Decision",
     description:
-      "Record a project decision to the GSD database and regenerate DECISIONS.md. " +
+      "Record a project decision to the SF database and regenerate DECISIONS.md. " +
       "Decision IDs are auto-assigned — never provide an ID manually.",
-    promptSnippet: "Record a project decision to the GSD database (auto-assigns ID, regenerates DECISIONS.md)",
+    promptSnippet: "Record a project decision to the SF database (auto-assigns ID, regenerates DECISIONS.md)",
     promptGuidelines: [
       "Use gsd_decision_save when recording an architectural, pattern, library, or observability decision.",
       "Decision IDs are auto-assigned (D001, D002, ...) — never guess or provide an ID.",
@@ -129,7 +129,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen();
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot update requirement." }],
+        content: [{ type: "text" as const, text: "Error: SF database is not available. Cannot update requirement." }],
         details: { operation: "update_requirement", id: params.id, error: "db_unavailable" } as any,
       };
     }
@@ -161,9 +161,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_requirement_update",
     label: "Update Requirement",
     description:
-      "Update an existing requirement in the GSD database and regenerate REQUIREMENTS.md. " +
+      "Update an existing requirement in the SF database and regenerate REQUIREMENTS.md. " +
       "Provide the requirement ID (e.g. R001) and any fields to update.",
-    promptSnippet: "Update an existing GSD requirement by ID (regenerates REQUIREMENTS.md)",
+    promptSnippet: "Update an existing SF requirement by ID (regenerates REQUIREMENTS.md)",
     promptGuidelines: [
       "Use gsd_requirement_update to change status, validation, notes, or other fields on an existing requirement.",
       "The id parameter is required — it must be an existing RXXX identifier.",
@@ -207,7 +207,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen();
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot save requirement." }],
+        content: [{ type: "text" as const, text: "Error: SF database is not available. Cannot save requirement." }],
         details: { operation: "save_requirement", error: "db_unavailable" } as any,
       };
     }
@@ -245,9 +245,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_requirement_save",
     label: "Save Requirement",
     description:
-      "Record a new requirement to the GSD database and regenerate REQUIREMENTS.md. " +
+      "Record a new requirement to the SF database and regenerate REQUIREMENTS.md. " +
       "Requirement IDs are auto-assigned — never provide an ID manually.",
-    promptSnippet: "Record a new GSD requirement to the database (auto-assigns ID, regenerates REQUIREMENTS.md)",
+    promptSnippet: "Record a new SF requirement to the database (auto-assigns ID, regenerates REQUIREMENTS.md)",
     promptGuidelines: [
       "Use gsd_requirement_save when recording a new functional, non-functional, or operational requirement.",
       "Requirement IDs are auto-assigned (R001, R002, ...) — never guess or provide an ID.",
@@ -296,9 +296,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_summary_save",
     label: "Save Summary",
     description:
-      "Save a summary, research, context, or assessment artifact to the GSD database and write it to disk. " +
+      "Save a summary, research, context, or assessment artifact to the SF database and write it to disk. " +
       "Computes the file path from milestone/slice/task IDs automatically.",
-    promptSnippet: "Save a GSD artifact (summary/research/context/assessment) to DB and disk",
+    promptSnippet: "Save a SF artifact (summary/research/context/assessment) to DB and disk",
     promptGuidelines: [
       "Use gsd_summary_save to persist structured artifacts (SUMMARY, RESEARCH, CONTEXT, ASSESSMENT, CONTEXT-DRAFT).",
       "milestone_id is required. slice_id and task_id are optional — they determine the file path.",
@@ -390,7 +390,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_milestone_generate_id",
     label: "Generate Milestone ID",
     description:
-      "Generate the next milestone ID for a new GSD milestone. " +
+      "Generate the next milestone ID for a new SF milestone. " +
       "Scans existing milestones on disk and respects the unique_milestone_ids preference. " +
       "Always use this tool when creating a new milestone — never invent milestone IDs manually.",
     promptSnippet: "Generate a valid milestone ID (respects unique_milestone_ids preference)",
@@ -429,7 +429,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_milestone",
     label: "Plan Milestone",
     description:
-      "Write milestone planning state to the GSD database, render ROADMAP.md from DB, and clear caches after a successful render.",
+      "Write milestone planning state to the SF database, render ROADMAP.md from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a milestone via DB write + roadmap render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_milestone for milestone planning instead of writing ROADMAP.md directly.",
@@ -491,7 +491,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_slice",
     label: "Plan Slice",
     description:
-      "Write slice planning state to the GSD database, render S##-PLAN.md plus task PLAN artifacts from DB, and clear caches after a successful render.",
+      "Write slice planning state to the SF database, render S##-PLAN.md plus task PLAN artifacts from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a slice via DB write + PLAN render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_slice for slice planning instead of writing S##-PLAN.md or task PLAN files directly.",
@@ -533,7 +533,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen();
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot plan task." }],
+        content: [{ type: "text" as const, text: "Error: SF database is not available. Cannot plan task." }],
         details: { operation: "plan_task", error: "db_unavailable" } as any,
       };
     }
@@ -570,7 +570,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_plan_task",
     label: "Plan Task",
     description:
-      "Write task planning state to the GSD database, render tasks/T##-PLAN.md from DB, and clear caches after a successful render.",
+      "Write task planning state to the SF database, render tasks/T##-PLAN.md from DB, and clear caches after a successful render.",
     promptSnippet: "Plan a task via DB write + task PLAN render + cache invalidation",
     promptGuidelines: [
       "Use gsd_plan_task for task planning instead of writing tasks/T##-PLAN.md directly.",
@@ -607,9 +607,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_task_complete",
     label: "Complete Task",
     description:
-      "Record a completed task to the GSD database, render a SUMMARY.md to disk, and toggle the plan checkbox — all in one atomic operation. " +
+      "Record a completed task to the SF database, render a SUMMARY.md to disk, and toggle the plan checkbox — all in one atomic operation. " +
       "Writes the task row inside a transaction, then performs filesystem writes outside the transaction.",
-    promptSnippet: "Complete a GSD task (DB write + summary render + checkbox toggle)",
+    promptSnippet: "Complete a SF task (DB write + summary render + checkbox toggle)",
     promptGuidelines: [
       "Use gsd_task_complete (or gsd_complete_task) when a task is finished and needs to be recorded.",
       "All string fields are required. verificationEvidence is an array of objects with command, exitCode, verdict, durationMs.",
@@ -660,9 +660,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_slice_complete",
     label: "Complete Slice",
     description:
-      "Record a completed slice to the GSD database, render SUMMARY.md + UAT.md to disk, and toggle the roadmap checkbox — all in one atomic operation. " +
+      "Record a completed slice to the SF database, render SUMMARY.md + UAT.md to disk, and toggle the roadmap checkbox — all in one atomic operation. " +
       "Validates all tasks are complete before proceeding. Writes the slice row inside a transaction, then performs filesystem writes outside the transaction.",
-    promptSnippet: "Complete a GSD slice (DB write + summary/UAT render + roadmap checkbox toggle)",
+    promptSnippet: "Complete a SF slice (DB write + summary/UAT render + roadmap checkbox toggle)",
     promptGuidelines: [
       "Use gsd_slice_complete (or gsd_complete_slice) when all tasks in a slice are finished and the slice needs to be recorded.",
       "All tasks in the slice must have status 'complete' — the handler validates this before proceeding.",
@@ -753,7 +753,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     const dbAvailable = await ensureDbOpen();
     if (!dbAvailable) {
       return {
-        content: [{ type: "text" as const, text: "Error: GSD database is not available. Cannot skip slice." }],
+        content: [{ type: "text" as const, text: "Error: SF database is not available. Cannot skip slice." }],
         details: { operation: "skip_slice", error: "db_unavailable" } as any,
       };
     }
@@ -821,7 +821,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Mark a slice as skipped so auto-mode advances past it without executing. " +
       "The slice data is preserved for reference. The state machine treats skipped slices like completed ones for dependency satisfaction.",
-    promptSnippet: "Skip a GSD slice (mark as skipped, auto-mode will advance past it)",
+    promptSnippet: "Skip a SF slice (mark as skipped, auto-mode will advance past it)",
     promptGuidelines: [
       "Use gsd_skip_slice when a slice should be bypassed — descoped, superseded, or no longer relevant.",
       "Cannot skip a slice that is already complete.",
@@ -845,9 +845,9 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_complete_milestone",
     label: "Complete Milestone",
     description:
-      "Record a completed milestone to the GSD database, render MILESTONE-SUMMARY.md to disk — all in one atomic operation. " +
+      "Record a completed milestone to the SF database, render MILESTONE-SUMMARY.md to disk — all in one atomic operation. " +
       "Validates all slices are complete before proceeding.",
-    promptSnippet: "Complete a GSD milestone (DB write + summary render)",
+    promptSnippet: "Complete a SF milestone (DB write + summary render)",
     promptGuidelines: [
       "Use gsd_complete_milestone when all slices in a milestone are finished and the milestone needs to be recorded.",
       "All slices in the milestone must have status 'complete' — the handler validates this before proceeding.",
@@ -889,7 +889,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     description:
       "Validate a milestone before completion — persist validation results to the DB, render VALIDATION.md to disk. " +
       "Records verdict (pass/needs-attention/needs-remediation) and rationale.",
-    promptSnippet: "Validate a GSD milestone (DB write + VALIDATION.md render)",
+    promptSnippet: "Validate a SF milestone (DB write + VALIDATION.md render)",
     promptGuidelines: [
       "Use gsd_validate_milestone when all slices are done and the milestone needs validation before completion.",
       "Parameters: milestoneId, verdict, remediationRound, successCriteriaChecklist, sliceDeliveryAudit, crossSliceIntegration, requirementCoverage, verificationClasses (optional), verdictRationale, remediationPlan (optional).",
@@ -927,7 +927,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Replan a slice after a blocker is discovered. Structurally enforces preservation of completed tasks — " +
       "mutations to completed task IDs are rejected with actionable error payloads. Writes replan history to DB, " +
       "applies task mutations, re-renders PLAN.md, and renders REPLAN.md.",
-    promptSnippet: "Replan a GSD slice with structural enforcement of completed tasks",
+    promptSnippet: "Replan a SF slice with structural enforcement of completed tasks",
     promptGuidelines: [
       "Use gsd_replan_slice (canonical) or gsd_slice_replan (alias) when a blocker is discovered and the slice plan needs rewriting.",
       "The tool structurally enforces that completed tasks cannot be updated or removed — violations return specific error payloads naming the blocked task ID.",
@@ -974,7 +974,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Reassess the milestone roadmap after a slice completes. Structurally enforces preservation of completed slices — " +
       "mutations to completed slice IDs are rejected with actionable error payloads. Writes assessment to DB, " +
       "applies slice mutations, re-renders ROADMAP.md, and renders ASSESSMENT.md.",
-    promptSnippet: "Reassess a GSD roadmap with structural enforcement of completed slices",
+    promptSnippet: "Reassess a SF roadmap with structural enforcement of completed slices",
     promptGuidelines: [
       "Use gsd_reassess_roadmap (canonical) or gsd_roadmap_reassess (alias) after a slice completes to reassess the roadmap.",
       "The tool structurally enforces that completed slices cannot be modified or removed — violations return specific error payloads naming the blocked slice ID.",
@@ -1026,7 +1026,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
     name: "gsd_save_gate_result",
     label: "Save Gate Result",
     description:
-      "Save the result of a quality gate evaluation (Q3-Q8 or MV01-MV04) to the GSD database. " +
+      "Save the result of a quality gate evaluation (Q3-Q8 or MV01-MV04) to the SF database. " +
       "Called by gate evaluation sub-agents after analyzing a specific quality question.",
     promptSnippet: "Save quality gate evaluation result (verdict, rationale, findings)",
     promptGuidelines: [

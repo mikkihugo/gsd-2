@@ -1,4 +1,4 @@
-// gsd-pi — Regression tests for the validate-milestone stuck-loop guard (#4094)
+// sf-run — Regression tests for the validate-milestone stuck-loop guard (#4094)
 
 import { describe, test, mock, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";

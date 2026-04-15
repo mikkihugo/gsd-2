@@ -1,10 +1,10 @@
 # Git 策略
 
-GSD 使用 git 来实现 milestone 隔离，以及每个 milestone 内部的顺序提交。你可以通过 **isolation mode** 控制工作发生在哪里。整个策略是自动化的，你不需要手工管理分支。
+SF 使用 git 来实现 milestone 隔离，以及每个 milestone 内部的顺序提交。你可以通过 **isolation mode** 控制工作发生在哪里。整个策略是自动化的，你不需要手工管理分支。
 
 ## 隔离模式
 
-GSD 支持三种隔离模式，通过 `git.isolation` 偏好设置：
+SF 支持三种隔离模式，通过 `git.isolation` 偏好设置：
 
 | 模式 | 工作目录 | 分支 | 适用场景 |
 |------|----------|------|----------|
@@ -26,7 +26,7 @@ GSD 支持三种隔离模式，通过 `git.isolation` 偏好设置：
 
 ### `none` 模式
 
-工作直接发生在当前分支。没有 worktree，也没有 milestone 分支。GSD 依然会按顺序提交，并使用 conventional commit message，但不会提供分支级隔离。
+工作直接发生在当前分支。没有 worktree，也没有 milestone 分支。SF 依然会按顺序提交，并使用 conventional commit message，但不会提供分支级隔离。
 
 适用于热重载工作流中“文件隔离会破坏开发工具”的情况（例如只能监视项目根目录的文件监听器），或者很小的项目里不值得承担分支开销的情况。
 
@@ -75,16 +75,16 @@ main ─────────────────────────
 
 ### 提交格式
 
-提交使用 conventional commit 格式，并在 trailer 中带上 GSD 元数据：
+提交使用 conventional commit 格式，并在 trailer 中带上 SF 元数据：
 
 ```
 feat: core type definitions
 
-GSD-Task: M001/S01/T01
+SF-Task: M001/S01/T01
 
 feat: markdown parser for plan files
 
-GSD-Task: M001/S01/T02
+SF-Task: M001/S01/T02
 ```
 
 ## Worktree 管理
@@ -156,7 +156,7 @@ git:
 
 ### 自动创建 Pull Request
 
-对于使用 Gitflow 或分支工作流的团队，GSD 可以在 milestone 完成时自动创建 pull request：
+对于使用 Gitflow 或分支工作流的团队，SF 可以在 milestone 完成时自动创建 pull request：
 
 ```yaml
 git:
@@ -169,11 +169,11 @@ git:
 
 ### `commit_docs: false`
 
-当设置为 `false` 时，GSD 会把 `.gsd/` 添加到 `.gitignore`，所有规划产物只保留在本地。适合只有部分成员使用 GSD 的团队，或者公司要求仓库保持干净的场景。
+当设置为 `false` 时，SF 会把 `.gsd/` 添加到 `.gitignore`，所有规划产物只保留在本地。适合只有部分成员使用 SF 的团队，或者公司要求仓库保持干净的场景。
 
 ## 自愈能力
 
-GSD 内置了对常见 git 问题的自动恢复：
+SF 内置了对常见 git 问题的自动恢复：
 
 - **Detached HEAD**：自动重新附着到正确分支
 - **过期锁文件**：移除崩溃进程残留的 `index.lock`
@@ -183,4 +183,4 @@ GSD 内置了对常见 git 问题的自动恢复：
 
 ## 原生 Git 操作
 
-从 v2.16 起，GSD 在派发热路径中的读密集 git 操作改用 libgit2 原生绑定。这消除了每次派发周期中约 70 次进程拉起，从而提升了自动模式吞吐量。
+从 v2.16 起，SF 在派发热路径中的读密集 git 操作改用 libgit2 原生绑定。这消除了每次派发周期中约 70 次进程拉起，从而提升了自动模式吞吐量。

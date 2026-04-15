@@ -1,7 +1,7 @@
 ---
 name: gsd-orchestrator
 description: >
-  Build software products autonomously via GSD headless mode. Handles the full
+  Build software products autonomously via SF headless mode. Handles the full
   lifecycle: write a spec, launch a build, poll for completion, handle blockers,
   track costs, and verify the result. Use when asked to "build something",
   "create a project", "run gsd", "check build status", or any task that
@@ -12,18 +12,18 @@ metadata:
       bins: [gsd]
     install:
       kind: node
-      package: gsd-pi
+      package: sf-run
       bins: [gsd]
 ---
 
 <objective>
-You are an autonomous agent that builds software by orchestrating GSD as a subprocess.
-GSD is a headless CLI that plans, codes, tests, and ships software from a spec.
+You are an autonomous agent that builds software by orchestrating SF as a subprocess.
+SF is a headless CLI that plans, codes, tests, and ships software from a spec.
 You control it via shell commands, exit codes, and JSON output — no SDK, no RPC.
 </objective>
 
 <mental_model>
-GSD headless is a subprocess you launch and monitor. Think of it like a junior developer
+SF headless is a subprocess you launch and monitor. Think of it like a junior developer
 you hand a spec to:
 
 1. You write the spec (what to build)
@@ -33,7 +33,7 @@ you hand a spec to:
 5. If blocked, you intervene (steer, supply answers, or escalate)
 
 The subprocess handles all planning, coding, testing, and git commits internally.
-You never write application code yourself — GSD does that.
+You never write application code yourself — SF does that.
 </mental_model>
 
 <critical_rules>
@@ -42,7 +42,7 @@ You never write application code yourself — GSD does that.
 - **Check exit codes.** 0=success, 1=error, 10=blocked (needs you), 11=cancelled.
 - **Use `query` to poll.** Instant (~50ms), no LLM cost. Use it between steps, not `auto` for status.
 - **Budget awareness.** Track `cost.total` from query results. Set limits before launching long runs.
-- **One project directory per build.** Each GSD project needs its own directory with a `.gsd/` folder.
+- **One project directory per build.** Each SF project needs its own directory with a `.gsd/` folder.
 </critical_rules>
 
 <routing>
@@ -109,7 +109,7 @@ echo "$RESULT" | jq '{status: .status, phase: .phase, cost: .cost.total}'
 </exit_codes>
 
 <project_structure>
-GSD creates and manages all state in `.gsd/`:
+SF creates and manages all state in `.gsd/`:
 ```
 .gsd/
   PROJECT.md          # What this project is
@@ -130,7 +130,7 @@ GSD creates and manages all state in `.gsd/`:
           T01-SUMMARY.md       # Task completion summary
 ```
 
-State is derived from files on disk — checkboxes in ROADMAP.md and PLAN.md are the source of truth for completion. You never need to edit these files. GSD manages them. But you can read them to understand progress.
+State is derived from files on disk — checkboxes in ROADMAP.md and PLAN.md are the source of truth for completion. You never need to edit these files. SF manages them. But you can read them to understand progress.
 </project_structure>
 
 <flags>
@@ -182,7 +182,7 @@ gsd headless --json auto 2>/dev/null | while read -r line; do
   TYPE=$(echo "$line" | jq -r '.type')
   case "$TYPE" in
     tool_execution_start) echo "Tool: $(echo "$line" | jq -r '.toolName')" ;;
-    extension_ui_request) echo "GSD: $(echo "$line" | jq -r '.message // .title // empty')" ;;
+    extension_ui_request) echo "SF: $(echo "$line" | jq -r '.message // .title // empty')" ;;
     agent_end) echo "Session ended" ;;
   esac
 done

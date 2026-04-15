@@ -1,7 +1,7 @@
 /**
- * GSD Git Service
+ * SF Git Service
  *
- * Core git operations for GSD: types, constants, and pure helpers.
+ * Core git operations for SF: types, constants, and pure helpers.
  * Higher-level operations (commit, staging, branching) build on these.
  *
  * This module centralizes the GitPreferences interface, runtime exclusion
@@ -36,7 +36,7 @@ import {
   nativeCommitSubject,
   _resetHasChangesCache,
 } from "./native-git-bridge.js";
-import { GSDError, GSD_MERGE_CONFLICT, GSD_GIT_ERROR } from "./errors.js";
+import { GSDError, SF_MERGE_CONFLICT, SF_GIT_ERROR } from "./errors.js";
 import { getErrorMessage } from "./error-utils.js";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -58,10 +58,10 @@ export interface GitPreferences {
    *  - "none": (default) no git isolation — commits land on the user's current branch directly
    */
   isolation?: "worktree" | "branch" | "none";
-  /** When false, GSD will not modify .gitignore at all — no baseline patterns
+  /** When false, SF will not modify .gitignore at all — no baseline patterns
    *  are added and no self-healing occurs. Use this if you manage your own
-   *  .gitignore and don't want GSD touching it.
-   *  Default: true (GSD ensures baseline patterns are present).
+   *  .gitignore and don't want SF touching it.
+   *  Default: true (SF ensures baseline patterns are present).
    */
   manage_gitignore?: boolean;
   /** Script to run after a worktree is created (#597).
@@ -121,9 +121,9 @@ export interface TaskCommitContext {
 
 /**
  * Build a meaningful conventional commit message from task execution context.
- * Format: `{type}: {description}` (clean conventional commit — no GSD IDs in subject).
+ * Format: `{type}: {description}` (clean conventional commit — no SF IDs in subject).
  *
- * GSD metadata is placed in a `GSD-Task:` git trailer at the end of the body,
+ * SF metadata is placed in a `SF-Task:` git trailer at the end of the body,
  * following the same convention as `Signed-off-by:` or `Co-Authored-By:`.
  *
  * The description is the task summary one-liner if available (it describes
@@ -152,8 +152,8 @@ export function buildTaskCommitMessage(ctx: TaskCommitContext): string {
     bodyParts.push(fileLines);
   }
 
-  // Trailers: GSD-Task first, then Resolves
-  bodyParts.push(`GSD-Task: ${ctx.taskId}`);
+  // Trailers: SF-Task first, then Resolves
+  bodyParts.push(`SF-Task: ${ctx.taskId}`);
 
   if (ctx.issueNumber) {
     bodyParts.push(`Resolves #${ctx.issueNumber}`);
@@ -180,7 +180,7 @@ export class MergeConflictError extends GSDError {
     mainBranch: string,
   ) {
     super(
-      GSD_MERGE_CONFLICT,
+      SF_MERGE_CONFLICT,
       `${strategy === "merge" ? "Merge" : "Squash-merge"} of "${branch}" into "${mainBranch}" ` +
       `failed with conflicts in ${conflictedFiles.length} non-.gsd file(s): ${conflictedFiles.join(", ")}`,
     );
@@ -202,10 +202,10 @@ export interface PreMergeCheckResult {
 // ─── Constants ─────────────────────────────────────────────────────────────
 
 /**
- * GSD runtime paths that should be excluded from smart staging.
+ * SF runtime paths that should be excluded from smart staging.
  * These are transient/generated artifacts that should never be committed.
  *
- * NOTE: GSD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
+ * NOTE: SF_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
  * This array must stay synchronized with it.
  */
 export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
@@ -425,7 +425,7 @@ export function runGit(basePath: string, args: string[], options: { allowFailure
   } catch (error) {
     if (options.allowFailure) return "";
     const message = getErrorMessage(error);
-    throw new GSDError(GSD_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
+    throw new GSDError(SF_GIT_ERROR, `git ${args.join(" ")} failed in ${basePath}: ${filterGitSvnNoise(message)}`);
   }
 }
 
@@ -468,7 +468,7 @@ export class GitServiceImpl {
   }
 
   /**
-   * Smart staging: `git add -A` excluding GSD runtime paths via pathspec.
+   * Smart staging: `git add -A` excluding SF runtime paths via pathspec.
    * Falls back to plain `git add -A` if the exclusion pathspec fails.
    * @param extraExclusions Additional pathspec exclusions beyond RUNTIME_EXCLUSION_PATHS.
    */
@@ -512,11 +512,11 @@ export class GitServiceImpl {
     const allExclusions = [...RUNTIME_EXCLUSION_PATHS, ...extraExclusions];
 
     // ── Parallel worker milestone scope (#1991) ──
-    // When GSD_MILESTONE_LOCK is set, this process is a parallel worker that
+    // When SF_MILESTONE_LOCK is set, this process is a parallel worker that
     // must only commit files belonging to its own milestone. Exclude all other
     // milestone directories from staging to prevent cross-milestone pollution
     // (e.g., an M033 worker fabricating M032 artifacts in the same commit).
-    const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+    const milestoneLock = process.env.SF_MILESTONE_LOCK;
     if (milestoneLock) {
       const msDir = join(gsdRoot(this.basePath), "milestones");
       if (existsSync(msDir)) {
@@ -612,13 +612,13 @@ export class GitServiceImpl {
       // Opt-in guard — users can disable to keep snapshot commits for forensics
       if (this.prefs.absorb_snapshot_commits === false) return;
 
-      const GSD_SNAPSHOT_PREFIX = "gsd snapshot:";
+      const SF_SNAPSHOT_PREFIX = "gsd snapshot:";
       let count = 0;
 
       // Walk back from HEAD~1 counting consecutive snapshot commits (cap at 10)
       for (let i = 1; i <= 10; i++) {
         const subject = nativeCommitSubject(this.basePath, `HEAD~${i}`);
-        if (!subject.startsWith(GSD_SNAPSHOT_PREFIX)) break;
+        if (!subject.startsWith(SF_SNAPSHOT_PREFIX)) break;
         count = i;
       }
 
@@ -681,7 +681,7 @@ export class GitServiceImpl {
    * branches are created from and merged back into.
    *
    * This is often `main` or `master`, but not necessarily. When a user
-   * starts GSD on a feature branch like `f-123-new-thing`, that branch
+   * starts SF on a feature branch like `f-123-new-thing`, that branch
    * is recorded as the integration target, and all slice branches merge
    * back into it — not the repo's default branch. The name "main branch"
    * in variable names is historical; think of it as "integration branch".

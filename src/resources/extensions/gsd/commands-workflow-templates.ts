@@ -1,5 +1,5 @@
 /**
- * GSD Workflow Template Commands — /gsd start, /gsd templates
+ * SF Workflow Template Commands — /gsd start, /gsd templates
  *
  * Handles the `/gsd start [template] [description]` and `/gsd templates` commands.
  * Resolves templates by name or auto-detection, then dispatches the workflow prompt.
@@ -321,7 +321,7 @@ export async function handleStart(
         "  refactor        Inventory → plan → migrate → verify\n" +
         "  security-audit  Scan → triage → remediate → re-scan\n" +
         "  dep-upgrade     Assess → upgrade → fix → verify\n" +
-        "  full-project    Complete GSD with full ceremony\n\n" +
+        "  full-project    Complete SF with full ceremony\n\n" +
         "Examples:\n" +
         "  /gsd start bugfix fix login button not responding\n" +
         "  /gsd start spike evaluate auth libraries\n" +
@@ -383,7 +383,7 @@ export async function handleStart(
     return;
   }
 
-  // ─── Route full-project to standard GSD workflow ────────────────────────
+  // ─── Route full-project to standard SF workflow ────────────────────────
 
   if (templateId === "full-project") {
     const root = gsdRoot(basePath);
@@ -396,7 +396,7 @@ export async function handleStart(
       pi.sendMessage(
         {
           customType: "gsd-workflow-template",
-          content: "The user wants to start a full GSD project. Run `/gsd init` to bootstrap the project, then `/gsd auto` to begin execution.",
+          content: "The user wants to start a full SF project. Run `/gsd init` to bootstrap the project, then `/gsd auto` to begin execution.",
           display: false,
         },
         { triggerTurn: true },

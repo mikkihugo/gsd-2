@@ -12,7 +12,7 @@
  *   (d) write/edit to .gsd/ path → pass (planning artifacts)
  *   (e) write/edit to source path → block
  *   (f) bash command → block (could execute work)
- *   (g) registered GSD tools (gsd_milestone_generate_id, gsd_summary_save) → pass
+ *   (g) registered SF tools (gsd_milestone_generate_id, gsd_summary_save) → pass
  *   (h) unknown custom tools → block
  */
 

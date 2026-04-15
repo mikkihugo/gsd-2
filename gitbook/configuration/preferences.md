@@ -1,6 +1,6 @@
 # Preferences
 
-GSD preferences live in YAML frontmatter markdown files. You can configure them globally or per-project.
+SF preferences live in YAML frontmatter markdown files. You can configure them globally or per-project.
 
 ## Managing Preferences
 

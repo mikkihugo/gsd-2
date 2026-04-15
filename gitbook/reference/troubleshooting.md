@@ -69,7 +69,7 @@ Auto mode pauses with "Budget ceiling reached."
 
 Auto mode won't start, says another session is running.
 
-**Fix:** GSD auto-detects stale locks (dead PID = auto cleanup). If automatic recovery fails:
+**Fix:** SF auto-detects stale locks (dead PID = auto cleanup). If automatic recovery fails:
 
 ```bash
 rm -f .gsd/auto.lock
@@ -100,7 +100,7 @@ See [Notifications](../configuration/notifications.md) for details.
 
 ### Server discovery times out
 
-**Fix:** Run the configured command outside GSD to confirm it starts. Check that backend services are reachable.
+**Fix:** Run the configured command outside SF to confirm it starts. Check that backend services are reachable.
 
 ### Server connection closed immediately
 
@@ -133,7 +133,7 @@ Rebuilds `STATE.md` from plan and roadmap files and fixes inconsistencies.
 
 ## Getting Help
 
-- **GitHub Issues:** [github.com/gsd-build/GSD-2/issues](https://github.com/gsd-build/GSD-2/issues)
+- **GitHub Issues:** [github.com/gsd-build/SF/issues](https://github.com/gsd-build/SF/issues)
 - **Dashboard:** `Ctrl+Alt+G` or `/gsd status`
 - **Forensics:** `/gsd forensics` for post-mortem analysis
 - **Session logs:** `.gsd/activity/` contains JSONL session dumps

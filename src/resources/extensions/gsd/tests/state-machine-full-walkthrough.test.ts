@@ -1,4 +1,4 @@
-// GSD State Machine — Comprehensive Phase-by-Phase Walkthrough Tests
+// SF State Machine — Comprehensive Phase-by-Phase Walkthrough Tests
 // Verifies all 16 phases, reconciliation, edge cases, and cross-validation.
 
 import { describe, test, afterEach } from "node:test";

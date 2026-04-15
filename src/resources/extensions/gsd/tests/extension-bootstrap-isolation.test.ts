@@ -1,4 +1,4 @@
-// Structural contracts for GSD extension bootstrap isolation.
+// Structural contracts for SF extension bootstrap isolation.
 //
 // The /gsd command must survive failures in the full extension bootstrap
 // (register-extension.ts). This guards against the regression where a

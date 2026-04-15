@@ -1,5 +1,5 @@
 /**
- * GSD Queue Order — Custom milestone execution ordering.
+ * SF Queue Order — Custom milestone execution ordering.
  *
  * Stores an explicit execution order in `.gsd/QUEUE-ORDER.json`.
  * When present, `findMilestoneIds()` uses this order instead of

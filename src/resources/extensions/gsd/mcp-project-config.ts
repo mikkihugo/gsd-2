@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { assertSafeDirectory } from "./validate-directory.js";
 import { detectWorkflowMcpLaunchConfig } from "./workflow-mcp.js";
 
-export const GSD_WORKFLOW_MCP_SERVER_NAME = "gsd-workflow";
+export const SF_WORKFLOW_MCP_SERVER_NAME = "gsd-workflow";
 
 export interface ProjectMcpServerConfig {
   command?: string;
@@ -28,7 +28,7 @@ interface McpConfigFile {
 }
 
 export function resolveBundledGsdCliPath(env: NodeJS.ProcessEnv = process.env): string | null {
-  const explicit = env.GSD_CLI_PATH?.trim() || env.GSD_BIN_PATH?.trim();
+  const explicit = env.SF_CLI_PATH?.trim() || env.SF_BIN_PATH?.trim();
   if (explicit) return explicit;
 
   const candidates = [
@@ -52,12 +52,12 @@ export function buildProjectWorkflowMcpServerConfig(
   const gsdCliPath = resolveBundledGsdCliPath(env);
   const launch = detectWorkflowMcpLaunchConfig(resolvedProjectRoot, {
     ...env,
-    ...(gsdCliPath ? { GSD_CLI_PATH: gsdCliPath, GSD_BIN_PATH: gsdCliPath } : {}),
+    ...(gsdCliPath ? { SF_CLI_PATH: gsdCliPath, SF_BIN_PATH: gsdCliPath } : {}),
   });
 
   if (!launch) {
     throw new Error(
-      "Unable to resolve the GSD workflow MCP server. Build this checkout or install gsd-mcp-server on PATH.",
+      "Unable to resolve the SF workflow MCP server. Build this checkout or install gsd-mcp-server on PATH.",
     );
   }
 
@@ -96,19 +96,19 @@ export function ensureProjectWorkflowMcpConfig(
   const previousServers = existing.mcpServers ?? {};
   const nextServers = {
     ...previousServers,
-    [GSD_WORKFLOW_MCP_SERVER_NAME]: desiredServer,
+    [SF_WORKFLOW_MCP_SERVER_NAME]: desiredServer,
   };
 
   const alreadyPresent = existsSync(configPath);
   const unchanged =
-    JSON.stringify(previousServers[GSD_WORKFLOW_MCP_SERVER_NAME] ?? null)
+    JSON.stringify(previousServers[SF_WORKFLOW_MCP_SERVER_NAME] ?? null)
       === JSON.stringify(desiredServer)
     && existing.mcpServers !== undefined;
 
   if (unchanged) {
     return {
       configPath,
-      serverName: GSD_WORKFLOW_MCP_SERVER_NAME,
+      serverName: SF_WORKFLOW_MCP_SERVER_NAME,
       status: "unchanged",
     };
   }
@@ -122,7 +122,7 @@ export function ensureProjectWorkflowMcpConfig(
 
   return {
     configPath,
-    serverName: GSD_WORKFLOW_MCP_SERVER_NAME,
+    serverName: SF_WORKFLOW_MCP_SERVER_NAME,
     status: alreadyPresent ? "updated" : "created",
   };
 }

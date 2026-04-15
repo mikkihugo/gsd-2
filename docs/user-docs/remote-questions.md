@@ -1,6 +1,6 @@
 # Remote Questions
 
-Remote questions allow GSD to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When GSD encounters a decision point that needs human input, it posts the question to your configured channel and polls for a response.
+Remote questions allow SF to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When SF encounters a decision point that needs human input, it posts the question to your configured channel and polls for a response.
 
 ## Setup
 
@@ -77,13 +77,13 @@ remote_questions:
 
 ## How It Works
 
-1. GSD encounters a decision point during auto-mode
+1. SF encounters a decision point during auto-mode
 2. The question is posted to your configured channel as a rich embed (Discord) or Block Kit message (Slack)
-3. GSD polls for a response at the configured interval
+3. SF polls for a response at the configured interval
 4. You respond by:
    - **Reacting** with a number emoji (1️⃣, 2️⃣, etc.) for single-question prompts
    - **Replying** to the message with a number (`1`), comma-separated numbers (`1,3`), or free text
-5. GSD picks up the response and continues execution
+5. SF picks up the response and continues execution
 6. A ✅ reaction is added to the prompt message to confirm receipt
 
 ### Response Formats
@@ -99,7 +99,7 @@ remote_questions:
 
 ### Timeouts
 
-If no response is received within `timeout_minutes`, the prompt times out and GSD continues with a timeout result. The LLM handles timeouts according to the task context — typically by making a conservative default choice or pausing auto-mode.
+If no response is received within `timeout_minutes`, the prompt times out and SF continues with a timeout result. The LLM handles timeouts according to the task context — typically by making a conservative default choice or pausing auto-mode.
 
 ## Commands
 

@@ -1,6 +1,6 @@
 # Table of contents
 
-* [What is GSD?](README.md)
+* [What is SF?](README.md)
 
 ## Getting Started
 
@@ -10,7 +10,7 @@
 
 ## Core Concepts
 
-* [How GSD Organizes Work](core-concepts/project-structure.md)
+* [How SF Organizes Work](core-concepts/project-structure.md)
 * [Step Mode](core-concepts/step-mode.md)
 * [Auto Mode](core-concepts/auto-mode.md)
 

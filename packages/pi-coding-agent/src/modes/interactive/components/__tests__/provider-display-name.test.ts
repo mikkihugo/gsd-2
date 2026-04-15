@@ -1,4 +1,4 @@
-// GSD-2 — Provider display name mapping tests
+// SF — Provider display name mapping tests
 import { test, describe } from "node:test";
 import assert from "node:assert/strict";
 import { providerDisplayName } from "../model-selector.js";

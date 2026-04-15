@@ -1,4 +1,4 @@
-// GSD Provider Fallback Resolver
+// SF Provider Fallback Resolver
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

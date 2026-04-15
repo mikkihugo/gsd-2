@@ -1,4 +1,4 @@
-// GSD-2 — Regression tests for #3616: tool list persistence across newSession() calls
+// SF — Regression tests for #3616: tool list persistence across newSession() calls
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from "node:test";

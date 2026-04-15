@@ -1,4 +1,4 @@
-// GSD-2 — Regression test for #3616: discuss tool scoping must not leak into subsequent sessions
+// SF — Regression test for #3616: discuss tool scoping must not leak into subsequent sessions
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

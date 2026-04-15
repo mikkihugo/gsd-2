@@ -892,7 +892,7 @@ function DevRootSetup({
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-foreground">Set your development root</h3>
           <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-            Point GSD at the folder that contains your project directories. It scans one level deep.
+            Point SF at the folder that contains your project directories. It scans one level deep.
           </p>
           <Button
             onClick={() => setPickerOpen(true)}
@@ -951,7 +951,7 @@ export function DevRootSettingsSection() {
         </h3>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        The parent folder containing your project directories. GSD scans one level deep for projects.
+        The parent folder containing your project directories. SF scans one level deep for projects.
       </p>
       <DevRootSetup currentRoot={devRoot ?? ""} onSaved={(root) => setDevRoot(root)} />
     </div>
@@ -1092,14 +1092,14 @@ export function ProjectSelectionGate() {
           <div className="flex flex-col items-center text-center mb-10">
             <Image
               src="/logo-black.svg"
-              alt="GSD"
+              alt="SF"
               width={100}
               height={28}
               className="h-7 w-auto dark:hidden"
             />
             <Image
               src="/logo-white.svg"
-              alt="GSD"
+              alt="SF"
               width={100}
               height={28}
               className="h-7 w-auto hidden dark:block"
@@ -1129,10 +1129,10 @@ export function ProjectSelectionGate() {
               <div className="space-y-6">
                 <div>
                   <h2 className="text-lg font-semibold tracking-tight text-foreground">
-                    Welcome to GSD
+                    Welcome to SF
                   </h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Set a development root to get started. GSD will discover projects inside it.
+                    Set a development root to get started. SF will discover projects inside it.
                   </p>
                 </div>
                 <DevRootSetup onSaved={handleDevRootSaved} />

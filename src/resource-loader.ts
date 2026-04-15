@@ -1,5 +1,5 @@
 import { DefaultResourceLoader, sortExtensionPaths } from '@sf-run/pi-coding-agent'
-if (process.env.GSD_DEBUG_EXTENSIONS) process.stderr.write("[gsd-debug] resource-loader.ts loaded\n")
+if (process.env.SF_DEBUG_EXTENSIONS) process.stderr.write("[gsd-debug] resource-loader.ts loaded\n")
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, openSync, closeSync, readFileSync, readlinkSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -35,14 +35,14 @@ interface ManagedResourceManifest {
   /** Content fingerprint of bundled resources — detects same-version content changes. */
   contentHash?: string
   /**
-   * Root-level files installed in extensions/ by this GSD version.
+   * Root-level files installed in extensions/ by this SF version.
    * Used on the next upgrade to detect and prune files that were removed or
    * moved into a subdirectory, preventing orphaned non-extension files from
    * causing extension load errors.
    */
   installedExtensionRootFiles?: string[]
   /**
-   * Subdirectory extension names installed in extensions/ by this GSD version.
+   * Subdirectory extension names installed in extensions/ by this SF version.
    * Used on the next upgrade to detect and prune subdirectory extensions that
    * were removed from the bundle.
    */
@@ -61,9 +61,9 @@ function getManagedResourceManifestPath(agentDir: string): string {
 }
 
 function getBundledGsdVersion(): string {
-  // Prefer GSD_VERSION env var (set once by loader.ts) to avoid re-reading package.json
-  if (process.env.GSD_VERSION && process.env.GSD_VERSION !== '0.0.0') {
-    return process.env.GSD_VERSION
+  // Prefer SF_VERSION env var (set once by loader.ts) to avoid re-reading package.json
+  if (process.env.SF_VERSION && process.env.SF_VERSION !== '0.0.0') {
+    return process.env.SF_VERSION
   }
   try {
     const pkg = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf-8'))
@@ -280,7 +280,7 @@ function copyDirRecursive(src: string, dest: string): void {
 }
 
 /**
- * Creates (or updates) a symlink at agentDir/node_modules pointing to GSD's
+ * Creates (or updates) a symlink at agentDir/node_modules pointing to SF's
  * own node_modules directory.
  *
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
@@ -391,7 +391,7 @@ function reconcileMergedNodeModules(
   // Symlink entries from the hoisted node_modules (external deps)
   try {
     for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-      // Skip the gsd-pi package itself and dotfiles
+      // Skip the sf-run package itself and dotfiles
       if (entry.name === basename(packageRoot)) continue
       if (entry.name.startsWith('.')) continue
       try { symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name), 'junction'); linkedCount++ } catch { /* skip individual */ }
@@ -433,7 +433,7 @@ function mergedFingerprint(hoisted: string, internal: string): string {
 }
 
 /**
- * Prune root-level extension files that were installed by a previous GSD version
+ * Prune root-level extension files that were installed by a previous SF version
  * but have since been removed or relocated to a subdirectory.
  *
  * Two strategies:
@@ -510,14 +510,14 @@ function pruneRemovedBundledExtensions(
  *
  * - extensions/ → ~/.gsd/agent/extensions/   (overwrite when version changes)
  * - agents/     → ~/.gsd/agent/agents/        (overwrite when version changes)
- * - GSD-WORKFLOW.md → ~/.gsd/agent/GSD-WORKFLOW.md (fallback for env var miss)
+ * - SF-WORKFLOW.md → ~/.gsd/agent/SF-WORKFLOW.md (fallback for env var miss)
  *
  * Skills are NOT synced here. They are installed by the user via the
  * skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ — the
  * industry-standard Agent Skills ecosystem directory.
  *
  * Skips the copy when the managed-resources.json version matches the current
- * GSD version, avoiding ~128ms of synchronous cpSync on every startup.
+ * SF version, avoiding ~128ms of synchronous cpSync on every startup.
  * After `npm update -g @glittercowboy/gsd`, versions will differ and the
  * copy runs once to land the new resources.
  *
@@ -537,9 +537,9 @@ export function initResources(agentDir: string): void {
   pruneRemovedBundledExtensions(manifest, agentDir)
   pruneStaleSiblingFiles(bundledExtensionsDir, extensionsDir)
 
-  // Ensure ~/.gsd/agent/node_modules symlinks to GSD's node_modules on EVERY
+  // Ensure ~/.gsd/agent/node_modules symlinks to SF's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
-  // extensions fail to resolve @sf-run/* packages, rendering GSD non-functional.
+  // extensions fail to resolve @sf-run/* packages, rendering SF non-functional.
   ensureNodeModulesSymlink(agentDir)
 
   // Migrate legacy skills on every launch (not gated by manifest) so that
@@ -570,11 +570,11 @@ export function initResources(agentDir: string): void {
   // above the manifest check so it runs on every launch (including retries
   // after partial copy failures).
 
-  // Sync GSD-WORKFLOW.md to agentDir as a fallback for when GSD_WORKFLOW_PATH
+  // Sync SF-WORKFLOW.md to agentDir as a fallback for when SF_WORKFLOW_PATH
   // env var is not set (e.g. fork/dev builds, alternative entry points).
-  const workflowSrc = join(resourcesDir, 'GSD-WORKFLOW.md')
+  const workflowSrc = join(resourcesDir, 'SF-WORKFLOW.md')
   if (existsSync(workflowSrc)) {
-    try { copyFileSync(workflowSrc, join(agentDir, 'GSD-WORKFLOW.md')) } catch { /* non-fatal */ }
+    try { copyFileSync(workflowSrc, join(agentDir, 'SF-WORKFLOW.md')) } catch { /* non-fatal */ }
   }
 
   // Ensure all newly copied files are owner-writable so the next run can
@@ -594,7 +594,7 @@ export function initResources(agentDir: string): void {
  * The migration is conservative:
  *  - Only skill directories containing a SKILL.md are considered.
  *  - Copies, does not move — the old directory stays intact so downgrading
- *    to a pre-migration GSD version still works.
+ *    to a pre-migration SF version still works.
  *  - Collision-safe — if a skill name already exists in the target, the
  *    existing ecosystem skill wins (user may have already installed a newer
  *    version via skills.sh).
@@ -609,7 +609,7 @@ function migrateSkillsToEcosystemDir(agentDir: string): void {
   if (!existsSync(legacyDir)) return
 
   // Atomic marker check — 'wx' fails if file already exists, preventing races
-  // when two GSD processes start simultaneously.
+  // when two SF processes start simultaneously.
   let markerFd: number
   try {
     markerFd = openSync(markerPath, 'wx')
@@ -716,7 +716,7 @@ export function hasStaleCompiledExtensionSiblings(extensionsDir: string, sourceD
 
 /**
  * Constructs a DefaultResourceLoader that loads extensions from both
- * ~/.gsd/agent/extensions/ (GSD's default) and ~/.pi/agent/extensions/ (pi's default).
+ * ~/.gsd/agent/extensions/ (SF's default) and ~/.pi/agent/extensions/ (pi's default).
  * This allows users to use extensions from either location.
  */
 // Cache bundled extension keys at module load — avoids re-scanning the extensions
@@ -734,7 +734,7 @@ function getBundledExtensionKeys(): Set<string> {
 /**
  * Optional overrides passed through to DefaultResourceLoader. Print mode
  * needs these — it used to construct DefaultResourceLoader directly, which
- * bypassed buildResourceLoader's extensionPathsTransform (= the GSD registry
+ * bypassed buildResourceLoader's extensionPathsTransform (= the SF registry
  * filter) and let disabled bundled extensions like `ollama` leak through and
  * conflict with community replacements such as `@0xkobold/pi-ollama`.
  */
@@ -772,7 +772,7 @@ export function buildResourceLoader(
     appendSystemPrompt: options.appendSystemPrompt,
     bundledExtensionKeys: bundledKeys,
     extensionPathsTransform: (paths: string[]) => {
-      // Filter community + bundled extensions through the GSD registry so
+      // Filter community + bundled extensions through the SF registry so
       // explicitly-disabled entries (e.g. bundled `ollama` superseded by
       // `@0xkobold/pi-ollama`) never reach the runtime and trigger command
       // conflicts.

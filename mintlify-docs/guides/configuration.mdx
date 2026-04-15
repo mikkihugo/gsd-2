@@ -3,7 +3,7 @@ title: "Configuration"
 description: "Preferences, model selection, MCP servers, hooks, and all settings."
 ---
 
-GSD preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project-local). Manage interactively with `/gsd prefs`.
+SF preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project-local). Manage interactively with `/gsd prefs`.
 
 ## Preferences commands
 
@@ -62,7 +62,7 @@ Anthropic models have built-in web search — no extra keys needed.
 
 ## MCP servers
 
-GSD connects to external MCP servers configured in project files:
+SF connects to external MCP servers configured in project files:
 
 - `.mcp.json` — repo-shared config
 - `.gsd/mcp.json` — local-only config
@@ -97,7 +97,7 @@ GSD connects to external MCP servers configured in project files:
   </Tab>
 </Tabs>
 
-Verify from a GSD session: `mcp_servers` → `mcp_discover` → `mcp_call`.
+Verify from a SF session: `mcp_servers` → `mcp_discover` → `mcp_call`.
 
 ## Models
 
@@ -118,7 +118,7 @@ models:
 
 **Phases:** `research`, `planning`, `execution`, `execution_simple`, `completion`, `subagent`
 
-When a model fails to switch, GSD automatically tries the next model in the `fallbacks` list.
+When a model fails to switch, SF automatically tries the next model in the `fallbacks` list.
 
 For custom providers (Ollama, vLLM, LM Studio), see [custom models](/guides/custom-models).
 
@@ -236,10 +236,10 @@ See [parallel orchestration](/guides/parallel-orchestration).
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GSD_HOME` | `~/.gsd` | Global GSD directory |
-| `GSD_PROJECT_ID` | (auto-hash) | Override project identity hash |
-| `GSD_STATE_DIR` | `$GSD_HOME` | Per-project state root |
-| `GSD_CODING_AGENT_DIR` | `$GSD_HOME/agent` | Agent directory |
+| `SF_HOME` | `~/.gsd` | Global SF directory |
+| `SF_PROJECT_ID` | (auto-hash) | Override project identity hash |
+| `SF_STATE_DIR` | `$SF_HOME` | Per-project state root |
+| `SF_CODING_AGENT_DIR` | `$SF_HOME/agent` | Agent directory |
 
 ## Full example
 

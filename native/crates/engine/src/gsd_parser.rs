@@ -1,7 +1,7 @@
-//! GSD `.gsd/` directory file parser.
+//! SF `.gsd/` directory file parser.
 //!
 //! Parses markdown files containing YAML-like frontmatter, section headings,
-//! and structured content used by GSD's planning system (roadmaps, plans,
+//! and structured content used by SF's planning system (roadmaps, plans,
 //! summaries, continue files).
 //!
 //! Key operations:
@@ -36,7 +36,7 @@ pub struct SectionResult {
     pub found: bool,
 }
 
-/// A single parsed GSD file from batch parsing.
+/// A single parsed SF file from batch parsing.
 #[napi(object)]
 pub struct ParsedGsdFile {
     /// Relative path from the base directory.
@@ -835,7 +835,7 @@ pub fn parse_roadmap_file(content: String) -> NativeRoadmap {
     parse_roadmap_internal(&content)
 }
 
-// ─── GSD Tree Scanner ───────────────────────────────────────────────────────
+// ─── SF Tree Scanner ───────────────────────────────────────────────────────
 
 #[napi(object)]
 pub struct GsdTreeEntry {

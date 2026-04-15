@@ -524,33 +524,33 @@ describe('SessionManager', () => {
 // ---------------------------------------------------------------------------
 
 describe('SessionManager.resolveCLIPath', () => {
-  const originalGsdPath = process.env['GSD_CLI_PATH'];
+  const originalGsdPath = process.env['SF_CLI_PATH'];
   const originalPath = process.env['PATH'];
 
   afterEach(() => {
     if (originalGsdPath !== undefined) {
-      process.env['GSD_CLI_PATH'] = originalGsdPath;
+      process.env['SF_CLI_PATH'] = originalGsdPath;
     } else {
-      delete process.env['GSD_CLI_PATH'];
+      delete process.env['SF_CLI_PATH'];
     }
     if (originalPath !== undefined) {
       process.env['PATH'] = originalPath;
     }
   });
 
-  it('GSD_CLI_PATH env var takes precedence', () => {
-    process.env['GSD_CLI_PATH'] = '/custom/path/to/gsd';
+  it('SF_CLI_PATH env var takes precedence', () => {
+    process.env['SF_CLI_PATH'] = '/custom/path/to/gsd';
     const result = SessionManager.resolveCLIPath();
     assert.equal(result, resolve('/custom/path/to/gsd'));
   });
 
-  it('throws when GSD_CLI_PATH not set and which fails', () => {
-    delete process.env['GSD_CLI_PATH'];
+  it('throws when SF_CLI_PATH not set and which fails', () => {
+    delete process.env['SF_CLI_PATH'];
     process.env['PATH'] = '/nonexistent';
     assert.throws(
       () => SessionManager.resolveCLIPath(),
       (err: Error) => {
-        assert.ok(err.message.includes('Cannot find GSD CLI'));
+        assert.ok(err.message.includes('Cannot find SF CLI'));
         return true;
       },
     );

@@ -193,14 +193,14 @@ test("getTaskStatus returns correct statuses", () => {
 // ─── Group 3: Files API — tree listing ───────────────────────────────
 test("files API returns tree listing of .gsd/ directory", async (t) => {
   const { root, gsdDir, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   // Create some files
   writeFileSync(join(gsdDir, "STATE.md"), "# State\nactive");
@@ -233,14 +233,14 @@ test("files API returns tree listing of .gsd/ directory", async (t) => {
 // ─── Group 4: Files API — file content ───────────────────────────────
 test("files API returns file content for valid path", async (t) => {
   const { root, gsdDir, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const fileContent = "# State\n\nCurrent milestone: M001";
   writeFileSync(join(gsdDir, "STATE.md"), fileContent);
@@ -255,14 +255,14 @@ test("files API returns file content for valid path", async (t) => {
 
 test("files API returns content for nested files", async (t) => {
   const { root, gsdDir, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const msDir = join(gsdDir, "milestones", "M001");
   mkdirSync(msDir, { recursive: true });
@@ -281,14 +281,14 @@ test("files API returns content for nested files", async (t) => {
 // ─── Group 5: Files API — security: path traversal rejection ─────────
 test("files API rejects path traversal with ../", async (t) => {
   const { root, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const request = new Request(
     "http://localhost:3000/api/files?path=../etc/passwd",
@@ -302,14 +302,14 @@ test("files API rejects path traversal with ../", async (t) => {
 
 test("files API rejects absolute paths", async (t) => {
   const { root, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const request = new Request(
     "http://localhost:3000/api/files?path=/etc/passwd",
@@ -323,14 +323,14 @@ test("files API rejects absolute paths", async (t) => {
 
 test("files API returns 404 for missing files", async (t) => {
   const { root, cleanup } = makeGsdFixture();
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     cleanup();
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const request = new Request(
     "http://localhost:3000/api/files?path=nonexistent.md",
@@ -344,14 +344,14 @@ test("files API returns 404 for missing files", async (t) => {
 
 test("files API returns empty tree when .gsd/ does not exist", async (t) => {
   const root = mkdtempSync(join(tmpdir(), "gsd-state-surfaces-empty-"));
-  const origEnv = process.env.GSD_WEB_PROJECT_CWD;
+  const origEnv = process.env.SF_WEB_PROJECT_CWD;
 
   t.after(() => {
-    process.env.GSD_WEB_PROJECT_CWD = origEnv;
+    process.env.SF_WEB_PROJECT_CWD = origEnv;
     rmSync(root, { recursive: true, force: true });
   });
 
-  process.env.GSD_WEB_PROJECT_CWD = root;
+  process.env.SF_WEB_PROJECT_CWD = root;
 
   const request = new Request("http://localhost:3000/api/files");
   const response = await filesRoute.GET(request);

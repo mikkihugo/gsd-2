@@ -1,5 +1,5 @@
 /**
- * GSD Inspect — SQLite DB diagnostics.
+ * SF Inspect — SQLite DB diagnostics.
  *
  * Contains: InspectData type, formatInspectOutput, handleInspect
  */
@@ -20,7 +20,7 @@ export interface InspectData {
 
 export function formatInspectOutput(data: InspectData): string {
   const lines: string[] = [];
-  lines.push("=== GSD Database Inspect ===");
+  lines.push("=== SF Database Inspect ===");
   lines.push(`Schema version: ${data.schemaVersion ?? "unknown"}`);
   lines.push("");
   lines.push(`Decisions:    ${data.counts.decisions}`);
@@ -54,14 +54,14 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
       const gsdDir = gsdRoot(process.cwd());
       const dbPath = join(gsdDir, "gsd.db");
       if (!existsSync(gsdDir) || !existsSync(dbPath) || !openDatabase(dbPath)) {
-        ctx.ui.notify("No GSD database available. Run /gsd auto to create one.", "info");
+        ctx.ui.notify("No SF database available. Run /gsd auto to create one.", "info");
         return;
       }
     }
 
     const adapter = _getAdapter();
     if (!adapter) {
-      ctx.ui.notify("No GSD database available. Run /gsd auto to create one.", "info");
+      ctx.ui.notify("No SF database available. Run /gsd auto to create one.", "info");
       return;
     }
 
@@ -94,6 +94,6 @@ export async function handleInspect(ctx: ExtensionCommandContext): Promise<void>
     ctx.ui.notify(formatInspectOutput(data), "info");
   } catch (err) {
     logWarning("command", `/gsd inspect failed: ${getErrorMessage(err)}`);
-    ctx.ui.notify("Failed to inspect GSD database. Check stderr for details.", "error");
+    ctx.ui.notify("Failed to inspect SF database. Check stderr for details.", "error");
   }
 }

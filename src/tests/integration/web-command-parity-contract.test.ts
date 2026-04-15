@@ -140,12 +140,12 @@ test("browser-local aliases and legacy helpers stay explicit", async (t) => {
   })
 })
 
-test("registered GSD command roots stay on the prompt/extension path", async () => {
+test("registered SF command roots stay on the prompt/extension path", async () => {
   const registeredRoots = await collectRegisteredGsdCommandRoots()
   assert.deepEqual(
     registeredRoots,
     ["exit", "gsd", "kill", "worktree", "wt"],
-    "browser parity contract only expects the current GSD command roots",
+    "browser parity contract only expects the current SF command roots",
   )
 
   // Non-gsd roots are extension commands that pass through to the bridge.
@@ -162,7 +162,7 @@ test("registered GSD command roots stay on the prompt/extension path", async () 
   assert.equal(bareGsd.command.message, "/gsd", "bare /gsd should preserve exact input")
 })
 
-test("current GSD command family samples dispatch to correct outcomes after S02", async (t) => {
+test("current SF command family samples dispatch to correct outcomes after S02", async (t) => {
   await t.test("/gsd (bare) still passes through to bridge", () => {
     assertPromptPassthrough("/gsd")
   })
@@ -231,7 +231,7 @@ test("every registered /gsd subcommand has an explicit browser dispatch outcome"
   assert.equal(
     EXPECTED_GSD_OUTCOMES.size,
     30,
-    "EXPECTED_GSD_OUTCOMES must cover all 30 GSD subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
+    "EXPECTED_GSD_OUTCOMES must cover all 30 SF subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
   )
 
   for (const [subcommand, expectedKind] of EXPECTED_GSD_OUTCOMES) {
@@ -274,7 +274,7 @@ test("every registered /gsd subcommand has an explicit browser dispatch outcome"
   }
 })
 
-test("GSD dispatch edge cases", async (t) => {
+test("SF dispatch edge cases", async (t) => {
   await t.test("/gsd (bare, no subcommand) passes through to bridge", () => {
     const outcome = dispatchBrowserSlashCommand("/gsd")
     assert.equal(outcome.kind, "prompt")
@@ -300,10 +300,10 @@ test("GSD dispatch edge cases", async (t) => {
     assert.equal(outcome.surface, "export", "/export should be the built-in session export surface")
   })
 
-  await t.test("/gsd export is GSD milestone export, distinct from built-in /export", () => {
+  await t.test("/gsd export is SF milestone export, distinct from built-in /export", () => {
     const outcome = dispatchBrowserSlashCommand("/gsd export")
     assert.equal(outcome.kind, "surface")
-    assert.equal(outcome.surface, "gsd-export", "/gsd export should be the GSD milestone export surface")
+    assert.equal(outcome.surface, "gsd-export", "/gsd export should be the SF milestone export surface")
   })
 
   await t.test("/gsd forensics detailed preserves sub-args", () => {
@@ -313,24 +313,24 @@ test("GSD dispatch edge cases", async (t) => {
     assert.equal(outcome.args, "detailed", "sub-args after subcommand should be preserved")
   })
 
-  await t.test("GSD surface commands produce system terminal notice", () => {
+  await t.test("SF surface commands produce system terminal notice", () => {
     const outcome = dispatchBrowserSlashCommand("/gsd status")
     const notice = getBrowserSlashCommandTerminalNotice(outcome)
     assert.ok(notice, "surface outcome should produce a terminal notice")
     assert.equal(notice.type, "system")
   })
 
-  await t.test("GSD passthrough commands produce no terminal notice", () => {
+  await t.test("SF passthrough commands produce no terminal notice", () => {
     const outcome = dispatchBrowserSlashCommand("/gsd auto")
     const notice = getBrowserSlashCommandTerminalNotice(outcome)
     assert.equal(notice, null, "passthrough outcome should produce no terminal notice")
   })
 })
 
-test("every GSD surface dispatches through the contract wiring end-to-end", async (t) => {
+test("every SF surface dispatches through the contract wiring end-to-end", async (t) => {
   const gsdSurfaces = [...EXPECTED_GSD_OUTCOMES.entries()].filter(([, kind]) => kind === "surface")
 
-  assert.equal(gsdSurfaces.length, 19, "should have exactly 19 GSD surface subcommands")
+  assert.equal(gsdSurfaces.length, 19, "should have exactly 19 SF surface subcommands")
 
   for (const [subcommand] of gsdSurfaces) {
     await t.test(`/gsd ${subcommand} -> dispatch -> open request -> surface state`, () => {

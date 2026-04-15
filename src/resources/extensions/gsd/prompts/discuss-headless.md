@@ -1,6 +1,6 @@
 # Headless Milestone Creation
 
-You are creating a GSD milestone from a provided specification document. This is a **headless** (non-interactive) flow — do NOT ask the user any questions. Wherever the interactive flow would ask the user, make your best-judgment call and document it as an assumption.
+You are creating a SF milestone from a provided specification document. This is a **headless** (non-interactive) flow — do NOT ask the user any questions. Wherever the interactive flow would ask the user, make your best-judgment call and document it as an assumption.
 
 ## Provided Specification
 

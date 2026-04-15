@@ -1,11 +1,11 @@
 ---
 name: gsd-headless
-description: Orchestrate GSD (Get Shit Done) projects programmatically via headless CLI. Use when an agent needs to create milestones from specs, execute software development workflows, monitor task progress, check project status, or control GSD execution (pause/stop/skip/steer). Triggers on requests to "run gsd", "create milestone", "execute project", "check gsd status", "orchestrate development", "run headless workflow", or any programmatic interaction with the GSD project management system. Essential for building orchestrators that coordinate multiple GSD workers.
+description: Orchestrate SF (Singularity Forge) projects programmatically via headless CLI. Use when an agent needs to create milestones from specs, execute software development workflows, monitor task progress, check project status, or control SF execution (pause/stop/skip/steer). Triggers on requests to "run gsd", "create milestone", "execute project", "check gsd status", "orchestrate development", "run headless workflow", or any programmatic interaction with the SF project management system. Essential for building orchestrators that coordinate multiple SF workers.
 ---
 
-# GSD Headless Orchestration
+# SF Headless Orchestration
 
-Run GSD commands without TUI via `gsd headless`. Spawns an RPC child process, auto-responds to UI prompts, streams progress.
+Run SF commands without TUI via `gsd headless`. Spawns an RPC child process, auto-responds to UI prompts, streams progress.
 
 ## Command Syntax
 
@@ -119,15 +119,15 @@ done
 
 ### Multi-Session Orchestration
 
-GSD tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
+SF tracks concurrent workers via file-based IPC in `.gsd/parallel/`. See [references/multi-session.md](references/multi-session.md) for the full architecture.
 
 **Quick overview:**
 
-Each worker spawns with `GSD_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gsd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
+Each worker spawns with `SF_MILESTONE_LOCK=M00X` + its own git worktree. Workers write heartbeats to `.gsd/parallel/<milestoneId>.status.json`. The orchestrator enumerates all status files to get a dashboard of all workers, and sends commands via signal files.
 
 ```bash
 # Spawn a worker for milestone M001 in its worktree
-GSD_MILESTONE_LOCK=M001 GSD_PARALLEL_WORKER=1 \
+SF_MILESTONE_LOCK=M001 SF_PARALLEL_WORKER=1 \
   gsd headless --json auto \
   --cwd .gsd/worktrees/M001 2>worker-M001.log &
 
@@ -158,7 +158,7 @@ gsd headless --json auto 2>/dev/null | while read -r line; do
   TYPE=$(echo "$line" | jq -r '.type')
   case "$TYPE" in
     tool_execution_start) echo "Tool: $(echo "$line" | jq -r '.toolName')" ;;
-    extension_ui_request) echo "GSD: $(echo "$line" | jq -r '.message // .title // empty')" ;;
+    extension_ui_request) echo "SF: $(echo "$line" | jq -r '.message // .title // empty')" ;;
     agent_end) echo "Session ended" ;;
   esac
 done
@@ -205,7 +205,7 @@ Answer file schema:
 
 See [references/answer-injection.md](references/answer-injection.md) for full details.
 
-## GSD Project Structure
+## SF Project Structure
 
 All state lives in `.gsd/` as markdown files (version-controllable):
 

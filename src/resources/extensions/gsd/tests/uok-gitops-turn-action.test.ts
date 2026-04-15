@@ -78,7 +78,7 @@ test("uok gitops turn action commit creates commit with unit trailer", () => {
     assert.equal(result.status, "ok");
     assert.ok(result.commitMessage?.includes("chore: auto-commit after execute-task"));
     const body = run("git log -1 --pretty=%B", repo);
-    assert.ok(body.includes("GSD-Unit: M001/S01/T02"));
+    assert.ok(body.includes("SF-Unit: M001/S01/T02"));
   } finally {
     rmSync(repo, { recursive: true, force: true });
   }

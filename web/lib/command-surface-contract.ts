@@ -41,7 +41,7 @@ export type CommandSurfaceSection =
   | "workspace"
   | "integrations"
   | "experimental"
-  // GSD subcommand surfaces (S02)
+  // SF subcommand surfaces (S02)
   | "gsd-status"
   | "gsd-visualize"
   | "gsd-forensics"
@@ -671,7 +671,7 @@ export function commandSurfaceSectionForRequest(request: CommandSurfaceOpenReque
       return "session"
     case "compact":
       return "compact"
-    // GSD subcommand surfaces (S02)
+    // SF subcommand surfaces (S02)
     case "gsd-status": return "gsd-status"
     case "gsd-visualize": return "gsd-visualize"
     case "gsd-forensics": return "gsd-forensics"
@@ -818,7 +818,7 @@ export function buildCommandSurfaceTarget(request: CommandSurfaceOpenRequest): C
     return buildCompactTarget(request)
   }
 
-  // GSD subcommand surfaces — generic target (S02)
+  // SF subcommand surfaces — generic target (S02)
   if (request.surface?.startsWith("gsd-")) {
     const subcommand = request.surface.slice(4) // "gsd-forensics" -> "forensics"
     return { kind: "gsd", surface: request.surface, subcommand, args: request.args ?? "" }

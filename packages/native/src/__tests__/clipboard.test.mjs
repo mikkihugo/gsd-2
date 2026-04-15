@@ -32,7 +32,7 @@ if (!native) {
 describe("native clipboard: copyToClipboard()", () => {
   test("copies text without throwing", () => {
     assert.doesNotThrow(() => {
-      native.copyToClipboard("GSD clipboard test");
+      native.copyToClipboard("SF clipboard test");
     });
   });
 
@@ -51,7 +51,7 @@ describe("native clipboard: copyToClipboard()", () => {
 
 describe("native clipboard: readTextFromClipboard()", () => {
   test("reads back text that was copied", () => {
-    const testText = `GSD clipboard roundtrip ${Date.now()}`;
+    const testText = `SF clipboard roundtrip ${Date.now()}`;
     native.copyToClipboard(testText);
     const result = native.readTextFromClipboard();
     assert.equal(result, testText);

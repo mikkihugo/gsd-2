@@ -227,7 +227,7 @@ export function StepDevRoot({ onNext, onBack }: StepDevRootProps) {
         transition={{ delay: 0.12, duration: 0.4 }}
         className="mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground"
       >
-        The folder that contains your projects. GSD discovers and manages workspaces inside it.
+        The folder that contains your projects. SF discovers and manages workspaces inside it.
       </motion.p>
 
       {/* Input + browse */}

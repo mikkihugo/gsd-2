@@ -148,7 +148,7 @@ try {
   // This catches the Windows-style failure where symlinkSync fails silently and
   // node_modules/@sf-run/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
   console.log('==> Verifying @sf-run/* workspace package resolution...');
-  const installedRoot = join(installDir, 'node_modules', 'gsd-pi');
+  const installedRoot = join(installDir, 'node_modules', 'sf-run');
   const criticalPackages = [
     { scope: '@gsd', name: 'pi-coding-agent' },
     { scope: '@gsd-build', name: 'rpc-client' },

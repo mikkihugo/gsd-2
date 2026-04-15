@@ -1,6 +1,6 @@
 /**
  * state-machine-live-validation.test.ts — Live operational validation of the
- * GSD state machine with real handlers, real DB, and real filesystem.
+ * SF state machine with real handlers, real DB, and real filesystem.
  *
  * Exercises every phase transition, completion guard, edge case, and reopen
  * path end-to-end. This is NOT a unit test — it drives the actual tool handlers
@@ -9,7 +9,7 @@
  * Findings reference: #3161 (state machine validation report)
  */
 
-// GSD State Machine Live Validation (#3161)
+// SF State Machine Live Validation (#3161)
 
 
 

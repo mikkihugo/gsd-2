@@ -1,5 +1,5 @@
 /**
- * GSD Forensics — Post-mortem investigation of auto-mode failures
+ * SF Forensics — Post-mortem investigation of auto-mode failures
  *
  * Programmatically scans activity logs, metrics, crash locks, and doctor
  * diagnostics for anomalies, then hands a structured report to the LLM
@@ -120,7 +120,7 @@ interface ForensicReport {
 const DEDUP_PROMPT_SECTION = `
 ## Pre-Investigation: Duplicate Check (REQUIRED)
 
-Before reading GSD source code or performing deep analysis, you MUST search for existing issues and PRs that may already address this bug. This avoids wasting tokens on already-fixed bugs.
+Before reading SF source code or performing deep analysis, you MUST search for existing issues and PRs that may already address this bug. This avoids wasting tokens on already-fixed bugs.
 
 ### Search Steps
 
@@ -165,7 +165,7 @@ async function writeForensicsDedupPref(ctx: ExtensionCommandContext, enabled: bo
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const raw = existsSync(prefsPath) ? readFileSync(prefsPath, "utf-8") : "";
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   const start = raw.startsWith("---\n") ? 4 : raw.startsWith("---\r\n") ? 5 : -1;
   if (start !== -1) {
     const closingIdx = raw.indexOf("\n---", start);
@@ -193,7 +193,7 @@ export async function handleForensics(
   const basePath = process.cwd();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GSD state found. Run /gsd auto first.", "warning");
+    ctx.ui.notify("No SF state found. Run /gsd auto first.", "warning");
     return;
   }
 
@@ -237,11 +237,11 @@ export async function handleForensics(
   const report = await buildForensicReport(basePath);
   const savedPath = saveForensicReport(basePath, report, problemDescription);
 
-  // Derive GSD source dir for prompt — fall back to ~/.gsd/agent/extensions/gsd/
+  // Derive SF source dir for prompt — fall back to ~/.gsd/agent/extensions/gsd/
   // when import.meta.url resolves to the npm-global install path (Windows).
   let gsdSourceDir = dirname(fileURLToPath(import.meta.url));
   if (!existsSync(join(gsdSourceDir, "prompts"))) {
-    const gsdHome = process.env.GSD_HOME || join(homedir(), ".gsd");
+    const gsdHome = process.env.SF_HOME || join(homedir(), ".gsd");
     const fallback = join(gsdHome, "agent", "extensions", "gsd");
     if (existsSync(join(fallback, "prompts"))) gsdSourceDir = fallback;
   }
@@ -318,10 +318,10 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
     }
   }
 
-  // 8. GSD version — use GSD_VERSION env var set by the loader at startup.
+  // 8. SF version — use SF_VERSION env var set by the loader at startup.
   // Extensions run from ~/.gsd/agent/extensions/gsd/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
-  const gsdVersion = process.env.GSD_VERSION || "unknown";
+  const gsdVersion = process.env.SF_VERSION || "unknown";
 
   // 9. Scan journal for flow timeline and structured events
   const journalSummary = scanJournalForForensics(basePath);
@@ -901,10 +901,10 @@ function saveForensicReport(basePath: string, report: ForensicReport, problemDes
   const redact = (s: string) => redactForGitHub(s, basePath);
 
   const sections: string[] = [
-    `# GSD Forensic Report`,
+    `# SF Forensic Report`,
     ``,
     `**Generated:** ${report.timestamp}`,
-    `**GSD Version:** ${report.gsdVersion}`,
+    `**SF Version:** ${report.gsdVersion}`,
     `**Active Milestone:** ${report.activeMilestone ?? "none"}`,
     `**Active Slice:** ${report.activeSlice ?? "none"}`,
     `**Active Worktree:** ${report.activeWorktree ?? "none"}`,
@@ -1166,7 +1166,7 @@ function formatReportForPrompt(report: ForensicReport): string {
   } else {
     sections.push(`### Completed Keys: ${report.completedKeys.length}`);
   }
-  sections.push(`### GSD Version: ${report.gsdVersion}`);
+  sections.push(`### SF Version: ${report.gsdVersion}`);
   sections.push(`### Active Milestone: ${report.activeMilestone ?? "none"}`);
   sections.push(`### Active Slice: ${report.activeSlice ?? "none"}`);
   if (report.activeWorktree) {

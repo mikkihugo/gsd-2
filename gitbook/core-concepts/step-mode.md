@@ -1,6 +1,6 @@
 # Step Mode
 
-Step mode is GSD's interactive, one-step-at-a-time workflow. You stay in the loop, reviewing output between each step.
+Step mode is SF's interactive, one-step-at-a-time workflow. You stay in the loop, reviewing output between each step.
 
 ## Starting Step Mode
 
@@ -8,7 +8,7 @@ Step mode is GSD's interactive, one-step-at-a-time workflow. You stay in the loo
 /gsd
 ```
 
-GSD reads the state of your `.gsd/` directory and presents a wizard showing what's completed and what's next. It then executes one unit of work and pauses.
+SF reads the state of your `.gsd/` directory and presents a wizard showing what's completed and what's next. It then executes one unit of work and pauses.
 
 ## How It Works
 
@@ -25,7 +25,7 @@ After each unit completes, you see results and decide what to do next. This is i
 
 - New projects where you want to shape the architecture
 - Critical work where you want to review each step
-- Learning how GSD works before trusting auto mode
+- Learning how SF works before trusting auto mode
 
 ## Steering During Step Mode
 
@@ -34,18 +34,18 @@ Between steps, you can:
 - **Discuss** — `/gsd discuss` to talk through architecture decisions
 - **Skip** — `/gsd skip` to prevent a unit from being dispatched
 - **Undo** — `/gsd undo` to revert the last completed unit
-- **Switch to auto** — `/gsd auto` to let GSD continue autonomously
+- **Switch to auto** — `/gsd auto` to let SF continue autonomously
 
 ## When to Use Step Mode
 
-- **First milestone** — Review GSD's work before trusting it to run solo
+- **First milestone** — Review SF's work before trusting it to run solo
 - **Architectural decisions** — When you want to guide the approach
-- **Unfamiliar codebases** — When you want to ensure GSD understands the project
+- **Unfamiliar codebases** — When you want to ensure SF understands the project
 - **High-stakes changes** — When mistakes would be costly
 
 ## Transitioning to Auto Mode
 
-Once you're comfortable with GSD's approach, switch to auto mode:
+Once you're comfortable with SF's approach, switch to auto mode:
 
 ```
 /gsd auto

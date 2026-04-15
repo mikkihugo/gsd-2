@@ -1,6 +1,6 @@
 # GitHub Sync
 
-GSD can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milestones.
+SF can auto-sync milestones, slices, and tasks to GitHub Issues, PRs, and Milestones.
 
 ## Setup
 

@@ -1,6 +1,6 @@
-# Getting Started with GSD
+# Getting Started with SF
 
-GSD is an AI coding agent that handles planning, execution, verification, and shipping so you can focus on what to build. This guide walks you through installation on macOS, Windows, and Linux, then gets you running your first session.
+SF is an AI coding agent that handles planning, execution, verification, and shipping so you can focus on what to build. This guide walks you through installation on macOS, Windows, and Linux, then gets you running your first session.
 
 ---
 
@@ -41,10 +41,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 4 — Install GSD:**
+**Step 4 — Install SF:**
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -66,7 +66,7 @@ source ~/.zshrc
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 6 — Launch GSD:**
+**Step 6 — Launch SF:**
 
 ```bash
 cd ~/my-project   # navigate to any project
@@ -113,10 +113,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 4 — Install GSD:**
+**Step 4 — Install SF:**
 
 ```powershell
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **Step 5 — Set up your LLM provider:**
@@ -137,7 +137,7 @@ To persist the key permanently, add it via System Settings > Environment Variabl
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 6 — Launch GSD:**
+**Step 6 — Launch SF:**
 
 ```powershell
 cd C:\Users\you\my-project   # navigate to any project
@@ -217,10 +217,10 @@ node --version   # should print v22.x or higher
 git --version    # should print 2.20+
 ```
 
-**Step 3 — Install GSD:**
+**Step 3 — Install SF:**
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **Step 4 — Set up your LLM provider:**
@@ -242,7 +242,7 @@ source ~/.bashrc
 
 See [Provider Setup Guide](./providers.md) for all 20+ supported providers.
 
-**Step 5 — Launch GSD:**
+**Step 5 — Launch SF:**
 
 ```bash
 cd ~/my-project   # navigate to any project
@@ -263,7 +263,7 @@ Inside the session, type `/model` to confirm your LLM is connected.
 > npm config set prefix '~/.npm-global'
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
-> npm install -g gsd-pi
+> npm install -g sf-run
 > ```
 
 ---
@@ -272,11 +272,11 @@ Inside the session, type `/model` to confirm your LLM is connected.
 
 > **Downloads:** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-Run GSD in an isolated sandbox without installing Node.js on your host.
+Run SF in an isolated sandbox without installing Node.js on your host.
 
 **Step 1 — Install Docker Desktop** (4.58+ required).
 
-**Step 2 — Clone the GSD repo:**
+**Step 2 — Clone the SF repo:**
 
 ```bash
 git clone https://github.com/singularity-forge/sf-run.git
@@ -290,7 +290,7 @@ docker sandbox create --template . --name gsd-sandbox
 docker sandbox exec -it gsd-sandbox bash
 ```
 
-**Step 4 — Set your API key and run GSD:**
+**Step 4 — Set your API key and run SF:**
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
@@ -305,7 +305,7 @@ See [Docker Sandbox docs](../../docker/README.md) for full configuration, resour
 
 ### Choose a Model
 
-GSD auto-selects a default model after provider setup. Switch anytime inside a session:
+SF auto-selects a default model after provider setup. Switch anytime inside a session:
 
 ```
 /model
@@ -319,7 +319,7 @@ Or configure per-phase models in preferences — see [Configuration](./configura
 
 ### Step Mode — `/gsd`
 
-Type `/gsd` inside a session. GSD executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
+Type `/gsd` inside a session. SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next.
 
 - **No `.gsd/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
@@ -330,7 +330,7 @@ Step mode keeps you in the loop, reviewing output between each step.
 
 ### Auto Mode — `/gsd auto`
 
-Type `/gsd auto` and walk away. GSD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
+Type `/gsd auto` and walk away. SF autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
 
 ```
 /gsd auto
@@ -364,7 +364,7 @@ Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 ar
 
 ---
 
-## How GSD Organizes Work
+## How SF Organizes Work
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -396,19 +396,19 @@ All state lives on disk in `.gsd/`:
 
 ## VS Code Extension
 
-GSD is also available as a VS Code extension. Install from the marketplace (publisher: FluxLabs) or search for "GSD" in VS Code extensions:
+SF is also available as a VS Code extension. Install from the marketplace (publisher: FluxLabs) or search for "SF" in VS Code extensions:
 
 - **`@gsd` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gsd-pi`) must be installed first — the extension connects to it via RPC.
+The CLI (`sf-run`) must be installed first — the extension connects to it via RPC.
 
 ---
 
 ## Web Interface
 
-GSD has a browser-based interface for visual project management:
+SF has a browser-based interface for visual project management:
 
 ```bash
 gsd --web
@@ -434,12 +434,12 @@ gsd sessions
 
 ---
 
-## Updating GSD
+## Updating SF
 
-GSD checks for updates every 24 hours and prompts at startup. You can also update manually:
+SF checks for updates every 24 hours and prompts at startup. You can also update manually:
 
 ```bash
-npm update -g gsd-pi
+npm update -g sf-run
 ```
 
 Or from within a session:

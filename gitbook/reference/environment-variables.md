@@ -1,16 +1,16 @@
 # Environment Variables
 
-## GSD Configuration
+## SF Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `GSD_HOME` | `~/.gsd` | Global GSD directory. All paths derive from this unless individually overridden. |
-| `GSD_PROJECT_ID` | (auto-hash) | Override automatic project identity hash. Useful for CI/CD or sharing state across repo clones. |
-| `GSD_STATE_DIR` | `$GSD_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. |
-| `GSD_CODING_AGENT_DIR` | `$GSD_HOME/agent` | Agent directory for extensions, auth, and managed resources. |
-| `GSD_FETCH_ALLOWED_URLS` | (none) | Comma-separated hostnames exempt from internal URL blocking. |
-| `GSD_ALLOWED_COMMAND_PREFIXES` | (built-in) | Comma-separated command prefixes allowed for value resolution. |
-| `GSD_WEB_PROJECT_CWD` | — | Default project path for `gsd --web` when `?project=` is not specified. |
+| `SF_HOME` | `~/.gsd` | Global SF directory. All paths derive from this unless individually overridden. |
+| `SF_PROJECT_ID` | (auto-hash) | Override automatic project identity hash. Useful for CI/CD or sharing state across repo clones. |
+| `SF_STATE_DIR` | `$SF_HOME` | Per-project state root. Controls where `projects/<repo-hash>/` directories are created. |
+| `SF_CODING_AGENT_DIR` | `$SF_HOME/agent` | Agent directory for extensions, auth, and managed resources. |
+| `SF_FETCH_ALLOWED_URLS` | (none) | Comma-separated hostnames exempt from internal URL blocking. |
+| `SF_ALLOWED_COMMAND_PREFIXES` | (built-in) | Comma-separated command prefixes allowed for value resolution. |
+| `SF_WEB_PROJECT_CWD` | — | Default project path for `gsd --web` when `?project=` is not specified. |
 
 ## LLM Provider Keys
 
@@ -48,7 +48,7 @@
 The `fetch_page` tool blocks requests to private/internal networks by default (SSRF protection). To allow specific internal hosts:
 
 ```bash
-export GSD_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
+export SF_FETCH_ALLOWED_URLS="internal-docs.company.com,192.168.1.50"
 ```
 
 Or set `fetchAllowedUrls` in `~/.gsd/agent/settings.json`.

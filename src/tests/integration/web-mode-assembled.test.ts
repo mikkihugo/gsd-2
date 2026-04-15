@@ -235,9 +235,9 @@ test("assembled lifecycle: boot → onboard → prompt → streaming text → to
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -591,9 +591,9 @@ test("assembled settings controls keep retry visibility and daily-use mutations 
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -813,9 +813,9 @@ test("assembled recovery route exposes actionable browser diagnostics without ra
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -895,7 +895,7 @@ test("assembled recovery route exposes actionable browser diagnostics without ra
   assert.doesNotMatch(JSON.stringify(payload), /sk-assembled-recovery-secret-0001|sk-assembled-auth-secret-0002/);
 });
 
-test("assembled slash-command behavior keeps built-ins safe while preserving GSD prompt commands", async (t) => {
+test("assembled slash-command behavior keeps built-ins safe while preserving SF prompt commands", async (t) => {
   const fixture = makeWorkspaceFixture();
   const sessionPath = createSessionFile(fixture.projectCwd, fixture.sessionsDir, "sess-slash", "Slash Session");
   const bridgeCommands: any[] = [];
@@ -903,9 +903,9 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn(command: string, args: readonly string[], options: Record<string, unknown>) {
       void command;
@@ -1041,5 +1041,5 @@ test("assembled slash-command behavior keeps built-ins safe while preserving GSD
     "only browser-executable slash commands should reach the live bridge; built-in surfaces/rejects must stay out of prompt text",
   );
   const promptCommand = bridgeCommands.find((command) => command.type === "prompt");
-  assert.equal(promptCommand?.message, "/gsd auto", "GSD passthrough commands must stay on the extension prompt path");
+  assert.equal(promptCommand?.message, "/gsd auto", "SF passthrough commands must stay on the extension prompt path");
 });

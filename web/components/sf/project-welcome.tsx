@@ -35,7 +35,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <FolderOpen className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Existing project detected",
-        body: "GSD will map your codebase and ask a few questions about what you want to build. From there it generates structured milestones and deliverable slices.",
+        body: "SF will map your codebase and ask a few questions about what you want to build. From there it generates structured milestones and deliverable slices.",
         primaryLabel: "Map & Initialize",
         primaryCommand: "/gsd",
         secondary: {
@@ -47,8 +47,8 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
     case "v1-legacy":
       return {
         icon: <ArrowUpCircle className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
-        headline: "GSD v1 project found",
-        body: "This project has a .planning/ folder from an earlier GSD version. Migration converts your existing planning data into the new .gsd/ format.",
+        headline: "SF v1 project found",
+        body: "This project has a .planning/ folder from an earlier SF version. Migration converts your existing planning data into the new .gsd/ format.",
         detail: "Your original files will be preserved — migration creates the new structure alongside them.",
         primaryLabel: "Migrate to v2",
         primaryCommand: "/gsd migrate",
@@ -63,7 +63,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <Sparkles className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Start a new project",
-        body: "This folder is empty. GSD will ask what you want to build, then generate a structured plan — milestones broken into deliverable slices with risk-ordered execution.",
+        body: "This folder is empty. SF will ask what you want to build, then generate a structured plan — milestones broken into deliverable slices with risk-ordered execution.",
         primaryLabel: "Start Project Setup",
         primaryCommand: "/gsd",
       }
@@ -73,7 +73,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <Folder className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "Set up your project",
-        body: "Run the GSD wizard to get started.",
+        body: "Run the SF wizard to get started.",
         primaryLabel: "Get Started",
         primaryCommand: "/gsd",
       }
@@ -233,7 +233,7 @@ export function ProjectWelcome({
             </p>
             <ul className="mt-2.5 space-y-2">
               {[
-                "GSD scans your codebase and asks about your goals",
+                "SF scans your codebase and asks about your goals",
                 "You discuss scope, constraints, and priorities",
                 "A milestone with risk-ordered slices is generated",
               ].map((step, i) => (

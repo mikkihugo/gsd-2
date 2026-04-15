@@ -2,7 +2,7 @@ import { ChildProcess, spawn } from "node:child_process";
 import * as vscode from "vscode";
 
 /**
- * Mirrors the RPC command/response protocol from the GSD agent.
+ * Mirrors the RPC command/response protocol from the SF agent.
  * These types are intentionally kept minimal and self-contained so the
  * extension has no dependency on the agent packages at runtime.
  */
@@ -116,7 +116,7 @@ export class GsdClient implements vscode.Disposable {
 	}
 
 	/**
-	 * Spawn the GSD agent in RPC mode.
+	 * Spawn the SF agent in RPC mode.
 	 */
 	async start(): Promise<void> {
 		if (this.process) {
@@ -167,9 +167,9 @@ export class GsdClient implements vscode.Disposable {
 					this.process = null;
 				}
 				const hint = err.code === "ENOENT"
-					? ` Make sure GSD is installed ("npm install -g gsd-pi") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
+					? ` Make sure SF is installed ("npm install -g sf-run") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
 					: "";
-				const message = `Failed to start GSD process: ${err.message}.${hint}`;
+				const message = `Failed to start SF process: ${err.message}.${hint}`;
 				this._onError.fire(message);
 				reject(new Error(message));
 			};
@@ -187,16 +187,16 @@ export class GsdClient implements vscode.Disposable {
 			}
 			this._onConnectionChange.fire(false);
 			const hint = err.code === "ENOENT"
-				? ` Make sure GSD is installed ("npm install -g gsd-pi") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
+				? ` Make sure SF is installed ("npm install -g sf-run") and set "gsd.binaryPath" to the absolute path if it is not on PATH.`
 				: "";
-			this._onError.fire(`GSD process error: ${err.message}.${hint}`);
+			this._onError.fire(`SF process error: ${err.message}.${hint}`);
 		});
 
 		proc.on("exit", (code, signal) => {
 			if (this.process === proc) {
 				this.process = null;
 			}
-			this.rejectAllPending(`GSD process exited (code=${code}, signal=${signal})`);
+			this.rejectAllPending(`SF process exited (code=${code}, signal=${signal})`);
 			this._onConnectionChange.fire(false);
 
 			if (code !== 0 && signal !== "SIGTERM") {
@@ -208,7 +208,7 @@ export class GsdClient implements vscode.Disposable {
 				if (this.restartTimestamps.length > 3) {
 					// Too many crashes within 60s — stop retrying
 					this._onError.fire(
-						`GSD process crashed ${this.restartTimestamps.length} times within 60s. Not restarting. Use "GSD: Start Agent" to retry manually.`,
+						`SF process crashed ${this.restartTimestamps.length} times within 60s. Not restarting. Use "SF: Start Agent" to retry manually.`,
 					);
 				} else if (this.restartCount < 3) {
 					this.restartCount++;
@@ -221,7 +221,7 @@ export class GsdClient implements vscode.Disposable {
 	}
 
 	/**
-	 * Stop the GSD agent process.
+	 * Stop the SF agent process.
 	 */
 	async stop(): Promise<void> {
 		if (!this.process) {
@@ -651,11 +651,11 @@ export class GsdClient implements vscode.Disposable {
 					const message = String(request.message ?? "");
 					const notifyType = String(request.notifyType ?? "info");
 					if (notifyType === "error") {
-						vscode.window.showErrorMessage(`GSD: ${message}`);
+						vscode.window.showErrorMessage(`SF: ${message}`);
 					} else if (notifyType === "warning") {
-						vscode.window.showWarningMessage(`GSD: ${message}`);
+						vscode.window.showWarningMessage(`SF: ${message}`);
 					} else {
-						vscode.window.showInformationMessage(`GSD: ${message}`);
+						vscode.window.showInformationMessage(`SF: ${message}`);
 					}
 					// Notify doesn't need a response
 					break;
@@ -680,7 +680,7 @@ export class GsdClient implements vscode.Disposable {
 
 	private send(command: Record<string, unknown>): Promise<RpcResponse> {
 		if (!this.process?.stdin) {
-			return Promise.reject(new Error("GSD client not started"));
+			return Promise.reject(new Error("SF client not started"));
 		}
 
 		const id = `req_${++this.requestId}`;

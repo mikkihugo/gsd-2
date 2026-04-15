@@ -3,7 +3,7 @@ title: "Token optimization"
 description: "Token profiles, context compression, and complexity-based task routing to reduce costs by 40-60%."
 ---
 
-GSD's token optimization system has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
+SF's token optimization system has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
 
 ## Token profiles
 
@@ -57,7 +57,7 @@ Each profile maps to an **inline level** controlling how much context is pre-loa
 
 ### Prompt compression
 
-GSD can apply deterministic text compression before falling back to section-boundary truncation:
+SF can apply deterministic text compression before falling back to section-boundary truncation:
 
 ```yaml
 compression_strategy: compress    # or "truncate"
@@ -81,7 +81,7 @@ context_selection: smart    # or "full"
 
 ## Complexity-based task routing
 
-GSD classifies each task by complexity and routes it to an appropriate model tier.
+SF classifies each task by complexity and routes it to an appropriate model tier.
 
 <Warning>
 Dynamic routing requires explicit `models` in your preferences. Without a `models` section, routing is skipped.
@@ -112,7 +112,7 @@ When approaching the budget ceiling, the classifier automatically downgrades tie
 
 ## Adaptive learning
 
-GSD tracks success/failure per tier and adjusts classifications over time. User feedback via `/gsd rate` is weighted 2x:
+SF tracks success/failure per tier and adjusts classifications over time. User feedback via `/gsd rate` is weighted 2x:
 
 ```
 /gsd rate over    # model was overpowered

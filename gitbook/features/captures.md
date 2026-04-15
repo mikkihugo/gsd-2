@@ -1,6 +1,6 @@
 # Captures & Triage
 
-Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto mode to steer, capture ideas, bugs, or scope changes and let GSD triage them at natural seams between tasks.
+Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto mode to steer, capture ideas, bugs, or scope changes and let SF triage them at natural seams between tasks.
 
 ## Quick Start
 
@@ -20,7 +20,7 @@ Capture → Triage → Confirm → Resolve → Resume
 ```
 
 1. **Capture** — your thought is saved with a timestamp
-2. **Triage** — between tasks, GSD classifies each capture
+2. **Triage** — between tasks, SF classifies each capture
 3. **Confirm** — you see the proposed resolution and approve or adjust
 4. **Resolve** — the resolution is applied
 5. **Resume** — auto mode continues

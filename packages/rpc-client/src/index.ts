@@ -1,5 +1,5 @@
 /**
- * @singularity-forge/rpc-client — standalone RPC client SDK for GSD.
+ * @singularity-forge/rpc-client — standalone RPC client SDK for SF.
  *
  * Re-exports all types, JSONL utilities, and the RpcClient class.
  */

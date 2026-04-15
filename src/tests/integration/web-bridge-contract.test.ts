@@ -294,9 +294,9 @@ test("/api/boot returns current-project workspace data, resumable sessions, onbo
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -384,10 +384,10 @@ test("/api/boot uses the authoritative auto helper by default and stays snapshot
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
-      GSD_WEB_TEST_AUTO_DASHBOARD_MODULE: autoModulePath,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_TEST_AUTO_DASHBOARD_MODULE: autoModulePath,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -449,9 +449,9 @@ test("bridge service is a singleton for the project runtime and /api/session/com
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -527,9 +527,9 @@ test("/api/session/events streams bridge status, agent events, and extension_ui_
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -621,9 +621,9 @@ test("bridge command/runtime failures are inspectable and redact secret material
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -702,9 +702,9 @@ test("/api/boot lists sessions from the real filesystem via readdirSync (#1936)"
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),

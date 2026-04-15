@@ -1,12 +1,12 @@
 # ──────────────────────────────────────────────
-# GSD Docker Sandbox Template
+# SF Docker Sandbox Template
 # Base: docker/sandbox-templates:shell
-# Purpose: Isolated environment for GSD auto mode
+# Purpose: Isolated environment for SF auto mode
 # Usage: docker sandbox create --template ./docker
 # ──────────────────────────────────────────────
 FROM node:24-bookworm-slim
 
-# System dependencies required by GSD
+# System dependencies required by SF
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
@@ -15,15 +15,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gosu \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GSD globally — version controlled via build arg
-ARG GSD_VERSION=latest
-RUN npm install -g gsd-pi@${GSD_VERSION}
+# Install SF globally — version controlled via build arg
+ARG SF_VERSION=latest
+RUN npm install -g sf-run@${SF_VERSION}
 
 # Create non-root user for sandbox isolation
 RUN groupadd --gid 1000 gsd \
     && useradd --uid 1000 --gid gsd --shell /bin/bash --create-home gsd
 
-# Persistent GSD state directory
+# Persistent SF state directory
 RUN mkdir -p /home/gsd/.gsd && chown -R gsd:gsd /home/gsd/.gsd
 
 # Workspace directory — synced from host via Docker sandbox
@@ -35,7 +35,7 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY bootstrap.sh /usr/local/bin/bootstrap.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh /usr/local/bin/bootstrap.sh
 
-# Expose default GSD web UI port
+# Expose default SF web UI port
 EXPOSE 3000
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

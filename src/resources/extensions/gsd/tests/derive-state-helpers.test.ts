@@ -1,4 +1,4 @@
-// GSD Extension — Tests for extracted deriveStateFromDb helper functions
+// SF Extension — Tests for extracted deriveStateFromDb helper functions
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 //
 // Tests the composable helpers extracted from deriveStateFromDb:
@@ -125,10 +125,10 @@ describe('derive-state-helpers', () => {
     }
   });
 
-  // ─── resolveSliceDependencies: GSD_SLICE_LOCK with missing slice ────
-  test('resolveSliceDependencies: GSD_SLICE_LOCK pointing to non-existent slice returns blocked', async () => {
+  // ─── resolveSliceDependencies: SF_SLICE_LOCK with missing slice ────
+  test('resolveSliceDependencies: SF_SLICE_LOCK pointing to non-existent slice returns blocked', async () => {
     const base = createFixtureBase();
-    const origLock = process.env.GSD_SLICE_LOCK;
+    const origLock = process.env.SF_SLICE_LOCK;
     try {
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       writeFile(base, 'milestones/M001/slices/S01/S01-PLAN.md', PLAN_CONTENT);
@@ -140,25 +140,25 @@ describe('derive-state-helpers', () => {
       insertSlice({ id: 'S01', milestoneId: 'M001', title: 'First', status: 'active', risk: 'low', depends: [] });
       insertTask({ id: 'T01', sliceId: 'S01', milestoneId: 'M001', title: 'First Task', status: 'pending' });
 
-      process.env.GSD_SLICE_LOCK = 'S99';
+      process.env.SF_SLICE_LOCK = 'S99';
 
       invalidateStateCache();
       const state = await deriveStateFromDb(base);
 
       assert.equal(state.phase, 'blocked', 'slice-lock-miss: phase is blocked');
-      assert.ok(state.blockers.some(b => b.includes('GSD_SLICE_LOCK=S99')), 'slice-lock-miss: blocker mentions lock');
+      assert.ok(state.blockers.some(b => b.includes('SF_SLICE_LOCK=S99')), 'slice-lock-miss: blocker mentions lock');
     } finally {
-      if (origLock !== undefined) process.env.GSD_SLICE_LOCK = origLock;
-      else delete process.env.GSD_SLICE_LOCK;
+      if (origLock !== undefined) process.env.SF_SLICE_LOCK = origLock;
+      else delete process.env.SF_SLICE_LOCK;
       closeDatabase();
       cleanup(base);
     }
   });
 
-  // ─── resolveSliceDependencies: GSD_SLICE_LOCK with valid slice ──────
-  test('resolveSliceDependencies: GSD_SLICE_LOCK targeting valid slice bypasses deps', async () => {
+  // ─── resolveSliceDependencies: SF_SLICE_LOCK with valid slice ──────
+  test('resolveSliceDependencies: SF_SLICE_LOCK targeting valid slice bypasses deps', async () => {
     const base = createFixtureBase();
-    const origLock = process.env.GSD_SLICE_LOCK;
+    const origLock = process.env.SF_SLICE_LOCK;
     try {
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', ROADMAP_CONTENT);
       // S02 depends on S01 but we lock to S02 directly
@@ -172,7 +172,7 @@ describe('derive-state-helpers', () => {
       insertSlice({ id: 'S02', milestoneId: 'M001', title: 'Second', status: 'pending', risk: 'low', depends: ['S01'] });
       insertTask({ id: 'T01', sliceId: 'S02', milestoneId: 'M001', title: 'Task', status: 'pending' });
 
-      process.env.GSD_SLICE_LOCK = 'S02';
+      process.env.SF_SLICE_LOCK = 'S02';
 
       invalidateStateCache();
       const state = await deriveStateFromDb(base);
@@ -180,8 +180,8 @@ describe('derive-state-helpers', () => {
       assert.equal(state.activeSlice?.id, 'S02', 'slice-lock-valid: activeSlice is S02 (locked)');
       assert.equal(state.phase, 'executing', 'slice-lock-valid: phase is executing');
     } finally {
-      if (origLock !== undefined) process.env.GSD_SLICE_LOCK = origLock;
-      else delete process.env.GSD_SLICE_LOCK;
+      if (origLock !== undefined) process.env.SF_SLICE_LOCK = origLock;
+      else delete process.env.SF_SLICE_LOCK;
       closeDatabase();
       cleanup(base);
     }

@@ -1,6 +1,6 @@
 # Web Interface
 
-GSD includes a browser-based interface for project management and real-time progress monitoring.
+SF includes a browser-based interface for project management and real-time progress monitoring.
 
 ## Quick Start
 

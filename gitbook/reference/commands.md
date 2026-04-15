@@ -6,7 +6,7 @@
 |---------|-------------|
 | `/gsd` | Step mode — execute one unit at a time |
 | `/gsd auto` | Autonomous mode — research, plan, execute, commit, repeat |
-| `/gsd quick` | Quick task with GSD guarantees but no full planning |
+| `/gsd quick` | Quick task with SF guarantees but no full planning |
 | `/gsd stop` | Stop auto mode gracefully |
 | `/gsd pause` | Pause auto mode (preserves state) |
 | `/gsd steer` | Modify plan documents during execution |
@@ -23,7 +23,7 @@
 | `/gsd visualize` | Open workflow visualizer |
 | `/gsd export --html` | Generate HTML report for current milestone |
 | `/gsd export --html --all` | Generate reports for all milestones |
-| `/gsd update` | Update GSD to the latest version |
+| `/gsd update` | Update SF to the latest version |
 | `/gsd knowledge` | Add persistent project knowledge |
 | `/gsd fast` | Toggle service tier for supported models |
 | `/gsd rate` | Rate last unit's model tier (over/ok/under) |

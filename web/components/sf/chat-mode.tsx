@@ -25,7 +25,7 @@ import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
 
 // ActionPanelConfig removed — all commands now route through the main bridge.
 
-/* ─── GSD Action Definitions ─── */
+/* ─── SF Action Definitions ─── */
 
 /**
  * Defines every /gsd subcommand available in the chat input bar.
@@ -187,7 +187,7 @@ function ChatModeHeader({ onPrimaryAction, onSecondaryAction }: ChatModeHeaderPr
     onPrimaryAction(workflowAction.primary.command)
   }
 
-  // Derive a short GSD state badge label
+  // Derive a short SF state badge label
   const stateBadge = (() => {
     if (state.bootStatus !== "ready") return state.bootStatus
     const phase = workspace?.active.phase
@@ -469,7 +469,7 @@ function MarkdownContent({ content }: { content: string }) {
 /* ─── TuiSelectPrompt ─── */
 
 /**
- * Renders a GSD arrow-key select prompt as a native clickable list.
+ * Renders a SF arrow-key select prompt as a native clickable list.
  *
  * Clicking an option calculates the arrow-key delta from the current
  * PTY-tracked selection, sends that many \x1b[A/\x1b[B + \r to the PTY,
@@ -612,7 +612,7 @@ function TuiSelectPrompt({
 /* ─── TuiTextPrompt ─── */
 
 /**
- * Renders a GSD text prompt as a native labeled input field.
+ * Renders a SF text prompt as a native labeled input field.
  *
  * Submitting sends the typed value + "\r" to the PTY (carriage return = Enter).
  * After submission shows a static "✓ Submitted" confirmation (value not echoed).
@@ -708,7 +708,7 @@ function TuiTextPrompt({
 /* ─── TuiPasswordPrompt ─── */
 
 /**
- * Renders a GSD password/API-key prompt as a native masked input field.
+ * Renders a SF password/API-key prompt as a native masked input field.
  *
  * Submitting sends the typed value + "\r" to the PTY.
  * The entered value is NEVER shown in the DOM, logs, or post-submission text.
@@ -1450,7 +1450,7 @@ function ChatInputBar({
                 <TooltipTrigger asChild>
                   <PopoverTrigger asChild>
                     <button
-                      aria-label="More GSD commands"
+                      aria-label="More SF commands"
                       className={cn(
                         "flex flex-shrink-0 items-center justify-center rounded-xl border border-border bg-background p-2.5 text-foreground transition-colors hover:bg-accent",
                         overflowOpen && "bg-accent",
@@ -1557,7 +1557,7 @@ function PlaceholderState({
           <p className="max-w-xs text-xs text-muted-foreground">{notice}</p>
         ) : !connected ? (
           <p className="max-w-xs text-xs text-muted-foreground">
-            Connecting to GSD session…
+            Connecting to SF session…
           </p>
         ) : primaryAction && onPrimaryAction ? (
           <div className="mt-4">
@@ -1571,7 +1571,7 @@ function PlaceholderState({
           </div>
         ) : (
           <p className="max-w-xs text-xs text-muted-foreground">
-            Connected — waiting for GSD output…
+            Connected — waiting for SF output…
           </p>
         )}
       </div>

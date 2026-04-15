@@ -1,10 +1,10 @@
 # MCP Servers
 
-GSD can connect to external MCP (Model Context Protocol) servers for local tools, internal APIs, self-hosted services, or integrations not built in as native extensions.
+SF can connect to external MCP (Model Context Protocol) servers for local tools, internal APIs, self-hosted services, or integrations not built in as native extensions.
 
 ## Configuration Files
 
-GSD reads MCP config from these project-local paths:
+SF reads MCP config from these project-local paths:
 
 - `.mcp.json` — repo-shared config (safe to commit)
 - `.gsd/mcp.json` — local-only config (not shared)
@@ -51,9 +51,9 @@ If both exist, server names are merged and the first definition found wins.
 
 ## Verifying a Server
 
-After adding config, verify from a GSD session:
+After adding config, verify from a SF session:
 
-1. `mcp_servers` — confirms GSD sees the config
+1. `mcp_servers` — confirms SF sees the config
 2. `mcp_discover(server="my-server")` — confirms the server starts and responds
 3. `mcp_call(server="my-server", tool="<tool>", args={...})` — confirms a real tool call works
 

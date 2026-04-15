@@ -1,6 +1,6 @@
-# How GSD Organizes Work
+# How SF Organizes Work
 
-GSD uses a three-level hierarchy to break projects into manageable pieces that an AI can execute reliably.
+SF uses a three-level hierarchy to break projects into manageable pieces that an AI can execute reliably.
 
 ## The Hierarchy
 
@@ -71,7 +71,7 @@ All project state lives on disk in a `.gsd/` directory at your project root:
 | `PROJECT.md` | High-level project description, updated as the project evolves |
 | `REQUIREMENTS.md` | Formal requirement contract — tracks what's active, validated, and deferred |
 | `DECISIONS.md` | Append-only log of architectural decisions with rationale |
-| `KNOWLEDGE.md` | Rules, patterns, and lessons learned across sessions — GSD reads this at the start of every task |
+| `KNOWLEDGE.md` | Rules, patterns, and lessons learned across sessions — SF reads this at the start of every task |
 | `RUNTIME.md` | Runtime context like API URLs, ports, and environment variables |
 | `STATE.md` | Current status at a glance — auto-generated, don't edit manually |
 
@@ -83,9 +83,9 @@ Each slice flows through phases:
 Plan → Execute (per task) → Complete → Reassess Roadmap → Next Slice
 ```
 
-1. **Plan** — GSD scouts the codebase, researches relevant docs, and decomposes the slice into tasks with clear requirements
+1. **Plan** — SF scouts the codebase, researches relevant docs, and decomposes the slice into tasks with clear requirements
 2. **Execute** — Each task runs in a fresh AI session with focused context
-3. **Complete** — GSD writes summaries, generates a UAT script, and commits
+3. **Complete** — SF writes summaries, generates a UAT script, and commits
 4. **Reassess** — The roadmap is checked against reality — slices may be reordered, added, or removed
 5. **Next Slice** — The loop continues until all slices are done
 
@@ -93,7 +93,7 @@ After all slices complete, a **milestone validation** gate checks that success c
 
 ## Adding Knowledge
 
-GSD maintains a knowledge base that persists across sessions. Add rules, patterns, or lessons:
+SF maintains a knowledge base that persists across sessions. Add rules, patterns, or lessons:
 
 ```
 /gsd knowledge rule "Always use parameterized queries for database access"

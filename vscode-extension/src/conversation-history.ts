@@ -17,7 +17,7 @@ interface ConversationMessage {
 
 /**
  * Webview panel that displays the full conversation history for the
- * current GSD session using the get_messages RPC call. Shows tool calls,
+ * current SF session using the get_messages RPC call. Shows tool calls,
  * thinking blocks, search/filter, and fork-from-here actions.
  */
 export class GsdConversationHistoryPanel implements vscode.Disposable {
@@ -41,7 +41,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 
 		const panel = vscode.window.createWebviewPanel(
 			"gsd-history",
-			"GSD Conversation History",
+			"SF Conversation History",
 			column,
 			{
 				enableScripts: true,
@@ -91,7 +91,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 
 	async refresh(): Promise<void> {
 		if (!this.client.isConnected) {
-			this.panel.webview.html = this.getHtml([], "Not connected to GSD agent.");
+			this.panel.webview.html = this.getHtml([], "Not connected to SF agent.");
 			return;
 		}
 
@@ -127,7 +127,7 @@ export class GsdConversationHistoryPanel implements vscode.Disposable {
 
 				return `<div class="message ${isUser ? "user" : "assistant"}" id="${entryId}">
 				<div class="role-row">
-					<span class="role">${isUser ? "You" : "GSD"}</span>
+					<span class="role">${isUser ? "You" : "SF"}</span>
 					${forkBtn}
 				</div>
 				<div class="content">${blocks}</div>

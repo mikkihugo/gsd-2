@@ -38,7 +38,7 @@ It checks file structure, referential integrity, completion state consistency, g
     source ~/.zshrc
     ```
 
-    **Workaround:** `npx gsd-pi` or `$(npm prefix -g)/bin/gsd`
+    **Workaround:** `npx sf-run` or `$(npm prefix -g)/bin/gsd`
   </Accordion>
 
   <Accordion title="Provider errors during auto mode">
@@ -63,7 +63,7 @@ It checks file structure, referential integrity, completion state consistency, g
   </Accordion>
 
   <Accordion title="Stale lock file">
-    GSD auto-detects stale locks. If automatic recovery fails:
+    SF auto-detects stale locks. If automatic recovery fails:
     ```bash
     rm -f .gsd/auto.lock
     rm -rf "$(dirname .gsd)/.gsd.lock"
@@ -71,7 +71,7 @@ It checks file structure, referential integrity, completion state consistency, g
   </Accordion>
 
   <Accordion title="Git merge conflicts on .gsd/ files">
-    GSD auto-resolves conflicts on `.gsd/` runtime files. For code conflicts, the LLM attempts resolution. If that fails, resolve manually.
+    SF auto-resolves conflicts on `.gsd/` runtime files. For code conflicts, the LLM attempts resolution. If that fails, resolve manually.
   </Accordion>
 
   <Accordion title="EBUSY / EPERM / EACCES on Windows">
@@ -91,7 +91,7 @@ It checks file structure, referential integrity, completion state consistency, g
   </Accordion>
 
   <Accordion title="Node.js version or git not found at startup">
-    **Cause:** GSD v2.45+ checks for Node.js >= 22 and git availability at startup.
+    **Cause:** SF v2.45+ checks for Node.js >= 22 and git availability at startup.
 
     **Fix:** Install Node.js 22+ (24 LTS recommended) and ensure `git` is in your PATH.
   </Accordion>
@@ -117,10 +117,10 @@ Use `/gsd mcp` to check MCP server status and connectivity at a glance.
   </Accordion>
 
   <Accordion title="mcp_discover times out">
-    Run the configured command outside GSD to confirm the server starts. Check backend URLs and dependencies.
+    Run the configured command outside SF to confirm the server starts. Check backend URLs and dependencies.
   </Accordion>
 
-  <Accordion title="Local server works manually but not in GSD">
+  <Accordion title="Local server works manually but not in SF">
     Use absolute paths. Set required environment variables in the MCP config's `env` block.
   </Accordion>
 </AccordionGroup>
@@ -152,7 +152,7 @@ Rebuilds `STATE.md` from plan and roadmap files on disk.
 
 ## Getting help
 
-- **GitHub Issues:** [github.com/gsd-build/GSD-2/issues](https://github.com/gsd-build/gsd-2/issues)
+- **GitHub Issues:** [github.com/gsd-build/SF/issues](https://github.com/gsd-build/gsd-2/issues)
 - **Dashboard:** `Ctrl+Alt+G` or `/gsd status`
 - **Forensics:** `/gsd forensics`
 - **Session logs:** `.gsd/activity/`

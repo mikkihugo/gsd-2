@@ -10,7 +10,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
     name: "gsd_milestone_status",
     label: "Milestone Status",
     description:
-      "Read the current status of a milestone and all its slices from the GSD database. " +
+      "Read the current status of a milestone and all its slices from the SF database. " +
       "Returns milestone metadata, per-slice status, and task counts per slice. " +
       "Use this instead of querying .gsd/gsd.db directly via sqlite3 or better-sqlite3.",
     promptSnippet: "Get milestone status, slice statuses, and task counts for a given milestoneId",
@@ -24,7 +24,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
       const dbAvailable = await ensureDbOpen();
       if (!dbAvailable) {
         return {
-          content: [{ type: "text", text: "Error: GSD database is not available. Cannot read milestone status." }],
+          content: [{ type: "text", text: "Error: SF database is not available. Cannot read milestone status." }],
           details: { operation: "milestone_status", error: "db_unavailable" },
         };
       }

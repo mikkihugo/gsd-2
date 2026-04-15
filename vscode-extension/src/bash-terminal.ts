@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import type { AgentEvent, GsdClient } from "./gsd-client.js";
 
 /**
- * Routes the GSD agent's Bash tool output to a dedicated VS Code terminal panel.
+ * Routes the SF agent's Bash tool output to a dedicated VS Code terminal panel.
  * Shows streaming output from tool_execution_update events in real time.
  */
 export class GsdBashTerminal implements vscode.Disposable {
@@ -31,7 +31,7 @@ export class GsdBashTerminal implements vscode.Disposable {
 				open: () => {},
 				close: () => { this.terminal = undefined; },
 			};
-			this.terminal = vscode.window.createTerminal({ name: "GSD Agent", pty });
+			this.terminal = vscode.window.createTerminal({ name: "SF Agent", pty });
 		}
 		return { terminal: this.terminal, writeEmitter: this.writeEmitter! };
 	}

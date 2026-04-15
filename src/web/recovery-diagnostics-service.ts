@@ -206,8 +206,8 @@ function buildCommandSuggestions(
     }
   }
 
-  if (phase === "planning") add("/gsd", "Open GSD planning")
-  if (phase === "executing" || phase === "summarizing") add("/gsd auto", "Resume GSD auto mode")
+  if (phase === "planning") add("/gsd", "Open SF planning")
+  if (phase === "executing" || phase === "summarizing") add("/gsd auto", "Resume SF auto mode")
   if (activeScope) add(`/gsd doctor ${activeScope}`, "Inspect scoped doctor report")
   if (activeScope) add(`/gsd doctor fix ${activeScope}`, "Apply scoped doctor fixes")
   if (validationCount > 0 && activeScope) add(`/gsd doctor audit ${activeScope}`, "Audit validation diagnostics")
@@ -389,14 +389,14 @@ async function collectRecoveryDiagnosticsChildPayload(
 
   const script = [
     'const { pathToFileURL } = await import("node:url");',
-    'const doctor = await import(pathToFileURL(process.env.GSD_RECOVERY_DOCTOR_MODULE).href);',
-    'const forensics = await import(pathToFileURL(process.env.GSD_RECOVERY_FORENSICS_MODULE).href);',
-    'const basePath = process.env.GSD_RECOVERY_BASE;',
-    'const scope = process.env.GSD_RECOVERY_SCOPE || undefined;',
-    'const unitType = process.env.GSD_RECOVERY_UNIT_TYPE || "execute-project";',
-    'const unitId = process.env.GSD_RECOVERY_UNIT_ID || "project";',
-    'const sessionFile = process.env.GSD_RECOVERY_SESSION_FILE || undefined;',
-    'const activityDir = process.env.GSD_RECOVERY_ACTIVITY_DIR || undefined;',
+    'const doctor = await import(pathToFileURL(process.env.SF_RECOVERY_DOCTOR_MODULE).href);',
+    'const forensics = await import(pathToFileURL(process.env.SF_RECOVERY_FORENSICS_MODULE).href);',
+    'const basePath = process.env.SF_RECOVERY_BASE;',
+    'const scope = process.env.SF_RECOVERY_SCOPE || undefined;',
+    'const unitType = process.env.SF_RECOVERY_UNIT_TYPE || "execute-project";',
+    'const unitId = process.env.SF_RECOVERY_UNIT_ID || "project";',
+    'const sessionFile = process.env.SF_RECOVERY_SESSION_FILE || undefined;',
+    'const activityDir = process.env.SF_RECOVERY_ACTIVITY_DIR || undefined;',
     'const report = await doctor.runGSDDoctor(basePath, { fix: false, scope, fixLevel: "task" });',
     'const summary = doctor.summarizeDoctorIssues(report.issues);',
     'const briefing = forensics.synthesizeCrashRecovery(basePath, unitType, unitId, sessionFile, activityDir);',
@@ -481,14 +481,14 @@ async function collectRecoveryDiagnosticsChildPayload(
         cwd: packageRoot,
         env: {
           ...env,
-          GSD_RECOVERY_BASE: basePath,
-          GSD_RECOVERY_SCOPE: scope ?? "",
-          GSD_RECOVERY_UNIT_TYPE: unit?.type ?? "execute-project",
-          GSD_RECOVERY_UNIT_ID: unit?.id ?? "project",
-          GSD_RECOVERY_SESSION_FILE: sessionFile ?? "",
-          GSD_RECOVERY_ACTIVITY_DIR: join(basePath, ".gsd", "activity"),
-          GSD_RECOVERY_DOCTOR_MODULE: doctorModulePath,
-          GSD_RECOVERY_FORENSICS_MODULE: sessionForensicsModulePath,
+          SF_RECOVERY_BASE: basePath,
+          SF_RECOVERY_SCOPE: scope ?? "",
+          SF_RECOVERY_UNIT_TYPE: unit?.type ?? "execute-project",
+          SF_RECOVERY_UNIT_ID: unit?.id ?? "project",
+          SF_RECOVERY_SESSION_FILE: sessionFile ?? "",
+          SF_RECOVERY_ACTIVITY_DIR: join(basePath, ".gsd", "activity"),
+          SF_RECOVERY_DOCTOR_MODULE: doctorModulePath,
+          SF_RECOVERY_FORENSICS_MODULE: sessionForensicsModulePath,
         },
         maxBuffer: RECOVERY_DIAGNOSTICS_MAX_BUFFER,
         windowsHide: true,

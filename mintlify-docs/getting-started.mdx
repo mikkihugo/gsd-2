@@ -1,12 +1,12 @@
 ---
 title: "Getting started"
-description: "Install GSD, configure your LLM provider, and run your first autonomous session."
+description: "Install SF, configure your LLM provider, and run your first autonomous session."
 ---
 
 ## Install
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 Requires Node.js 22+ and Git.
@@ -15,7 +15,7 @@ Requires Node.js 22+ and Git.
 **`command not found: gsd`?** Your shell may not have npm's global bin directory in `$PATH`. Run `npm prefix -g` to find it, then add `$(npm prefix -g)/bin` to your PATH. See [troubleshooting](/guides/troubleshooting) for details.
 </Note>
 
-GSD checks for updates every 24 hours. Update in-session with `/gsd update`.
+SF checks for updates every 24 hours. Update in-session with `/gsd update`.
 
 ## First launch
 
@@ -40,15 +40,15 @@ For non-Anthropic models, you may need a search API key. Run `/gsd config` to se
 
 ### Set up MCP servers
 
-To connect GSD to local or external MCP servers, add project-local config in `.mcp.json` or `.gsd/mcp.json`. See [configuration](/guides/configuration) for examples. Use `/gsd mcp` to verify connectivity.
+To connect SF to local or external MCP servers, add project-local config in `.mcp.json` or `.gsd/mcp.json`. See [configuration](/guides/configuration) for examples. Use `/gsd mcp` to verify connectivity.
 
 ### Offline mode
 
-GSD works fully offline with local models (Ollama, vLLM, LM Studio). Configure a [custom model](/guides/custom-models) and GSD handles the rest — no internet connection required.
+SF works fully offline with local models (Ollama, vLLM, LM Studio). Configure a [custom model](/guides/custom-models) and SF handles the rest — no internet connection required.
 
 ## Choose a model
 
-GSD auto-selects a default model after login. Switch anytime:
+SF auto-selects a default model after login. Switch anytime:
 
 ```
 /model
@@ -60,7 +60,7 @@ Or configure per-phase models in [preferences](/guides/configuration).
 
 <Tabs>
   <Tab title="Step mode">
-    Type `/gsd` inside a session. GSD executes one unit at a time, pausing between each with a wizard showing what completed and what's next.
+    Type `/gsd` inside a session. SF executes one unit at a time, pausing between each with a wizard showing what completed and what's next.
 
     - **No `.gsd/` directory** → starts a discussion to capture your project vision
     - **Milestone exists, no roadmap** → discuss or research the milestone
@@ -68,7 +68,7 @@ Or configure per-phase models in [preferences](/guides/configuration).
     - **Mid-task** → resume where you left off
   </Tab>
   <Tab title="Auto mode">
-    Type `/gsd auto` and walk away. GSD autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
+    Type `/gsd auto` and walk away. SF autonomously researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete.
 
     ```
     /gsd auto
@@ -102,7 +102,7 @@ Both terminals read and write the same `.gsd/` files. Decisions in terminal 2 ar
 
 ## Project structure
 
-GSD organizes work into a hierarchy:
+SF organizes work into a hierarchy:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -150,13 +150,13 @@ gsd sessions
 
 ## VS Code extension
 
-GSD is also available as a VS Code extension (publisher: FluxLabs). It provides:
+SF is also available as a VS Code extension (publisher: FluxLabs). It provides:
 
 - **`@gsd` chat participant** — talk to the agent in VS Code Chat
 - **Sidebar dashboard** — connection status, model info, token usage, quick actions
 - **Full command palette** — start/stop agent, switch models, export sessions
 
-The CLI (`gsd-pi`) must be installed first — the extension connects to it via RPC.
+The CLI (`sf-run`) must be installed first — the extension connects to it via RPC.
 
 ## Web interface
 
@@ -168,7 +168,7 @@ A browser-based dashboard with real-time progress and multi-project support. See
 
 ## Troubleshooting
 
-### `gsd` runs `git svn dcommit` instead of GSD
+### `gsd` runs `git svn dcommit` instead of SF
 
 The [oh-my-zsh git plugin](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git) defines `alias gsd='git svn dcommit'`.
 

@@ -1,5 +1,5 @@
 /**
- * GSD Parallel Merge — Worktree reconciliation for parallel milestones.
+ * SF Parallel Merge — Worktree reconciliation for parallel milestones.
  *
  * Handles merging completed milestone worktrees back to main branch
  * with safety checks for parallel execution context.

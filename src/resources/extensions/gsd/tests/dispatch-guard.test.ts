@@ -270,10 +270,10 @@ test("dispatch guard works without git repo", (t) => {
   assert.equal(getPriorSliceCompletionBlocker(repo, "main", "plan-slice", "M001/S02"), null);
 });
 
-test("dispatch guard skips cross-milestone check when GSD_MILESTONE_LOCK is set (#2797)", (t) => {
+test("dispatch guard skips cross-milestone check when SF_MILESTONE_LOCK is set (#2797)", (t) => {
   const repo = setupRepo();
   t.after(() => {
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.SF_MILESTONE_LOCK;
     teardownRepo(repo);
   });
 
@@ -297,14 +297,14 @@ test("dispatch guard skips cross-milestone check when GSD_MILESTONE_LOCK is set 
   writeFileSync(join(repo, ".gsd", "milestones", "M012", "M012-ROADMAP.md"), "# M012\n");
 
   // Without lock: M012 blocked by M010's incomplete S01
-  delete process.env.GSD_MILESTONE_LOCK;
+  delete process.env.SF_MILESTONE_LOCK;
   assert.match(
     getPriorSliceCompletionBlocker(repo, "main", "execute-task", "M012/S01/T01") ?? "",
     /earlier slice M010\/S01 is not complete/,
   );
 
   // With lock: M012 only checks its own intra-milestone deps — S01 has none, so unblocked
-  process.env.GSD_MILESTONE_LOCK = "M012";
+  process.env.SF_MILESTONE_LOCK = "M012";
   assert.equal(
     getPriorSliceCompletionBlocker(repo, "main", "execute-task", "M012/S01/T01"),
     null,

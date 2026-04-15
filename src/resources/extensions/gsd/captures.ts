@@ -1,5 +1,5 @@
 /**
- * GSD Captures — Fire-and-forget thought capture with triage classification
+ * SF Captures — Fire-and-forget thought capture with triage classification
  *
  * Append-only capture file at `.gsd/CAPTURES.md`. Each capture is an H3 section
  * with bold metadata fields, parseable by the same patterns used in files.ts.

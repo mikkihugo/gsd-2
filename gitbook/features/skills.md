@@ -1,8 +1,8 @@
 # Skills
 
-Skills are specialized instruction sets that GSD loads when the task matches. They provide domain-specific guidance — coding patterns, framework idioms, testing strategies, and tool usage.
+Skills are specialized instruction sets that SF loads when the task matches. They provide domain-specific guidance — coding patterns, framework idioms, testing strategies, and tool usage.
 
-Skills follow the open [Agent Skills standard](https://agentskills.io/) and work across multiple AI agents, not just GSD.
+Skills follow the open [Agent Skills standard](https://agentskills.io/) and work across multiple AI agents, not just SF.
 
 ## Skill Directories
 
@@ -36,7 +36,7 @@ npx skills update
 
 ## Onboarding Catalog
 
-During `gsd init`, GSD detects your project's tech stack and recommends relevant skill packs:
+During `gsd init`, SF detects your project's tech stack and recommends relevant skill packs:
 
 - **Swift** — SwiftUI, Swift Core, concurrency, Charts, Testing
 - **iOS** — App Intents, Widgets, StoreKit, MapKit, Core ML, Vision, accessibility
@@ -46,7 +46,7 @@ During `gsd init`, GSD detects your project's tech stack and recommends relevant
 
 ## Skill Discovery
 
-The `skill_discovery` preference controls how GSD finds skills during auto mode:
+The `skill_discovery` preference controls how SF finds skills during auto mode:
 
 | Mode | Behavior |
 |------|----------|

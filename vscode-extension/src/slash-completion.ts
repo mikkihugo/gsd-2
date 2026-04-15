@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import type { GsdClient, SlashCommand } from "./gsd-client.js";
 
 /**
- * CompletionItemProvider that surfaces GSD slash commands when the user
+ * CompletionItemProvider that surfaces SF slash commands when the user
  * types `/` at the start of a line (or after only whitespace) in Markdown,
  * plaintext, and TypeScript/JavaScript files.
  *

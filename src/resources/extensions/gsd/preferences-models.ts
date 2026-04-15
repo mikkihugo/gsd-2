@@ -110,7 +110,7 @@ export function resolveModelWithFallbacksForUnit(unitType: string): ResolvedMode
 }
 
 /**
- * Resolve the default session model from GSD preferences.
+ * Resolve the default session model from SF preferences.
  *
  * Used at auto-mode bootstrap to override the session model that was
  * determined by settings.json (defaultProvider/defaultModel).  When
@@ -282,7 +282,7 @@ export function validateModelId(modelId: string): boolean {
 }
 
 /**
- * Update the models section of the global GSD preferences file.
+ * Update the models section of the global SF preferences file.
  * Performs a safe read-modify-write: reads current content, updates the models
  * YAML block, and writes back. Creates the file if it doesn't exist.
  */

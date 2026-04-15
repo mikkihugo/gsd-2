@@ -1,7 +1,7 @@
 {
   "name": "@singularity-forge/engine-win32-x64-msvc",
   "version": "2.74.0",
-  "description": "GSD native engine binary for Windows x64 (MSVC)",
+  "description": "SF native engine binary for Windows x64 (MSVC)",
   "os": [
     "win32"
   ],

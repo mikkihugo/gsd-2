@@ -29,7 +29,7 @@ function strip(s: string): string {
   return s.replace(/\x1b\[[0-9;]*m/g, '')
 }
 
-test('renders GSD logo', () => {
+test('renders SF logo', () => {
   const out = strip(capture({ version: '1.0.0' }))
   assert.ok(out.includes('██'), 'logo block characters missing')
 })
@@ -37,7 +37,7 @@ test('renders GSD logo', () => {
 test('renders version', () => {
   const out = strip(capture({ version: '2.38.0' }))
   assert.ok(out.includes('v2.38.0'), 'version missing')
-  assert.ok(out.includes('Get Shit Done'), 'brand name missing')
+  assert.ok(out.includes('Singularity Forge'), 'brand name missing')
 })
 
 test('renders model and provider', () => {

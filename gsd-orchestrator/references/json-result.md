@@ -1,6 +1,6 @@
 # HeadlessJsonResult Reference
 
-When using `--output-format json`, GSD collects events silently and emits a single `HeadlessJsonResult` JSON object to stdout at process exit. This is the structured result for orchestrator decision-making.
+When using `--output-format json`, SF collects events silently and emits a single `HeadlessJsonResult` JSON object to stdout at process exit. This is the structured result for orchestrator decision-making.
 
 ## Obtaining the Result
 
@@ -31,7 +31,7 @@ echo "$RESULT" | jq '.nextAction'
 | `toolCalls` | `number` | Total number of tool calls made during the session. |
 | `events` | `number` | Total number of events processed during the session. |
 | `milestone` | `string \| undefined` | Active milestone ID (e.g. `"M001"`). |
-| `phase` | `string \| undefined` | Current GSD phase at session end (e.g. `"executing"`, `"blocked"`, `"complete"`). |
+| `phase` | `string \| undefined` | Current SF phase at session end (e.g. `"executing"`, `"blocked"`, `"complete"`). |
 | `nextAction` | `string \| undefined` | Recommended next action from the state machine (e.g. `"dispatch"`, `"complete"`). |
 | `artifacts` | `string[] \| undefined` | Paths to artifacts created or modified during the session. |
 | `commits` | `string[] \| undefined` | Git commit SHAs created during the session. |

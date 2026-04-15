@@ -1,6 +1,6 @@
 ---
 title: "Commands reference"
-description: "Every GSD command, keyboard shortcut, and CLI flag."
+description: "Every SF command, keyboard shortcut, and CLI flag."
 ---
 
 ## Session commands
@@ -10,7 +10,7 @@ description: "Every GSD command, keyboard shortcut, and CLI flag."
 | `/gsd` | Step mode — execute one unit at a time, pause between each |
 | `/gsd next` | Explicit step mode (same as `/gsd`) |
 | `/gsd auto` | Autonomous mode — research, plan, execute, commit, repeat |
-| `/gsd quick` | Execute a quick task with GSD guarantees without full planning overhead |
+| `/gsd quick` | Execute a quick task with SF guarantees without full planning overhead |
 | `/gsd stop` | Stop auto mode gracefully |
 | `/gsd pause` | Pause auto mode (preserves state, `/gsd auto` to resume) |
 | `/gsd steer` | Hard-steer plan documents during execution |
@@ -25,11 +25,11 @@ description: "Every GSD command, keyboard shortcut, and CLI flag."
 | `/gsd dispatch` | Dispatch a specific phase directly |
 | `/gsd history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
 | `/gsd forensics` | Full-access debugger for auto-mode failures |
-| `/gsd cleanup` | Clean up GSD state files and stale worktrees |
+| `/gsd cleanup` | Clean up SF state files and stale worktrees |
 | `/gsd visualize` | Open workflow visualizer |
 | `/gsd export --html` | Generate self-contained HTML report |
 | `/gsd export --html --all` | Generate reports for all milestones |
-| `/gsd update` | Update GSD to the latest version in-session |
+| `/gsd update` | Update SF to the latest version in-session |
 | `/gsd knowledge` | Add persistent project knowledge |
 | `/gsd fast` | Toggle service tier for supported models |
 | `/gsd rate` | Rate last unit's model tier (over/ok/under) |
@@ -138,7 +138,7 @@ In terminals without Kitty keyboard protocol support (macOS Terminal.app, JetBra
 | `gsd --version` (`-v`) | Print version and exit |
 | `gsd sessions` | Interactive session picker |
 | `gsd config` | Set up global API keys |
-| `gsd update` | Update GSD to the latest version |
+| `gsd update` | Update SF to the latest version |
 
 ## Headless mode
 
@@ -179,4 +179,4 @@ gsd headless query | jq '.cost.total'        # total spend
 gsd --mode mcp
 ```
 
-Runs GSD as a Model Context Protocol server over stdin/stdout, exposing all tools to external AI clients (Claude Desktop, VS Code Copilot, etc.).
+Runs SF as a Model Context Protocol server over stdin/stdout, exposing all tools to external AI clients (Claude Desktop, VS Code Copilot, etc.).

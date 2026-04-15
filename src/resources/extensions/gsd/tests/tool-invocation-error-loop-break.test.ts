@@ -2,14 +2,14 @@
  * Regression tests for #2883: gsd_complete_slice tool invocation fails with
  * JSON truncation, causing stuck retry loop.
  *
- * When a GSD tool is invoked with malformed/truncated JSON arguments, the tool
+ * When a SF tool is invoked with malformed/truncated JSON arguments, the tool
  * execution fails (isError: true). But postUnitPreVerification only checks if
  * the expected artifact exists on disk — it does not know the tool itself failed.
  * When the artifact is missing (because the tool never ran), it sets up
  * pendingVerificationRetry, re-dispatching the same unit with the same truncated
  * input, creating a stuck loop.
  *
- * The fix adds a `lastToolInvocationError` field to AutoSession. When a GSD tool
+ * The fix adds a `lastToolInvocationError` field to AutoSession. When a SF tool
  * execution ends with isError, the error is recorded. postUnitPreVerification
  * checks this field before retrying — if a tool invocation error occurred, it
  * pauses auto-mode instead of retrying.

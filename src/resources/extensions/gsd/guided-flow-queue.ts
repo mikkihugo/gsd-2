@@ -1,5 +1,5 @@
 /**
- * GSD Queue Management — showQueue, reorder, add, and context builder.
+ * SF Queue Management — showQueue, reorder, add, and context builder.
  *
  * Self-contained queue UI extracted from guided-flow.ts.
  * Safe to run while auto-mode is executing — only writes to future milestone
@@ -48,7 +48,7 @@ export async function showQueue(
   // ── Ensure .gsd/ exists ─────────────────────────────────────────────
   const gsd = gsdRoot(basePath);
   if (!existsSync(gsd)) {
-    ctx.ui.notify("No GSD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No SF project found. Run /gsd to start one first.", "warning");
     return;
   }
 
@@ -73,7 +73,7 @@ export async function showQueue(
     if (parkedCount > 0) summaryParts.push(`${parkedCount} parked.`);
 
     const choice = await showNextAction(ctx, {
-      title: "GSD — Queue Management",
+      title: "SF — Queue Management",
       summary: summaryParts,
       actions: [
         {
@@ -185,7 +185,7 @@ export async function showQueueAdd(
   const completeCount = state.registry.filter(m => m.status === "complete").length;
 
   const preamble = [
-    `Queuing new work onto an existing GSD project.`,
+    `Queuing new work onto an existing SF project.`,
     activePart,
     `${completeCount} milestone(s) complete, ${pendingCount} pending.`,
     `Next available milestone ID: ${nextId}.`,

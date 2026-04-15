@@ -31,7 +31,7 @@ import {
 import { stopWebMode } from './web-mode.js'
 import { getProjectSessionsDir } from './project-sessions.js'
 import { markStartup, printStartupTimings } from './startup-timings.js'
-import { bootstrapRtk, GSD_RTK_DISABLED_ENV } from './rtk.js'
+import { bootstrapRtk, SF_RTK_DISABLED_ENV, SF_RTK_DISABLED_ENV } from './rtk.js'
 import { loadEffectiveGSDPreferences } from './resources/extensions/sf/preferences.js'
 
 // ---------------------------------------------------------------------------
@@ -44,7 +44,7 @@ if (parseInt(process.versions.node) >= 22) {
 }
 
 function exitIfManagedResourcesAreNewer(currentAgentDir: string): void {
-  const currentVersion = process.env.GSD_VERSION || '0.0.0'
+  const currentVersion = process.env.SF_VERSION || '0.0.0'
   const managedVersion = getNewerManagedResourceVersion(currentAgentDir, currentVersion)
   if (!managedVersion) {
     return
@@ -53,7 +53,7 @@ function exitIfManagedResourcesAreNewer(currentAgentDir: string): void {
   process.stderr.write(
     `[sf] ${chalk.yellow('Version mismatch detected')}\n` +
     `[sf] Synced resources are from ${chalk.bold(`v${managedVersion}`)}, but this \`sf\` binary is ${chalk.dim(`v${currentVersion}`)}.\n` +
-    `[sf] Run ${chalk.bold('npm install -g gsd-pi@latest')} or ${chalk.bold('sf update')}, then try again.\n`,
+    `[sf] Run ${chalk.bold('npm install -g sf-run@latest')} or ${chalk.bold('sf update')}, then try again.\n`,
   )
   process.exit(1)
 }
@@ -133,7 +133,7 @@ const isPrintMode = cliFlags.print || cliFlags.mode !== undefined
 // subcommand, otherwise fall back to general help.
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
   const helpSubcommand = cliFlags.messages[0]
-  const version = process.env.GSD_VERSION || '0.0.0'
+  const version = process.env.SF_VERSION || '0.0.0'
   if (!helpSubcommand || !printSubcommandHelp(helpSubcommand, version)) {
     printHelp(version)
   }
@@ -145,13 +145,14 @@ if (process.argv.includes('--help') || process.argv.includes('-h')) {
 let rtkBootstrapPromise: Promise<void> | undefined
 async function doRtkBootstrap(): Promise<void> {
   // RTK is opt-in via experimental.rtk preference. Default: disabled.
-  // Honor GSD_RTK_DISABLED if already explicitly set in the environment
+  // Honor SF_RTK_DISABLED (or SF_RTK_DISABLED) if already explicitly set in the environment
   // (env var takes precedence over preferences for manual override).
-  if (!process.env[GSD_RTK_DISABLED_ENV]) {
+  if (!process.env[SF_RTK_DISABLED_ENV] && !process.env[SF_RTK_DISABLED_ENV]) {
     const prefs = loadEffectiveGSDPreferences()
     const rtkEnabled = prefs?.preferences.experimental?.rtk === true
     if (!rtkEnabled) {
-      process.env[GSD_RTK_DISABLED_ENV] = '1'
+      process.env[SF_RTK_DISABLED_ENV] = '1'
+      process.env[SF_RTK_DISABLED_ENV] = '1'
     }
   }
 
@@ -177,15 +178,15 @@ if (cliFlags.messages[0] === 'update') {
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'graph') {
   const sub = cliFlags.messages[1]
-  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@singularity-forge/mcp-server')
+  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveSfRoot } = await import('@singularity-forge/mcp-server')
 
   const projectDir = process.cwd()
-  const gsdRoot = resolveGsdRoot(projectDir)
+  const sfRoot = resolveSfRoot(projectDir)
 
   if (!sub || sub === 'build') {
     try {
       const graph = await buildGraph(projectDir)
-      await writeGraph(gsdRoot, graph)
+      await writeGraph(sfRoot, graph)
       process.stdout.write(`Graph built: ${graph.nodes.length} nodes, ${graph.edges.length} edges\n`)
     } catch (err) {
       process.stderr.write(`[sf] graph build failed: ${err instanceof Error ? err.message : String(err)}\n`)
@@ -544,7 +545,7 @@ if (isPrintMode) {
   exitIfManagedResourcesAreNewer(agentDir)
   initResources(agentDir)
   markStartup('initResources')
-  // Route print mode through buildResourceLoader so the GSD extension registry
+  // Route print mode through buildResourceLoader so the SF extension registry
   // filter (extensionPathsTransform) is applied consistently with TUI mode.
   // Constructing DefaultResourceLoader directly bypassed the filter and let
   // disabled bundled extensions (e.g. `ollama` superseded by `@0xkobold/pi-ollama`)
@@ -619,7 +620,7 @@ if (isPrintMode) {
 
     await startMcpServer({
       tools: session.agent.state.tools ?? [],
-      version: process.env.GSD_VERSION || '0.0.0',
+      version: process.env.SF_VERSION || '0.0.0',
     })
     // MCP server runs until the transport closes; keep alive
     await new Promise(() => {})
@@ -798,7 +799,7 @@ if (!process.stdin.isTTY || !process.stdout.isTTY) {
 
 // Welcome screen — shown on every fresh interactive session before TUI takes over.
 // Skip when the first-run banner was already printed in loader.ts (prevents double banner).
-if (!process.env.GSD_FIRST_RUN_BANNER) {
+if (!process.env.SF_FIRST_RUN_BANNER && !process.env.SF_FIRST_RUN_BANNER) {
   const { printWelcomeScreen } = await import('./welcome-screen.js')
   let remoteChannel: string | undefined
   try {
@@ -807,7 +808,7 @@ if (!process.env.GSD_FIRST_RUN_BANNER) {
     if (rc) remoteChannel = rc.channel
   } catch { /* non-fatal */ }
   printWelcomeScreen({
-    version: process.env.GSD_VERSION || '0.0.0',
+    version: process.env.SF_VERSION || '0.0.0',
     modelName: settingsManager.getDefaultModel() || undefined,
     provider: settingsManager.getDefaultProvider() || undefined,
     remoteChannel,

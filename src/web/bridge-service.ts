@@ -38,7 +38,7 @@ import {
   collectAuthoritativeAutoDashboardData,
   collectTestOnlyFallbackAutoDashboardData,
 } from "./auto-dashboard-service.ts";
-import { resolveGsdCliEntry } from "./cli-entry.ts";
+import { resolveSfCliEntry } from "./cli-entry.ts";
 
 // The standalone Next.js bundle bakes import.meta.url at build time with the
 // CI runner's absolute path.  On Windows, fileURLToPath() rejects a Linux
@@ -747,8 +747,8 @@ async function loadSessionBrowserSessionsViaChildProcess(config: BridgeRuntimeCo
 
   const script = [
     'const { pathToFileURL } = await import("node:url");',
-    'const mod = await import(pathToFileURL(process.env.GSD_SESSION_MANAGER_MODULE).href);',
-    'const sessions = await mod.SessionManager.list(process.env.GSD_SESSION_BROWSER_CWD, process.env.GSD_SESSION_BROWSER_DIR);',
+    'const mod = await import(pathToFileURL(process.env.SF_SESSION_MANAGER_MODULE).href);',
+    'const sessions = await mod.SessionManager.list(process.env.SF_SESSION_BROWSER_CWD, process.env.SF_SESSION_BROWSER_DIR);',
     'process.stdout.write(JSON.stringify(sessions.map((session) => ({ ...session, created: session.created.toISOString(), modified: session.modified.toISOString() }))));',
   ].join(" ");
 
@@ -760,9 +760,9 @@ async function loadSessionBrowserSessionsViaChildProcess(config: BridgeRuntimeCo
         cwd: config.packageRoot,
         env: {
           ...(deps.env ?? process.env),
-          GSD_SESSION_MANAGER_MODULE: sessionManagerModulePath,
-          GSD_SESSION_BROWSER_CWD: config.projectCwd,
-          GSD_SESSION_BROWSER_DIR: config.projectSessionsDir,
+          SF_SESSION_MANAGER_MODULE: sessionManagerModulePath,
+          SF_SESSION_BROWSER_CWD: config.projectCwd,
+          SF_SESSION_BROWSER_DIR: config.projectSessionsDir,
         },
         maxBuffer: 1024 * 1024,
         windowsHide: true,
@@ -808,9 +808,9 @@ async function appendSessionInfoViaChildProcess(
 
   const script = [
     'const { pathToFileURL } = await import("node:url");',
-    'const mod = await import(pathToFileURL(process.env.GSD_SESSION_MANAGER_MODULE).href);',
-    'const manager = mod.SessionManager.open(process.env.GSD_TARGET_SESSION_PATH, process.env.GSD_SESSION_BROWSER_DIR);',
-    'manager.appendSessionInfo(process.env.GSD_TARGET_SESSION_NAME);',
+    'const mod = await import(pathToFileURL(process.env.SF_SESSION_MANAGER_MODULE).href);',
+    'const manager = mod.SessionManager.open(process.env.SF_TARGET_SESSION_PATH, process.env.SF_SESSION_BROWSER_DIR);',
+    'manager.appendSessionInfo(process.env.SF_TARGET_SESSION_NAME);',
   ].join(" ");
 
   await new Promise<void>((resolveResult, reject) => {
@@ -821,10 +821,10 @@ async function appendSessionInfoViaChildProcess(
         cwd: config.packageRoot,
         env: {
           ...(deps.env ?? process.env),
-          GSD_SESSION_MANAGER_MODULE: sessionManagerModulePath,
-          GSD_SESSION_BROWSER_DIR: config.projectSessionsDir,
-          GSD_TARGET_SESSION_PATH: sessionPath,
-          GSD_TARGET_SESSION_NAME: name,
+          SF_SESSION_MANAGER_MODULE: sessionManagerModulePath,
+          SF_SESSION_BROWSER_DIR: config.projectSessionsDir,
+          SF_TARGET_SESSION_PATH: sessionPath,
+          SF_TARGET_SESSION_NAME: name,
         },
         maxBuffer: 1024 * 1024,
         windowsHide: true,
@@ -983,7 +983,7 @@ async function loadCachedWorkspaceIndex(
 async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: string): Promise<GSDWorkspaceIndex> {
   const deps = getBridgeDeps();
   const checkExists = deps.existsSync ?? existsSync;
-  const resolveTsLoader = join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs");
+  const resolveTsLoader = join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs");
   const moduleResolution = resolveSubprocessModule(
     packageRoot,
     "resources/extensions/sf/workspace-index.ts",
@@ -999,8 +999,8 @@ async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: 
 
   const script = [
     'const { pathToFileURL } = await import("node:url");',
-    'const mod = await import(pathToFileURL(process.env.GSD_WORKSPACE_MODULE).href);',
-    'const result = await mod.indexWorkspace(process.env.GSD_WORKSPACE_BASE);',
+    'const mod = await import(pathToFileURL(process.env.SF_WORKSPACE_MODULE).href);',
+    'const result = await mod.indexWorkspace(process.env.SF_WORKSPACE_BASE);',
     'process.stdout.write(JSON.stringify(result));',
   ].join(' ');
 
@@ -1022,8 +1022,8 @@ async function loadWorkspaceIndexViaChildProcess(basePath: string, packageRoot: 
         cwd: packageRoot,
         env: {
           ...(deps.env ?? process.env),
-          GSD_WORKSPACE_MODULE: workspaceModulePath,
-          GSD_WORKSPACE_BASE: basePath,
+          SF_WORKSPACE_MODULE: workspaceModulePath,
+          SF_WORKSPACE_BASE: basePath,
         },
         maxBuffer: 1024 * 1024,
         windowsHide: true,
@@ -1134,18 +1134,18 @@ async function fallbackWorkspaceIndex(basePath: string): Promise<GSDWorkspaceInd
 }
 
 export function resolveBridgeRuntimeConfig(env: NodeJS.ProcessEnv = getBridgeDeps().env ?? process.env, projectCwdOverride?: string): BridgeRuntimeConfig {
-  const projectCwd = projectCwdOverride || env.GSD_WEB_PROJECT_CWD || process.cwd();
-  const projectSessionsDir = env.GSD_WEB_PROJECT_SESSIONS_DIR || getProjectSessionsDir(projectCwd);
-  const packageRoot = env.GSD_WEB_PACKAGE_ROOT || getDefaultPackageRoot();
+  const projectCwd = projectCwdOverride || env.SF_WEB_PROJECT_CWD || process.cwd();
+  const projectSessionsDir = env.SF_WEB_PROJECT_SESSIONS_DIR || getProjectSessionsDir(projectCwd);
+  const packageRoot = env.SF_WEB_PACKAGE_ROOT || getDefaultPackageRoot();
   return { projectCwd, projectSessionsDir, packageRoot };
 }
 
 function resolveBridgeCliEntry(config: BridgeRuntimeConfig, deps: BridgeServiceDeps): BridgeCliEntry {
-  return resolveGsdCliEntry({
+  return resolveSfCliEntry({
     packageRoot: config.packageRoot,
     cwd: config.projectCwd,
     execPath: deps.execPath ?? process.execPath,
-    hostKind: (deps.env ?? process.env).GSD_WEB_HOST_KIND,
+    hostKind: (deps.env ?? process.env).SF_WEB_HOST_KIND,
     mode: "rpc",
     sessionDir: config.projectSessionsDir,
     existsSync: deps.existsSync ?? existsSync,
@@ -1613,8 +1613,8 @@ export class BridgeService {
 
     const spawnChild = this.deps.spawn ?? ((command, args, options) => spawn(command, args, options));
     const childEnv = { ...(this.deps.env ?? process.env) };
-    delete childEnv.GSD_CODING_AGENT_DIR;
-    childEnv.GSD_WEB_BRIDGE_TUI = "1";
+    delete childEnv.SF_CODING_AGENT_DIR;
+    childEnv.SF_WEB_BRIDGE_TUI = "1";
 
     const child = spawnChild(cliEntry.command, cliEntry.args, {
       cwd: cliEntry.cwd,
@@ -1866,7 +1866,8 @@ export function resolveProjectCwd(request: Request): string | null {
   } catch {
     // Malformed URL — fall through to env-based default.
   }
-  return (getBridgeDeps().env ?? process.env).GSD_WEB_PROJECT_CWD || null;
+  const bridgeEnv = getBridgeDeps().env ?? process.env;
+  return bridgeEnv.SF_WEB_PROJECT_CWD || null;
 }
 
 /**
@@ -2239,7 +2240,7 @@ export async function collectBootPayload(projectCwd?: string): Promise<BridgeBoo
 
   const onboarding = await resolveBootOnboardingState(deps, env);
 
-  if (onboarding.locked && env.GSD_WEB_HOST_KIND === "packaged-standalone") {
+  if (onboarding.locked && env.SF_WEB_HOST_KIND === "packaged-standalone") {
     return {
       project: {
         cwd: config.projectCwd,

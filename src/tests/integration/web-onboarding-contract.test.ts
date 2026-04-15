@@ -292,9 +292,9 @@ function configureBridgeFixture(fixture: { projectCwd: string; sessionsDir: stri
 
   bridge.configureBridgeServiceForTests({
     env: {
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),

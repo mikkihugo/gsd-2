@@ -1,5 +1,5 @@
 /**
- * GSD Paths — ID-based path resolution
+ * SF Paths — ID-based path resolution
  *
  * Directories use bare IDs: M001/, S01/, etc.
  * Files use ID-SUFFIX: M001-ROADMAP.md, S01-PLAN.md, T01-PLAN.md
@@ -256,7 +256,7 @@ export function resolveTaskJsonFiles(tasksDir: string, suffix: string): string[]
 
 // ─── Full Path Builders ────────────────────────────────────────────────────
 
-export const GSD_ROOT_FILES = {
+export const SF_ROOT_FILES = {
   PROJECT: "PROJECT.md",
   DECISIONS: "DECISIONS.md",
   QUEUE: "QUEUE.md",
@@ -267,7 +267,7 @@ export const GSD_ROOT_FILES = {
   CODEBASE: "CODEBASE.md",
 } as const;
 
-export type GSDRootFileKey = keyof typeof GSD_ROOT_FILES;
+export type GSDRootFileKey = keyof typeof SF_ROOT_FILES;
 
 const LEGACY_GSD_ROOT_FILES: Record<GSDRootFileKey, string> = {
   PROJECT: "project.md",
@@ -280,7 +280,7 @@ const LEGACY_GSD_ROOT_FILES: Record<GSDRootFileKey, string> = {
   CODEBASE: "codebase.md",
 };
 
-// ─── GSD Root Discovery ───────────────────────────────────────────────────────
+// ─── SF Root Discovery ───────────────────────────────────────────────────────
 
 const gsdRootCache = new Map<string, string>();
 
@@ -312,7 +312,7 @@ export function gsdRoot(basePath: string): string {
 /**
  * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
  *
- * GSD auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
+ * SF auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
  * When gsdRoot() is called with such a path, we must NOT walk up to the
  * project root's .gsd — each worktree manages its own .gsd state (#2594).
  *
@@ -406,7 +406,7 @@ export function resolveRuntimeFile(basePath: string): string {
 
 export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): string {
   const root = gsdRoot(basePath);
-  const canonical = join(root, GSD_ROOT_FILES[key]);
+  const canonical = join(root, SF_ROOT_FILES[key]);
   if (existsSync(canonical)) return canonical;
   const legacy = join(root, LEGACY_GSD_ROOT_FILES[key]);
   if (existsSync(legacy)) return legacy;
@@ -414,7 +414,7 @@ export function resolveGsdRootFile(basePath: string, key: GSDRootFileKey): strin
 }
 
 export function relGsdRootFile(key: GSDRootFileKey): string {
-  return `.gsd/${GSD_ROOT_FILES[key]}`;
+  return `.gsd/${SF_ROOT_FILES[key]}`;
 }
 
 /**

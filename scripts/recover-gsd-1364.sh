@@ -4,7 +4,7 @@
 # For Windows use the PowerShell equivalent:
 #   powershell -ExecutionPolicy Bypass -File scripts\recover-gsd-1364.ps1 [-DryRun]
 #
-# CRITICAL DATA-LOSS BUG: GSD versions 2.30.0–2.35.x unconditionally added
+# CRITICAL DATA-LOSS BUG: SF versions 2.30.0–2.35.x unconditionally added
 # ".gsd" to .gitignore via ensureGitignore(), causing git to report all
 # tracked .gsd/ files as deleted. Fixed in v2.36.0 (PR #1367).
 # Three residual vectors remain on v2.36.0–v2.38.0 — see PR #1635 for details.
@@ -88,18 +88,18 @@ fi
 
 section "── Step 1: Detect .gsd/ directory ────────────────────────────────────"
 
-GSD_DIR="$REPO_ROOT/.gsd"
-GSD_IS_SYMLINK=false
+SF_DIR="$REPO_ROOT/.gsd"
+SF_IS_SYMLINK=false
 
-if [[ ! -e "$GSD_DIR" ]]; then
+if [[ ! -e "$SF_DIR" ]]; then
   ok ".gsd/ does not exist in this repo — not affected."
   exit 0
 fi
 
-if [[ -L "$GSD_DIR" ]]; then
+if [[ -L "$SF_DIR" ]]; then
   # Scenario C: migration succeeded (symlink in place) but git index was never
   # cleaned — tracked .gsd/* files still appear as deleted through the symlink.
-  GSD_IS_SYMLINK=true
+  SF_IS_SYMLINK=true
   warn ".gsd/ is a symlink — checking for stale git index entries (Scenario C)..."
 else
   info ".gsd/ is a real directory (Scenario A/B)."
@@ -111,35 +111,35 @@ section "── Step 2: Check .gitignore for .gsd entry ────────
 
 GITIGNORE="$REPO_ROOT/.gitignore"
 
-if [[ ! -f "$GITIGNORE" ]] && ! $GSD_IS_SYMLINK; then
+if [[ ! -f "$GITIGNORE" ]] && ! $SF_IS_SYMLINK; then
   ok ".gitignore does not exist — not affected."
   exit 0
 fi
 
 # Look for a bare ".gsd" line (not a comment, not a sub-path like .gsd/)
-GSD_IGNORE_LINE=""
+SF_IGNORE_LINE=""
 if [[ -f "$GITIGNORE" ]]; then
   while IFS= read -r line; do
     trimmed="${line#"${line%%[![:space:]]*}"}"
     trimmed="${trimmed%"${trimmed##*[![:space:]]}"}"
     if [[ "$trimmed" == ".gsd" ]] && [[ "${trimmed:0:1}" != "#" ]]; then
-      GSD_IGNORE_LINE="$trimmed"
+      SF_IGNORE_LINE="$trimmed"
       break
     fi
   done < "$GITIGNORE"
 fi
 
-if $GSD_IS_SYMLINK; then
+if $SF_IS_SYMLINK; then
   # Symlink layout: .gsd SHOULD be ignored (it's external state).
   # Missing = needs adding. Present = correct.
-  if [[ -z "$GSD_IGNORE_LINE" ]]; then
+  if [[ -z "$SF_IGNORE_LINE" ]]; then
     warn '".gsd" missing from .gitignore — will add (migration complete, .gsd/ is external).'
   else
     ok '".gsd" already in .gitignore — correct for external-state layout.'
   fi
 else
   # Real-directory layout: .gsd should NOT be ignored.
-  if [[ -z "$GSD_IGNORE_LINE" ]]; then
+  if [[ -z "$SF_IGNORE_LINE" ]]; then
     ok '".gsd" not found in .gitignore — .gitignore not affected.'
   else
     warn '".gsd" found in .gitignore — this is the bad pattern from #1364.'
@@ -156,12 +156,12 @@ DELETED_FILES="$(git ls-files --deleted -- '.gsd/*' 2>/dev/null || true)"
 # Files tracked in HEAD right now
 TRACKED_IN_HEAD="$(git ls-tree -r --name-only HEAD -- '.gsd/' 2>/dev/null || true)"
 
-if $GSD_IS_SYMLINK; then
+if $SF_IS_SYMLINK; then
   # Scenario C: migration succeeded. Files are safe via symlink.
   # Only index entries can be stale — no need to scan commit history.
   if [[ -z "$TRACKED_IN_HEAD" ]] && [[ -z "$DELETED_FILES" ]]; then
     ok "No stale index entries found — symlink layout is healthy."
-    if [[ -z "$GSD_IGNORE_LINE" ]]; then
+    if [[ -z "$SF_IGNORE_LINE" ]]; then
       info "Add .gsd to .gitignore manually to complete the migration."
     fi
     exit 0
@@ -176,7 +176,7 @@ else
 
   if [[ -z "$TRACKED_IN_HEAD" ]] && [[ -z "$DELETED_FILES" ]] && [[ -z "$DELETED_FROM_HISTORY" ]]; then
     ok "No .gsd/ files tracked in this repo — not affected by #1364."
-    if [[ -n "$GSD_IGNORE_LINE" ]]; then
+    if [[ -n "$SF_IGNORE_LINE" ]]; then
       warn '".gsd" is still in .gitignore but there is nothing to restore.'
     fi
     exit 0
@@ -200,7 +200,7 @@ else
   fi
 
   if [[ -n "$TRACKED_IN_HEAD" ]] && [[ -z "$DELETED_FILES" ]]; then
-    if [[ -z "$GSD_IGNORE_LINE" ]]; then
+    if [[ -z "$SF_IGNORE_LINE" ]]; then
       ok "No action needed — .gsd/ is tracked in HEAD and .gitignore is clean."
       exit 0
     fi
@@ -216,7 +216,7 @@ DAMAGE_COMMIT=""
 CLEAN_COMMIT=""
 RESTORABLE=""
 
-if $GSD_IS_SYMLINK; then
+if $SF_IS_SYMLINK; then
   info "Scenario C: symlink layout — skipping commit history scan (no file restore needed)."
 else
   # Find the commit where ".gsd" was first added to .gitignore
@@ -260,7 +260,7 @@ fi
 
 # ─── Step 5: Clean index (Scenario C) or restore deleted files (Scenario A/B) ─
 
-if $GSD_IS_SYMLINK; then
+if $SF_IS_SYMLINK; then
   section "── Step 5: Clean stale git index entries ───────────────────────────────"
 
   info "Running: git rm -r --cached --ignore-unmatch .gsd/ ..."
@@ -302,14 +302,14 @@ fi
 
 section "── Step 6: Fix .gitignore ───────────────────────────────────────────────"
 
-if $GSD_IS_SYMLINK; then
+if $SF_IS_SYMLINK; then
   # Scenario C: .gsd IS external — it should be in .gitignore.  Add if missing.
-  if [[ -z "$GSD_IGNORE_LINE" ]]; then
+  if [[ -z "$SF_IGNORE_LINE" ]]; then
     info 'Adding ".gsd" to .gitignore (migration complete — .gsd/ is external state)...'
     if $DRY_RUN; then
       echo -e "  ${YELLOW}(dry-run)${RESET} Would append: .gsd"
     else
-      printf '\n# GSD external state (symlink — added by recover-gsd-1364)\n.gsd\n' >> "$GITIGNORE"
+      printf '\n# SF external state (symlink — added by recover-gsd-1364)\n.gsd\n' >> "$GITIGNORE"
       ok '".gsd" added to .gitignore.'
     fi
   else
@@ -317,7 +317,7 @@ if $GSD_IS_SYMLINK; then
   fi
 else
   # Scenario A/B: .gsd is a real tracked directory — remove the bad ignore line.
-  if [[ -z "$GSD_IGNORE_LINE" ]]; then
+  if [[ -z "$SF_IGNORE_LINE" ]]; then
     ok '".gsd" not in .gitignore — nothing to fix.'
   else
     info 'Removing bare ".gsd" line from .gitignore...'
@@ -343,7 +343,7 @@ if ! $DRY_RUN; then
   if [[ -z "$CHANGED" ]]; then
     ok "No staged changes — working tree was already clean."
   else
-    if $GSD_IS_SYMLINK; then
+    if $SF_IS_SYMLINK; then
       # Scenario C: the git rm --cached already staged the index cleanup.
       # Only stage .gitignore — adding .gsd/ would fail (now gitignored).
       git add .gitignore 2>/dev/null || true
@@ -366,7 +366,7 @@ else
   if (( FINAL_STAGED > 0 )); then
     echo -e "${GREEN}Recovery complete. Commit with:${RESET}"
     echo ""
-    if $GSD_IS_SYMLINK; then
+    if $SF_IS_SYMLINK; then
       echo "  git commit -m \"fix: clean stale .gsd/ index entries after external-state migration\""
     else
       echo "  git commit -m \"fix: restore .gsd/ files deleted by #1364 regression\""

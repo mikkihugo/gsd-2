@@ -120,13 +120,13 @@ function render(w: number, healthState: { icon: string; color: string; summary: 
   // Top bar
   lines.push(...ui.bar());
 
-  // Header: GSD AUTO + health ... elapsed + ETA
+  // Header: SF AUTO + health ... elapsed + ETA
   const dot = theme.fg("accent", GLYPH.statusActive);
   const healthIcon = healthState.color === "success" ? "o"
     : healthState.color === "warning" ? "!"
       : "x";
   const healthStr = `  ${theme.fg(healthState.color, healthIcon)} ${theme.fg(healthState.color, healthState.summary)}`;
-  const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GSD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
+  const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("SF"))}  ${theme.fg("success", modeTag)}${healthStr}`;
   const headerRight = `${theme.fg("dim", elapsed)} ${theme.fg("dim", "·")} ${theme.fg("dim", etaShort)}`;
   lines.push(rightAlign(headerLeft, headerRight, w));
 

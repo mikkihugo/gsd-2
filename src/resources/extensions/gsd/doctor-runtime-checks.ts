@@ -304,7 +304,7 @@ export async function checkRuntimeHealth(
       );
 
       // Check for critical runtime patterns that must be present.
-      // NOTE: GSD_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
+      // NOTE: SF_RUNTIME_PATTERNS in gitignore.ts is the canonical source of truth.
       // This is a minimal subset for the doctor check.
       const criticalPatterns = [
         ".gsd/activity/",
@@ -326,14 +326,14 @@ export async function checkRuntimeHealth(
             code: "gitignore_missing_patterns",
             scope: "project",
             unitId: "project",
-            message: `${missing.length} critical GSD runtime pattern(s) missing from .gitignore: ${missing.join(", ")}`,
+            message: `${missing.length} critical SF runtime pattern(s) missing from .gitignore: ${missing.join(", ")}`,
             file: ".gitignore",
             fixable: true,
           });
 
           if (shouldFix("gitignore_missing_patterns")) {
             ensureGitignore(basePath);
-            fixesApplied.push("added missing GSD runtime patterns to .gitignore");
+            fixesApplied.push("added missing SF runtime patterns to .gitignore");
           }
         }
       }
@@ -403,7 +403,7 @@ export async function checkRuntimeHealth(
           code: "numbered_gsd_variant",
           scope: "project",
           unitId: "project",
-          message: `Found macOS collision variant "${v}" — this can cause GSD state to appear deleted.`,
+          message: `Found macOS collision variant "${v}" — this can cause SF state to appear deleted.`,
           file: v,
           fixable: true,
         });
@@ -582,7 +582,7 @@ export async function checkRuntimeHealth(
  */
 function buildStateMarkdownForCheck(state: Awaited<ReturnType<typeof deriveState>>): string {
   const lines: string[] = [];
-  lines.push("# GSD State", "");
+  lines.push("# SF State", "");
 
   const activeMilestone = state.activeMilestone
     ? `${state.activeMilestone.id}: ${state.activeMilestone.title}`

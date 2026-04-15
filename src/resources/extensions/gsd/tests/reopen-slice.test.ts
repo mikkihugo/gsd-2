@@ -1,4 +1,4 @@
-// GSD — reopen-slice handler tests
+// SF — reopen-slice handler tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test from 'node:test';

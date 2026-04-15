@@ -1,7 +1,7 @@
 /**
  * Shared subprocess runner for web service files.
  *
- * Every web service that loads upstream GSD extension modules needs to spawn
+ * Every web service that loads upstream SF extension modules needs to spawn
  * a Node child process with the TS loader, type-stripping flag, and --eval.
  * This module centralises that boilerplate so services only specify what
  * varies: the script, env vars, and module paths.

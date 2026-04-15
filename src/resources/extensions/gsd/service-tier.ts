@@ -143,7 +143,7 @@ async function writeGlobalServiceTier(
   }
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;

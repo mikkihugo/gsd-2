@@ -57,7 +57,7 @@ describe("guided-flow STATE.md rebuild (#3475)", () => {
 
     // Write a STALE STATE.md pointing to wrong milestone
     writeFile(base, "STATE.md", [
-      "# GSD State",
+      "# SF State",
       "",
       "**Active Milestone:** M008: Old Queued",
       "**Active Slice:** None",

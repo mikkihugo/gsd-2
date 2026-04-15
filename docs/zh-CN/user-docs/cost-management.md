@@ -1,6 +1,6 @@
 # 成本管理
 
-GSD 会跟踪自动模式中每个派发工作单元的 Token 使用量和成本。这些数据会驱动仪表板、预算约束以及成本预测。
+SF 会跟踪自动模式中每个派发工作单元的 Token 使用量和成本。这些数据会驱动仪表板、预算约束以及成本预测。
 
 ## 成本跟踪
 
@@ -52,7 +52,7 @@ budget_enforcement: pause    # 设置 ceiling 后的默认值
 
 ## 成本预测
 
-当至少完成两个 slices 后，GSD 会预测剩余成本：
+当至少完成两个 slices 后，SF 会预测剩余成本：
 
 ```
 Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)

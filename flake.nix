@@ -28,8 +28,8 @@
           ];
 
           shellHook = ''
-            export GSD_SOURCE_DIR="${toString ./.}"
-            export PATH="$GSD_SOURCE_DIR/bin:$PATH"
+            export SF_SOURCE_DIR="${toString ./.}"
+            export PATH="$SF_SOURCE_DIR/bin:$PATH"
             export RUST_BACKTRACE=1
 
             echo "singularity-forge development shell"

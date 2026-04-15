@@ -1,4 +1,4 @@
-// GSD Extension — write-intercept unit tests
+// SF Extension — write-intercept unit tests
 // Tests isBlockedStateFile() and BLOCKED_WRITE_ERROR constant.
 
 import test from 'node:test';

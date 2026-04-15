@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # recover-gsd-1668.sh — Recovery script for issue #1668 (Linux / macOS)
 #
-# GSD v2.39.x deleted the milestone branch and worktree directory when a
+# SF v2.39.x deleted the milestone branch and worktree directory when a
 # merge failed due to the repo using `master` as its default branch (not
 # `main`). The commits were never merged — they are orphaned in the git
 # object store and can be recovered via git reflog or git fsck.
@@ -9,7 +9,7 @@
 # This script:
 #   1. Searches git reflog for the deleted milestone branch (fastest path)
 #   2. Falls back to git fsck --unreachable to find orphaned commits
-#   3. Ranks candidates by recency and GSD commit message patterns
+#   3. Ranks candidates by recency and SF commit message patterns
 #   4. Creates a recovery branch at the identified commit
 #   5. Reports what was found and how to complete the merge manually
 #
@@ -17,15 +17,15 @@
 #   bash scripts/recover-gsd-1668.sh [--milestone <ID>] [--dry-run] [--auto]
 #
 # Options:
-#   --milestone <ID>   GSD milestone ID (e.g. M001-g2nalq).
+#   --milestone <ID>   SF milestone ID (e.g. M001-g2nalq).
 #                      When omitted the script scans all recent orphans.
 #   --dry-run          Show what would be done without making any changes.
 #   --auto             Pick the best candidate automatically (no prompts).
 #
 # Requirements: git >= 2.23, bash >= 4.x
 #
-# Affected versions: GSD 2.39.x
-# Fixed in: GSD 2.40.1 (PR #1669)
+# Affected versions: SF.39.x
+# Fixed in: SF.40.1 (PR #1669)
 
 set -euo pipefail
 
@@ -222,8 +222,8 @@ if [[ -z "$REFLOG_FOUND_SHA" ]]; then
     exit 1
   fi
 
-  # Score each unreachable commit — rank by recency and GSD message patterns.
-  # GSD milestone commits look like: "feat(M001-g2nalq): <title>"
+  # Score each unreachable commit — rank by recency and SF message patterns.
+  # SF milestone commits look like: "feat(M001-g2nalq): <title>"
   # Slice merges look like:          "feat(M001-g2nalq/S01): <slice>"
   #
   # Performance: use a single `git log --no-walk=unsorted --stdin` call to
@@ -249,7 +249,7 @@ if [[ -z "$REFLOG_FOUND_SHA" ]]; then
     if echo "$commit_msg" | grep -qE '^feat\([A-Z][0-9]+'; then
       SCORE=$((SCORE + 50))
     fi
-    if echo "$commit_msg" | grep -qiE 'milestone/|complete-milestone|GSD|slice'; then
+    if echo "$commit_msg" | grep -qiE 'milestone/|complete-milestone|SF|slice'; then
       SCORE=$((SCORE + 20))
     fi
     if [[ "$commit_ts" -gt "$WEEK_AGO" ]]; then
@@ -278,7 +278,7 @@ if [[ -z "$REFLOG_FOUND_SHA" ]]; then
   ))
   unset IFS
 
-  info "Top candidates (scored by recency and GSD message patterns):"
+  info "Top candidates (scored by recency and SF message patterns):"
   echo ""
   NUM=1
   SORTED_IDXS=()
@@ -441,6 +441,6 @@ echo ""
 echo -e "  ${BOLD}4. Clean up after verifying:${RESET}"
 echo "     git branch -D ${RECOVERY_BRANCH}"
 echo ""
-echo -e "${DIM}Note: update GSD to v2.40.1+ to prevent this from recurring.${RESET}"
+echo -e "${DIM}Note: update SF to v2.40.1+ to prevent this from recurring.${RESET}"
 echo "      PR: https://github.com/singularity-forge/sf-run/pull/1669"
 echo ""

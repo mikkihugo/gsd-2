@@ -7,7 +7,7 @@
 
 ## Context
 
-GSD uses git for isolation during autonomous coding sessions. The current architecture (shipped in M003, v2.13.0) creates a **worktree per milestone** with **slice branches inside each worktree**. Each slice (`S01`, `S02`, ...) gets its own branch (`gsd/M001/S01`) within the worktree, which merges back to the milestone branch (`milestone/M001`) via `--no-ff` when the slice completes. The milestone branch squash-merges to `main` when the milestone completes.
+SF uses git for isolation during autonomous coding sessions. The current architecture (shipped in M003, v2.13.0) creates a **worktree per milestone** with **slice branches inside each worktree**. Each slice (`S01`, `S02`, ...) gets its own branch (`gsd/M001/S01`) within the worktree, which merges back to the milestone branch (`milestone/M001`) via `--no-ff` when the slice completes. The milestone branch squash-merges to `main` when the milestone completes.
 
 This architecture replaced a previous "branch-per-slice" model that had severe `.gsd/` merge conflicts. M003 solved the merge conflicts but retained slice branches inside worktrees, inheriting complexity that has produced persistent, user-facing failures.
 
@@ -21,9 +21,9 @@ Documented in the auto-stop architecture doc as "The Branch-Switching Problem."
 
 **2. `.gsd/` state clobbering across branches**
 
-`.gsd/` is gitignored (line 52 of `.gitignore`: `.gsd/`). Planning artifacts (roadmaps, plans, summaries, decisions, requirements) live in `.gsd/milestones/` but are invisible to git. When multiple branches or worktrees operate from the same repo, they share a single `.gsd/` directory on disk. Branch A's M001 roadmap overwrites Branch B's M001 roadmap. GSD reads corrupted state, shows wrong milestone as complete, or enters infinite dispatch loops.
+`.gsd/` is gitignored (line 52 of `.gitignore`: `.gsd/`). Planning artifacts (roadmaps, plans, summaries, decisions, requirements) live in `.gsd/milestones/` but are invisible to git. When multiple branches or worktrees operate from the same repo, they share a single `.gsd/` directory on disk. Branch A's M001 roadmap overwrites Branch B's M001 roadmap. SF reads corrupted state, shows wrong milestone as complete, or enters infinite dispatch loops.
 
-The codebase has a contradictory workaround: `smartStage()` (git-service.ts:304-352) force-adds `GSD_DURABLE_PATHS` (milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md) despite the `.gitignore`. This means `.gsd/milestones/` IS partially tracked on some branches but the gitignore claims otherwise. The code fights the configuration.
+The codebase has a contradictory workaround: `smartStage()` (git-service.ts:304-352) force-adds `SF_DURABLE_PATHS` (milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md) despite the `.gitignore`. This means `.gsd/milestones/` IS partially tracked on some branches but the gitignore claims otherwise. The code fights the configuration.
 
 **3. Merge/conflict code complexity**
 
@@ -123,7 +123,7 @@ main ─────────────────────────
 Replace the current blanket `.gsd/` ignore with explicit runtime-only ignores:
 
 ```gitignore
-# ── GSD: Runtime / Ephemeral ─────────────────────────────────
+# ── SF: Runtime / Ephemeral ─────────────────────────────────
 .gsd/auto.lock
 .gsd/completed-units.json
 .gsd/STATE.md
@@ -167,7 +167,7 @@ No conflict categorization. No runtime file stripping. No `.gsd/` special handli
 
 ### What `smartStage()` Becomes
 
-The force-add of `GSD_DURABLE_PATHS` is no longer needed — planning artifacts are not gitignored, so `git add -A` picks them up naturally. The function reduces to:
+The force-add of `SF_DURABLE_PATHS` is no longer needed — planning artifacts are not gitignored, so `git add -A` picks them up naturally. The function reduces to:
 
 1. `git add -A`
 2. `git reset HEAD -- <runtime paths>` (unstage runtime files)
@@ -225,7 +225,7 @@ After `research-slice` or `plan-slice`, immediately merge the slice branch back 
 
 ### B. Keep `.gsd/` gitignored, bootstrap from git history for manual worktrees
 
-When GSD detects an empty `.gsd/` in a worktree, reconstruct state from the branch's git history using `git show <commit>:.gsd/...`.
+When SF detects an empty `.gsd/` in a worktree, reconstruct state from the branch's git history using `git show <commit>:.gsd/...`.
 
 **Rejected:** Recovery logic, not architecture. Doesn't fix the fundamental problem of branch-agnostic state. Fails when git history has been rewritten.
 
@@ -243,7 +243,7 @@ This architecture was stress-tested by three independent models:
 
 **GPT-5.4 (Codex)** read the full codebase and confirmed the model is sound. Identified that `smartStage()` already force-adds durable paths (validating the tracked-artifact approach) and that `resolveMainWorktreeRoot` in PR #487 is architecturally wrong (adopted — PR to be closed).
 
-**Codebase analysis** confirmed `.gsd/milestones/` is already partially tracked on `main` despite the `.gitignore`, that `GSD_DURABLE_PATHS` exists as a code-level acknowledgment that planning artifacts should be tracked, and that the README already documents the correct runtime-only gitignore pattern.
+**Codebase analysis** confirmed `.gsd/milestones/` is already partially tracked on `main` despite the `.gitignore`, that `SF_DURABLE_PATHS` exists as a code-level acknowledgment that planning artifacts should be tracked, and that the README already documents the correct runtime-only gitignore pattern.
 
 ### Codex (GPT-5.4) Dissent — "No Slice Branches Is a Redesign"
 
@@ -268,7 +268,7 @@ Response: Accepted in spirit. Commits with conventional tags (`feat(M001/S01):`,
 ## Action Items
 
 1. Close PR #487 (`resolveMainWorktreeRoot`) — contradicts this architecture
-2. Implement as a GSD milestone with phases:
+2. Implement as a SF milestone with phases:
    - Update `.gitignore` and force-add existing planning artifacts
    - Remove slice branch creation/switching/merging code
    - Simplify `mergeMilestoneToMain()` and `smartStage()`

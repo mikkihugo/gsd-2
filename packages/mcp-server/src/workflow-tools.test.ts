@@ -108,9 +108,9 @@ describe("workflow MCP tools", () => {
   it("rejects workflow tool calls outside the configured project root", async () => {
     const base = makeTmpBase();
     const otherBase = makeTmpBase();
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevRoot = process.env.SF_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
+      process.env.SF_WORKFLOW_PROJECT_ROOT = base;
       const server = makeMockServer();
       registerWorkflowTools(server as any);
       const tool = server.tools.find((t) => t.name === "gsd_summary_save");
@@ -128,9 +128,9 @@ describe("workflow MCP tools", () => {
       );
     } finally {
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.SF_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.SF_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
       cleanup(otherBase);
@@ -139,11 +139,11 @@ describe("workflow MCP tools", () => {
 
   it("rejects non-file executor module URLs", async () => {
     const base = makeTmpBase();
-    const prevModule = process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
-    const prevRoot = process.env.GSD_WORKFLOW_PROJECT_ROOT;
+    const prevModule = process.env.SF_WORKFLOW_EXECUTORS_MODULE;
+    const prevRoot = process.env.SF_WORKFLOW_PROJECT_ROOT;
     try {
-      process.env.GSD_WORKFLOW_PROJECT_ROOT = base;
-      process.env.GSD_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
+      process.env.SF_WORKFLOW_PROJECT_ROOT = base;
+      process.env.SF_WORKFLOW_EXECUTORS_MODULE = "data:text/javascript,export default {}";
       const { registerWorkflowTools: freshRegisterWorkflowTools } = await import(`./workflow-tools.ts?bad-module=${randomUUID()}`);
       const server = makeMockServer();
       freshRegisterWorkflowTools(server as any);
@@ -162,14 +162,14 @@ describe("workflow MCP tools", () => {
       );
     } finally {
       if (prevModule === undefined) {
-        delete process.env.GSD_WORKFLOW_EXECUTORS_MODULE;
+        delete process.env.SF_WORKFLOW_EXECUTORS_MODULE;
       } else {
-        process.env.GSD_WORKFLOW_EXECUTORS_MODULE = prevModule;
+        process.env.SF_WORKFLOW_EXECUTORS_MODULE = prevModule;
       }
       if (prevRoot === undefined) {
-        delete process.env.GSD_WORKFLOW_PROJECT_ROOT;
+        delete process.env.SF_WORKFLOW_PROJECT_ROOT;
       } else {
-        process.env.GSD_WORKFLOW_PROJECT_ROOT = prevRoot;
+        process.env.SF_WORKFLOW_PROJECT_ROOT = prevRoot;
       }
       cleanup(base);
     }

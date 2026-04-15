@@ -1,4 +1,4 @@
-// GSD MCP Server — reader tests
+// SF MCP Server — reader tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, it, before, after } from 'node:test';
@@ -41,7 +41,7 @@ describe('readProgress', () => {
   before(() => {
     projectDir = tmpProject();
 
-    writeFixture(projectDir, '.gsd/STATE.md', `# GSD State
+    writeFixture(projectDir, '.gsd/STATE.md', `# SF State
 
 **Active Milestone:** M002: Auth System
 **Active Slice:** S01: Login flow
@@ -448,7 +448,7 @@ describe('runDoctorLite', () => {
 
     // M001: complete milestone (has summary)
     writeFixture(projectDir, '.gsd/PROJECT.md', '# Test Project');
-    writeFixture(projectDir, '.gsd/STATE.md', '# GSD State');
+    writeFixture(projectDir, '.gsd/STATE.md', '# SF State');
     writeFixture(projectDir, '.gsd/milestones/M001/M001-CONTEXT.md', '# M001');
     writeFixture(projectDir, '.gsd/milestones/M001/M001-ROADMAP.md', '# Roadmap');
     writeFixture(projectDir, '.gsd/milestones/M001/M001-SUMMARY.md', '# Done');

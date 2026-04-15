@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
  * "File URL path must be absolute".
  *
  * This helper catches that error so the module-level constant never throws,
- * letting resolveBridgeRuntimeConfig() fall through to the GSD_WEB_PACKAGE_ROOT
+ * letting resolveBridgeRuntimeConfig() fall through to the SF_WEB_PACKAGE_ROOT
  * env var that web-mode.ts always sets at launch time.
  *
  * @param importUrl - The value of import.meta.url at the call site.

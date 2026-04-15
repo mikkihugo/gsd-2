@@ -1,5 +1,5 @@
 /**
- * GSD Codebase Map Generator
+ * SF Codebase Map Generator
  *
  * Produces .gsd/CODEBASE.md — a structural table of contents for the project.
  * Gives fresh agent contexts instant orientation without filesystem exploration.

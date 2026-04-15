@@ -44,46 +44,46 @@ describe("parallel-worker-lock-contention (#2184)", () => {
   const savedEnv: Record<string, string | undefined> = {};
 
   beforeEach(() => {
-    savedEnv.GSD_PARALLEL_WORKER = process.env.GSD_PARALLEL_WORKER;
-    savedEnv.GSD_MILESTONE_LOCK = process.env.GSD_MILESTONE_LOCK;
+    savedEnv.SF_PARALLEL_WORKER = process.env.SF_PARALLEL_WORKER;
+    savedEnv.SF_MILESTONE_LOCK = process.env.SF_MILESTONE_LOCK;
   });
 
   afterEach(() => {
-    if (savedEnv.GSD_PARALLEL_WORKER === undefined) {
-      delete process.env.GSD_PARALLEL_WORKER;
+    if (savedEnv.SF_PARALLEL_WORKER === undefined) {
+      delete process.env.SF_PARALLEL_WORKER;
     } else {
-      process.env.GSD_PARALLEL_WORKER = savedEnv.GSD_PARALLEL_WORKER;
+      process.env.SF_PARALLEL_WORKER = savedEnv.SF_PARALLEL_WORKER;
     }
-    if (savedEnv.GSD_MILESTONE_LOCK === undefined) {
-      delete process.env.GSD_MILESTONE_LOCK;
+    if (savedEnv.SF_MILESTONE_LOCK === undefined) {
+      delete process.env.SF_MILESTONE_LOCK;
     } else {
-      process.env.GSD_MILESTONE_LOCK = savedEnv.GSD_MILESTONE_LOCK;
+      process.env.SF_MILESTONE_LOCK = savedEnv.SF_MILESTONE_LOCK;
     }
   });
 
   // ─── Bug 1a: effectiveLockFile returns per-milestone name ────────────────
   test("Bug 1a: effectiveLockFile returns auto.lock without parallel env", () => {
-    delete process.env.GSD_PARALLEL_WORKER;
-    delete process.env.GSD_MILESTONE_LOCK;
+    delete process.env.SF_PARALLEL_WORKER;
+    delete process.env.SF_MILESTONE_LOCK;
     assert.equal(effectiveLockFile(), "auto.lock");
   });
 
   test("Bug 1a: effectiveLockFile returns auto-<MID>.lock in parallel mode", () => {
-    process.env.GSD_PARALLEL_WORKER = "1";
-    process.env.GSD_MILESTONE_LOCK = "M003";
+    process.env.SF_PARALLEL_WORKER = "1";
+    process.env.SF_MILESTONE_LOCK = "M003";
     assert.equal(effectiveLockFile(), "auto-M003.lock");
   });
 
   // ─── Bug 1b: effectiveLockTarget returns per-milestone directory ─────────
   test("Bug 1b: effectiveLockTarget returns gsdDir without parallel env", () => {
-    delete process.env.GSD_PARALLEL_WORKER;
+    delete process.env.SF_PARALLEL_WORKER;
     const gsdDir = "/tmp/test/.gsd";
     assert.equal(effectiveLockTarget(gsdDir), gsdDir);
   });
 
   test("Bug 1b: effectiveLockTarget returns parallel/<MID> in parallel mode", () => {
-    process.env.GSD_PARALLEL_WORKER = "1";
-    process.env.GSD_MILESTONE_LOCK = "M003";
+    process.env.SF_PARALLEL_WORKER = "1";
+    process.env.SF_MILESTONE_LOCK = "M003";
     const gsdDir = "/tmp/test/.gsd";
     assert.equal(effectiveLockTarget(gsdDir), join(gsdDir, "parallel", "M003"));
   });
@@ -95,8 +95,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
 
     try {
       // Simulate worker for M001
-      process.env.GSD_PARALLEL_WORKER = "1";
-      process.env.GSD_MILESTONE_LOCK = "M001";
+      process.env.SF_PARALLEL_WORKER = "1";
+      process.env.SF_MILESTONE_LOCK = "M001";
 
       const r1 = acquireSessionLock(base);
       assert.ok(r1.acquired, "M001 worker acquires lock");
@@ -119,8 +119,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
       // After release, per-milestone lock file should be cleaned
       assert.ok(!existsSync(m001LockFile), "auto-M001.lock cleaned after release");
     } finally {
-      delete process.env.GSD_PARALLEL_WORKER;
-      delete process.env.GSD_MILESTONE_LOCK;
+      delete process.env.SF_PARALLEL_WORKER;
+      delete process.env.SF_MILESTONE_LOCK;
       rmSync(base, { recursive: true, force: true });
     }
   });
@@ -131,8 +131,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
     mkdirSync(join(base, ".gsd"), { recursive: true });
 
     try {
-      process.env.GSD_PARALLEL_WORKER = "1";
-      process.env.GSD_MILESTONE_LOCK = "M002";
+      process.env.SF_PARALLEL_WORKER = "1";
+      process.env.SF_MILESTONE_LOCK = "M002";
 
       writeLock(base, "execute-task", "M002/S01/T01");
 
@@ -147,8 +147,8 @@ describe("parallel-worker-lock-contention (#2184)", () => {
       clearLock(base);
       assert.ok(!existsSync(lockFile), "clearLock removes per-milestone lock");
     } finally {
-      delete process.env.GSD_PARALLEL_WORKER;
-      delete process.env.GSD_MILESTONE_LOCK;
+      delete process.env.SF_PARALLEL_WORKER;
+      delete process.env.SF_MILESTONE_LOCK;
       rmSync(base, { recursive: true, force: true });
     }
   });

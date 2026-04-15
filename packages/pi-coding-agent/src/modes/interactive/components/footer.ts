@@ -140,7 +140,7 @@ export class FooterComponent implements Component {
 		}
 
 		// Per-prompt cost annotation (opt-in via show_token_cost preference, #1515)
-		if (process.env.GSD_SHOW_TOKEN_COST === "1") {
+		if (process.env.SF_SHOW_TOKEN_COST === "1") {
 			const lastTurnCost = this.session.getLastTurnCost();
 			if (lastTurnCost > 0) {
 				costGroup.push(`(last: ${formatPromptCost(lastTurnCost)})`);

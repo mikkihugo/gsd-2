@@ -1,5 +1,5 @@
 /**
- * GSD Session Forensics — Deep analysis of pi session JSONL files
+ * SF Session Forensics — Deep analysis of pi session JSONL files
  *
  * Pi's SessionManager persists every entry to disk via appendFileSync as it
  * happens. When a crash occurs, the session JSONL on disk contains every tool
@@ -11,7 +11,7 @@
  *
  * Used by:
  * - Crash recovery (reading the surviving pi session file)
- * - Stuck-retry diagnostics (reading GSD activity log copies)
+ * - Stuck-retry diagnostics (reading SF activity log copies)
  *
  * Entry format (verified against real pi session files):
  * - Tool calls: { type: "toolCall", name: "bash", id: "toolu_...", arguments: { command: "..." } }
@@ -88,7 +88,7 @@ function extractLastSession(entries: unknown[]): unknown[] {
 
 /**
  * Extract a structured execution trace from raw session entries.
- * Works with both pi session JSONL and GSD activity log JSONL.
+ * Works with both pi session JSONL and SF activity log JSONL.
  */
 export function extractTrace(entries: unknown[]): ExecutionTrace {
   const toolCalls: ToolCall[] = [];
@@ -231,7 +231,7 @@ function getGitChanges(basePath: string): string | null {
 /**
  * Synthesize a full crash recovery briefing.
  *
- * Reads the surviving pi session file (or falls back to the last GSD activity
+ * Reads the surviving pi session file (or falls back to the last SF activity
  * log), deep-parses it into an execution trace, combines with git state, and
  * formats a structured prompt section ready for injection.
  */
@@ -265,7 +265,7 @@ export function synthesizeCrashRecovery(
       }
     }
 
-    // Fallback: last GSD activity log
+    // Fallback: last SF activity log
     if (!trace || trace.toolCallCount === 0) {
       const fallbackTrace = readLastActivityLog(activityDir);
       if (fallbackTrace && fallbackTrace.toolCallCount > 0) {

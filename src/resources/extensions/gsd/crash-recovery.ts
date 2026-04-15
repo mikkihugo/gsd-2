@@ -1,5 +1,5 @@
 /**
- * GSD Crash Recovery
+ * SF Crash Recovery
  *
  * Detects interrupted auto-mode sessions via a lock file.
  * Written on auto-start, updated on each unit dispatch, deleted on clean stop.

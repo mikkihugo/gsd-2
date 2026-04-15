@@ -41,6 +41,6 @@ test("/gsd inspect opens existing database when it was not yet opened in session
 
   assert.equal(notifications.length, 1);
   assert.equal(notifications[0].level, "info");
-  assert.match(notifications[0].message, /=== GSD Database Inspect ===/);
-  assert.doesNotMatch(notifications[0].message, /No GSD database available/);
+  assert.match(notifications[0].message, /=== SF Database Inspect ===/);
+  assert.doesNotMatch(notifications[0].message, /No SF database available/);
 });

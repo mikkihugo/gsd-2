@@ -1571,7 +1571,7 @@ export async function buildCompleteMilestonePrompt(
     inlined.push(await inlineFile(summaryPath, summaryRel, `${sid} Summary`));
   }
 
-  // Inline root GSD files (skip for minimal — completion can read these if needed)
+  // Inline root SF files (skip for minimal — completion can read these if needed)
   if (inlineLevel !== "minimal") {
     const requirementsInline = await inlineRequirementsFromDb(base, mid, undefined, inlineLevel);
     if (requirementsInline) inlined.push(requirementsInline);
@@ -1582,7 +1582,7 @@ export async function buildCompleteMilestonePrompt(
   }
   const knowledgeInlineCM = await inlineGsdRootFile(base, "knowledge.md", "Project Knowledge");
   if (knowledgeInlineCM) inlined.push(knowledgeInlineCM);
-  // Inline milestone context file (milestone-level, not GSD root)
+  // Inline milestone context file (milestone-level, not SF root)
   const contextPath = resolveMilestoneFile(base, mid, "CONTEXT");
   const contextRel = relMilestoneFile(base, mid, "CONTEXT");
   const contextInline = await inlineFileOptional(contextPath, contextRel, "Milestone Context");
@@ -1698,7 +1698,7 @@ export async function buildValidateMilestonePrompt(
     inlined.push(`### Previous Validation (re-validation round ${remediationRound})\nSource: \`${validationRel}\`\n\n${validationContent.trim()}`);
   }
 
-  // Inline root GSD files
+  // Inline root SF files
   if (inlineLevel !== "minimal") {
     const requirementsInline = await inlineRequirementsFromDb(base, mid, undefined, inlineLevel);
     if (requirementsInline) inlined.push(requirementsInline);

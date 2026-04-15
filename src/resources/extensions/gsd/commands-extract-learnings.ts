@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd extract-learnings
+ * SF Command — /gsd extract-learnings
  *
  * Analyses completed milestone artefacts and dispatches an LLM turn that
  * extracts structured knowledge into 4 categories:

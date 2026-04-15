@@ -1,5 +1,5 @@
 /**
- * GSD Metrics — Token & Cost Tracking
+ * SF Metrics — Token & Cost Tracking
  *
  * Accumulates per-unit usage data across auto-mode sessions.
  * Data is extracted from session entries before each context wipe,

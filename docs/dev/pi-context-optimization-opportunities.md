@@ -2,7 +2,7 @@
 
 > **Status**: Research only — not planned for implementation.
 > Scope: `packages/pi-coding-agent` and `packages/pi-agent-core` infrastructure.
-> These changes would benefit every consumer of the pi engine, not just GSD.
+> These changes would benefit every consumer of the pi engine, not just SF.
 
 ---
 
@@ -21,7 +21,7 @@
 
 **Cache hierarchy**: Tools → system → messages. Changing a tool definition invalidates system and message caches. Tool definitions should be sorted deterministically (alphabetically) to prevent spurious cache misses.
 
-**Expected savings**: 80–90% reduction in input token cost for multi-turn sessions (the dominant cost pattern in GSD auto-mode).
+**Expected savings**: 80–90% reduction in input token cost for multi-turn sessions (the dominant cost pattern in SF auto-mode).
 
 ---
 
@@ -165,7 +165,7 @@ Speakeasy measured 91–97% token reduction with 100% task success rate. Trade-o
 
 ## 10. Cost Attribution and Per-Phase Reporting
 
-**Current state**: `SessionManager.getUsageTotals()` accumulates cost across the entire session. No per-phase or per-agent breakdown is stored. Cost visibility is limited to the footer total and `GSD_SHOW_TOKEN_COST=1` per-turn display.
+**Current state**: `SessionManager.getUsageTotals()` accumulates cost across the entire session. No per-phase or per-agent breakdown is stored. Cost visibility is limited to the footer total and `SF_SHOW_TOKEN_COST=1` per-turn display.
 
 **Opportunity**: Emit structured cost events that extensions can subscribe to:
 ```typescript
@@ -178,7 +178,7 @@ interface CostCheckpointEvent {
 }
 ```
 
-GSD extension could consume these events to surface per-milestone cost in `/gsd stats` and flag milestones that are disproportionately expensive — enabling budget-aware planning.
+SF extension could consume these events to surface per-milestone cost in `/gsd stats` and flag milestones that are disproportionately expensive — enabling budget-aware planning.
 
 ---
 

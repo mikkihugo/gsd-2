@@ -1,4 +1,4 @@
-// GSD2 — Extension registration: wires all GSD tools, commands, and hooks into pi
+// GSD2 — Extension registration: wires all SF tools, commands, and hooks into pi
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
@@ -66,7 +66,7 @@ export function registerGsdExtension(pi: ExtensionAPI): void {
   installEpipeGuard();
 
   pi.registerCommand("kill", {
-    description: "Exit GSD immediately (no cleanup)",
+    description: "Exit SF immediately (no cleanup)",
     handler: async (_args: string, _ctx: ExtensionCommandContext) => {
       process.exit(0);
     },

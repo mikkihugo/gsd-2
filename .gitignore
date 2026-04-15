@@ -12,7 +12,7 @@ src/**/*.d.ts.map
 # ── Repowise index (local machine-generated cache) ──
 .repowise/
 
-# ── GSD project state (development-only, lives in worktree branches) ──
+# ── SF project state (development-only, lives in worktree branches) ──
 package-lock.json
 .claude/
 RELEASE-GUIDE.md
@@ -55,7 +55,7 @@ packages/*/node_modules/
 # ── Scratch/WIP files ──
 preflight-script.ts
 
-# ── GSD baseline (auto-generated) ──
+# ── SF baseline (auto-generated) ──
 dist/
 !/pkg/dist/modes/
 !/pkg/dist/core/export-html/
@@ -70,15 +70,15 @@ TODOS.md
 docs/coherence-audit/
 .plans/
 
-# ── GSD project state (per-worktree, never committed) ──
+# ── SF project state (per-worktree, never committed) ──
 .gsd/
 
 # ── Stale lock files (npm is canonical) ──
 pnpm-lock.yaml
 bun.lock
 
-# ── GSD baseline (auto-generated) ──
+# ── SF baseline (auto-generated) ──
 .gsd
 
-# ── GSD baseline (auto-generated) ──
+# ── SF baseline (auto-generated) ──
 .gsd-id

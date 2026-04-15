@@ -6,7 +6,7 @@
  * All business logic lives in the pipeline modules (S01–S03).
  *
  * After a successful write, offers an agent-driven review that audits the
- * output for GSD-2 standards compliance.
+ * output for SF standards compliance.
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -98,7 +98,7 @@ export async function handleMigrate(
   if (!existsSync(sourcePath)) {
     ctx.ui.notify(
       `Directory not found: ${sourcePath}\n\n` +
-      'Migration converts a .planning/ directory (from older GSD versions) into .gsd/ format.\n' +
+      'Migration converts a .planning/ directory (from older SF versions) into .gsd/ format.\n' +
       'If you are starting a new project, use /gsd:new-project instead.\n' +
       'If migrating, ensure the path contains a .planning/ directory.',
       "error",
@@ -193,7 +193,7 @@ export async function handleMigrate(
     summary: [
       `${result.paths.length} files written to .gsd/`,
       "",
-      "The agent can now review the migrated output against GSD-2 standards —",
+      "The agent can now review the migrated output against SF standards —",
       "checking structure, content quality, deriveState() round-trip, and",
       "requirement statuses. It will fix minor issues in-place.",
     ],

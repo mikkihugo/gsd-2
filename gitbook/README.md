@@ -1,15 +1,15 @@
-# What is GSD?
+# What is SF?
 
-GSD is an AI-powered development agent that turns project ideas into working software. Describe what you want to build, and GSD researches, plans, codes, tests, and commits — with clean git history and full cost tracking.
+SF is an AI-powered development agent that turns project ideas into working software. Describe what you want to build, and SF researches, plans, codes, tests, and commits — with clean git history and full cost tracking.
 
 ## How It Works
 
-GSD breaks your project into manageable pieces and works through them systematically:
+SF breaks your project into manageable pieces and works through them systematically:
 
 ```
 You describe your project
     ↓
-GSD creates a milestone with slices (features)
+SF creates a milestone with slices (features)
     ↓
 Each slice is decomposed into tasks
     ↓
@@ -18,7 +18,7 @@ Tasks are executed one at a time in fresh AI sessions
 Code is committed, verified, and the next task begins
 ```
 
-You can stay hands-on with **step mode** (reviewing each step) or let GSD run autonomously with **auto mode** while you grab coffee.
+You can stay hands-on with **step mode** (reviewing each step) or let SF run autonomously with **auto mode** while you grab coffee.
 
 ## Key Features
 
@@ -29,7 +29,7 @@ You can stay hands-on with **step mode** (reviewing each step) or let GSD run au
 - **Crash recovery** — Sessions resume automatically after interruptions
 - **Skills system** — Domain-specific instruction sets for frameworks, languages, and tools
 - **Parallel milestones** — Run multiple milestones simultaneously in isolated worktrees
-- **Remote questions** — Get Discord, Slack, or Telegram notifications when GSD needs input
+- **Remote questions** — Get Discord, Slack, or Telegram notifications when SF needs input
 - **Web interface** — Browser-based dashboard with real-time progress
 - **VS Code extension** — Chat participant, sidebar dashboard, and full command palette
 - **Headless mode** — Run in CI pipelines, cron jobs, and scripted automation
@@ -38,7 +38,7 @@ You can stay hands-on with **step mode** (reviewing each step) or let GSD run au
 
 ```bash
 # Install
-npm install -g gsd-pi
+npm install -g sf-run
 
 # Launch
 gsd

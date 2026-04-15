@@ -1,6 +1,6 @@
 # recover-gsd-1668.ps1 — Recovery script for issue #1668 (Windows)
 #
-# GSD v2.39.x deleted the milestone branch and worktree directory when a
+# SF v2.39.x deleted the milestone branch and worktree directory when a
 # merge failed due to the repo using `master` as its default branch (not
 # `main`). The commits were never merged — they are orphaned in the git
 # object store and can be recovered via git reflog or git fsck.
@@ -8,7 +8,7 @@
 # This script:
 #   1. Searches git reflog for the deleted milestone branch (fastest path)
 #   2. Falls back to git fsck --unreachable to find orphaned commits
-#   3. Ranks candidates by recency and GSD commit message patterns
+#   3. Ranks candidates by recency and SF commit message patterns
 #   4. Creates a recovery branch at the identified commit
 #   5. Reports what was found and how to complete the merge manually
 #
@@ -16,14 +16,14 @@
 #   powershell -ExecutionPolicy Bypass -File scripts\recover-gsd-1668.ps1 [-MilestoneId <ID>] [-DryRun] [-Auto]
 #
 # Options:
-#   -MilestoneId <ID>   GSD milestone ID (e.g. M001-g2nalq).
+#   -MilestoneId <ID>   SF milestone ID (e.g. M001-g2nalq).
 #   -DryRun             Show what would be done without making any changes.
 #   -Auto               Pick best candidate automatically (no prompts).
 #
 # Requirements: git >= 2.23, PowerShell >= 5.1, Git for Windows
 #
-# Affected versions: GSD 2.39.x
-# Fixed in: GSD 2.40.1 (PR #1669)
+# Affected versions: SF.39.x
+# Fixed in: SF.40.1 (PR #1669)
 
 [CmdletBinding()]
 param(
@@ -188,7 +188,7 @@ if (-not $reflogFoundSha) {
         $score = 0
         if ($MilestoneId -and ($commitMsg + $commitBody) -match [regex]::Escape($MilestoneId)) { $score += 100 }
         if ($commitMsg -match '^feat\([A-Z][0-9]+') { $score += 50 }
-        if (($commitMsg + $commitBody) -match 'milestone/|complete-milestone|GSD|slice') { $score += 20 }
+        if (($commitMsg + $commitBody) -match 'milestone/|complete-milestone|SF|slice') { $score += 20 }
 
         $weekAgo = (Get-Date).AddDays(-7).ToUnixTimeSeconds()
         if ($commitDate -gt $weekAgo) { $score += 10 }
@@ -212,7 +212,7 @@ if (-not $reflogFoundSha) {
 
     $sortedCandidates = $candidates | Sort-Object -Property Score -Descending | Select-Object -First 10
 
-    Info "Top candidates (scored by recency and GSD message patterns):"
+    Info "Top candidates (scored by recency and SF message patterns):"
     Write-Host ""
     $num = 1
     foreach ($c in $sortedCandidates) {
@@ -334,6 +334,6 @@ Write-Host ""
 Write-Host "  4. Clean up after verifying:"
 Write-Host "     git branch -D $recoveryBranch"
 Write-Host ""
-Write-Host "Note: update GSD to v2.40.1+ to prevent this from recurring." -ForegroundColor DarkGray
+Write-Host "Note: update SF to v2.40.1+ to prevent this from recurring." -ForegroundColor DarkGray
 Write-Host "      PR: https://github.com/singularity-forge/sf-run/pull/1669" -ForegroundColor DarkGray
 Write-Host ""

@@ -1,4 +1,4 @@
-// GSD Provider Fallback Resolver Tests
+// SF Provider Fallback Resolver Tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, it, beforeEach, mock } from "node:test";

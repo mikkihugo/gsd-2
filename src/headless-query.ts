@@ -25,7 +25,7 @@ const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, 
 // Resolve extensions from the synced agent directory so headless-query
 // loads the same extension copy as interactive/auto modes (#3471).
 // Falls back to bundled source for source-tree dev workflows.
-const agentExtensionsDir = join(process.env.GSD_AGENT_DIR || join(homedir(), '.gsd', 'agent'), 'extensions', 'gsd')
+const agentExtensionsDir = join(process.env.SF_AGENT_DIR || join(homedir(), '.gsd', 'agent'), 'extensions', 'gsd')
 const { existsSync } = await import('node:fs')
 const useAgentDir = existsSync(join(agentExtensionsDir, 'state.ts'))
 const gsdExtensionPath = (...segments: string[]) =>

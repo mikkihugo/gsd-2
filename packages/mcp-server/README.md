@@ -1,12 +1,12 @@
 # @gsd-build/mcp-server
 
-MCP server exposing GSD orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
+MCP server exposing SF orchestration tools for Claude Code, Cursor, and other MCP-compatible clients.
 
-Start GSD auto-mode sessions, poll progress, resolve blockers, and retrieve results — all through the [Model Context Protocol](https://modelcontextprotocol.io/).
+Start SF auto-mode sessions, poll progress, resolve blockers, and retrieve results — all through the [Model Context Protocol](https://modelcontextprotocol.io/).
 
 This package now exposes two tool surfaces:
 
-- session/read tools for starting and inspecting GSD sessions
+- session/read tools for starting and inspecting SF sessions
 - MCP-native interactive tools for structured user input
 - headless-safe workflow tools for planning, completion, validation, reassessment, metadata persistence, and journal reads
 
@@ -36,7 +36,7 @@ Add to your project's `.mcp.json`:
       "command": "npx",
       "args": ["gsd-mcp-server"],
       "env": {
-        "GSD_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/gsd"
       }
     }
   }
@@ -66,7 +66,7 @@ Add to `.cursor/mcp.json`:
       "command": "npx",
       "args": ["gsd-mcp-server"],
       "env": {
-        "GSD_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/gsd"
       }
     }
   }
@@ -109,18 +109,18 @@ The workflow MCP surface includes:
 - `gsd_milestone_status`
 - `gsd_journal_query`
 
-These tools use the same GSD workflow handlers as the native in-process tool path wherever a shared handler exists.
+These tools use the same SF workflow handlers as the native in-process tool path wherever a shared handler exists.
 
 ### Interactive tools
 
-The packaged server now exposes `ask_user_questions` through MCP form elicitation. This keeps the existing GSD answer payload shape while allowing Claude Code CLI and other elicitation-capable clients to surface structured user choices.
+The packaged server now exposes `ask_user_questions` through MCP form elicitation. This keeps the existing SF answer payload shape while allowing Claude Code CLI and other elicitation-capable clients to surface structured user choices.
 
 `secure_env_collect` is still not exposed by this package. That path needs MCP URL elicitation or an equivalent secure bridge because secrets should not flow through form elicitation.
 
 Current support boundary:
 
-- when running inside the GSD monorepo checkout, the MCP server auto-discovers the shared workflow executor module
-- outside the monorepo, set `GSD_WORKFLOW_EXECUTORS_MODULE` to an importable `workflow-tool-executors` module path if you want the mutation tools enabled
+- when running inside the SF monorepo checkout, the MCP server auto-discovers the shared workflow executor module
+- outside the monorepo, set `SF_WORKFLOW_EXECUTORS_MODULE` to an importable `workflow-tool-executors` module path if you want the mutation tools enabled
 - `ask_user_questions` requires an MCP client that supports form elicitation
 - session/read tools do not depend on this bridge
 
@@ -128,7 +128,7 @@ If the executor bridge cannot be loaded, workflow mutation calls will fail with 
 
 ### `gsd_execute`
 
-Start a GSD auto-mode session for a project directory.
+Start a SF auto-mode session for a project directory.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -141,7 +141,7 @@ Start a GSD auto-mode session for a project directory.
 
 ### `gsd_status`
 
-Poll the current status of a running GSD session.
+Poll the current status of a running SF session.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -195,7 +195,7 @@ Cancel a running session. Aborts the current operation and stops the agent proce
 
 ### `gsd_query`
 
-Query GSD project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
+Query SF project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
@@ -231,8 +231,8 @@ Resolve a pending blocker in a session by sending a response to the blocked UI r
 
 | Variable | Description |
 |----------|-------------|
-| `GSD_CLI_PATH` | Absolute path to the GSD CLI binary. If not set, the server resolves `gsd` via `which`. |
-| `GSD_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared GSD workflow executor module used by workflow mutation tools. |
+| `SF_CLI_PATH` | Absolute path to the SF CLI binary. If not set, the server resolves `gsd` via `which`. |
+| `SF_WORKFLOW_EXECUTORS_MODULE` | Optional absolute path or `file:` URL for the shared SF workflow executor module used by workflow mutation tools. |
 
 The server also hydrates supported model-provider and tool credentials from `~/.gsd/agent/auth.json` on startup. Keys saved through `/gsd config` or `/gsd keys` become available to the MCP server process automatically, and any explicitly-set environment variable still wins.
 
@@ -248,14 +248,14 @@ The server also hydrates supported model-provider and tool credentials from `~/.
                                    │  @gsd-build/rpc-client │
                                    │       │          │
                                    │       ▼          │
-                                   │  GSD CLI (child  │
+                                   │  SF CLI (child  │
                                    │  process via RPC)│
                                    └──────────────────┘
 ```
 
 - **@gsd-build/mcp-server** — MCP protocol adapter. Translates MCP tool calls into SessionManager operations.
 - **SessionManager** — Manages RpcClient lifecycle. One session per project directory. Tracks events in a ring buffer (last 50), detects blockers, accumulates cost.
-- **@gsd-build/rpc-client** — Low-level RPC client that spawns and communicates with the GSD CLI process via JSON-RPC over stdio.
+- **@gsd-build/rpc-client** — Low-level RPC client that spawns and communicates with the SF CLI process via JSON-RPC over stdio.
 
 ## License
 

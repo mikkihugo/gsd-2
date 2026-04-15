@@ -8,8 +8,8 @@ import { resolveTypeStrippingFlag, resolveSubprocessModule, buildSubprocessPrefi
 import type { UndoInfo, UndoResult } from "../../web/lib/remaining-command-types.ts"
 
 const UNDO_MAX_BUFFER = 2 * 1024 * 1024
-const UNDO_MODULE_ENV = "GSD_UNDO_MODULE"
-const PATHS_MODULE_ENV = "GSD_PATHS_MODULE"
+const UNDO_MODULE_ENV = "SF_UNDO_MODULE"
+const PATHS_MODULE_ENV = "SF_PATHS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
   return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
@@ -142,7 +142,7 @@ export async function executeUndo(projectCwdOverride?: string): Promise<UndoResu
     'const { join } = await import("node:path");',
     `const undoMod = await import(pathToFileURL(process.env.${UNDO_MODULE_ENV}).href);`,
     `const pathsMod = await import(pathToFileURL(process.env.${PATHS_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_UNDO_BASE;',
+    'const basePath = process.env.SF_UNDO_BASE;',
     'const gsdDir = pathsMod.gsdRoot(basePath);',
     'const completedPath = join(gsdDir, "completed-units.json");',
     'if (!existsSync(completedPath)) { process.stdout.write(JSON.stringify({ success: false, message: "No completed units to undo" })); process.exit(0); }',
@@ -192,7 +192,7 @@ export async function executeUndo(projectCwdOverride?: string): Promise<UndoResu
           ...process.env,
           [UNDO_MODULE_ENV]: undoModulePath,
           [PATHS_MODULE_ENV]: pathsModulePath,
-          GSD_UNDO_BASE: projectCwd,
+          SF_UNDO_BASE: projectCwd,
         },
         maxBuffer: UNDO_MAX_BUFFER,
         windowsHide: true,

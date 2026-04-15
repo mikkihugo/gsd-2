@@ -1,5 +1,5 @@
 /**
- * Minimal tool interface matching GSD's AgentTool shape.
+ * Minimal tool interface matching SF's AgentTool shape.
  * Avoids a direct dependency on @sf-run/pi-agent-core from this compiled module.
  */
 export interface McpToolDef {
@@ -33,12 +33,12 @@ const MCP_PKG = '@modelcontextprotocol/sdk'
 /**
  * Starts a native MCP (Model Context Protocol) server over stdin/stdout.
  *
- * This enables GSD's tools (read, write, edit, bash, grep, glob, ls, etc.)
+ * This enables SF's tools (read, write, edit, bash, grep, glob, ls, etc.)
  * to be used by external AI clients such as Claude Desktop, VS Code Copilot,
  * and any MCP-compatible host.
  *
  * The server registers all tools from the agent session's tool registry and
- * maps MCP tools/list and tools/call requests to GSD tool definitions and
+ * maps MCP tools/list and tools/call requests to SF tool definitions and
  * execution, respectively.
  *
  * All MCP SDK imports are dynamic to avoid subpath export resolution issues
@@ -69,7 +69,7 @@ export async function startMcpServer(options: {
     { capabilities: { tools: {} } },
   )
 
-  // tools/list — return every registered GSD tool with its JSON Schema parameters
+  // tools/list — return every registered SF tool with its JSON Schema parameters
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: tools.map((t: McpToolDef) => ({
       name: t.name,

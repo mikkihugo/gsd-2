@@ -19,7 +19,7 @@ Parallel mode is off by default. Enable it in preferences to use `/gsd parallel`
    ```
    /gsd parallel start
    ```
-   GSD scans milestones, checks dependencies and file overlap, shows an eligibility report, and spawns workers.
+   SF scans milestones, checks dependencies and file overlap, shows an eligibility report, and spawns workers.
 
 3. Monitor:
    ```
@@ -33,7 +33,7 @@ Parallel mode is off by default. Enable it in preferences to use `/gsd parallel`
 
 ## How It Works
 
-Each worker is a separate GSD process with complete isolation:
+Each worker is a separate SF process with complete isolation:
 
 | Resource | Isolation |
 |----------|----------|
@@ -47,7 +47,7 @@ Workers communicate with the coordinator through file-based IPC — heartbeat fi
 
 ## Eligibility
 
-Before starting, GSD checks which milestones can run concurrently:
+Before starting, SF checks which milestones can run concurrently:
 
 1. **Not complete** — finished milestones are skipped
 2. **Dependencies satisfied** — all `dependsOn` entries must be complete

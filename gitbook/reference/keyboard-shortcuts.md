@@ -22,7 +22,7 @@ If `Ctrl+Alt` shortcuts trigger the wrong action (e.g., `Ctrl+Alt+G` opens exter
 
 ## cmux Integration
 
-If you use cmux (terminal multiplexer), GSD can integrate with it:
+If you use cmux (terminal multiplexer), SF can integrate with it:
 
 | Command | Description |
 |---------|-------------|

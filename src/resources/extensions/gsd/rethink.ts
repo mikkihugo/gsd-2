@@ -1,5 +1,5 @@
 /**
- * GSD Rethink — Conversational project reorganization.
+ * SF Rethink — Conversational project reorganization.
  *
  * Collects a snapshot of all milestones (status, dependencies, slice progress,
  * queue order) and dispatches a prompt that turns Claude into a reorganization
@@ -36,7 +36,7 @@ export async function handleRethink(
   const basePath = process.cwd();
   const root = gsdRoot(basePath);
   if (!existsSync(root)) {
-    ctx.ui.notify("No GSD project found. Run /gsd init first.", "warning");
+    ctx.ui.notify("No SF project found. Run /gsd init first.", "warning");
     return;
   }
 

@@ -22,7 +22,7 @@ import { toPosixPath } from "../../shared/mod.js";
 import { markCmuxPromptShown, shouldPromptToEnableCmux } from "../../cmux/index.js";
 import { autoEnableCmuxPreferences } from "../commands-cmux.js";
 
-const gsdHome = process.env.GSD_HOME || join(homedir(), ".gsd");
+const gsdHome = process.env.SF_HOME || join(homedir(), ".gsd");
 
 /**
  * Bundled skill triggers — resolved dynamically at runtime instead of
@@ -57,9 +57,9 @@ function warnDeprecatedAgentInstructions(): void {
   for (const path of paths) {
     if (existsSync(path)) {
       console.warn(
-        `[GSD] DEPRECATED: ${path} is no longer loaded. ` +
+        `[SF] DEPRECATED: ${path} is no longer loaded. ` +
         `Migrate your instructions to AGENTS.md (or CLAUDE.md) in the same directory. ` +
-        `See https://github.com/gsd-build/GSD-2/issues/1492`,
+        `See https://github.com/gsd-build/SF/issues/1492`,
       );
     }
   }
@@ -97,7 +97,7 @@ export async function buildBeforeAgentStartResult(
     preferenceBlock = `\n\n${renderPreferencesForSystemPrompt(loadedPreferences.preferences, report.resolutions)}`;
     if (report.warnings.length > 0) {
       ctx.ui.notify(
-        `GSD skill preferences: ${report.warnings.length} unresolved skill${report.warnings.length === 1 ? "" : "s"}: ${report.warnings.join(", ")}`,
+        `SF skill preferences: ${report.warnings.length} unresolved skill${report.warnings.length === 1 ? "" : "s"}: ${report.warnings.join(", ")}`,
         "warning",
       );
     }
@@ -106,7 +106,7 @@ export async function buildBeforeAgentStartResult(
   const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(gsdHome, process.cwd());
   if (globalSizeKb > 4) {
     ctx.ui.notify(
-      `GSD: ~/.gsd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
+      `SF: ~/.gsd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
       "warning",
     );
   }
@@ -161,7 +161,7 @@ export async function buildBeforeAgentStartResult(
         const content = rawContent.length > MAX_CODEBASE_CHARS
           ? rawContent.slice(0, MAX_CODEBASE_CHARS) + "\n\n*(truncated — see .gsd/CODEBASE.md for full map)*"
           : rawContent;
-        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when GSD detects tracked file changes; use /gsd codebase stats for status)]\n\n${content}`;
+        codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when SF detects tracked file changes; use /gsd codebase stats for status)]\n\n${content}`;
       }
     } catch (e) {
       logWarning("bootstrap", `CODEBASE file read failed: ${(e as Error).message}`);
@@ -182,7 +182,7 @@ export async function buildBeforeAgentStartResult(
     ? `\n\n## Subagent Model\n\nWhen spawning subagents via the \`subagent\` tool, always pass \`model: "${subagentModelConfig.primary}"\` in the tool call parameters. Never omit this — always specify it explicitly.`
     : "";
 
-  const fullSystem = `${event.systemPrompt}\n\n[SYSTEM CONTEXT — GSD]\n\n${systemContent}${preferenceBlock}${knowledgeBlock}${codebaseBlock}${memoryBlock}${newSkillsBlock}${worktreeBlock}${subagentModelBlock}`;
+  const fullSystem = `${event.systemPrompt}\n\n[SYSTEM CONTEXT — SF]\n\n${systemContent}${preferenceBlock}${knowledgeBlock}${codebaseBlock}${memoryBlock}${newSkillsBlock}${worktreeBlock}${subagentModelBlock}`;
 
   stopContextTimer({
     systemPromptSize: fullSystem.length,
@@ -259,13 +259,13 @@ function buildWorktreeContextBlock(): string {
       `IMPORTANT: Ignore the "Current working directory" shown earlier in this prompt.`,
       `The actual current working directory is: ${toPosixPath(process.cwd())}`,
       "",
-      `You are working inside a GSD worktree.`,
+      `You are working inside a SF worktree.`,
       `- Worktree name: ${worktreeName}`,
       `- Worktree path (this is the real cwd): ${toPosixPath(process.cwd())}`,
       `- Main project: ${toPosixPath(worktreeMainCwd)}`,
       `- Branch: worktree/${worktreeName}`,
       "",
-      "All file operations, bash commands, and GSD state resolve against the worktree path above.",
+      "All file operations, bash commands, and SF state resolve against the worktree path above.",
       "Use /worktree merge to merge changes back. Use /worktree return to switch back to the main tree.",
     ].join("\n");
   }
@@ -278,13 +278,13 @@ function buildWorktreeContextBlock(): string {
       `IMPORTANT: Ignore the "Current working directory" shown earlier in this prompt.`,
       `The actual current working directory is: ${toPosixPath(process.cwd())}`,
       "",
-      "You are working inside a GSD auto-worktree.",
+      "You are working inside a SF auto-worktree.",
       `- Milestone worktree: ${autoWorktree.worktreeName}`,
       `- Worktree path (this is the real cwd): ${toPosixPath(process.cwd())}`,
       `- Main project: ${toPosixPath(autoWorktree.originalBase)}`,
       `- Branch: ${autoWorktree.branch}`,
       "",
-      "All file operations, bash commands, and GSD state resolve against the worktree path above.",
+      "All file operations, bash commands, and SF state resolve against the worktree path above.",
       "Write every .gsd artifact in the worktree path above, never in the main project tree.",
     ].join("\n");
   }
@@ -370,7 +370,7 @@ async function buildTaskExecutionContextInjection(
   const overridesSection = formatOverridesSection(activeOverrides);
 
   return [
-    "[GSD Guided Execute Context]",
+    "[SF Guided Execute Context]",
     "Use this injected context as startup context for guided task execution. Treat the inlined task plan as the authoritative local execution contract. Use source artifacts to verify details and run checks.",
     overridesSection, "",
     "",

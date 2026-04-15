@@ -1,7 +1,7 @@
 /**
  * Worktree Integration Tests
  *
- * Tests the full lifecycle of GSD operations inside a worktree:
+ * Tests the full lifecycle of SF operations inside a worktree:
  * - Branch namespacing (gsd/<wt>/<M>/<S> instead of gsd/<M>/<S>)
  * - getMainBranch returns worktree/<name> inside a worktree
  * - Parallel worktrees don't conflict on branch names

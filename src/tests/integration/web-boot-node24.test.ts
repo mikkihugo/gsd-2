@@ -25,7 +25,7 @@ test(
   "resolveTypeStrippingFlag returns --experimental-transform-types for paths under node_modules/ on Node >= 22.7",
   { skip: !isNode22_7OrNewer },
   () => {
-    const flag = resolveTypeStrippingFlag("/usr/lib/node_modules/gsd-pi")
+    const flag = resolveTypeStrippingFlag("/usr/lib/node_modules/sf-run")
     assert.equal(flag, "--experimental-transform-types")
   },
 )
@@ -34,7 +34,7 @@ test(
   "resolveTypeStrippingFlag returns --experimental-strip-types for paths under node_modules/ on Node < 22.7",
   { skip: isNode22_7OrNewer },
   () => {
-    const flag = resolveTypeStrippingFlag("/usr/lib/node_modules/gsd-pi")
+    const flag = resolveTypeStrippingFlag("/usr/lib/node_modules/sf-run")
     // On older Node, falls back to strip-types since transform-types isn't available
     assert.equal(flag, "--experimental-strip-types")
   },
@@ -44,7 +44,7 @@ test(
   "resolveTypeStrippingFlag handles Windows-style paths under node_modules on Node >= 22.7",
   { skip: !isNode22_7OrNewer },
   () => {
-    const flag = resolveTypeStrippingFlag("C:\\Users\\dev\\AppData\\node_modules\\gsd-pi")
+    const flag = resolveTypeStrippingFlag("C:\\Users\\dev\\AppData\\node_modules\\sf-run")
     assert.equal(flag, "--experimental-transform-types")
   },
 )
@@ -53,7 +53,7 @@ test(
   "resolveTypeStrippingFlag handles Windows-style paths under node_modules on Node < 22.7",
   { skip: isNode22_7OrNewer },
   () => {
-    const flag = resolveTypeStrippingFlag("C:\\Users\\dev\\AppData\\node_modules\\gsd-pi")
+    const flag = resolveTypeStrippingFlag("C:\\Users\\dev\\AppData\\node_modules\\sf-run")
     assert.equal(flag, "--experimental-strip-types")
   },
 )

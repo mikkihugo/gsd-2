@@ -30,7 +30,7 @@ describe("migrate-external worktree guard (#2970)", () => {
   before(() => {
     base = realpathSync(mkdtempSync(join(tmpdir(), "gsd-migrate-wt-")));
     stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-")));
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.SF_STATE_DIR = stateDir;
 
     // Create a git repo with a remote
     run("git init -b main", base);
@@ -52,7 +52,7 @@ describe("migrate-external worktree guard (#2970)", () => {
   });
 
   after(() => {
-    delete process.env.GSD_STATE_DIR;
+    delete process.env.SF_STATE_DIR;
     // Remove worktree before cleaning up
     try { run(`git worktree remove --force ${worktreePath}`, base); } catch { /* ok */ }
     rmSync(base, { recursive: true, force: true });

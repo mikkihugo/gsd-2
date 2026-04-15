@@ -1,6 +1,6 @@
 # Notifications
 
-GSD sends desktop notifications during auto mode to keep you informed without watching the terminal.
+SF sends desktop notifications during auto mode to keep you informed without watching the terminal.
 
 ## Configuration
 
@@ -16,7 +16,7 @@ notifications:
 
 ## macOS Setup
 
-GSD uses `terminal-notifier` when available, falling back to `osascript`.
+SF uses `terminal-notifier` when available, falling back to `osascript`.
 
 **Recommended:** Install `terminal-notifier` for reliable delivery:
 
@@ -32,7 +32,7 @@ brew install terminal-notifier
 2. Install `terminal-notifier` (recommended)
 3. Test with:
    ```bash
-   terminal-notifier -title "GSD" -message "working!" -sound Glass
+   terminal-notifier -title "SF" -message "working!" -sound Glass
    ```
 
 If your terminal app doesn't appear in Notification settings, it may need to send at least one notification first to register. See [Troubleshooting](../reference/troubleshooting.md) for more details.

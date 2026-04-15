@@ -1,4 +1,4 @@
-// Tests for GSD visualizer data loader.
+// Tests for SF visualizer data loader.
 // Verifies the VisualizerData interface shape and source-file contracts.
 
 import { readFileSync } from "node:fs";

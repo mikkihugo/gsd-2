@@ -13,9 +13,9 @@ Anthropic's current public guidance draws a hard line:
 For GSD2, the safe path is:
 
 1. Treat local Claude Code as an external authenticated runtime.
-2. Never ask GSD users to sign into Claude subscriptions through GSD-managed Anthropic OAuth.
-3. Never exchange Claude.ai subscription OAuth into a bearer token and call Anthropic APIs as if GSD were Claude Code.
-4. If GSD needs direct Anthropic API access, require a Claude Console API key, Bedrock, Vertex, or another explicitly supported provider path.
+2. Never ask SF users to sign into Claude subscriptions through SF-managed Anthropic OAuth.
+3. Never exchange Claude.ai subscription OAuth into a bearer token and call Anthropic APIs as if SF were Claude Code.
+4. If SF needs direct Anthropic API access, require a Claude Console API key, Bedrock, Vertex, or another explicitly supported provider path.
 
 ## What Anthropic Explicitly Allows
 
@@ -67,9 +67,9 @@ Anthropic's consumer terms add two more constraints:
 
 Implication for GSD2:
 
-- A GSD-managed Anthropic OAuth flow for subscription accounts is high risk.
-- Reusing user Claude subscription credentials inside GSD's own API client is high risk.
-- Any flow that makes Anthropic believe requests come from Claude Code when they actually come from GSD infrastructure is out of bounds.
+- A SF-managed Anthropic OAuth flow for subscription accounts is high risk.
+- Reusing user Claude subscription credentials inside SF's own API client is high risk.
+- Any flow that makes Anthropic believe requests come from Claude Code when they actually come from SF infrastructure is out of bounds.
 
 ## Current GSD2 Findings
 
@@ -84,7 +84,7 @@ Implication for GSD2:
 - `src/cli.ts`
   Migrates users from `anthropic` to `claude-code` when the local CLI is available.
 
-These are directionally correct because GSD is using the user's own local Claude Code installation as the authenticated Anthropic surface.
+These are directionally correct because SF is using the user's own local Claude Code installation as the authenticated Anthropic surface.
 
 ### Medium/high-risk pieces — RESOLVED
 
@@ -106,7 +106,7 @@ Adopt this as the repo rule:
   - other Anthropic-documented native flows
 - GSD2 must not implement its own Anthropic subscription OAuth flow for end users.
 - GSD2 must not persist Anthropic subscription OAuth tokens for later API use.
-- GSD2 must not send Anthropic API traffic using subscription OAuth tokens obtained by GSD.
+- GSD2 must not send Anthropic API traffic using subscription OAuth tokens obtained by SF.
 - GSD2 may support Anthropic direct access only via:
   - `ANTHROPIC_API_KEY`
   - Claude Console API keys stored in auth storage
@@ -122,8 +122,8 @@ Adopt this as the repo rule:
 2. Change web onboarding so Anthropic is API-key only.
 3. Keep `claude-code` as the recommended path when `claude auth status` succeeds.
 4. Add explicit UI copy:
-   - "Claude subscription users: sign into the local Claude Code app/CLI, not GSD."
-5. Block migrations or code paths that convert Anthropic OAuth credentials into API auth for GSD-managed requests.
+   - "Claude subscription users: sign into the local Claude Code app/CLI, not SF."
+5. Block migrations or code paths that convert Anthropic OAuth credentials into API auth for SF-managed requests.
 
 This is the fastest path to align the repo with Anthropic's published guidance.
 
@@ -159,10 +159,10 @@ This is the best long-term UX because it separates:
 
 If a proposed GSD2 feature needs Anthropic access, ask one question:
 
-"Is GSD calling Anthropic as GSD, or is GSD delegating to the user's already-authenticated local Claude Code runtime?"
+"Is SF calling Anthropic as SF, or is SF delegating to the user's already-authenticated local Claude Code runtime?"
 
-- If GSD is calling Anthropic as GSD: require API key or supported cloud auth.
-- If GSD is delegating to local Claude Code: acceptable, as long as GSD does not intercept, mint, or replay subscription credentials itself.
+- If SF is calling Anthropic as SF: require API key or supported cloud auth.
+- If SF is delegating to local Claude Code: acceptable, as long as SF does not intercept, mint, or replay subscription credentials itself.
 
 ## Sources Reviewed
 

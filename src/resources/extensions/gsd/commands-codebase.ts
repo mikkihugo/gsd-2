@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd codebase
+ * SF Command — /gsd codebase
  *
  * Generate and manage the codebase map (.gsd/CODEBASE.md).
  * Subcommands: generate, update, stats, help
@@ -24,7 +24,7 @@ const USAGE =
   "  stats                                              — Show file count, coverage, and generation time\n" +
   "  help                                               — Show this help\n\n" +
   "With no subcommand, shows stats if a map exists or help if not.\n" +
-  "GSD also refreshes CODEBASE.md automatically before prompt injection and after completed units when tracked files change.\n\n" +
+  "SF also refreshes CODEBASE.md automatically before prompt injection and after completed units when tracked files change.\n\n" +
   "Configure defaults via preferences.md:\n" +
   "  codebase:\n" +
   "    exclude_patterns: [\"docs/\", \"fixtures/\"]\n" +

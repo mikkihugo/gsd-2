@@ -7,7 +7,7 @@ import { resolveBridgeRuntimeConfig } from "./bridge-service.ts"
 import { resolveTypeStrippingFlag, resolveSubprocessModule, buildSubprocessPrefixArgs } from "./ts-subprocess-flags.ts"
 
 const VISUALIZER_MAX_BUFFER = 2 * 1024 * 1024
-const VISUALIZER_MODULE_ENV = "GSD_VISUALIZER_MODULE"
+const VISUALIZER_MODULE_ENV = "SF_VISUALIZER_MODULE"
 
 /**
  * Browser-safe version of VisualizerData where Map fields are converted to
@@ -67,7 +67,7 @@ export async function collectVisualizerData(projectCwdOverride?: string): Promis
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${VISUALIZER_MODULE_ENV}).href);`,
-    `const data = await mod.loadVisualizerData(process.env.GSD_VISUALIZER_BASE);`,
+    `const data = await mod.loadVisualizerData(process.env.SF_VISUALIZER_BASE);`,
     'const result = {',
     '  ...data,',
     '  criticalPath: {',
@@ -95,7 +95,7 @@ export async function collectVisualizerData(projectCwdOverride?: string): Promis
         env: {
           ...process.env,
           [VISUALIZER_MODULE_ENV]: visualizerModulePath,
-          GSD_VISUALIZER_BASE: projectCwd,
+          SF_VISUALIZER_BASE: projectCwd,
         },
         maxBuffer: VISUALIZER_MAX_BUFFER,
         windowsHide: true,

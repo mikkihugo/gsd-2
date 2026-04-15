@@ -8,7 +8,7 @@ import { resolveTypeStrippingFlag, resolveSubprocessModule, buildSubprocessPrefi
 import type { HooksData } from "../../web/lib/remaining-command-types.ts"
 
 const HOOKS_MAX_BUFFER = 512 * 1024
-const HOOKS_MODULE_ENV = "GSD_HOOKS_MODULE"
+const HOOKS_MODULE_ENV = "SF_HOOKS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
   return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")

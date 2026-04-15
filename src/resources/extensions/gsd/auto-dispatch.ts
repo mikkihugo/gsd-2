@@ -1,7 +1,7 @@
 /**
  * Auto-mode Dispatch Table — declarative phase → unit mapping.
  *
- * Each rule maps a GSD state to the unit type, unit ID, and prompt builder
+ * Each rule maps a SF state to the unit type, unit ID, and prompt builder
  * that should be dispatched. Rules are evaluated in order; the first match wins.
  *
  * This replaces the 130-line if-else chain in dispatchNextUnit with a
@@ -265,7 +265,7 @@ export const DISPATCH_RULES: DispatchRule[] = [
           uatContent ?? "",
           basePath,
         ),
-        pauseAfterDispatch: !process.env.GSD_HEADLESS && uatType !== "artifact-driven" && uatType !== "browser-executable" && uatType !== "runtime-executable",
+        pauseAfterDispatch: !process.env.SF_HEADLESS && uatType !== "artifact-driven" && uatType !== "browser-executable" && uatType !== "runtime-executable",
       };
     },
   },

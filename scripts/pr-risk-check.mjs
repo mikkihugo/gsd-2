@@ -32,7 +32,7 @@ const RISK_TIERS = {
     'Auto Engine', 'MCP Server/Client', 'Native/Rust Tools',
   ],
   high: [
-    'GSD Workflow', 'Tool System', 'AI Providers', 'Extension Registry',
+    'SF Workflow', 'Tool System', 'AI Providers', 'Extension Registry',
     'Session Management', 'Extensions', 'Modes', 'Event System',
     'Node.js Bindings', 'Compaction',
   ],
@@ -89,7 +89,7 @@ function parseMap(mapPath) {
     const rawPath = cols[0];
     const rawSystems = cols[1] || '';
 
-    // Skip bold section headers like **GSD Extension (Core Workflow Engine)**
+    // Skip bold section headers like **SF Extension (Core Workflow Engine)**
     if (rawPath.startsWith('**') || rawPath === '') continue;
 
     // Clean up path — remove parenthetical notes like "(50+ files)"

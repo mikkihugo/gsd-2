@@ -3,7 +3,7 @@ import type { AgentEvent, GsdClient } from "./gsd-client.js";
 
 /**
  * Registers the @gsd chat participant that forwards messages to the
- * GSD RPC client and streams tool execution events back to the chat.
+ * SF RPC client and streams tool execution events back to the chat.
  */
 export function registerChatParticipant(
 	context: vscode.ExtensionContext,
@@ -17,12 +17,12 @@ export function registerChatParticipant(
 	) => {
 		// Auto-start the agent if not connected
 		if (!client.isConnected) {
-			response.progress("Starting GSD agent...");
+			response.progress("Starting SF agent...");
 			try {
 				await client.start();
 			} catch (err) {
 				const msg = err instanceof Error ? err.message : String(err);
-				response.markdown(`**Failed to start GSD agent:** ${msg}\n\nMake sure \`gsd\` is installed (\`npm install -g gsd-pi\`) and try again.`);
+				response.markdown(`**Failed to start SF agent:** ${msg}\n\nMake sure \`gsd\` is installed (\`npm install -g sf-run\`) and try again.`);
 				return;
 			}
 		}
@@ -64,7 +64,7 @@ export function registerChatParticipant(
 		const eventHandler = (event: AgentEvent) => {
 			switch (event.type) {
 				case "agent_start":
-					response.progress("GSD is working...");
+					response.progress("SF is working...");
 					break;
 
 				case "tool_execution_start": {

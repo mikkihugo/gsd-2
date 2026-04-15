@@ -7,7 +7,7 @@
 | `/gsd` | Step mode：一次执行一个工作单元，并在每步之间暂停 |
 | `/gsd next` | 显式 Step mode（与 `/gsd` 相同） |
 | `/gsd auto` | 自动模式：research、plan、execute、commit，然后重复 |
-| `/gsd quick` | 在不经过完整 planning 开销的情况下，执行一个带 GSD 保证的 quick task（原子提交、状态跟踪） |
+| `/gsd quick` | 在不经过完整 planning 开销的情况下，执行一个带 SF 保证的 quick task（原子提交、状态跟踪） |
 | `/gsd stop` | 优雅地停止自动模式 |
 | `/gsd pause` | 暂停自动模式（保留状态，可用 `/gsd auto` 恢复） |
 | `/gsd steer` | 在执行过程中强制修改 plan 文档 |
@@ -19,8 +19,8 @@
 | `/gsd triage` | 手动触发待处理 captures 的 triage |
 | `/gsd dispatch` | 直接派发一个指定阶段（research、plan、execute、complete、reassess、uat、replan） |
 | `/gsd history` | 查看执行历史（支持 `--cost`、`--phase`、`--model` 过滤） |
-| `/gsd forensics` | 全访问 GSD 调试器：用于分析自动模式失败，支持结构化异常检测、单元追踪和 LLM 引导的根因分析 |
-| `/gsd cleanup` | 清理 GSD 状态文件和过期 worktrees |
+| `/gsd forensics` | 全访问 SF 调试器：用于分析自动模式失败，支持结构化异常检测、单元追踪和 LLM 引导的根因分析 |
+| `/gsd cleanup` | 清理 SF 状态文件和过期 worktrees |
 | `/gsd visualize` | 打开工作流可视化器（进度、依赖、指标、时间线） |
 | `/gsd export --html` | 为当前或已完成的 milestone 生成自包含 HTML 报告 |
 | `/gsd export --html --all` | 一次性为所有 milestones 生成回顾报告 |
@@ -31,7 +31,7 @@
 | `/gsd changelog` | 查看分类后的发行说明 |
 | `/gsd logs` | 浏览活动日志、调试日志和指标 |
 | `/gsd remote` | 控制远程自动模式 |
-| `/gsd help` | 查看所有 GSD 子命令的分类参考及说明 |
+| `/gsd help` | 查看所有 SF 子命令的分类参考及说明 |
 
 ## 配置与诊断
 
@@ -140,7 +140,7 @@
 |------|------|
 | `/clear` | 启动一个新会话（`/new` 的别名） |
 | `/exit` | 优雅退出，会在退出前保存会话状态 |
-| `/kill` | 立即终止 GSD 进程 |
+| `/kill` | 立即终止 SF 进程 |
 | `/model` | 切换当前 active model |
 | `/login` | 登录一个 LLM provider |
 | `/thinking` | 在会话中切换 thinking level |
@@ -230,7 +230,7 @@ echo "Build a CLI tool" | gsd headless new-milestone --context -
 
 ### `gsd headless query`
 
-它会返回单个 JSON 对象，包含完整项目快照，无需 LLM 会话，也无需 RPC 子进程，响应几乎即时（约 50ms）。这是 orchestration 工具和脚本检查 GSD 状态的推荐方式。
+它会返回单个 JSON 对象，包含完整项目快照，无需 LLM 会话，也无需 RPC 子进程，响应几乎即时（约 50ms）。这是 orchestration 工具和脚本检查 SF 状态的推荐方式。
 
 ```bash
 gsd headless query | jq '.state.phase'
@@ -271,14 +271,14 @@ gsd headless query | jq '.cost.total'
 <a id="mcp-server-mode"></a>
 ## MCP Server 模式
 
-`gsd --mode mcp` 会通过 stdin/stdout 将 GSD 作为一个 [Model Context Protocol](https://modelcontextprotocol.io) server 运行。这会把所有 GSD 工具（read、write、edit、bash 等）暴露给外部 AI 客户端，例如 Claude Desktop、VS Code Copilot，以及任何兼容 MCP 的宿主。
+`gsd --mode mcp` 会通过 stdin/stdout 将 SF 作为一个 [Model Context Protocol](https://modelcontextprotocol.io) server 运行。这会把所有 SF 工具（read、write、edit、bash 等）暴露给外部 AI 客户端，例如 Claude Desktop、VS Code Copilot，以及任何兼容 MCP 的宿主。
 
 ```bash
-# 以 MCP server 模式启动 GSD
+# 以 MCP server 模式启动 SF
 gsd --mode mcp
 ```
 
-服务会注册 agent 会话中的全部工具，并把 MCP 的 `tools/list` 与 `tools/call` 请求映射到 GSD 的工具定义上。连接会一直保持，直到底层 transport 关闭。
+服务会注册 agent 会话中的全部工具，并把 MCP 的 `tools/list` 与 `tools/call` 请求映射到 SF 的工具定义上。连接会一直保持，直到底层 transport 关闭。
 
 ## 会话内更新
 
@@ -288,7 +288,7 @@ gsd --mode mcp
 /gsd update
 # Current version: v2.36.0
 # Checking npm registry...
-# Updated to v2.37.0. Restart GSD to use the new version.
+# Updated to v2.37.0. Restart SF to use the new version.
 ```
 
 如果已经是最新版本，它会给出提示且不做任何操作。

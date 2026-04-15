@@ -14,7 +14,7 @@ import { formattedShortcutPair } from "../../shortcut-defs.js";
 
 export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
   const summaryLines = [
-    "GSD — Get Shit Done\n",
+    "SF — Singularity Forge\n",
     "QUICK START",
     "  /gsd start <tpl>   Start a workflow template",
     "  /gsd               Run next unit (same as /gsd next)",
@@ -47,7 +47,7 @@ export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
   ];
 
   const fullLines = [
-    "GSD — Get Shit Done\n",
+    "SF — Singularity Forge\n",
     "WORKFLOW",
     "  /gsd start <tpl>   Start a workflow template (bugfix, spike, feature, hotfix, etc.)",
     "  /gsd templates     List available workflow templates  [info <name>]",
@@ -104,7 +104,7 @@ export function showHelp(ctx: ExtensionCommandContext, args = ""): void {
     "  /gsd migrate        Migrate .planning/ (v1) to .gsd/ (v2) format",
     "  /gsd remote         Control remote auto-mode  [slack|discord|status|disconnect]",
     "  /gsd inspect        Show SQLite DB diagnostics (schema, row counts, recent entries)",
-    "  /gsd update         Update GSD to the latest version via npm",
+    "  /gsd update         Update SF to the latest version via npm",
   ];
   const full = ["full", "--full", "all"].includes(args.trim().toLowerCase());
   ctx.ui.notify((full ? fullLines : summaryLines).join("\n"), "info");
@@ -118,7 +118,7 @@ export async function handleStatus(ctx: ExtensionCommandContext): Promise<void> 
   const state = await deriveState(basePath);
 
   if (state.registry.length === 0) {
-    ctx.ui.notify("No GSD milestones found. Run /gsd to start.", "info");
+    ctx.ui.notify("No SF milestones found. Run /gsd to start.", "info");
     return;
   }
 
@@ -176,7 +176,7 @@ export async function handleSetup(args: string, ctx: ExtensionCommandContext): P
   const globalConfigured = hasGlobalSetup();
   const detection = detectProjectState(projectRoot());
 
-  const statusLines = ["GSD Setup Status\n"];
+  const statusLines = ["SF Setup Status\n"];
   statusLines.push(`  Global preferences: ${globalConfigured ? "configured" : "not set"}`);
   statusLines.push(`  Project state: ${detection.state}`);
   if (detection.projectSignals.primaryLanguage) {
@@ -337,7 +337,7 @@ async function handleModel(trimmedArgs: string, ctx: ExtensionCommandContext, pi
     return;
   }
 
-  // /gsd model is an explicit per-session pin for GSD dispatches.
+  // /gsd model is an explicit per-session pin for SF dispatches.
   // This is captured at auto bootstrap so it survives internal session
   // switches during /gsd auto and /gsd next runs.
   const sessionId = ctx.sessionManager?.getSessionId?.();
@@ -426,7 +426,7 @@ export async function handleCoreCommand(
 }
 
 export function formatTextStatus(state: GSDState): string {
-  const lines: string[] = ["GSD Status\n"];
+  const lines: string[] = ["SF Status\n"];
   lines.push(formatProgressLine(computeProgressScore()));
   lines.push("");
   lines.push(`Phase: ${state.phase}`);

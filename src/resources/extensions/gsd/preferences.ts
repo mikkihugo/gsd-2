@@ -1,5 +1,5 @@
 /**
- * GSD Preferences -- loading, merging, and rendering.
+ * SF Preferences -- loading, merging, and rendering.
  *
  * This module is the primary entry point for preference operations.
  * Type definitions live in ./preferences-types.js, validation in
@@ -99,7 +99,7 @@ export {
 // ─── Path Constants & Getters ───────────────────────────────────────────────
 
 function gsdHome(): string {
-  return process.env.GSD_HOME || join(homedir(), ".gsd");
+  return process.env.SF_HOME || join(homedir(), ".gsd");
 }
 
 function globalPreferencesPath(): string {
@@ -235,7 +235,7 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
   }
 
   // Fallback: heading+list format (e.g. "## Git\n- isolation: none") (#2036)
-  // GSD agents may write preferences files without frontmatter delimiters.
+  // SF agents may write preferences files without frontmatter delimiters.
   if (/^##\s+\w/m.test(content)) {
     return parseHeadingListFormat(content);
   }
@@ -244,7 +244,7 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
   if (content.trim().length > 0 && !_warnedUnrecognizedFormat) {
     _warnedUnrecognizedFormat = true;
     console.warn(
-      "[GSD] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
+      "[SF] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
       "Wrap your preferences in --- fences. See https://github.com/singularity-forge/sf-run/issues/2036",
     );
   }
@@ -517,7 +517,7 @@ function mergePreDispatchHooks(
 
 export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, resolutions?: Map<string, SkillResolution>): string {
   const validated = validatePreferences(preferences);
-  const lines: string[] = ["## GSD Skill Preferences"];
+  const lines: string[] = ["## SF Skill Preferences"];
 
   if (validated.errors.length > 0) {
     lines.push("- Validation: some preference values were ignored because they were invalid.");
@@ -529,7 +529,7 @@ export function renderPreferencesForSystemPrompt(preferences: GSDPreferences, re
   preferences = validated.preferences;
 
   lines.push(
-    "- Treat these as explicit skill-selection policy for GSD work.",
+    "- Treat these as explicit skill-selection policy for SF work.",
     "- If a listed skill exists and is relevant, load and follow it instead of treating it as a vague suggestion.",
     "- Current user instructions still override these defaults.",
   );
@@ -611,7 +611,7 @@ export function resolvePreDispatchHooks(): PreDispatchHookConfig[] {
  * Resolve the effective git isolation mode from preferences.
  * Returns "none" (default), "worktree", or "branch".
  *
- * Default is "none" so GSD works out of the box without preferences.md.
+ * Default is "none" so SF works out of the box without preferences.md.
  * Worktree isolation requires explicit opt-in because it depends on git
  * branch infrastructure that must be set up before use.
  */

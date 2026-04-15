@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Utilities
+ * SF Worktree Utilities
  *
  * Pure utility functions for worktree name detection, legacy branch name
  * parsing, and integration branch capture.
@@ -65,7 +65,7 @@ export function setActiveMilestoneId(basePath: string, milestoneId: string | nul
  * Called once when auto-mode starts — captures where slice branches should
  * merge back to. No-op if the same branch is already recorded. Updates the
  * record when the user starts from a different branch (#300). Always a no-op
- * if on a GSD slice branch.
+ * if on a SF slice branch.
  */
 export function captureIntegrationBranch(basePath: string, milestoneId: string): void {
   // In a worktree, the base branch is implicit (worktree/<name>).
@@ -103,7 +103,7 @@ function findWorktreeSegment(normalizedPath: string): { gsdIdx: number; afterWor
 
 /**
  * Detect the active worktree name from the current working directory.
- * Returns null if not inside a GSD worktree (.gsd/worktrees/<name>/).
+ * Returns null if not inside a SF worktree (.gsd/worktrees/<name>/).
  */
 export function detectWorktreeName(basePath: string): string | null {
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -119,7 +119,7 @@ export function detectWorktreeName(basePath: string): string | null {
  * If the path contains a worktrees segment, returns the portion before
  * `/.gsd/`. Otherwise returns the input unchanged.
  *
- * When the worker was spawned with GSD_PROJECT_ROOT set, use that directly —
+ * When the worker was spawned with SF_PROJECT_ROOT set, use that directly —
  * the coordinator already knows the real project root unambiguously.
  *
  * When `/.gsd/` in the resolved path is actually the user-level `~/.gsd/`
@@ -134,8 +134,8 @@ export function detectWorktreeName(basePath: string): string | null {
  */
 export function resolveProjectRoot(basePath: string): string {
   // Layer 1: If the coordinator passed the real project root, use it.
-  if (process.env.GSD_PROJECT_ROOT) {
-    return process.env.GSD_PROJECT_ROOT;
+  if (process.env.SF_PROJECT_ROOT) {
+    return process.env.SF_PROJECT_ROOT;
   }
 
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -153,12 +153,12 @@ export function resolveProjectRoot(basePath: string): string {
   // Layer 2: Guard against resolving to the user's home directory.
   // When .gsd is a symlink into ~/.gsd/projects/<hash>, the resolved path
   // contains /.gsd/ at the user-level boundary. Slicing there yields ~ — wrong.
-  const gsdHome = normalizePathForCompare(process.env.GSD_HOME || join(homedir(), ".gsd"));
+  const gsdHome = normalizePathForCompare(process.env.SF_HOME || join(homedir(), ".gsd"));
   const candidateGsdPath = normalizePathForCompare(join(candidate, ".gsd"));
 
   if (candidateGsdPath === gsdHome || candidateGsdPath.startsWith(gsdHome + "/")) {
     // The candidate is the home directory (or within it in a way that .gsd
-    // maps to the user-level GSD dir). Try to recover the real project root
+    // maps to the user-level SF dir). Try to recover the real project root
     // from the worktree's .git file.
     const realRoot = resolveProjectRootFromGitFile(basePath);
     if (realRoot) return realRoot;
@@ -270,7 +270,7 @@ export function parseSliceBranch(branchName: string): {
 // ─── Git-Mutation Functions (delegate to GitServiceImpl) ───────────────────
 
 /**
- * Get the "main" branch for GSD slice operations.
+ * Get the "main" branch for SF slice operations.
  *
  * In the main working tree: returns main/master (the repo's default branch).
  * In a worktree: returns worktree/<name> — the worktree's own base branch.

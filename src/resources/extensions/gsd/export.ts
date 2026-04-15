@@ -1,4 +1,4 @@
-// GSD Extension — Session/Milestone Export
+// SF Extension — Session/Milestone Export
 // Generate shareable reports of milestone work in JSON or markdown format.
 
 import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -76,7 +76,7 @@ export function writeExportFile(
     const slices = visualizerData?.bySlice ?? aggregateBySlice(units);
 
     const md = [
-      `# GSD Session Report — ${projectName}`,
+      `# SF Session Report — ${projectName}`,
       ``,
       `**Generated**: ${new Date().toISOString()}`,
       `**Units completed**: ${totals.units}`,
@@ -123,7 +123,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
       const { basename: bn } = await import("node:path");
       const data = await loadVisualizerData(basePath);
       const projName = basename(basePath);
-      const gsdVersion = process.env.GSD_VERSION ?? "0.0.0";
+      const gsdVersion = process.env.SF_VERSION ?? "0.0.0";
       const doneMilestones = data.milestones.filter(m => m.status === "complete").length;
 
       const htmlOpts = {
@@ -268,7 +268,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
     const slices = aggregateBySlice(units);
 
     const md = [
-      `# GSD Session Report — ${projectName}`,
+      `# SF Session Report — ${projectName}`,
       ``,
       `**Generated**: ${new Date().toISOString()}`,
       `**Units completed**: ${totals.units}`,

@@ -1,4 +1,4 @@
-// GSD Extension — Routing History (Adaptive Learning)
+// SF Extension — Routing History (Adaptive Learning)
 // Tracks success/failure per tier per unit-type pattern to improve
 // classification accuracy over time.
 

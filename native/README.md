@@ -1,6 +1,6 @@
-# GSD Native Engine
+# SF Native Engine
 
-Rust N-API addon providing high-performance native modules for GSD.
+Rust N-API addon providing high-performance native modules for SF.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ native/crates/
 └── ast/     (ast-grep structural search)
 ```
 
-Inspired by [Oh My Pi's pi-natives](https://github.com/can1357/oh-my-pi), adapted for GSD's Node.js runtime.
+Inspired by [Oh My Pi's pi-natives](https://github.com/can1357/oh-my-pi), adapted for SF's Node.js runtime.
 
 ## Prerequisites
 
@@ -105,7 +105,7 @@ const contentResult = searchContent(Buffer.from(fileContent), {
 
 ### gsd_parser
 
-GSD file parsing and frontmatter extraction. Reads `.gsd` files and extracts structured metadata from YAML frontmatter blocks.
+SF file parsing and frontmatter extraction. Reads `.gsd` files and extracts structured metadata from YAML frontmatter blocks.
 
 ### highlight
 
@@ -113,7 +113,7 @@ Syntect-based syntax highlighting. Tokenizes source code and produces highlighte
 
 ### html
 
-HTML-to-Markdown conversion. Transforms HTML content into clean Markdown, useful for importing web content into GSD notes and documents.
+HTML-to-Markdown conversion. Transforms HTML content into clean Markdown, useful for importing web content into SF notes and documents.
 
 ### image
 

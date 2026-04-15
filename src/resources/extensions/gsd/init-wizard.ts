@@ -1,5 +1,5 @@
 /**
- * GSD Init Wizard — Per-project onboarding.
+ * SF Init Wizard — Per-project onboarding.
  *
  * Guides users through project setup when entering a directory without .gsd/.
  * Detects project ecosystem, offers v1 migration, configures project preferences,
@@ -75,8 +75,8 @@ export async function showProjectInit(
   // ── Step 2: Git setup ──────────────────────────────────────────────────────
   if (!signals.isGitRepo) {
     const gitChoice = await showNextAction(ctx, {
-      title: "GSD — Project Setup",
-      summary: ["This folder is not a git repository. GSD uses git for version control and isolation."],
+      title: "SF — Project Setup",
+      summary: ["This folder is not a git repository. SF uses git for version control and isolation."],
       actions: [
         { id: "init_git", label: "Initialize git", description: "Create a git repo in this folder", recommended: true },
         { id: "skip_git", label: "Skip", description: "Continue without git (limited functionality)" },
@@ -97,7 +97,7 @@ export async function showProjectInit(
 
   // ── Step 3: Mode selection ─────────────────────────────────────────────────
   const modeChoice = await showNextAction(ctx, {
-    title: "GSD — Workflow Mode",
+    title: "SF — Workflow Mode",
     summary: ["How are you working on this project?"],
     actions: [
       {
@@ -129,12 +129,12 @@ export async function showProjectInit(
   if (signals.verificationCommands.length > 0) {
     const verifyLines = signals.verificationCommands.map((cmd, i) => `  ${i + 1}. ${cmd}`);
     const verifyChoice = await showNextAction(ctx, {
-      title: "GSD — Verification Commands",
+      title: "SF — Verification Commands",
       summary: [
         "Auto-detected verification commands:",
         ...verifyLines,
         "",
-        "GSD runs these after each code change to verify nothing is broken.",
+        "SF runs these after each code change to verify nothing is broken.",
       ],
       actions: [
         { id: "accept", label: "Use these commands", description: "Accept auto-detected commands", recommended: true },
@@ -153,7 +153,7 @@ export async function showProjectInit(
   gitSummary.push(`Main branch: ${prefs.mainBranch}`);
 
   const gitChoice = await showNextAction(ctx, {
-    title: "GSD — Git Settings",
+    title: "SF — Git Settings",
     summary: ["Default git settings for this project:", ...gitSummary],
     actions: [
       { id: "accept", label: "Accept defaults", description: "Use standard git settings", recommended: true },
@@ -170,9 +170,9 @@ export async function showProjectInit(
 
   // ── Step 6: Custom instructions ────────────────────────────────────────────
   const instructionChoice = await showNextAction(ctx, {
-    title: "GSD — Project Instructions",
+    title: "SF — Project Instructions",
     summary: [
-      "Any rules GSD should follow for this project?",
+      "Any rules SF should follow for this project?",
       "",
       "Examples:",
       '  - "Use TypeScript strict mode"',
@@ -206,7 +206,7 @@ export async function showProjectInit(
 
   // ── Step 7: Advanced (optional) ────────────────────────────────────────────
   const advancedChoice = await showNextAction(ctx, {
-    title: "GSD — Advanced Settings",
+    title: "SF — Advanced Settings",
     summary: [
       `Token profile: ${prefs.tokenProfile}`,
       `Skip research phase: ${prefs.skipResearch ? "yes" : "no"}`,
@@ -235,8 +235,8 @@ export async function showProjectInit(
   // ── Step 9: Bootstrap .gsd/ ────────────────────────────────────────────────
   bootstrapGsdDirectory(basePath, prefs, signals);
 
-  // Initialize SQLite database so GSD starts in full-capability mode (#3880).
-  // Without this, isDbAvailable() returns false and GSD enters degraded
+  // Initialize SQLite database so SF starts in full-capability mode (#3880).
+  // Without this, isDbAvailable() returns false and SF enters degraded
   // markdown-only mode until a tool handler happens to call ensureDbOpen().
   try {
     const { ensureDbOpen } = await import("./bootstrap/dynamic-tools.js");
@@ -279,7 +279,7 @@ export async function showProjectInit(
     prepareWorkflowMcpForProject(ctx, basePath);
   }
 
-  ctx.ui.notify("GSD initialized. Starting your first milestone...", "info");
+  ctx.ui.notify("SF initialized. Starting your first milestone...", "info");
 
   return { completed: true, bootstrapped: true };
 }
@@ -295,7 +295,7 @@ export async function offerMigration(
   v1: NonNullable<ProjectDetection["v1"]>,
 ): Promise<"migrate" | "fresh" | "cancel"> {
   const summary = [
-    "Found .planning/ directory (GSD v1 format)",
+    "Found .planning/ directory (SF v1 format)",
   ];
   if (v1.phaseCount > 0) {
     summary.push(`${v1.phaseCount} phase${v1.phaseCount > 1 ? "s" : ""} detected`);
@@ -305,12 +305,12 @@ export async function offerMigration(
   }
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Legacy Project Detected",
+    title: "SF — Legacy Project Detected",
     summary,
     actions: [
       {
         id: "migrate",
-        label: "Migrate to GSD v2",
+        label: "Migrate to SF v2",
         description: "Convert .planning/ to .gsd/ format",
         recommended: true,
       },
@@ -337,14 +337,14 @@ export async function handleReinit(
   ctx: ExtensionCommandContext,
   detection: ProjectDetection,
 ): Promise<void> {
-  const summary = ["GSD is already initialized in this project."];
+  const summary = ["SF is already initialized in this project."];
   if (detection.v2) {
     summary.push(`${detection.v2.milestoneCount} milestone(s) found`);
     summary.push(`Preferences: ${detection.v2.hasPreferences ? "configured" : "not set"}`);
   }
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Already Initialized",
+    title: "SF — Already Initialized",
     summary,
     actions: [
       {
@@ -406,7 +406,7 @@ async function customizeAdvancedPrefs(
   const profileChoice = await showNextAction(ctx, {
     title: "Token usage profile",
     summary: [
-      "Controls how much context GSD uses per task.",
+      "Controls how much context SF uses per task.",
       "Budget: cheaper, faster. Quality: thorough, more expensive.",
     ],
     actions: [
@@ -424,7 +424,7 @@ async function customizeAdvancedPrefs(
   const researchChoice = await showNextAction(ctx, {
     title: "Research phase",
     summary: [
-      "GSD can research the codebase before planning each milestone.",
+      "SF can research the codebase before planning each milestone.",
       "Small projects may not need this step.",
     ],
     actions: [
@@ -522,7 +522,7 @@ function buildPreferencesFile(prefs: ProjectPreferences): string {
 
   lines.push("---");
   lines.push("");
-  lines.push("# GSD Project Preferences");
+  lines.push("# SF Project Preferences");
   lines.push("");
   lines.push("Generated by `/gsd init`. Edit directly or use `/gsd prefs project` to modify.");
   lines.push("");
@@ -541,7 +541,7 @@ function buildContextSeed(signals: ProjectSignals): string | null {
 
   lines.push("# Project Context");
   lines.push("");
-  lines.push("Auto-detected by GSD init wizard. Edit or expand as needed.");
+  lines.push("Auto-detected by SF init wizard. Edit or expand as needed.");
   lines.push("");
 
   if (signals.primaryLanguage) {

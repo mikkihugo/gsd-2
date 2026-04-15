@@ -35,7 +35,7 @@ For local models (Ollama, LM Studio, vLLM), only `id` is required per model:
 
 The `apiKey` is required but Ollama ignores it, so any value works.
 
-Some OpenAI-compatible servers do not understand the `developer` role used for reasoning-capable models. For those providers, set `compat.supportsDeveloperRole` to `false` so GSD sends the system prompt as a `system` message instead. If the server also does not support `reasoning_effort`, set `compat.supportsReasoningEffort` to `false` too.
+Some OpenAI-compatible servers do not understand the `developer` role used for reasoning-capable models. For those providers, set `compat.supportsDeveloperRole` to `false` so SF sends the system prompt as a `system` message instead. If the server also does not support `reasoning_effort`, set `compat.supportsReasoningEffort` to `false` too.
 
 You can set `compat` at the provider level to apply to all models, or at the model level to override a specific model. This commonly applies to Ollama, vLLM, SGLang, and similar OpenAI-compatible servers.
 
@@ -153,10 +153,10 @@ If you use a credential tool not on the default list, override it in global sett
 
 This replaces the default list entirely — include any defaults you still want.
 
-Alternatively, set the `GSD_ALLOWED_COMMAND_PREFIXES` environment variable (comma-separated). The env var takes precedence over settings.json:
+Alternatively, set the `SF_ALLOWED_COMMAND_PREFIXES` environment variable (comma-separated). The env var takes precedence over settings.json:
 
 ```bash
-export GSD_ALLOWED_COMMAND_PREFIXES="pass,op,sops,doppler"
+export SF_ALLOWED_COMMAND_PREFIXES="pass,op,sops,doppler"
 ```
 
 > **Note:** This setting is global-only. Project-level settings.json (`<project>/.gsd/settings.json`) cannot override the command allowlist — this prevents a cloned repo from escalating command execution privileges.
@@ -294,7 +294,7 @@ For providers with partial OpenAI compatibility, use the `compat` field.
 | `supportsStore` | Provider supports `store` field |
 | `supportsDeveloperRole` | Use `developer` vs `system` role |
 | `supportsReasoningEffort` | Support for `reasoning_effort` parameter |
-| `reasoningEffortMap` | Map GSD thinking levels to provider-specific `reasoning_effort` values |
+| `reasoningEffortMap` | Map SF thinking levels to provider-specific `reasoning_effort` values |
 | `supportsUsageInStreaming` | Supports `stream_options: { include_usage: true }` (default: `true`) |
 | `maxTokensField` | Use `max_completion_tokens` or `max_tokens` |
 | `requiresToolResultName` | Include `name` on tool result messages |

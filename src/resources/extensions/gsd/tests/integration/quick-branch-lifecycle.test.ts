@@ -24,7 +24,7 @@ function run(command: string, cwd: string): string {
 function createTestRepo(): string {
   const repo = mkdtempSync(join(tmpdir(), "gsd-quick-lifecycle-"));
   run("git init -b main", repo);
-  run(`git config user.name "GSD Test"`, repo);
+  run(`git config user.name "SF Test"`, repo);
   run(`git config user.email "test@gsd.dev"`, repo);
   mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
   mkdirSync(join(repo, ".gsd", "milestones", "M001"), { recursive: true });

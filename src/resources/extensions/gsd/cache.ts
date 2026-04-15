@@ -1,6 +1,6 @@
-// GSD Extension — Cache Invalidation
+// SF Extension — Cache Invalidation
 //
-// Three module-scoped caches exist across the GSD extension:
+// Three module-scoped caches exist across the SF extension:
 //   1. State cache (state.ts)  — memoized deriveState() result
 //   2. Path cache  (paths.ts)  — directory listing results (readdirSync)
 //   3. Parse cache (files.ts)  — parsed markdown file results
@@ -15,7 +15,7 @@ import { clearParseCache } from './files.js';
 import { clearArtifacts } from './gsd-db.js';
 
 /**
- * Invalidate all GSD runtime caches in one call.
+ * Invalidate all SF runtime caches in one call.
  *
  * Call this after file writes, milestone transitions, merge reconciliation,
  * or any operation that changes .gsd/ contents on disk. Forgetting to clear

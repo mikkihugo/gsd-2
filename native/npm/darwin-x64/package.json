@@ -1,7 +1,7 @@
 {
   "name": "@singularity-forge/engine-darwin-x64",
   "version": "2.74.0",
-  "description": "GSD native engine binary for macOS Intel",
+  "description": "SF native engine binary for macOS Intel",
   "os": [
     "darwin"
   ],

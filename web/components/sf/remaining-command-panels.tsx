@@ -695,7 +695,7 @@ export function HooksPanel() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// 6. INSPECT PANEL — GSD database overview
+// 6. INSPECT PANEL — SF database overview
 // ═══════════════════════════════════════════════════════════════════════
 
 export function InspectPanel() {

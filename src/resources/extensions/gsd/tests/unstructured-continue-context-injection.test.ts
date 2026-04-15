@@ -1,4 +1,4 @@
-// GSD-2 — Regression test for #3615: unstructured "continue" must inject task context
+// SF — Regression test for #3615: unstructured "continue" must inject task context
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**

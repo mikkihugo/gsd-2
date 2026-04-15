@@ -1,5 +1,5 @@
 /**
- * GSD bootstrappers for .gitignore and PREFERENCES.md
+ * SF bootstrappers for .gitignore and PREFERENCES.md
  *
  * Ensures baseline .gitignore exists with universally-correct patterns.
  * Creates an empty PREFERENCES.md template if it doesn't exist.
@@ -14,7 +14,7 @@ import { gsdRoot } from "./paths.js";
 import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
 
 /**
- * GSD runtime patterns for git index cleanup.
+ * SF runtime patterns for git index cleanup.
  *
  * CANONICAL SOURCE OF TRUTH: This array is the authoritative list of runtime
  * ignore patterns. Other modules (RUNTIME_EXCLUSION_PATHS in git-service.ts,
@@ -24,7 +24,7 @@ import { GIT_NO_PROMPT_ENV } from "./git-constants.js";
  * With external state (symlink), these are a no-op in most cases,
  * but retained for backwards compatibility during migration.
  */
-const GSD_RUNTIME_PATTERNS = [
+const SF_RUNTIME_PATTERNS = [
   ".gsd/activity/",
   ".gsd/forensics/",
   ".gsd/runtime/",
@@ -45,7 +45,7 @@ const GSD_RUNTIME_PATTERNS = [
 ] as const;
 
 const BASELINE_PATTERNS = [
-  // ── GSD state directory (symlink to external storage) ──
+  // ── SF state directory (symlink to external storage) ──
   ".gsd",
   ".gsd-id",
   ".bg-shell/",
@@ -216,7 +216,7 @@ export function ensureGitignore(
   // Build the block to append
   const block = [
     "",
-    "# ── GSD baseline (auto-generated) ──",
+    "# ── SF baseline (auto-generated) ──",
     ...missing,
     "",
   ].join("\n");
@@ -242,7 +242,7 @@ export function ensureGitignore(
  * version control.
  */
 export function untrackRuntimeFiles(basePath: string): void {
-  const runtimePaths = GSD_RUNTIME_PATTERNS;
+  const runtimePaths = SF_RUNTIME_PATTERNS;
 
   for (const pattern of runtimePaths) {
     // Use -r for directory patterns (trailing slash), strip the slash for the command
@@ -283,7 +283,7 @@ skill_discovery: {}
 auto_supervisor: {}
 ---
 
-# GSD Skill Preferences
+# SF Skill Preferences
 
 Project-specific guidance for skill selection and execution preferences.
 
@@ -291,7 +291,7 @@ See \`~/.gsd/agent/extensions/gsd/docs/preferences-reference.md\` for full field
 
 ## Fields
 
-- \`always_use_skills\`: Skills that must be available during all GSD operations
+- \`always_use_skills\`: Skills that must be available during all SF operations
 - \`prefer_skills\`: Skills to prioritize when multiple options exist
 - \`avoid_skills\`: Skills to minimize or avoid (with lower priority than prefer)
 - \`skill_rules\`: Context-specific rules (e.g., "use tool X for Y type of work")

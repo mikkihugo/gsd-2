@@ -1,5 +1,5 @@
 /**
- * GSD Preparation — Structured brief generation for discussion LLM sessions.
+ * SF Preparation — Structured brief generation for discussion LLM sessions.
  *
  * Produces structured briefs (codebase, prior context, ecosystem) before
  * the discussion LLM session starts.
@@ -93,7 +93,7 @@ export interface RequirementEntry {
   status: "active" | "validated" | "deferred" | "out-of-scope";
 }
 
-/** Prior context brief aggregated from GSD artifacts. */
+/** Prior context brief aggregated from SF artifacts. */
 export interface PriorContextBrief {
   /** Decisions grouped by scope. */
   decisions: {
@@ -866,7 +866,7 @@ const MAX_SECTION_CHARS = 2000;
 const MAX_PRIOR_CONTEXT_CHARS = 6000;
 
 /**
- * Aggregate prior context from GSD artifacts.
+ * Aggregate prior context from SF artifacts.
  *
  * Reads DECISIONS.md, REQUIREMENTS.md, KNOWLEDGE.md from the .gsd directory
  * and milestone summaries from each milestone's MILESTONE-SUMMARY.md file.

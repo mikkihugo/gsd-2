@@ -6,7 +6,7 @@ export type InitialGsdHeaderFilterResult =
 const MIN_LOGO_LINES = 6
 const MAX_HEADER_PROBE_LINES = 16
 const MAX_HEADER_PROBE_CHARS = 4096
-const TITLE_PATTERN = /Get Shit Done v\d+\.\d+\.\d+/i
+const TITLE_PATTERN = /Singularity Forge v\d+\.\d+\.\d+/i
 
 interface IndexedVisibleText {
   plainText: string
@@ -99,7 +99,7 @@ function isLogoLine(line: string | undefined): boolean {
 }
 
 /**
- * Strip the decorative GSD startup banner from the beginning of a PTY stream.
+ * Strip the decorative SF startup banner from the beginning of a PTY stream.
  *
  * Power User Mode now renders both panes without a separate wrapper header. The
  * main-session pane never replays the native banner reliably, while the right

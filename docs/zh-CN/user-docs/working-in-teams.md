@@ -1,12 +1,12 @@
 # 团队协作
 
-GSD 支持多人并行工作流，让多个开发者可以同时在同一个仓库中工作。
+SF 支持多人并行工作流，让多个开发者可以同时在同一个仓库中工作。
 
 ## 设置
 
 ### 1. 启用 Team Mode
 
-为团队使用配置 GSD 的最简单方法，是在项目偏好中设置 `mode: team`。这会一次性开启唯一 milestone ID、推送分支和预合并检查：
+为团队使用配置 SF 的最简单方法，是在项目偏好中设置 `mode: team`。这会一次性开启唯一 milestone ID、推送分支和预合并检查：
 
 ```yaml
 # .gsd/PREFERENCES.md（项目级，提交到 git）
@@ -25,7 +25,7 @@ mode: team
 共享规划产物（milestones、roadmaps、decisions），同时把运行时文件保留在本地：
 
 ```bash
-# ── GSD：运行时 / 临时文件（按开发者、按会话隔离）──────
+# ── SF：运行时 / 临时文件（按开发者、按会话隔离）──────
 .gsd/auto.lock
 .gsd/completed-units.json
 .gsd/STATE.md
@@ -53,19 +53,19 @@ mode: team
 
 ```bash
 git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git commit -m "chore: enable SF team workflow"
 ```
 
 ## `commit_docs: false`
 
-如果团队里只有部分成员使用 GSD，或者公司策略要求仓库保持干净：
+如果团队里只有部分成员使用 SF，或者公司策略要求仓库保持干净：
 
 ```yaml
 git:
   commit_docs: false
 ```
 
-这会把整个 `.gsd/` 加入 `.gitignore`，让所有产物都保留在本地。这样使用 GSD 的开发者仍然能获得结构化规划的好处，而不会影响不使用 GSD 的同事。
+这会把整个 `.gsd/` 加入 `.gitignore`，让所有产物都保留在本地。这样使用 SF 的开发者仍然能获得结构化规划的好处，而不会影响不使用 SF 的同事。
 
 ## 迁移现有项目
 
@@ -100,4 +100,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD 会强制要求上游依赖 milestone 先完成，之后才会启动下游工作。
+SF 会强制要求上游依赖 milestone 先完成，之后才会启动下游工作。

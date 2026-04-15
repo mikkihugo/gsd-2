@@ -1,6 +1,6 @@
 # Headless & CI Mode
 
-`gsd headless` runs GSD commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
+`gsd headless` runs SF commands without a terminal UI — designed for CI pipelines, cron jobs, and scripted automation.
 
 ## Basic Usage
 
@@ -73,7 +73,7 @@ Any `/gsd` subcommand works as a positional argument: `gsd headless status`, `gs
 
 ## MCP Server Mode
 
-`gsd --mode mcp` runs GSD as a Model Context Protocol server over stdin/stdout, exposing all GSD tools to external AI clients:
+`gsd --mode mcp` runs SF as a Model Context Protocol server over stdin/stdout, exposing all SF tools to external AI clients:
 
 ```bash
 gsd --mode mcp

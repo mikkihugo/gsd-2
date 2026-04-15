@@ -994,7 +994,7 @@ function ExportTab({ data }: { data: VisualizerData }) {
 
   const generateMarkdown = useCallback(() => {
     const lines: string[] = []
-    lines.push("# GSD Workflow Report")
+    lines.push("# SF Workflow Report")
     lines.push("")
     lines.push(`Generated: ${new Date().toISOString()}`)
     lines.push(`Phase: ${data.phase}`)

@@ -1,5 +1,5 @@
 /**
- * GSD Doctor — Proactive Healing Layer
+ * SF Doctor — Proactive Healing Layer
  *
  * Three mechanisms for automatic health monitoring during auto-mode:
  *

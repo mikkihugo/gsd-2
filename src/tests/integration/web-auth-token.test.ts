@@ -85,7 +85,7 @@ test('middleware.ts validates bearer token from Authorization header', () => {
   assert.match(middlewareSource, /Bearer/, 'middleware should check Authorization: Bearer header')
 })
 
-test('middleware.ts skips auth when GSD_WEB_AUTH_TOKEN is not set', () => {
-  assert.match(middlewareSource, /GSD_WEB_AUTH_TOKEN/, 'middleware should read GSD_WEB_AUTH_TOKEN from env')
+test('middleware.ts skips auth when SF_WEB_AUTH_TOKEN is not set', () => {
+  assert.match(middlewareSource, /SF_WEB_AUTH_TOKEN/, 'middleware should read SF_WEB_AUTH_TOKEN from env')
   assert.match(middlewareSource, /NextResponse\.next\(\)/, 'middleware should pass through when no token is configured')
 })

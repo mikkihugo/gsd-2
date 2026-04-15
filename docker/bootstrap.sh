@@ -2,7 +2,7 @@
 set -e
 
 # ──────────────────────────────────────────────
-# GSD First-Boot Bootstrap
+# SF First-Boot Bootstrap
 #
 # Runs once on initial container creation.
 # Called by entrypoint.sh as the gsd user.

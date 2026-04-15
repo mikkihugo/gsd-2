@@ -1,24 +1,24 @@
-# GSD-2 — VS Code Extension
+# SF-2 — VS Code Extension
 
-Control the [GSD-2 coding agent](https://github.com/singularity-forge/sf-run) directly from VS Code. Run autonomous coding sessions, chat with `@gsd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
+Control the [SF-2 coding agent](https://github.com/singularity-forge/sf-run) directly from VS Code. Run autonomous coding sessions, chat with `@sf`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
 
-![GSD Extension Overview](docs/images/overview.png)
+![SF Extension Overview](docs/images/overview.png)
 
 ## Requirements
 
-- **GSD-2** installed globally: `npm install -g gsd-pi`
+- **SF-2** installed globally: `npm install -g sf-pi`
 - **Node.js** >= 22.0.0
 - **Git** installed and on PATH
 - **VS Code** >= 1.95.0
 
 ## Quick Start
 
-1. Install GSD: `npm install -g gsd-pi`
+1. Install SF: `npm install -g sf-pi`
 2. Install this extension
 3. Open a project folder in VS Code
-4. Click the **GSD icon** in the Activity Bar (left sidebar)
-5. Click **Start Agent** or run `Ctrl+Shift+P` > **GSD: Start Agent**
-6. Start chatting with `@gsd` in Chat or click **Auto** in the sidebar
+4. Click the **SF icon** in the Activity Bar (left sidebar)
+5. Click **Start Agent** or run `Ctrl+Shift+P` > **SF: Start Agent**
+6. Start chatting with `@sf` in Chat or click **Auto** in the sidebar
 
 ---
 
@@ -26,11 +26,11 @@ Control the [GSD-2 coding agent](https://github.com/singularity-forge/sf-run) di
 
 ### Sidebar Dashboard
 
-Click the **GSD icon** in the Activity Bar. The compact header shows connection status, model, session, message count, thinking level, context usage bar, and cost — all in two lines. Sections (Workflow, Stats, Actions, Settings) are collapsible and remember their state.
+Click the **SF icon** in the Activity Bar. The compact header shows connection status, model, session, message count, thinking level, context usage bar, and cost — all in two lines. Sections (Workflow, Stats, Actions, Settings) are collapsible and remember their state.
 
 ### Workflow Controls
 
-One-click buttons for GSD's core commands. All route through the Chat panel so you see the full response:
+One-click buttons for SF's core commands. All route through the Chat panel so you see the full response:
 
 | Button | What it does |
 |--------|-------------|
@@ -39,14 +39,14 @@ One-click buttons for GSD's core commands. All route through the Chat panel so y
 | **Quick** | Quick task without planning (opens input) |
 | **Capture** | Capture a thought for later triage |
 
-### Chat Integration (`@gsd`)
+### Chat Integration (`@sf`)
 
-Use `@gsd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
+Use `@sf` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
 
 ```
-@gsd refactor the auth module to use JWT
-@gsd /gsd auto
-@gsd fix the errors in this file
+@sf refactor the auth module to use JWT
+@sf /sf auto
+@sf fix the errors in this file
 ```
 
 - **Auto-starts** the agent if not running
@@ -57,7 +57,7 @@ Use `@gsd` in VS Code Chat (`Cmd+Shift+I`) to talk to the agent:
 
 ### Source Control Integration
 
-Agent-modified files appear in a dedicated **"GSD Agent"** section of the Source Control panel:
+Agent-modified files appear in a dedicated **"SF Agent"** section of the Source Control panel:
 
 - **Click any file** to see a before/after diff in VS Code's native diff editor
 - **Accept** or **Discard** changes per-file via inline buttons
@@ -70,7 +70,7 @@ When the agent modifies a file, you'll see:
 - **Green background** on newly added lines
 - **Yellow background** on modified lines
 - **Left border gutter indicator** on all agent-touched lines
-- **Hover** any decorated line to see "Modified by GSD Agent"
+- **Hover** any decorated line to see "Modified by SF Agent"
 
 ### Checkpoints & Rollback
 
@@ -87,7 +87,7 @@ The **Sessions** panel lists all past sessions for the current workspace. Click 
 ### Diagnostic Integration
 
 - **Fix Errors** button in the sidebar reads the active file's diagnostics from the Problems panel and sends them to the agent
-- **Fix All Problems** (`Cmd+Shift+P` > GSD: Fix All Problems) collects errors/warnings across the workspace
+- **Fix All Problems** (`Cmd+Shift+P` > SF: Fix All Problems) collects errors/warnings across the workspace
 - Works automatically in chat — mention "fix" or "error" and diagnostics are included
 
 ### Code Lens
@@ -96,7 +96,7 @@ Four inline actions above every function and class (TS/JS/Python/Go/Rust):
 
 | Action | What it does |
 |--------|-------------|
-| **Ask GSD** | Explain the function/class |
+| **Ask SF** | Explain the function/class |
 | **Refactor** | Improve clarity, performance, or structure |
 | **Find Bugs** | Review for bugs and edge cases |
 | **Tests** | Generate test coverage |
@@ -117,7 +117,7 @@ Control how much autonomy the agent has:
 | **Ask** | Prompts before file writes and commands |
 | **Plan-only** | Read-only — agent can analyze but not modify |
 
-Change via Settings section or `Cmd+Shift+P` > **GSD: Select Approval Mode**.
+Change via Settings section or `Cmd+Shift+P` > **SF: Select Approval Mode**.
 
 ### Agent UI Requests
 
@@ -126,7 +126,7 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 ### Additional Features
 
 - **Conversation History** — full message viewer with tool calls, thinking blocks, search, and fork-from-here
-- **Slash Command Completion** — type `/` for auto-complete of `/gsd` commands
+- **Slash Command Completion** — type `/` for auto-complete of `/sf` commands
 - **File Decorations** — "G" badge on agent-modified files in the Explorer
 - **Bash Terminal** — dedicated terminal for agent shell output
 - **Context Window Warning** — notification when context exceeds threshold
@@ -138,36 +138,36 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 
 | Command | Shortcut | Description |
 |---------|----------|-------------|
-| **GSD: Start Agent** | | Connect to the GSD agent |
-| **GSD: Stop Agent** | | Disconnect the agent |
-| **GSD: New Session** | `Cmd+Shift+G` `Cmd+Shift+N` | Start a fresh conversation |
-| **GSD: Send Message** | `Cmd+Shift+G` `Cmd+Shift+P` | Send a message to the agent |
-| **GSD: Abort** | `Cmd+Shift+G` `Cmd+Shift+A` | Interrupt the current operation |
-| **GSD: Steer Agent** | `Cmd+Shift+G` `Cmd+Shift+I` | Steering message mid-operation |
-| **GSD: Switch Model** | | Pick a model from QuickPick |
-| **GSD: Cycle Model** | `Cmd+Shift+G` `Cmd+Shift+M` | Rotate to the next model |
-| **GSD: Set Thinking Level** | | Choose off / low / medium / high |
-| **GSD: Cycle Thinking** | `Cmd+Shift+G` `Cmd+Shift+T` | Rotate through thinking levels |
-| **GSD: Compact Context** | | Trigger context compaction |
-| **GSD: Export HTML** | | Save session as HTML |
-| **GSD: Session Stats** | | Display token usage and cost |
-| **GSD: Run Bash** | | Execute a shell command |
-| **GSD: List Commands** | | Browse slash commands |
-| **GSD: Set Session Name** | | Rename current session |
-| **GSD: Copy Last Response** | | Copy to clipboard |
-| **GSD: Switch Session** | | Load a different session |
-| **GSD: Show History** | | Open conversation viewer |
-| **GSD: Fork Session** | | Fork from a previous message |
-| **GSD: Fix Problems in File** | | Send file diagnostics to agent |
-| **GSD: Fix All Problems** | | Send workspace errors to agent |
-| **GSD: Commit Agent Changes** | | Git commit modified files |
-| **GSD: Create Branch** | | Create branch for agent work |
-| **GSD: Show Agent Diff** | | View git diff |
-| **GSD: Accept All Changes** | | Accept all SCM changes |
-| **GSD: Discard All Changes** | | Revert all agent modifications |
-| **GSD: Select Approval Mode** | | Choose auto-approve/ask/plan-only |
-| **GSD: Cycle Approval Mode** | | Rotate through approval modes |
-| **GSD: Code Lens** actions | | Ask, Refactor, Find Bugs, Tests |
+| **SF: Start Agent** | | Connect to the SF agent |
+| **SF: Stop Agent** | | Disconnect the agent |
+| **SF: New Session** | `Cmd+Shift+G` `Cmd+Shift+N` | Start a fresh conversation |
+| **SF: Send Message** | `Cmd+Shift+G` `Cmd+Shift+P` | Send a message to the agent |
+| **SF: Abort** | `Cmd+Shift+G` `Cmd+Shift+A` | Interrupt the current operation |
+| **SF: Steer Agent** | `Cmd+Shift+G` `Cmd+Shift+I` | Steering message mid-operation |
+| **SF: Switch Model** | | Pick a model from QuickPick |
+| **SF: Cycle Model** | `Cmd+Shift+G` `Cmd+Shift+M` | Rotate to the next model |
+| **SF: Set Thinking Level** | | Choose off / low / medium / high |
+| **SF: Cycle Thinking** | `Cmd+Shift+G` `Cmd+Shift+T` | Rotate through thinking levels |
+| **SF: Compact Context** | | Trigger context compaction |
+| **SF: Export HTML** | | Save session as HTML |
+| **SF: Session Stats** | | Display token usage and cost |
+| **SF: Run Bash** | | Execute a shell command |
+| **SF: List Commands** | | Browse slash commands |
+| **SF: Set Session Name** | | Rename current session |
+| **SF: Copy Last Response** | | Copy to clipboard |
+| **SF: Switch Session** | | Load a different session |
+| **SF: Show History** | | Open conversation viewer |
+| **SF: Fork Session** | | Fork from a previous message |
+| **SF: Fix Problems in File** | | Send file diagnostics to agent |
+| **SF: Fix All Problems** | | Send workspace errors to agent |
+| **SF: Commit Agent Changes** | | Git commit modified files |
+| **SF: Create Branch** | | Create branch for agent work |
+| **SF: Show Agent Diff** | | View git diff |
+| **SF: Accept All Changes** | | Accept all SCM changes |
+| **SF: Discard All Changes** | | Revert all agent modifications |
+| **SF: Select Approval Mode** | | Choose auto-approve/ask/plan-only |
+| **SF: Cycle Approval Mode** | | Rotate through approval modes |
+| **SF: Code Lens** actions | | Ask, Refactor, Find Bugs, Tests |
 
 > On Windows/Linux, replace `Cmd` with `Ctrl`.
 
@@ -175,22 +175,22 @@ When the agent needs input (questions, confirmations, selections), VS Code dialo
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| `gsd.binaryPath` | `"gsd"` | Path to the GSD binary |
-| `gsd.autoStart` | `false` | Start agent on extension activation |
-| `gsd.autoCompaction` | `true` | Automatic context compaction |
-| `gsd.codeLens` | `true` | Code lens above functions/classes |
-| `gsd.showProgressNotifications` | `false` | Progress notification (off — Chat shows progress) |
-| `gsd.activityFeedMaxItems` | `100` | Max items in Activity feed |
-| `gsd.showContextWarning` | `true` | Warn when context exceeds threshold |
-| `gsd.contextWarningThreshold` | `80` | Context % that triggers warning |
-| `gsd.approvalMode` | `"auto-approve"` | Agent permission mode |
+| `sf.binaryPath` | `"sf"` | Path to the SF binary |
+| `sf.autoStart` | `false` | Start agent on extension activation |
+| `sf.autoCompaction` | `true` | Automatic context compaction |
+| `sf.codeLens` | `true` | Code lens above functions/classes |
+| `sf.showProgressNotifications` | `false` | Progress notification (off — Chat shows progress) |
+| `sf.activityFeedMaxItems` | `100` | Max items in Activity feed |
+| `sf.showContextWarning` | `true` | Warn when context exceeds threshold |
+| `sf.contextWarningThreshold` | `80` | Context % that triggers warning |
+| `sf.approvalMode` | `"auto-approve"` | Agent permission mode |
 
 ## How It Works
 
-The extension spawns `gsd --mode rpc` and communicates over JSON-RPC via stdin/stdout. Agent events stream in real-time. The change tracker captures file state before modifications for SCM diffs and rollback. UI requests from the agent (questions, confirmations) are handled via VS Code dialogs.
+The extension spawns `sf --mode rpc` and communicates over JSON-RPC via stdin/stdout. Agent events stream in real-time. The change tracker captures file state before modifications for SCM diffs and rollback. UI requests from the agent (questions, confirmations) are handled via VS Code dialogs.
 
 ## Links
 
-- [GSD Documentation](https://github.com/singularity-forge/sf-run/tree/main/docs)
+- [SF Documentation](https://github.com/singularity-forge/sf-run/tree/main/docs)
 - [Getting Started](https://github.com/singularity-forge/sf-run/blob/main/docs/getting-started.md)
 - [Issue Tracker](https://github.com/singularity-forge/sf-run/issues)

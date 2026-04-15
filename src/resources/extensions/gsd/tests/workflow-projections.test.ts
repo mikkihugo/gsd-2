@@ -1,4 +1,4 @@
-// GSD Extension — workflow-projections unit tests
+// SF Extension — workflow-projections unit tests
 // Tests the pure rendering functions (no DB required).
 
 import test from 'node:test';

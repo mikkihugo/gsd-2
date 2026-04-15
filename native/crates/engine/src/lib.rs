@@ -1,4 +1,4 @@
-//! N-API addon for GSD.
+//! N-API addon for SF.
 //!
 //! Exposes high-performance Rust modules to Node.js via napi-rs.
 //! ```text

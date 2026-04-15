@@ -226,12 +226,12 @@ export async function runOnboarding(authStorage: AuthStorage): Promise<void> {
 
   // ── Intro ─────────────────────────────────────────────────────────────────
   process.stderr.write(renderLogo(pc.cyan))
-  p.intro(pc.bold('Welcome to GSD — let\'s get you set up'))
+  p.intro(pc.bold('Welcome to SF — let\'s get you set up'))
 
   // ── LLM Provider Selection ────────────────────────────────────────────────
   const llmResult = await runStep(p, 'LLM setup failed', () => runLlmStep(p, pc, authStorage), {
-    cancelMessage: 'Setup cancelled — you can run /login inside GSD later.',
-    errorInfo: 'You can configure your LLM provider later with /login inside GSD.',
+    cancelMessage: 'Setup cancelled — you can run /login inside SF later.',
+    errorInfo: 'You can configure your LLM provider later with /login inside SF.',
   })
   if (llmResult === STEP_CANCELLED) return
   const llmConfigured = llmResult ?? false
@@ -266,19 +266,19 @@ export async function runOnboarding(authStorage: AuthStorage): Promise<void> {
       summaryLines.push(`${pc.green('✓')} LLM provider configured`)
     }
   } else {
-    summaryLines.push(`${pc.yellow('↷')} LLM provider: skipped — use /login inside GSD`)
+    summaryLines.push(`${pc.yellow('↷')} LLM provider: skipped — use /login inside SF`)
   }
 
   if (searchConfigured) {
     summaryLines.push(`${pc.green('✓')} Web search: ${searchConfigured}`)
   } else {
-    summaryLines.push(`${pc.dim('↷')} Web search: not configured — use /search-provider inside GSD`)
+    summaryLines.push(`${pc.dim('↷')} Web search: not configured — use /search-provider inside SF`)
   }
 
   if (remoteConfigured) {
     summaryLines.push(`${pc.green('✓')} Remote questions: ${remoteConfigured}`)
   } else {
-    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gsd remote inside GSD`)
+    summaryLines.push(`${pc.dim('↷')} Remote questions: not configured — use /gsd remote inside SF`)
   }
 
   if (toolKeyCount > 0) {
@@ -288,7 +288,7 @@ export async function runOnboarding(authStorage: AuthStorage): Promise<void> {
   }
 
   p.note(summaryLines.join('\n'), 'Setup complete')
-  p.outro(pc.dim('Launching GSD...'))
+  p.outro(pc.dim('Launching SF...'))
 }
 
 // ─── LLM Authentication Step ──────────────────────────────────────────────────
@@ -320,7 +320,7 @@ async function runLlmStep(p: ClackModule, pc: PicoModule, authStorage: AuthStora
   authOptions.push(
     { value: 'browser', label: 'Sign in with your browser', hint: 'GitHub Copilot, ChatGPT, Google, etc.' },
     { value: 'api-key', label: 'Paste an API key', hint: 'from your provider dashboard' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /login inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: 'use /login inside SF later' },
   )
 
   const method = await p.select({
@@ -492,7 +492,7 @@ async function runApiKeyFlow(
 
   // Provider-specific post-setup hints
   if (providerId === 'openrouter') {
-    p.log.info(`Use ${pc.cyan('/model')} inside GSD to pick an OpenRouter model.`)
+    p.log.info(`Use ${pc.cyan('/model')} inside SF to pick an OpenRouter model.`)
     p.log.info(`To add custom models or control routing, see ${pc.dim('docs/providers.md#openrouter')}`)
   }
 
@@ -681,7 +681,7 @@ async function runWebSearchStep(
   options.push(
     { value: 'brave', label: 'Brave Search', hint: 'requires API key — brave.com/search/api' },
     { value: 'tavily', label: 'Tavily', hint: 'requires API key — tavily.com' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /search-provider inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: 'use /search-provider inside SF later' },
   )
 
   const choice = await p.select({
@@ -795,11 +795,11 @@ async function runRemoteQuestionsStep(
     { value: 'discord', label: 'Discord', hint: 'receive questions in a Discord channel' },
     { value: 'slack', label: 'Slack', hint: 'receive questions in a Slack channel' },
     { value: 'telegram', label: 'Telegram', hint: 'receive questions via Telegram bot' },
-    { value: 'skip', label: 'Skip for now', hint: 'use /gsd remote inside GSD later' },
+    { value: 'skip', label: 'Skip for now', hint: 'use /gsd remote inside SF later' },
   )
 
   const choice = await p.select({
-    message: 'Set up remote questions? (get notified when GSD needs input)',
+    message: 'Set up remote questions? (get notified when SF needs input)',
     options,
   })
 
@@ -918,7 +918,7 @@ async function runRemoteQuestionsStep(
       const res = await fetch(`https://api.telegram.org/bot${trimmed}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: trimmedChatId, text: 'GSD remote questions connected.' }),
+        body: JSON.stringify({ chat_id: trimmedChatId, text: 'SF remote questions connected.' }),
         signal: AbortSignal.timeout(15_000),
       })
       const data = await res.json() as any
@@ -1013,7 +1013,7 @@ async function runDiscordChannelStep(p: ClackModule, pc: PicoModule, token: stri
   // Select channel
   const MANUAL_VALUE = '__manual__'
   const channelChoice = await p.select({
-    message: 'Which channel should GSD use for remote questions?',
+    message: 'Which channel should SF use for remote questions?',
     options: [
       ...channels.map(ch => ({ value: ch.id, label: `#${ch.name}` })),
       { value: MANUAL_VALUE, label: 'Enter channel ID manually' },

@@ -1,6 +1,6 @@
 # Monitor and Poll
 
-Check status of a GSD project, handle blockers, track costs, and decide next actions.
+Check status of a SF project, handle blockers, track costs, and decide next actions.
 
 ## Checking Project State
 
@@ -77,7 +77,7 @@ gsd headless --answers fix.json auto
 gsd headless dispatch replan
 
 # 5. Option D: Escalate to user
-echo "GSD build blocked. Phase: $(gsd headless query | jq -r '.state.phase')"
+echo "SF build blocked. Phase: $(gsd headless query | jq -r '.state.phase')"
 echo "Manual intervention required."
 ```
 
@@ -165,7 +165,7 @@ gsd headless --resume "$SESSION_ID" --output-format json auto 2>/dev/null
 
 ## Reading Build Artifacts
 
-After completion, inspect what GSD produced:
+After completion, inspect what SF produced:
 
 ```bash
 cd /path/to/project
@@ -182,6 +182,6 @@ cat .gsd/REQUIREMENTS.md
 # Milestone summary
 cat .gsd/milestones/M001-*/M001-*-SUMMARY.md 2>/dev/null
 
-# Git history (GSD commits per-slice)
+# Git history (SF commits per-slice)
 git log --oneline
 ```

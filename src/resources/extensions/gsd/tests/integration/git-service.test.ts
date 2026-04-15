@@ -216,11 +216,11 @@ describe('git-service', async () => {
       keyFiles: ["src/auth.ts", "src/middleware/jwt.ts"],
     });
     assert.ok(msg.startsWith("feat:"), "message starts with type: (no scope)");
-    assert.ok(!msg.includes("(S01/T02)"), "no GSD ID in subject line");
+    assert.ok(!msg.includes("(S01/T02)"), "no SF ID in subject line");
     assert.ok(msg.includes("JWT-based auth"), "message includes one-liner content");
     assert.ok(msg.includes("- src/auth.ts"), "message body includes key files");
     assert.ok(msg.includes("- src/middleware/jwt.ts"), "message body includes second key file");
-    assert.ok(msg.includes("GSD-Task: S01/T02"), "GSD-Task trailer in body");
+    assert.ok(msg.includes("SF-Task: S01/T02"), "SF-Task trailer in body");
   });
 
   {
@@ -230,7 +230,7 @@ describe('git-service', async () => {
     });
     assert.ok(msg.startsWith("fix:"), "infers fix type from title");
     assert.ok(msg.includes("fix login redirect bug"), "uses task title when no one-liner");
-    assert.ok(msg.includes("GSD-Task: S02/T01"), "GSD-Task trailer present");
+    assert.ok(msg.includes("SF-Task: S02/T01"), "SF-Task trailer present");
   }
 
   {
@@ -240,7 +240,7 @@ describe('git-service', async () => {
       oneLiner: "Unit tests for auth module with coverage",
     });
     assert.ok(msg.startsWith("test:"), "infers test type");
-    assert.ok(msg.includes("GSD-Task: S01/T03"), "GSD-Task trailer present");
+    assert.ok(msg.includes("SF-Task: S01/T03"), "SF-Task trailer present");
   }
 
   // ─── RUNTIME_EXCLUSION_PATHS ───────────────────────────────────────────
@@ -499,7 +499,7 @@ describe('git-service', async () => {
     assert.ok(msg2 !== null, "autoCommit with task context returns a message");
     assert.ok(msg2!.startsWith("feat:"), "meaningful commit uses feat type without scope");
     assert.ok(msg2!.includes("JWT-based auth"), "meaningful commit includes one-liner content");
-    assert.ok(msg2!.includes("GSD-Task: S01/T02"), "meaningful commit has GSD-Task trailer");
+    assert.ok(msg2!.includes("SF-Task: S01/T02"), "meaningful commit has SF-Task trailer");
 
     rmSync(repo, { recursive: true, force: true });
   });
@@ -1398,11 +1398,11 @@ describe('git-service', async () => {
     });
     assert.ok(msg.includes("Resolves #42"), "buildTaskCommitMessage includes Resolves #N trailer when issueNumber is set");
     assert.ok(msg.startsWith("fix:"), "buildTaskCommitMessage infers fix type");
-    assert.ok(msg.includes("GSD-Task: S01/T03"), "GSD-Task trailer present");
-    // GSD-Task should come before Resolves
-    const taskIdx = msg.indexOf("GSD-Task: S01/T03");
+    assert.ok(msg.includes("SF-Task: S01/T03"), "SF-Task trailer present");
+    // SF-Task should come before Resolves
+    const taskIdx = msg.indexOf("SF-Task: S01/T03");
     const resolvesIdx = msg.indexOf("Resolves #42");
-    assert.ok(taskIdx < resolvesIdx, "GSD-Task trailer before Resolves trailer");
+    assert.ok(taskIdx < resolvesIdx, "SF-Task trailer before Resolves trailer");
   });
 
   {
@@ -1412,7 +1412,7 @@ describe('git-service', async () => {
       taskTitle: "add dashboard widget",
     });
     assert.ok(!msg.includes("Resolves"), "buildTaskCommitMessage omits Resolves trailer when issueNumber is absent");
-    assert.ok(msg.includes("GSD-Task: S01/T04"), "GSD-Task trailer still present");
+    assert.ok(msg.includes("SF-Task: S01/T04"), "SF-Task trailer still present");
   }
 
   // ─── runPreMergeCheck: skips when no package.json ────────────────────────

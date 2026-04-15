@@ -13,7 +13,7 @@
  * header.
  *
  * localStorage is shared across all tabs on the same origin. Because each
- * GSD instance binds to a unique random port, the origin already scopes
+ * SF instance binds to a unique random port, the origin already scopes
  * the token to that instance — no additional namespacing is needed.
  *
  * For EventSource (SSE), which cannot send custom headers, the token is
@@ -42,7 +42,7 @@ export function getAuthToken(): string | null {
     if (match) {
       cachedToken = match[1]
       // Persist to localStorage so the token survives page refreshes and
-      // is available to other tabs on the same origin (same GSD instance).
+      // is available to other tabs on the same origin (same SF instance).
       try {
         localStorage.setItem(AUTH_STORAGE_KEY, cachedToken)
       } catch {

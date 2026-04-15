@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Build script for the GSD native Rust addon.
+ * Build script for the SF native Rust addon.
  *
  * Usage:
  *   node native/scripts/build.js          # release build

@@ -6,7 +6,7 @@
  * ~/.gsd/projects/<hash> and worktree isolation is enabled.
  *
  * Layout mimics pi's default:
- *   /root/.gsd/projects/<hash>/          ← user-level GSD storage
+ *   /root/.gsd/projects/<hash>/          ← user-level SF storage
  *   /tmp/myproject/.gsd → symlink to ↑   ← project's .gsd
  *   /tmp/myproject/.gsd/worktrees/M001/  ← worktree (logical path through symlink)
  *
@@ -55,7 +55,7 @@ function resolveProjectRoot(basePath) {
 
 const HASH = "abc123def456";
 const TEST_ROOT = mkdtempSync(join(tmpdir(), "gsd-repro-"));
-const USER_GSD = process.env.GSD_HOME || join(TEST_ROOT, ".gsd");
+const USER_GSD = process.env.SF_HOME || join(TEST_ROOT, ".gsd");
 const USER_HOME = homedir();
 const PROJECT_GSD_STORAGE = `${USER_GSD}/projects/${HASH}`;
 const PROJECT_DIR = mkdtempSync(join(tmpdir(), "myproject-"));
@@ -63,7 +63,7 @@ const PROJECT_GSD_LINK = `${PROJECT_DIR}/.gsd`;
 
 console.log("=== Setting up filesystem layout ===\n");
 
-// 1. Create user-level GSD structure
+// 1. Create user-level SF structure
 mkdirSync(`${PROJECT_GSD_STORAGE}/worktrees/M001`, { recursive: true });
 mkdirSync(`${PROJECT_GSD_STORAGE}/milestones`, { recursive: true });
 console.log(`Created: ${PROJECT_GSD_STORAGE}/worktrees/M001`);
@@ -135,7 +135,7 @@ if (workerBuggy) {
     console.log(`  1. Write session status to ~/.gsd/parallel/`);
     console.log(`  2. Write orchestrator.json to ~/.gsd/`);
     console.log(`  3. Potentially git init in ${result3} (the home directory)`);
-    console.log(`  4. Corrupt the user-level GSD configuration`);
+    console.log(`  4. Corrupt the user-level SF configuration`);
   }
 }
 

@@ -1,6 +1,6 @@
 # recover-gsd-1364.ps1 - Recovery script for issue #1364 (Windows)
 #
-# CRITICAL DATA-LOSS BUG: GSD versions 2.30.0-2.35.x unconditionally added
+# CRITICAL DATA-LOSS BUG: SF versions 2.30.0-2.35.x unconditionally added
 # ".gsd" to .gitignore via ensureGitignore(), causing git to report all
 # tracked .gsd/ files as deleted. Fixed in v2.36.0 (PR #1367).
 #
@@ -337,7 +337,7 @@ if ($GsdIsSymlink) {
         if ($DryRun) {
             Write-Host "  (dry-run) Would append: .gsd" -ForegroundColor Yellow
         } else {
-            $appendLines = @('', '# GSD external state (symlink/junction — added by recover-gsd-1364)', '.gsd')
+            $appendLines = @('', '# SF external state (symlink/junction — added by recover-gsd-1364)', '.gsd')
             Add-Content -LiteralPath $gitignorePath -Value $appendLines -Encoding UTF8
             Write-Ok '".gsd" added to .gitignore.'
         }

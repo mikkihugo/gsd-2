@@ -16,15 +16,15 @@ const PLAYWRIGHT_SKIP =
   process.env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD === '1' ||
   process.env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD === 'true'
 const RTK_SKIP =
-  process.env.GSD_SKIP_RTK_INSTALL === '1' ||
-  process.env.GSD_SKIP_RTK_INSTALL === 'true' ||
-  process.env.GSD_RTK_DISABLED === '1' ||
-  process.env.GSD_RTK_DISABLED === 'true'
+  process.env.SF_SKIP_RTK_INSTALL === '1' ||
+  process.env.SF_SKIP_RTK_INSTALL === 'true' ||
+  process.env.SF_RTK_DISABLED === '1' ||
+  process.env.SF_RTK_DISABLED === 'true'
 
 const RTK_VERSION = '0.33.1'
 const RTK_REPO = 'rtk-ai/rtk'
 const RTK_ENV = { ...process.env, RTK_TELEMETRY_DISABLED: '1' }
-const managedBinDir = join(process.env.GSD_HOME || join(homedir(), '.gsd'), 'agent', 'bin')
+const managedBinDir = join(process.env.SF_HOME || process.env.SF_HOME || join(homedir(), '.gsd'), 'agent', 'bin')
 const managedBinaryPath = join(managedBinDir, platform() === 'win32' ? 'rtk.exe' : 'rtk')
 
 function run(cmd) {
@@ -69,7 +69,7 @@ function sha256File(path) {
 }
 
 async function downloadToFile(url, destination) {
-  const response = await fetch(url, { headers: { 'User-Agent': 'gsd-pi-postinstall' } })
+  const response = await fetch(url, { headers: { 'User-Agent': 'sf-run-postinstall' } })
   if (!response.ok) {
     throw new Error(`download failed (${response.status}) for ${url}`)
   }
@@ -121,7 +121,7 @@ async function ensureRtkInstalled() {
 
   try {
     const checksumsResponse = await fetch(`${releaseBase}/checksums.txt`, {
-      headers: { 'User-Agent': 'gsd-pi-postinstall' },
+      headers: { 'User-Agent': 'sf-run-postinstall' },
     })
     if (!checksumsResponse.ok) {
       throw new Error(`failed to fetch RTK checksums (${checksumsResponse.status})`)

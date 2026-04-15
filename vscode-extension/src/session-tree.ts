@@ -12,7 +12,7 @@ export interface SessionItem {
 }
 
 /**
- * Tree view provider that lists GSD session files from the same directory
+ * Tree view provider that lists SF session files from the same directory
  * as the currently active session.
  */
 export class GsdSessionTreeProvider implements vscode.TreeDataProvider<SessionItem>, vscode.Disposable {

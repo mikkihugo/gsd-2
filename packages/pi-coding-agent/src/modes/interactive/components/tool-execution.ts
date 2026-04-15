@@ -1047,7 +1047,7 @@ export class ToolExecutionComponent extends Container {
 			// Generic tool / MCP tool without a registered renderer.
 			// MCP tool names from Claude Code arrive as `mcp__<server>__<tool>`;
 			// render the server prefix in muted style so the tool name reads
-			// cleanly. GSD-registered MCP tools have already had their prefix
+			// cleanly. SF-registered MCP tools have already had their prefix
 			// stripped upstream in partial-builder.ts and won't reach this branch.
 			const parsed = parseMcpToolName(this.toolName);
 			const displayName = parsed ? parsed.tool : this.toolName;

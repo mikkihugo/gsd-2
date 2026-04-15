@@ -63,7 +63,7 @@ export type SessionStatus = 'starting' | 'running' | 'blocked' | 'completed' | '
 // ---------------------------------------------------------------------------
 
 /**
- * A daemon-managed GSD headless session.
+ * A daemon-managed SF headless session.
  */
 export interface ManagedSession {
   /** Unique session ID returned from RpcClient.init() */
@@ -170,7 +170,7 @@ export interface StartSessionOptions {
   /** Run in bare mode (skip user config) */
   bare?: boolean;
 
-  /** Path to CLI binary (overrides GSD_CLI_PATH and which resolution) */
+  /** Path to CLI binary (overrides SF_CLI_PATH and which resolution) */
   cliPath?: string;
 }
 
@@ -179,7 +179,7 @@ export interface StartSessionOptions {
 // ---------------------------------------------------------------------------
 
 /**
- * Formatted Discord message payload for a GSD event.
+ * Formatted Discord message payload for a SF event.
  * content is the plain-text fallback; embeds and components are optional.
  */
 export interface FormattedEvent {

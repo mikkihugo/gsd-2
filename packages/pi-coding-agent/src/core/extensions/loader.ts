@@ -92,7 +92,7 @@ const STATIC_BUNDLED_MODULES: Record<string, unknown> = {
 const VIRTUAL_MODULES: Record<string, unknown> = { ...STATIC_BUNDLED_MODULES };
 
 const require = createRequire(import.meta.url);
-const EXTENSION_TIMING_ENABLED = process.env.GSD_STARTUP_TIMING === "1" || process.env.PI_TIMING === "1";
+const EXTENSION_TIMING_ENABLED = process.env.SF_STARTUP_TIMING === "1" || process.env.PI_TIMING === "1";
 
 /**
  * Bundled npm packages whose subpath exports should be auto-resolved for extensions.
@@ -989,7 +989,7 @@ function discoverExtensionsInDir(dir: string): string[] {
  * Discover and load extensions from standard locations.
  *
  * @deprecated Use DefaultResourceLoader.reload() instead — this function is
- * not called in the GSD loading flow. Extension discovery happens through
+ * not called in the SF loading flow. Extension discovery happens through
  * DefaultPackageManager.resolve() → addAutoDiscoveredResources(). Kept for
  * backwards compatibility with direct pi-coding-agent consumers.
  */

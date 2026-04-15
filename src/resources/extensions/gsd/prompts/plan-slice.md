@@ -1,4 +1,4 @@
-You are executing GSD auto-mode.
+You are executing SF auto-mode.
 
 ## UNIT: Plan Slice {{sliceId}} ("{{sliceTitle}}") — Milestone {{milestoneId}}
 

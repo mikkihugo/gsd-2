@@ -2,7 +2,7 @@
 
 *Introduced in v2.19.0*
 
-Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto-mode to steer, you can capture ideas, bugs, or scope changes and let GSD triage them at natural seams between tasks.
+Captures let you fire-and-forget thoughts during auto-mode execution. Instead of pausing auto-mode to steer, you can capture ideas, bugs, or scope changes and let SF triage them at natural seams between tasks.
 
 ## Quick Start
 
@@ -24,7 +24,7 @@ capture → triage → confirm → resolve → resume
 ```
 
 1. **Capture** — `/gsd capture "thought"` appends to `.gsd/CAPTURES.md` with a timestamp and unique ID
-2. **Triage** — at natural seams between tasks (in `handleAgentEnd`), GSD detects pending captures and classifies them
+2. **Triage** — at natural seams between tasks (in `handleAgentEnd`), SF detects pending captures and classifies them
 3. **Confirm** — the user is shown the proposed resolution and confirms or adjusts
 4. **Resolve** — the resolution is applied (task injection, replan trigger, deferral, etc.)
 5. **Resume** — auto-mode continues

@@ -199,7 +199,7 @@ export function Dashboard({ onSwitchView, onExpandTerminal }: DashboardProps = {
       : "Waiting for shell usage"
 
   // ─── Project Welcome Gate ───────────────────────────────────────────
-  // Show welcome screen for projects that aren't initialized with GSD yet
+  // Show welcome screen for projects that aren't initialized with SF yet
   const detection = boot?.projectDetection
   const showWelcome =
     !isConnecting &&

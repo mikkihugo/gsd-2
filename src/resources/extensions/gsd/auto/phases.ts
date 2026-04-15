@@ -180,7 +180,7 @@ async function generateMilestoneReport(
     (m: { id: string }) => m.id === milestoneId,
   );
   const msTitle = completedMs?.title ?? milestoneId;
-  const gsdVersion = process.env.GSD_VERSION ?? "0.0.0";
+  const gsdVersion = process.env.SF_VERSION ?? "0.0.0";
   const projName = basename(reportBasePath);
   const doneSlices = snapData.milestones.reduce(
     (acc: number, m: { slices: { done: boolean }[] }) =>
@@ -448,7 +448,7 @@ export async function runPreDispatch(
   if (
     prefs?.slice_parallel?.enabled &&
     mid &&
-    !process.env.GSD_PARALLEL_WORKER &&
+    !process.env.SF_PARALLEL_WORKER &&
     isDbAvailable()
   ) {
     try {
@@ -509,7 +509,7 @@ export async function runPreDispatch(
       "info",
     );
     deps.sendDesktopNotification(
-      "GSD",
+      "SF",
       `Milestone ${s.currentMilestoneId} complete!`,
       "success",
       "milestone",
@@ -668,7 +668,7 @@ export async function runPreDispatch(
         // PR creation (auto_pr) is handled inside mergeMilestoneToMain (#2302)
       }
       deps.sendDesktopNotification(
-        "GSD",
+        "SF",
         "All milestones complete!",
         "success",
         "milestone",
@@ -699,7 +699,7 @@ export async function runPreDispatch(
       // were temporarily unresolvable (e.g. after reassessment added new slices).
       await deps.pauseAuto(ctx, pi);
       ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
-      deps.sendDesktopNotification("GSD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
+      deps.sendDesktopNotification("SF", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
       deps.logCmuxEvent(prefs, blockerMsg, "warning");
     } else {
       const ids = incomplete.map((m: { id: string }) => m.id).join(", ");
@@ -782,7 +782,7 @@ export async function runPreDispatch(
       // PR creation (auto_pr) is handled inside mergeMilestoneToMain (#2302)
     }
     deps.sendDesktopNotification(
-      "GSD",
+      "SF",
       `Milestone ${mid} complete!`,
       "success",
       "milestone",
@@ -814,7 +814,7 @@ export async function runPreDispatch(
     }
     await deps.pauseAuto(ctx, pi);
     ctx.ui.notify(`${blockerMsg}. Fix and run /gsd auto to resume.`, "warning");
-    deps.sendDesktopNotification("GSD", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
+    deps.sendDesktopNotification("SF", blockerMsg, "warning", "attention", basename(s.originalBasePath || s.basePath));
     deps.logCmuxEvent(prefs, blockerMsg, "warning");
     debugLog("autoLoop", { phase: "exit", reason: "blocked" });
     deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: ic.nextSeq(), eventType: "terminal", data: { reason: "blocked", blockers: state.blockers } });
@@ -1039,7 +1039,7 @@ export async function runGuards(
 
       ctx.ui.notify(label, "warning");
       deps.sendDesktopNotification(
-        "GSD", label, "warning", "stop-directive",
+        "SF", label, "warning", "stop-directive",
         basename(s.originalBasePath || s.basePath),
       );
 
@@ -1078,7 +1078,7 @@ export async function runGuards(
     // In parallel worker mode, only count cost from the current auto-mode session
     // to avoid hitting the ceiling due to historical project-wide spend (#2184).
     let costUnits = currentLedger?.units;
-    if (process.env.GSD_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
+    if (process.env.SF_PARALLEL_WORKER && s.autoStartTime && Array.isArray(costUnits)) {
       const sessionStartISO = new Date(s.autoStartTime).toISOString();
       costUnits = costUnits.filter(
         (u: { startedAt?: string }) => u.startedAt != null && u.startedAt >= sessionStartISO,
@@ -1111,7 +1111,7 @@ export async function runGuards(
         // 100% — special enforcement logic (halt/pause/warn)
         const msg = `Budget ceiling ${deps.formatCost(budgetCeiling)} reached (spent ${deps.formatCost(totalCost)}).`;
         if (budgetEnforcementAction === "halt") {
-          deps.sendDesktopNotification("GSD", msg, "error", "budget", basename(s.originalBasePath || s.basePath));
+          deps.sendDesktopNotification("SF", msg, "error", "budget", basename(s.originalBasePath || s.basePath));
           await deps.stopAuto(ctx, pi, "Budget ceiling reached");
           debugLog("autoLoop", { phase: "exit", reason: "budget-halt" });
           return { action: "break", reason: "budget-halt" };
@@ -1121,21 +1121,21 @@ export async function runGuards(
             `${msg} Pausing auto-mode — /gsd auto to override and continue.`,
             "warning",
           );
-          deps.sendDesktopNotification("GSD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
+          deps.sendDesktopNotification("SF", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
           deps.logCmuxEvent(prefs, msg, "warning");
           await deps.pauseAuto(ctx, pi);
           debugLog("autoLoop", { phase: "exit", reason: "budget-pause" });
           return { action: "break", reason: "budget-pause" };
         }
         ctx.ui.notify(`${msg} Continuing (enforcement: warn).`, "warning");
-        deps.sendDesktopNotification("GSD", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
+        deps.sendDesktopNotification("SF", msg, "warning", "budget", basename(s.originalBasePath || s.basePath));
         deps.logCmuxEvent(prefs, msg, "warning");
       } else if (threshold.pct < 100) {
         // Sub-100% — simple notification
         const msg = `${threshold.label}: ${deps.formatCost(totalCost)} / ${deps.formatCost(budgetCeiling)}`;
         ctx.ui.notify(msg, threshold.notifyLevel);
         deps.sendDesktopNotification(
-          "GSD",
+          "SF",
           msg,
           threshold.notifyLevel,
           "budget",
@@ -1165,7 +1165,7 @@ export async function runGuards(
         "warning",
       );
       deps.sendDesktopNotification(
-        "GSD",
+        "SF",
         `Context ${contextUsage.percent}% — paused`,
         "warning",
         "attention",

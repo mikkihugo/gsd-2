@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile.sandbox
       args:
-        GSD_VERSION: latest
+        SF_VERSION: latest
     container_name: gsd-sandbox
     ports:
       - "3000:3000"

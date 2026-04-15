@@ -16,22 +16,22 @@ import { resolve } from "node:path";
 
 const bridge = await import("../../web/bridge-service.ts");
 
-test("resolveBridgeRuntimeConfig uses GSD_WEB_PACKAGE_ROOT when set", () => {
+test("resolveBridgeRuntimeConfig uses SF_WEB_PACKAGE_ROOT when set", () => {
   const env = {
-    GSD_WEB_PACKAGE_ROOT: "/custom/package/root",
-    GSD_WEB_PROJECT_CWD: "/some/project",
+    SF_WEB_PACKAGE_ROOT: "/custom/package/root",
+    SF_WEB_PROJECT_CWD: "/some/project",
   } as unknown as NodeJS.ProcessEnv;
 
   const config = bridge.resolveBridgeRuntimeConfig(env);
   assert.equal(config.packageRoot, "/custom/package/root");
 });
 
-test("resolveBridgeRuntimeConfig falls back to lazy default when GSD_WEB_PACKAGE_ROOT is absent", () => {
+test("resolveBridgeRuntimeConfig falls back to lazy default when SF_WEB_PACKAGE_ROOT is absent", () => {
   // Reset the memoized value so we exercise the lazy computation path.
   bridge.resetDefaultPackageRootForTests();
 
   const env = {
-    GSD_WEB_PROJECT_CWD: "/some/project",
+    SF_WEB_PROJECT_CWD: "/some/project",
   } as unknown as NodeJS.ProcessEnv;
 
   // Should not throw — the lazy getter catches cross-platform failures.
@@ -44,7 +44,7 @@ test("lazy default package root is an absolute path", () => {
   bridge.resetDefaultPackageRootForTests();
 
   const env = {
-    GSD_WEB_PROJECT_CWD: "/some/project",
+    SF_WEB_PROJECT_CWD: "/some/project",
   } as unknown as NodeJS.ProcessEnv;
 
   const config = bridge.resolveBridgeRuntimeConfig(env);

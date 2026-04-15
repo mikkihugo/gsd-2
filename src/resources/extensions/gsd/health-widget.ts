@@ -1,5 +1,5 @@
 /**
- * GSD Health Widget — always-on ambient health signal rendered belowEditor.
+ * SF Health Widget — always-on ambient health signal rendered belowEditor.
  *
  * Shows a compact 1-2 line summary: progress score, budget, provider key
  * status, and doctor/environment issue count. Refreshes every 60 seconds.

@@ -103,8 +103,8 @@ When you use `createAgentSession()`, you can control:
 That means your app can store state under:
 
 - `~/.gsd/agent`
-- `~/Library/Application Support/GSD`
-- `%APPDATA%/GSD`
+- `~/Library/Application Support/SF`
+- `%APPDATA%/SF`
 - an app-local portable directory
 - a project-local directory
 
@@ -284,7 +284,7 @@ Example:
 Or on macOS:
 
 ```text
-~/Library/Application Support/GSD/
+~/Library/Application Support/SF/
   agent/
   sessions/
 ```
@@ -377,7 +377,7 @@ const loader = new DefaultResourceLoader({
     (pi) => {
       pi.registerCommand("hello", {
         description: "My branded command",
-        handler: async (_args, ctx) => ctx.ui.notify("Hello from GSD", "info"),
+        handler: async (_args, ctx) => ctx.ui.notify("Hello from SF", "info"),
       });
     },
   ],
@@ -393,7 +393,7 @@ const loader = new DefaultResourceLoader({
   promptsOverride: () => ({ prompts: [], diagnostics: [] }),
   skillsOverride: () => ({ skills: [], diagnostics: [] }),
   agentsFilesOverride: () => ({ agentsFiles: [] }),
-  systemPromptOverride: () => "You are GSD, a specialized software delivery agent.",
+  systemPromptOverride: () => "You are SF, a specialized software delivery agent.",
 });
 ```
 
@@ -756,7 +756,7 @@ const resourceLoader = new DefaultResourceLoader({
   agentDir,
   settingsManager,
   systemPromptOverride: () =>
-    "You are GSD, a branded software delivery agent. Prefer project-specific workflows and terminology.",
+    "You are SF, a branded software delivery agent. Prefer project-specific workflows and terminology.",
   additionalExtensionPaths: [
     path.resolve("resources/extensions/index.ts"),
   ],

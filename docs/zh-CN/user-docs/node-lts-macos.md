@@ -2,7 +2,7 @@
 
 如果你是通过 Homebrew 安装 Node.js（`brew install node`），那你跟踪的是**当前最新正式版本**，其中可能包含奇数版本的开发分支（例如 23.x、25.x）。这些版本并不是 LTS，可能带来破坏性变更或稳定性问题。
 
-GSD 要求 Node.js **v22 或更高版本**，并且在 **LTS（偶数版本）** 上运行效果最好。本指南展示如何用 Homebrew 固定到 Node 24 LTS。
+SF 要求 Node.js **v22 或更高版本**，并且在 **LTS（偶数版本）** 上运行效果最好。本指南展示如何用 Homebrew 固定到 Node 24 LTS。
 
 ## 检查当前版本
 
@@ -37,7 +37,7 @@ node --version
 ## 为什么要固定到 LTS？
 
 - **稳定性**：LTS 版本会在 30 个月内持续收到 bug 修复和安全更新
-- **兼容性**：包括 GSD 在内的 npm 包通常都会优先测试 LTS 版本
+- **兼容性**：包括 SF 在内的 npm 包通常都会优先测试 LTS 版本
 - **可预期**：`brew upgrade` 不会把你突然升级到不稳定的开发版
 
 ## 防止误升级
@@ -64,12 +64,12 @@ brew unpin node@24
 
 这些工具允许你通过 `.node-version` 或 `.nvmrc` 为不同项目设置独立的 Node 版本。
 
-## 验证 GSD 是否正常工作
+## 验证 SF 是否正常工作
 
 固定版本后，执行：
 
 ```bash
 node --version   # v24.x.x
-npm install -g gsd-pi
+npm install -g sf-run
 gsd --version
 ```

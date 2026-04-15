@@ -25,15 +25,15 @@ export function buildCommands(): RESTPostAPIChatInputApplicationCommandsJSONBody
   return [
     new SlashCommandBuilder()
       .setName('gsd-status')
-      .setDescription('Show status of all active GSD sessions')
+      .setDescription('Show status of all active SF sessions')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-start')
-      .setDescription('Start a new GSD session')
+      .setDescription('Start a new SF session')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-stop')
-      .setDescription('Stop a running GSD session')
+      .setDescription('Stop a running SF session')
       .toJSON(),
     new SlashCommandBuilder()
       .setName('gsd-verbose')

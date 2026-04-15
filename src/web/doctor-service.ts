@@ -8,7 +8,7 @@ import { resolveTypeStrippingFlag, resolveSubprocessModule, buildSubprocessPrefi
 import type { DoctorReport, DoctorFixResult } from "../../web/lib/diagnostics-types.ts"
 
 const DOCTOR_MAX_BUFFER = 2 * 1024 * 1024
-const DOCTOR_MODULE_ENV = "GSD_DOCTOR_MODULE"
+const DOCTOR_MODULE_ENV = "SF_DOCTOR_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
   return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
@@ -37,8 +37,8 @@ function runDoctorChild(
         env: {
           ...process.env,
           [DOCTOR_MODULE_ENV]: doctorModulePath,
-          GSD_DOCTOR_BASE: projectCwd,
-          GSD_DOCTOR_SCOPE: scope ?? "",
+          SF_DOCTOR_BASE: projectCwd,
+          SF_DOCTOR_SCOPE: scope ?? "",
         },
         maxBuffer: DOCTOR_MAX_BUFFER,
         windowsHide: true,
@@ -78,8 +78,8 @@ export async function collectDoctorData(scope?: string, projectCwdOverride?: str
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${DOCTOR_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_DOCTOR_BASE;',
-    'const scope = process.env.GSD_DOCTOR_SCOPE || undefined;',
+    'const basePath = process.env.SF_DOCTOR_BASE;',
+    'const scope = process.env.SF_DOCTOR_SCOPE || undefined;',
     'const report = await mod.runGSDDoctor(basePath, { fix: false, scope });',
     'const summary = mod.summarizeDoctorIssues(report.issues);',
     'const result = {',
@@ -128,8 +128,8 @@ export async function applyDoctorFixes(scope?: string, projectCwdOverride?: stri
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${DOCTOR_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_DOCTOR_BASE;',
-    'const scope = process.env.GSD_DOCTOR_SCOPE || undefined;',
+    'const basePath = process.env.SF_DOCTOR_BASE;',
+    'const scope = process.env.SF_DOCTOR_SCOPE || undefined;',
     'const report = await mod.runGSDDoctor(basePath, { fix: true, scope });',
     'const result = {',
     '  ok: report.ok,',

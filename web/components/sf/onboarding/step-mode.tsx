@@ -35,7 +35,7 @@ const MODE_OPTIONS: {
     icon: MessageCircle,
     tagline: "Just chat",
     description:
-      "Conversational interface with the AI agent. Describe what you want and let GSD handle the structure. Same engine, friendlier surface.",
+      "Conversational interface with the AI agent. Describe what you want and let SF handle the structure. Same engine, friendlier surface.",
   },
 ]
 

@@ -107,12 +107,12 @@ test('launchWebMode forwards custom host, port, and allowed origins to subproces
   assert.ok(spawnEnv)
   assert.equal(spawnEnv!.HOSTNAME, '0.0.0.0')
   assert.equal(spawnEnv!.PORT, '8080')
-  assert.equal(spawnEnv!.GSD_WEB_HOST, '0.0.0.0')
-  assert.equal(spawnEnv!.GSD_WEB_PORT, '8080')
-  assert.equal(spawnEnv!.GSD_WEB_ALLOWED_ORIGINS, 'http://192.168.1.10:8080,http://tailscale-host:8080')
+  assert.equal(spawnEnv!.SF_WEB_HOST, '0.0.0.0')
+  assert.equal(spawnEnv!.SF_WEB_PORT, '8080')
+  assert.equal(spawnEnv!.SF_WEB_ALLOWED_ORIGINS, 'http://192.168.1.10:8080,http://tailscale-host:8080')
 })
 
-test('launchWebMode omits GSD_WEB_ALLOWED_ORIGINS when none provided', async (t) => {
+test('launchWebMode omits SF_WEB_ALLOWED_ORIGINS when none provided', async (t) => {
   const tmp = mkdtempSync(join(tmpdir(), 'gsd-web-no-origins-'))
   const standaloneRoot = join(tmp, 'dist', 'web', 'standalone')
   const serverPath = join(standaloneRoot, 'server.js')
@@ -145,7 +145,7 @@ test('launchWebMode omits GSD_WEB_ALLOWED_ORIGINS when none provided', async (t)
   )
 
   assert.ok(spawnEnv)
-  assert.equal(spawnEnv!.GSD_WEB_ALLOWED_ORIGINS, undefined)
+  assert.equal(spawnEnv!.SF_WEB_ALLOWED_ORIGINS, undefined)
 })
 
 // ─── runWebCliBranch end-to-end forwarding ───────────────────────────

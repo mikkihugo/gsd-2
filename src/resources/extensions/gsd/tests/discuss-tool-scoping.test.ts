@@ -2,7 +2,7 @@
  * discuss-tool-scoping.test.ts — Tests for #2949.
  *
  * xAI/Grok returns "Grammar is too complex" (400) when the combined tool
- * schemas exceed the provider's grammar limit. The GSD discuss flow only
+ * schemas exceed the provider's grammar limit. The SF discuss flow only
  * needs a small subset of tools (summary_save, decision_save, etc.), but
  * was sending ALL ~30+ tools to the provider.
  *
@@ -88,10 +88,10 @@ describe("discuss tool scoping (#2949)", () => {
 
   test("DISCUSS_TOOLS_ALLOWLIST is significantly smaller than full tool set", () => {
     // Full set is 27 DB tools + dynamic + journal = 33+
-    // Discuss set should be roughly 10 GSD tools (5 canonical + 5 aliases)
+    // Discuss set should be roughly 10 SF tools (5 canonical + 5 aliases)
     assert.ok(
       DISCUSS_TOOLS_ALLOWLIST.length <= 12,
-      `allowlist should have at most 12 GSD tools, got ${DISCUSS_TOOLS_ALLOWLIST.length}`,
+      `allowlist should have at most 12 SF tools, got ${DISCUSS_TOOLS_ALLOWLIST.length}`,
     );
   });
 

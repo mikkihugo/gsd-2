@@ -30,7 +30,7 @@ let permissionManager: GsdPermissionManager | undefined;
 
 function requireConnected(): boolean {
 	if (!client?.isConnected) {
-		vscode.window.showWarningMessage("GSD agent is not running.");
+		vscode.window.showWarningMessage("SF agent is not running.");
 		return false;
 	}
 	return true;
@@ -50,7 +50,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(client);
 
 	// Log stderr to an output channel
-	const outputChannel = vscode.window.createOutputChannel("GSD-2 Agent");
+	const outputChannel = vscode.window.createOutputChannel("SF Agent");
 	context.subscriptions.push(outputChannel);
 
 	client.onError((msg) => {
@@ -61,15 +61,15 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0);
 	statusBarItem.command = "workbench.view.extension.gsd";
-	statusBarItem.text = "$(hubot) GSD";
-	statusBarItem.tooltip = "GSD Agent — click to open";
+	statusBarItem.text = "$(hubot) SF";
+	statusBarItem.tooltip = "SF Agent — click to open";
 	statusBarItem.show();
 	context.subscriptions.push(statusBarItem);
 
 	async function refreshStatusBar(): Promise<void> {
 		if (!client?.isConnected) {
-			statusBarItem.text = "$(hubot) GSD";
-			statusBarItem.tooltip = "GSD: Disconnected";
+			statusBarItem.text = "$(hubot) SF";
+			statusBarItem.tooltip = "SF: Disconnected";
 			return;
 		}
 		try {
@@ -80,10 +80,10 @@ export function activate(context: vscode.ExtensionContext): void {
 			const modelId = state?.model?.id ?? "";
 			const costPart = stats?.totalCost !== undefined ? ` | $${stats.totalCost.toFixed(4)}` : "";
 			const streamPart = state?.isStreaming ? " $(sync~spin)" : "";
-			statusBarItem.text = `$(hubot) GSD${modelId ? ` | ${modelId}` : ""}${costPart}${streamPart}`;
+			statusBarItem.text = `$(hubot) SF${modelId ? ` | ${modelId}` : ""}${costPart}${streamPart}`;
 			statusBarItem.tooltip = state?.model
-				? `GSD: Connected — ${state.model.provider}/${state.model.id}`
-				: "GSD: Connected";
+				? `SF: Connected — ${state.model.provider}/${state.model.id}`
+				: "SF: Connected";
 		} catch {
 			// ignore fetch errors
 		}
@@ -95,9 +95,9 @@ export function activate(context: vscode.ExtensionContext): void {
 	client.onConnectionChange(async (connected) => {
 		await refreshStatusBar();
 		if (connected) {
-			vscode.window.setStatusBarMessage("$(hubot) GSD connected", 3000);
+			vscode.window.setStatusBarMessage("$(hubot) SF connected", 3000);
 		} else {
-			vscode.window.setStatusBarMessage("$(hubot) GSD disconnected", 3000);
+			vscode.window.setStatusBarMessage("$(hubot) SF disconnected", 3000);
 		}
 	});
 
@@ -180,7 +180,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			vscode.window.withProgress(
 				{
 					location: vscode.ProgressLocation.Notification,
-					title: "GSD Agent",
+					title: "SF Agent",
 					cancellable: true,
 				},
 				(progress, token) => {
@@ -279,7 +279,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		),
 	);
 
-	// -- Code lens "Ask GSD" -----------------------------------------------
+	// -- Code lens "Ask SF" -----------------------------------------------
 
 	const codeLensProvider = new GsdCodeLensProvider(client);
 	context.subscriptions.push(
@@ -310,9 +310,9 @@ export function activate(context: vscode.ExtensionContext): void {
 				await client!.setAutoCompaction(autoCompaction).catch(() => {});
 				sidebarProvider?.refresh();
 				refreshStatusBar();
-				vscode.window.showInformationMessage("GSD agent started.");
+				vscode.window.showInformationMessage("SF agent started.");
 			} catch (err) {
-				handleError(err, "Failed to start GSD");
+				handleError(err, "Failed to start SF");
 			}
 		}),
 	);
@@ -322,7 +322,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand("gsd.stop", async () => {
 			await client!.stop();
 			sidebarProvider?.refresh();
-			vscode.window.showInformationMessage("GSD agent stopped.");
+			vscode.window.showInformationMessage("SF agent stopped.");
 		}),
 	);
 
@@ -335,7 +335,7 @@ export function activate(context: vscode.ExtensionContext): void {
 				sidebarProvider?.refresh();
 				sessionTreeProvider?.refresh();
 				fileDecorations?.clear();
-				vscode.window.showInformationMessage("New GSD session started.");
+				vscode.window.showInformationMessage("New SF session started.");
 			} catch (err) {
 				handleError(err, "Failed to start new session");
 			}
@@ -347,7 +347,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		vscode.commands.registerCommand("gsd.sendMessage", async () => {
 			if (!requireConnected()) return;
 			const message = await vscode.window.showInputBox({
-				prompt: "Enter message for GSD",
+				prompt: "Enter message for SF",
 				placeHolder: "What should I do?",
 			});
 			if (!message) return;
@@ -636,7 +636,7 @@ export function activate(context: vscode.ExtensionContext): void {
 					const prompt = `Explain the \`${symbolName}\` function/class in ${fileName} (line ${lineNumber}). Be concise.`;
 					await client!.sendPrompt(prompt);
 				} catch (err) {
-					handleError(err, "Failed to send Ask GSD request");
+					handleError(err, "Failed to send Ask SF request");
 				}
 			},
 		),

@@ -22,7 +22,7 @@ parallel:
 /gsd parallel start
 ```
 
-GSD scans your milestones, checks dependencies and file overlap, shows an eligibility report, and spawns workers for eligible milestones.
+SF scans your milestones, checks dependencies and file overlap, shows an eligibility report, and spawns workers for eligible milestones.
 
 3. Monitor progress:
 
@@ -42,7 +42,7 @@ GSD scans your milestones, checks dependencies and file overlap, shows an eligib
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  Coordinator (your GSD session)                         │
+│  Coordinator (your SF session)                         │
 │                                                         │
 │  Responsibilities:                                      │
 │  - Eligibility analysis (deps + file overlap)           │
@@ -73,7 +73,7 @@ Each worker is a separate `gsd` process with complete isolation:
 |----------|-----------------|
 | **Filesystem** | Git worktree — each worker has its own checkout |
 | **Git branch** | `milestone/<MID>` — one branch per milestone |
-| **State derivation** | `GSD_MILESTONE_LOCK` env var — `deriveState()` only sees the assigned milestone |
+| **State derivation** | `SF_MILESTONE_LOCK` env var — `deriveState()` only sees the assigned milestone |
 | **Context window** | Separate process — each worker has its own agent sessions |
 | **Metrics** | Each worktree has its own `.gsd/metrics.json` |
 | **Crash recovery** | Each worktree has its own `.gsd/auto.lock` |
@@ -88,7 +88,7 @@ Workers and the coordinator communicate through file-based IPC:
 
 ## Eligibility Analysis
 
-Before starting parallel execution, GSD checks which milestones can safely run concurrently.
+Before starting parallel execution, SF checks which milestones can safely run concurrently.
 
 ### Rules
 
@@ -250,8 +250,8 @@ The coordinator runs stale detection during `refreshWorkerStatuses()` and automa
 | **Feature flag** | `parallel.enabled: false` by default — existing users unaffected |
 | **Eligibility analysis** | Dependency and file overlap checks before starting |
 | **Worker isolation** | Separate processes, worktrees, branches, context windows |
-| **`GSD_MILESTONE_LOCK`** | Each worker only sees its milestone in state derivation |
-| **`GSD_PARALLEL_WORKER`** | Workers cannot spawn nested parallel sessions |
+| **`SF_MILESTONE_LOCK`** | Each worker only sees its milestone in state derivation |
+| **`SF_PARALLEL_WORKER`** | Workers cannot spawn nested parallel sessions |
 | **Budget ceiling** | Aggregate cost enforcement across all workers |
 | **Signal-based shutdown** | Graceful stop via file signals + SIGTERM |
 | **Doctor integration** | Detects and cleans up orphaned sessions |

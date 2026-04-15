@@ -1,5 +1,5 @@
 /**
- * GSD-2 — Regression tests for merge cwd restore (#2929)
+ * SF — Regression tests for merge cwd restore (#2929)
  * merge-cwd-restore.test.ts — Regression tests for #2929.
  *
  * Verifies:
@@ -158,7 +158,7 @@ describe("merge cwd restore (#2929)", () => {
     assert.ok(mergeLog.length > 0, "m010.ts should be in a commit on main");
 
     // The dirty file should NOT appear in the squash merge commit.
-    const squashCommit = run("git log --format=%H --grep='GSD-Milestone: M010' -1", repo);
+    const squashCommit = run("git log --format=%H --grep='SF-Milestone: M010' -1", repo);
     assert.ok(squashCommit.length > 0, "should find the squash merge commit");
     const filesInSquash = run(`git diff-tree --no-commit-id --name-only -r ${squashCommit}`, repo);
     assert.ok(

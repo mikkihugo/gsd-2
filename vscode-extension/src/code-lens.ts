@@ -46,8 +46,8 @@ const SYMBOL_PATTERNS: { languages: string[]; regex: RegExp }[] = [
 ];
 
 /**
- * CodeLensProvider that adds an "Ask GSD" lens above named function and class
- * declarations. Clicking the lens sends a brief explanation request to the GSD
+ * CodeLensProvider that adds an "Ask SF" lens above named function and class
+ * declarations. Clicking the lens sends a brief explanation request to the SF
  * agent for that specific symbol.
  */
 export class GsdCodeLensProvider implements vscode.CodeLensProvider, vscode.Disposable {
@@ -100,8 +100,8 @@ export class GsdCodeLensProvider implements vscode.CodeLensProvider, vscode.Disp
 
 					lenses.push(
 						new vscode.CodeLens(range, {
-							title: "$(hubot) Ask GSD",
-							tooltip: `Ask GSD to explain ${symbolName}`,
+							title: "$(hubot) Ask SF",
+							tooltip: `Ask SF to explain ${symbolName}`,
 							command: "gsd.askAboutSymbol",
 							arguments: args,
 						}),

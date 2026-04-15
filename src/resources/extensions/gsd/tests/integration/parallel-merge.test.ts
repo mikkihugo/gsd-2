@@ -287,9 +287,9 @@ test("mergeCompletedMilestone — clean merge, session status cleaned up", async
     // Verify file merged to main
     assert.ok(existsSync(join(repo, "auth.ts")), "auth.ts should be on main");
 
-    // Verify commit on main (M010 is now in the body as a GSD-Milestone trailer)
+    // Verify commit on main (M010 is now in the body as a SF-Milestone trailer)
     const log = run("git log -1 --format=%B main", repo);
-    assert.ok(log.includes("GSD-Milestone: M010"), "commit message should reference M010 in trailer");
+    assert.ok(log.includes("SF-Milestone: M010"), "commit message should reference M010 in trailer");
 
     // Verify session status cleaned up
     const statusAfter = readSessionStatus(repo, "M010");

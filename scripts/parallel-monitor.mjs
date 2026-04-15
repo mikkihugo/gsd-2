@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * GSD Parallel Worker Monitor
+ * SF Parallel Worker Monitor
  * 
- * Real-time TUI dashboard for monitoring parallel GSD auto-mode workers.
+ * Real-time TUI dashboard for monitoring parallel SF auto-mode workers.
  * Zero dependencies — uses raw ANSI escape codes, Node.js builtins only.
  * 
  * Usage:
@@ -274,7 +274,7 @@ function extractCostFromNdjson(mid) {
 
 // ─── Self-Healing ────────────────────────────────────────────────────────────
 
-// Auto-detect the GSD loader path — works across npm global, homebrew, and local installs
+// Auto-detect the SF loader path — works across npm global, homebrew, and local installs
 function findGsdLoader() {
   // 1. Check if we're running from inside the gsd-2 repo itself
   const repoLoader = path.resolve(import.meta.dirname, '..', 'dist', 'loader.js');
@@ -284,7 +284,7 @@ function findGsdLoader() {
   try {
     const globalRoot = execSync('npm root -g', { encoding: 'utf-8', timeout: 3000 }).trim();
     const candidates = [
-      path.join(globalRoot, 'gsd-pi', 'dist', 'loader.js'),
+      path.join(globalRoot, 'sf-run', 'dist', 'loader.js'),
       path.join(globalRoot, '@gsd', 'pi', 'dist', 'loader.js'),
     ];
     for (const c of candidates) {
@@ -308,7 +308,7 @@ function findGsdLoader() {
   return null;
 }
 
-const GSD_LOADER = findGsdLoader();
+const SF_LOADER = findGsdLoader();
 
 /**
  * Respawn a dead worker. Returns the new PID or null on failure.
@@ -317,7 +317,7 @@ const GSD_LOADER = findGsdLoader();
 function respawnWorker(mid) {
   const worktreeDir = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}`);
   if (!fs.existsSync(worktreeDir)) return null;
-  if (!fs.existsSync(GSD_LOADER)) return null;
+  if (!fs.existsSync(SF_LOADER)) return null;
   
   const stdoutLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stdout.log`);
   const stderrLog = path.resolve(PROJECT_ROOT, PARALLEL_DIR, `${mid}.stderr.log`);
@@ -329,14 +329,14 @@ function respawnWorker(mid) {
     stdoutFd = fs.openSync(stdoutLog, 'a');
     stderrFd = fs.openSync(stderrLog, 'a');
 
-    const child = spawn(process.execPath, [GSD_LOADER, 'headless', '--json', 'auto'], {
+    const child = spawn(process.execPath, [SF_LOADER, 'headless', '--json', 'auto'], {
       cwd: worktreeDir,
       detached: true,
       env: {
         ...process.env,
-        GSD_MILESTONE_LOCK: mid,
-        GSD_PROJECT_ROOT: PROJECT_ROOT,
-        GSD_PARALLEL_WORKER: '1',
+        SF_MILESTONE_LOCK: mid,
+        SF_PROJECT_ROOT: PROJECT_ROOT,
+        SF_PARALLEL_WORKER: '1',
       },
       stdio: ['ignore', stdoutFd, stderrFd],
       windowsHide: true,
@@ -630,7 +630,7 @@ function render(workers) {
   
   // ── Header ──
   buf.push('');
-  const title = ' GSD Parallel Monitor ';
+  const title = ' SF Parallel Monitor ';
   const titlePad = Math.max(0, Math.floor((w - title.length) / 2));
   buf.push(
     `${' '.repeat(titlePad)}${BOLD}${BG.blue}${FG.white}${title}${RESET}`

@@ -1,8 +1,8 @@
 /**
- * GSD Quick Mode — /gsd quick <task>
+ * SF Quick Mode — /gsd quick <task>
  * Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
  *
- * Lightweight task execution with GSD guarantees (atomic commits, state
+ * Lightweight task execution with SF guarantees (atomic commits, state
  * tracking) but without the full milestone/slice ceremony.
  *
  * Quick tasks live in `.gsd/quick/` and are tracked in STATE.md's

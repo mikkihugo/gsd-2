@@ -83,7 +83,7 @@ export function DualTerminal() {
           )}
           <span>Left: Main Session TUI</span>
           <span className="text-border">|</span>
-          <span>Right: Interactive GSD</span>
+          <span>Right: Interactive SF</span>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export function DualTerminal() {
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
 
-        {/* Right terminal - Interactive GSD instance */}
+        {/* Right terminal - Interactive SF instance */}
         <div style={{ width: `${100 - splitPosition}%` }} className="h-full min-w-0 overflow-hidden bg-terminal">
           <ShellTerminal
             className="h-full"

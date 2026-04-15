@@ -2,7 +2,7 @@
 set -e
 
 # ──────────────────────────────────────────────
-# GSD Container Entrypoint
+# SF Container Entrypoint
 #
 # Responsibilities:
 #   1. UID/GID remapping — match host user via PUID/PGID
@@ -12,9 +12,9 @@ set -e
 #   4. Signal forwarding — exec into the final process
 # ──────────────────────────────────────────────
 
-GSD_USER="gsd"
-GSD_HOME="/home/${GSD_USER}"
-GSD_DIR="${GSD_HOME}/.gsd"
+SF_USER="gsd"
+SF_HOME="/home/${SF_USER}"
+SF_DIR="${SF_HOME}/.gsd"
 
 # ── 1. UID/GID Remapping ────────────────────────────────
 # Accept PUID/PGID from the environment so the container
@@ -24,24 +24,24 @@ GSD_DIR="${GSD_HOME}/.gsd"
 PUID="${PUID:-1000}"
 PGID="${PGID:-1000}"
 
-CURRENT_UID=$(id -u "${GSD_USER}")
-CURRENT_GID=$(id -g "${GSD_USER}")
+CURRENT_UID=$(id -u "${SF_USER}")
+CURRENT_GID=$(id -g "${SF_USER}")
 
 REMAPPED=0
 
 if [ "${PGID}" != "${CURRENT_GID}" ]; then
-    groupmod -o -g "${PGID}" "${GSD_USER}"
+    groupmod -o -g "${PGID}" "${SF_USER}"
     REMAPPED=1
 fi
 
 if [ "${PUID}" != "${CURRENT_UID}" ]; then
-    usermod -o -u "${PUID}" "${GSD_USER}"
+    usermod -o -u "${PUID}" "${SF_USER}"
     REMAPPED=1
 fi
 
 # Fix ownership only when UID/GID actually changed
 if [ "${REMAPPED}" -eq 1 ]; then
-    chown -R "${PUID}:${PGID}" "${GSD_HOME}"
+    chown -R "${PUID}:${PGID}" "${SF_HOME}"
     chown "${PUID}:${PGID}" /workspace
 fi
 
@@ -50,24 +50,24 @@ fi
 # path doesn't exist. We need these to be files, so touch
 # them before Docker gets a chance to mangle things.
 
-mkdir -p "${GSD_DIR}"
+mkdir -p "${SF_DIR}"
 
-if [ ! -f "${GSD_DIR}/settings.json" ]; then
-    echo '{}' > "${GSD_DIR}/settings.json"
+if [ ! -f "${SF_DIR}/settings.json" ]; then
+    echo '{}' > "${SF_DIR}/settings.json"
 fi
 
-chown "${PUID}:${PGID}" "${GSD_DIR}" "${GSD_DIR}/settings.json"
+chown "${PUID}:${PGID}" "${SF_DIR}" "${SF_DIR}/settings.json"
 
 # ── 3. Sentinel-based Bootstrap ─────────────────────────
 # Run first-boot setup exactly once. Subsequent container
 # starts (or restarts) skip this entirely.
 
-SENTINEL="${GSD_DIR}/.bootstrapped"
+SENTINEL="${SF_DIR}/.bootstrapped"
 
 if [ ! -f "${SENTINEL}" ]; then
     if [ -x /usr/local/bin/bootstrap.sh ]; then
         # Run bootstrap as the gsd user so files get correct ownership
-        gosu "${GSD_USER}" /usr/local/bin/bootstrap.sh
+        gosu "${SF_USER}" /usr/local/bin/bootstrap.sh
     fi
     touch "${SENTINEL}"
     chown "${PUID}:${PGID}" "${SENTINEL}"
@@ -78,4 +78,4 @@ fi
 # as the gsd user. exec + gosu = proper PID 1 = proper
 # signal forwarding (SIGTERM, SIGINT, etc.).
 
-exec gosu "${GSD_USER}" "$@"
+exec gosu "${SF_USER}" "$@"

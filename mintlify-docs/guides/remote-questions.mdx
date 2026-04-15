@@ -3,7 +3,7 @@ title: "Remote questions"
 description: "Discord, Slack, and Telegram integration for headless auto-mode."
 ---
 
-Remote questions allow GSD to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When GSD encounters a decision point, it posts the question to your configured channel and polls for a response.
+Remote questions allow SF to ask for user input via Slack, Discord, or Telegram when running in headless auto-mode. When SF encounters a decision point, it posts the question to your configured channel and polls for a response.
 
 ## Setup
 
@@ -55,11 +55,11 @@ remote_questions:
 
 ## How it works
 
-1. GSD encounters a decision point during auto-mode
+1. SF encounters a decision point during auto-mode
 2. The question is posted to your channel as a rich embed (Discord) or Block Kit message (Slack)
-3. GSD polls for a response at the configured interval
+3. SF polls for a response at the configured interval
 4. You respond by reacting with a number emoji or replying with text
-5. GSD picks up the response and continues
+5. SF picks up the response and continues
 6. A check reaction confirms receipt
 
 ### Response formats

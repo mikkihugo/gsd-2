@@ -1,5 +1,5 @@
 /**
- * GSD Triage Resolution — Execute triage classifications
+ * SF Triage Resolution — Execute triage classifications
  *
  * Provides resolution executors for each capture classification type:
  *
@@ -389,7 +389,7 @@ export function loadReplanCaptures(basePath: string): CaptureEntry[] {
  */
 export function buildQuickTaskPrompt(capture: CaptureEntry): string {
   return [
-    `You are executing a quick one-off task captured during a GSD auto-mode session.`,
+    `You are executing a quick one-off task captured during a SF auto-mode session.`,
     ``,
     `## Quick Task`,
     ``,

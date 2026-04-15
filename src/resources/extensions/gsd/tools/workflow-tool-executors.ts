@@ -57,7 +57,7 @@ export async function executeSummarySave(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot save artifact." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot save artifact." }],
       details: { operation: "save_summary", error: "db_unavailable" },
     isError: true,
       };
@@ -167,7 +167,7 @@ export async function executeTaskComplete(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot complete task." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot complete task." }],
       details: { operation: "complete_task", error: "db_unavailable" },
     isError: true,
       };
@@ -214,7 +214,7 @@ export async function executeSliceComplete(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot complete slice." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot complete slice." }],
       details: { operation: "complete_slice", error: "db_unavailable" },
     isError: true,
       };
@@ -298,7 +298,7 @@ export async function executeCompleteMilestone(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot complete milestone." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot complete milestone." }],
       details: { operation: "complete_milestone", error: "db_unavailable" },
     isError: true,
       };
@@ -339,7 +339,7 @@ export async function executeValidateMilestone(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot validate milestone." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot validate milestone." }],
       details: { operation: "validate_milestone", error: "db_unavailable" },
     isError: true,
       };
@@ -380,7 +380,7 @@ export async function executeReassessRoadmap(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot reassess roadmap." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot reassess roadmap." }],
       details: { operation: "reassess_roadmap", error: "db_unavailable" },
     isError: true,
       };
@@ -422,7 +422,7 @@ export async function executeSaveGateResult(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available." }],
+      content: [{ type: "text", text: "Error: SF database is not available." }],
       details: { operation: "save_gate_result", error: "db_unavailable" },
     isError: true,
       };
@@ -481,7 +481,7 @@ export async function executePlanMilestone(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot plan milestone." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot plan milestone." }],
       details: { operation: "plan_milestone", error: "db_unavailable" },
     isError: true,
       };
@@ -521,7 +521,7 @@ export async function executePlanSlice(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot plan slice." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot plan slice." }],
       details: { operation: "plan_slice", error: "db_unavailable" },
     isError: true,
       };
@@ -563,7 +563,7 @@ export async function executeReplanSlice(
   const dbAvailable = await ensureDbOpen(basePath);
   if (!dbAvailable) {
     return {
-      content: [{ type: "text", text: "Error: GSD database is not available. Cannot replan slice." }],
+      content: [{ type: "text", text: "Error: SF database is not available. Cannot replan slice." }],
       details: { operation: "replan_slice", error: "db_unavailable" },
     isError: true,
       };
@@ -610,7 +610,7 @@ export async function executeMilestoneStatus(
     const dbAvailable = await ensureDbOpen(basePath);
     if (!dbAvailable) {
       return {
-        content: [{ type: "text", text: "Error: GSD database is not available." }],
+        content: [{ type: "text", text: "Error: SF database is not available." }],
         details: { operation: "milestone_status", error: "db_unavailable" },
       isError: true,
       };

@@ -9,7 +9,7 @@
 
 ## Context
 
-GSD vendors four packages from [pi-mono](https://github.com/badlogic/pi-mono) (an open-source coding agent framework) by copying their source directly into `/packages/`:
+SF vendors four packages from [pi-mono](https://github.com/badlogic/pi-mono) (an open-source coding agent framework) by copying their source directly into `/packages/`:
 
 | Package | Role | Current version |
 |---|---|---|
@@ -18,15 +18,15 @@ GSD vendors four packages from [pi-mono](https://github.com/badlogic/pi-mono) (a
 | `@gsd/pi-tui` | Terminal UI framework | 0.57.1 |
 | `@gsd/pi-coding-agent` | Coding agent, tools, extension system | 2.74.0 |
 
-Vendoring was chosen over npm dependencies to allow GSD to modify the upstream packages freely. However, over time, GSD has written substantial original logic directly inside `pi-coding-agent` — approximately 79 files including:
+Vendoring was chosen over npm dependencies to allow SF to modify the upstream packages freely. However, over time, SF has written substantial original logic directly inside `pi-coding-agent` — approximately 79 files including:
 
-- `agent-session.ts` (98KB) — the primary GSD session orchestrator
+- `agent-session.ts` (98KB) — the primary SF session orchestrator
 - `compaction/` — context window management
 - `modes/interactive/`, `modes/rpc/`, `modes/print/` — all three run modes
 - `cli/` — CLI argument parsing and utilities
 - `sdk.ts` — the `createAgentSession()` factory
 
-This GSD-authored code is mixed in with upstream pi code inside the same package. The pi packages are currently 10 versions behind upstream (0.57.1 vs 0.67.2), with a breaking API change from v0.65.0 (`session_switch`/`session_fork` removal) unresolved. The primary obstacle to applying updates is that there is no reliable way to distinguish GSD files from pi files without reading them individually.
+This SF-authored code is mixed in with upstream pi code inside the same package. The pi packages are currently 10 versions behind upstream (0.57.1 vs 0.67.2), with a breaking API change from v0.65.0 (`session_switch`/`session_fork` removal) unresolved. The primary obstacle to applying updates is that there is no reliable way to distinguish SF files from pi files without reading them individually.
 
 ### Why not move to npm dependencies now?
 
@@ -34,7 +34,7 @@ Pi-mono does publish to npm as `@mariozechner/pi-*`. Moving to npm dependencies 
 
 1. `@gsd/native` bindings are imported directly inside the vendored pi-tui and pi-coding-agent source — the upstream npm packages do not have these imports
 2. ~50 direct source modification commits to the vendored packages since March 2026 would need to be evaluated individually
-3. The upstream extension API (~25 events) is a subset of GSD's extension system (~50+ events) — the delta would need to be re-architected before the move
+3. The upstream extension API (~25 events) is a subset of SF's extension system (~50+ events) — the delta would need to be re-architected before the move
 
 Moving to npm is a valid Phase 2. This ADR covers Phase 1: establishing a clean seam without changing the vendoring approach.
 
@@ -42,24 +42,24 @@ Moving to npm is a valid Phase 2. This ADR covers Phase 1: establishing a clean 
 
 ## Decision
 
-Introduce two new workspace packages that own all GSD-authored code currently living inside `pi-coding-agent`. The vendored pi packages become close-to-upstream source copies. GSD code depends on pi; pi code does not depend on GSD.
+Introduce two new workspace packages that own all SF-authored code currently living inside `pi-coding-agent`. The vendored pi packages become close-to-upstream source copies. SF code depends on pi; pi code does not depend on SF.
 
 ### New package structure
 
 ```
 packages/
-  pi-agent-core/          # vendored upstream — no GSD modifications
-  pi-ai/                  # vendored upstream — no GSD modifications
-  pi-tui/                 # vendored upstream — no GSD modifications
+  pi-agent-core/          # vendored upstream — no SF modifications
+  pi-ai/                  # vendored upstream — no SF modifications
+  pi-tui/                 # vendored upstream — no SF modifications
   pi-coding-agent/        # vendored upstream + extension system (pi-typed, stays here)
-  gsd-agent-core/         # NEW — GSD session orchestration layer
-  gsd-agent-modes/        # NEW — GSD run modes and CLI layer
+  gsd-agent-core/         # NEW — SF session orchestration layer
+  gsd-agent-modes/        # NEW — SF run modes and CLI layer
 ```
 
 ### Dependency graph
 
 ```
-gsd-pi (binary)
+sf-run (binary)
   └── @gsd/agent-modes
         ├── @gsd/agent-core
         │     ├── @gsd/pi-coding-agent
@@ -79,7 +79,7 @@ Arrows point in one direction only. No cycles. The vendored pi packages have no 
 
 ### `@gsd/agent-core` (`packages/gsd-agent-core/`)
 
-**Purpose:** GSD's session orchestration layer. Owns the `AgentSession` class, compaction, bash execution, system prompt construction, and the `createAgentSession()` factory that wires everything together.
+**Purpose:** SF's session orchestration layer. Owns the `AgentSession` class, compaction, bash execution, system prompt construction, and the `createAgentSession()` factory that wires everything together.
 
 **Public API surface (exported from `index.ts`):**
 
@@ -108,8 +108,8 @@ export { BlobStore } from './blob-store.js'
 | `compaction/compaction.ts` | Context window orchestration |
 | `compaction/branch-summarization.ts` | Summarization on fork |
 | `compaction/utils.ts` | Shared compaction utilities |
-| `system-prompt.ts` | GSD system prompt construction |
-| `bash-executor.ts` | Bash runtime with GSD integration |
+| `system-prompt.ts` | SF system prompt construction |
+| `bash-executor.ts` | Bash runtime with SF integration |
 | `fallback-resolver.ts` | Model fallback strategy |
 | `lifecycle-hooks.ts` | Phase hook system |
 | `image-overflow-recovery.ts` | Context overflow recovery |
@@ -119,13 +119,13 @@ export { BlobStore } from './blob-store.js'
 | `blob-store.ts` | External binary data management |
 | `export-html/` | Session HTML export |
 
-**Key dependency note:** `agent-session.ts` imports pi types directly (`Agent`, `AgentEvent`, `AgentMessage`, `AgentState`, `AgentTool`, `ThinkingLevel` from `@gsd/pi-agent-core`; `Model`, `Message` from `@gsd/pi-ai`). This is intentional — GSD's session layer is pi-typed, not abstracting over pi. This makes the seam a clear seam, not an abstraction.
+**Key dependency note:** `agent-session.ts` imports pi types directly (`Agent`, `AgentEvent`, `AgentMessage`, `AgentState`, `AgentTool`, `ThinkingLevel` from `@gsd/pi-agent-core`; `Model`, `Message` from `@gsd/pi-ai`). This is intentional — SF's session layer is pi-typed, not abstracting over pi. This makes the seam a clear seam, not an abstraction.
 
 ---
 
 ### `@gsd/agent-modes` (`packages/gsd-agent-modes/`)
 
-**Purpose:** GSD's run-mode and CLI layer. Assembles the agent session (from `@gsd/agent-core`) with a specific interface: interactive TUI, headless RPC server, or print output. Contains the `main()` entry point logic invoked by the `gsd` binary.
+**Purpose:** SF's run-mode and CLI layer. Assembles the agent session (from `@gsd/agent-core`) with a specific interface: interactive TUI, headless RPC server, or print output. Contains the `main()` entry point logic invoked by the `gsd` binary.
 
 **Public API surface (exported from `index.ts`):**
 
@@ -163,7 +163,7 @@ After the migration, `pi-coding-agent` contains:
 - **Upstream agent infrastructure** — auth storage, model registry, upstream session manager
 - **Extension system** (`src/core/extensions/`) — loader, runner, types, wrapper
 
-The extension system remains here because it is legitimately pi-typed. Extensions subscribe to pi events (`session_start`, `tool_execution_start`, `model_select`, etc.) and receive pi types in their handlers. Moving the extension system out of `pi-coding-agent` would require re-expressing those types in GSD terms, which is the abstraction-layer work explicitly out of scope for this phase.
+The extension system remains here because it is legitimately pi-typed. Extensions subscribe to pi events (`session_start`, `tool_execution_start`, `model_select`, etc.) and receive pi types in their handlers. Moving the extension system out of `pi-coding-agent` would require re-expressing those types in SF terms, which is the abstraction-layer work explicitly out of scope for this phase.
 
 **Required update to extension loader:**
 
@@ -212,7 +212,7 @@ Steps 2-5 are scoped to known files. No archaeology required.
 |---|---|---|
 | Internal-path import of `AgentSessionEvent` | `src/web/bridge-service.ts` | Import from `@gsd/agent-core` public export |
 | `clearQueue()` not in typed public API | `AgentSession` | Add to public interface in `@gsd/agent-core/index.ts` |
-| `buildSessionContext()` on `SessionManager` | Used by GSD code, not publicly exported | Evaluate: re-export from `@gsd/agent-core` or remove dependency |
+| `buildSessionContext()` on `SessionManager` | Used by SF code, not publicly exported | Evaluate: re-export from `@gsd/agent-core` or remove dependency |
 | Deprecated `session_switch`, `session_fork`, `session_directory` usage | 2+ files in `pi-coding-agent` | Migrate to `session_start` with `reason` field (required for v0.65.0 compat) — can be done as part of or after clean seam work |
 
 ---
@@ -221,7 +221,7 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 ### Positive
 
-- Pi updates are scoped: type errors from a pi update surface only in the two new GSD packages, not scattered across mixed source
+- Pi updates are scoped: type errors from a pi update surface only in the two new SF packages, not scattered across mixed source
 - The module system enforces the boundary: a pi file importing `@gsd/agent-core` is a compiler error, not a convention violation
 - Phase 2 (moving pi packages to npm) becomes a package.json change rather than a file archaeology project
 - Headless/RPC consumers can depend on `@gsd/agent-core` without pulling in the TUI layer
@@ -234,9 +234,9 @@ Steps 2-5 are scoped to known files. No archaeology required.
 
 ### Neutral
 
-- End-user install experience (`npm install -g gsd-pi@latest`) is unchanged
+- End-user install experience (`npm install -g sf-run@latest`) is unchanged
 - Extension authors see no change — the extension API surface remains in `@gsd/pi-coding-agent`
-- GSD packages continue to use pi types directly — no new abstraction layer
+- SF packages continue to use pi types directly — no new abstraction layer
 
 ---
 
@@ -248,7 +248,7 @@ Move everything into one package instead of two. Simpler dependency graph but cr
 
 ### Directory convention within `pi-coding-agent` (no new packages)
 
-Add a `src/gsd/` subdirectory inside `pi-coding-agent` to clearly mark GSD files without creating new packages. Fastest to implement but the seam is a convention, not enforced by the module system. A future accidental cross-import would not be caught by the compiler. Rejected because the enforcement value of proper packages is worth the modest extra setup.
+Add a `src/gsd/` subdirectory inside `pi-coding-agent` to clearly mark SF files without creating new packages. Fastest to implement but the seam is a convention, not enforced by the module system. A future accidental cross-import would not be caught by the compiler. Rejected because the enforcement value of proper packages is worth the modest extra setup.
 
 ### Move to npm dependencies now (Phase 2 first)
 

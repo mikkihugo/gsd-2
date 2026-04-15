@@ -1,4 +1,4 @@
-// GSD Extension — Workflow Logger
+// SF Extension — Workflow Logger
 // Centralized warning/error accumulator for the workflow engine pipeline.
 // Captures structured entries that the auto-loop can drain after each unit
 // to surface root causes for stuck loops, silent degradation, and blocked writes.

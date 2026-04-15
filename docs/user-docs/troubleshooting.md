@@ -43,7 +43,7 @@ It checks:
 
 ### `command not found: gsd` after install
 
-**Symptoms:** `npm install -g gsd-pi` succeeds but `gsd` isn't found.
+**Symptoms:** `npm install -g sf-run` succeeds but `gsd` isn't found.
 
 **Cause:** npm's global bin directory isn't in your shell's `$PATH`.
 
@@ -59,14 +59,14 @@ echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
-**Workaround:** Run `npx gsd-pi` or `$(npm prefix -g)/bin/gsd` directly.
+**Workaround:** Run `npx sf-run` or `$(npm prefix -g)/bin/gsd` directly.
 
 **Common causes:**
 - **Homebrew Node** — `/opt/homebrew/bin` should be in PATH but sometimes isn't if Homebrew init is missing from your shell profile
 - **Version manager (nvm, fnm, mise)** — global bin is version-specific; ensure your version manager initializes in your shell config
 - **oh-my-zsh** — the `gitfast` plugin aliases `gsd` to `git svn dcommit`. Check with `alias gsd` and unalias if needed
 
-### `npm install -g gsd-pi` fails
+### `npm install -g sf-run` fails
 
 **Common causes:**
 - Missing workspace packages — fixed in v2.10.4+
@@ -77,7 +77,7 @@ source ~/.zshrc
 
 **Symptoms:** Auto mode pauses with a provider error (rate limit, server error, auth failure).
 
-**How GSD handles it (v2.26):**
+**How SF handles it (v2.26):**
 
 | Error type | Auto-resume? | Delay |
 |-----------|-------------|-------|
@@ -85,7 +85,7 @@ source ~/.zshrc
 | Server error (500, 502, 503, "overloaded") | ✅ Yes | 30s |
 | Auth/billing ("unauthorized", "invalid key") | ❌ No | Manual resume |
 
-For transient errors, GSD pauses briefly and resumes automatically. For permanent errors, configure fallback models:
+For transient errors, SF pauses briefly and resumes automatically. For permanent errors, configure fallback models:
 
 ```yaml
 models:
@@ -109,7 +109,7 @@ For common provider setup issues (role errors, streaming errors, model ID mismat
 
 **Symptoms:** Auto mode won't start, says another session is running.
 
-**Fix:** GSD automatically detects stale locks — if the owning PID is dead, the lock is cleaned up and re-acquired on the next `/gsd auto`. This includes stranded `.gsd.lock/` directories left by `proper-lockfile` after crashes. If automatic recovery fails, delete `.gsd/auto.lock` and the `.gsd.lock/` directory manually:
+**Fix:** SF automatically detects stale locks — if the owning PID is dead, the lock is cleaned up and re-acquired on the next `/gsd auto`. This includes stranded `.gsd.lock/` directories left by `proper-lockfile` after crashes. If automatic recovery fails, delete `.gsd/auto.lock` and the `.gsd.lock/` directory manually:
 
 ```bash
 rm -f .gsd/auto.lock
@@ -120,7 +120,7 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 
 **Symptoms:** Worktree merge fails on `.gsd/` files.
 
-**Fix:** GSD auto-resolves conflicts on `.gsd/` runtime files. For content conflicts in code files, the LLM is given an opportunity to resolve them via a fix-merge session. If that fails, manual resolution is needed.
+**Fix:** SF auto-resolves conflicts on `.gsd/` runtime files. For content conflicts in code files, the LLM is given an opportunity to resolve them via a fix-merge session. If that fails, manual resolution is needed.
 
 ### Pre-dispatch says the milestone integration branch no longer exists
 
@@ -129,24 +129,24 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 **What it means:** The milestone's `.gsd/milestones/<MID>/<MID>-META.json` still points at the branch that was active when the milestone started, but that branch has since been renamed or deleted.
 
 **Current behavior:**
-- If GSD can deterministically recover to a safe branch, it no longer hard-stops auto mode.
+- If SF can deterministically recover to a safe branch, it no longer hard-stops auto mode.
 - Safe fallbacks are:
   - explicit `git.main_branch` when configured and present
   - the repo's detected default integration branch (for example `main` or `master`)
 - In that case `/gsd doctor` reports a warning and `/gsd doctor fix` rewrites the stale metadata to the effective branch.
-- GSD still blocks when no safe fallback branch can be determined.
+- SF still blocks when no safe fallback branch can be determined.
 
 **Fix:**
 - Run `/gsd doctor fix` to rewrite the stale milestone metadata automatically when the fallback is obvious.
-- If GSD still blocks, recreate the missing branch or update your git preferences so `git.main_branch` points at a real branch.
+- If SF still blocks, recreate the missing branch or update your git preferences so `git.main_branch` points at a real branch.
 
 ### Transient `EBUSY` / `EPERM` / `EACCES` while writing `.gsd/` files
 
 **Symptoms:** On Windows, auto mode or doctor occasionally fails while updating `.gsd/` files with errors like `EBUSY`, `EPERM`, or `EACCES`.
 
-**Cause:** Antivirus, indexers, editors, or filesystem watchers can briefly lock the destination or temp file just as GSD performs the atomic rename.
+**Cause:** Antivirus, indexers, editors, or filesystem watchers can briefly lock the destination or temp file just as SF performs the atomic rename.
 
-**Current behavior:** GSD now retries those transient rename failures with a short bounded backoff before surfacing an error. The retry is intentionally limited so genuine filesystem problems still fail loudly instead of hanging forever.
+**Current behavior:** SF now retries those transient rename failures with a short bounded backoff before surfacing an error. The retry is intentionally limited so genuine filesystem problems still fail loudly instead of hanging forever.
 
 **Fix:**
 - Re-run the operation; most transient lock races clear quickly.
@@ -163,11 +163,11 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 
 ### Orphan web server process
 
-**Symptoms:** `gsd --web` fails because port 3000 is already in use, even though no GSD session is running.
+**Symptoms:** `gsd --web` fails because port 3000 is already in use, even though no SF session is running.
 
 **Cause:** A previous web server process was not cleaned up on exit.
 
-**Fix:** Fixed in v2.42.0+. GSD now cleans up stale web server processes automatically. If you're on an older version, kill the orphan process manually: `lsof -ti:3000 | xargs kill`.
+**Fix:** Fixed in v2.42.0+. SF now cleans up stale web server processes automatically. If you're on an older version, kill the orphan process manually: `lsof -ti:3000 | xargs kill`.
 
 ### Non-JS project blocked by worktree health check
 
@@ -181,7 +181,7 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 
 **Symptoms:** Git commands fail or produce unexpected results when the system locale is non-English (e.g., German).
 
-**Cause:** GSD parsed git output assuming English locale strings.
+**Cause:** SF parsed git output assuming English locale strings.
 
 **Fix:** Fixed in v2.42.0+. All git commands now force `LC_ALL=C` to ensure consistent English output regardless of system locale.
 
@@ -194,7 +194,7 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 **Common causes:**
 - No `.mcp.json` or `.gsd/mcp.json` file exists in the current project
 - The config file is malformed JSON
-- The server is configured in a different project directory than the one where you launched GSD
+- The server is configured in a different project directory than the one where you launched SF
 
 **Fix:**
 - Add the server to `.mcp.json` or `.gsd/mcp.json`
@@ -211,7 +211,7 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 - The server is waiting on an unavailable dependency or backend service
 
 **Fix:**
-- Run the configured command directly outside GSD and confirm the server actually starts
+- Run the configured command directly outside SF and confirm the server actually starts
 - Check that any backend URLs or required services are reachable
 - For local custom servers, verify the implementation is using an MCP SDK or a correct stdio protocol implementation
 
@@ -242,14 +242,14 @@ rm -rf "$(dirname .gsd)/.gsd.lock"
 **Fix:**
 - Re-run `mcp_discover(server="name")` and confirm the exact required argument names
 - Call the tool with `mcp_call(server="name", tool="tool_name", args={...})`
-- If you're developing GSD itself, rebuild after schema changes with `npm run build`
+- If you're developing SF itself, rebuild after schema changes with `npm run build`
 
-### Local stdio server works manually but not in GSD
+### Local stdio server works manually but not in SF
 
-**Symptoms:** Running the server command manually seems fine, but GSD can't connect.
+**Symptoms:** Running the server command manually seems fine, but SF can't connect.
 
 **Common causes:**
-- The server depends on shell state that GSD doesn't inherit
+- The server depends on shell state that SF doesn't inherit
 - Relative paths only work from a different working directory
 - Required environment variables exist in your shell but not in the MCP config
 
@@ -307,16 +307,16 @@ Doctor rebuilds `STATE.md` from plan and roadmap files on disk and fixes detecte
 
 ## Getting Help
 
-- **GitHub Issues:** [github.com/gsd-build/GSD-2/issues](https://github.com/gsd-build/GSD-2/issues)
+- **GitHub Issues:** [github.com/gsd-build/SF/issues](https://github.com/gsd-build/SF/issues)
 - **Dashboard:** `Ctrl+Alt+G` or `/gsd status` for real-time diagnostics
 - **Forensics:** `/gsd forensics` for structured post-mortem analysis of auto-mode failures
 - **Session logs:** `.gsd/activity/` contains JSONL session dumps for crash forensics
 
 ## iTerm2-Specific Issues
 
-### Ctrl+Alt shortcuts trigger the wrong action (e.g., Ctrl+Alt+G opens external editor instead of GSD dashboard)
+### Ctrl+Alt shortcuts trigger the wrong action (e.g., Ctrl+Alt+G opens external editor instead of SF dashboard)
 
-**Symptoms:** Pressing Ctrl+Alt+G opens the external editor prompt (Ctrl+G) instead of the GSD dashboard. Other Ctrl+Alt shortcuts behave as their Ctrl-only counterparts.
+**Symptoms:** Pressing Ctrl+Alt+G opens the external editor prompt (Ctrl+G) instead of the SF dashboard. Other Ctrl+Alt shortcuts behave as their Ctrl-only counterparts.
 
 **Cause:** iTerm2's default Left Option Key setting is "Normal", which swallows the Alt modifier for Ctrl+Alt key combinations. The terminal receives only the Ctrl key, so Ctrl+Alt+G arrives as Ctrl+G.
 
@@ -342,7 +342,7 @@ Doctor rebuilds `STATE.md` from plan and roadmap files on disk and fixes detecte
 
 ## Database Issues
 
-### "GSD database is not available"
+### "SF database is not available"
 
 **Symptoms:** `gsd_decision_save` (or its alias `gsd_save_decision`), `gsd_requirement_update` (or `gsd_update_requirement`), or `gsd_summary_save` (or `gsd_save_summary`) fail with this error.
 
@@ -364,7 +364,7 @@ Doctor rebuilds `STATE.md` from plan and roadmap files on disk and fixes detecte
 
 ### "LSP isn't available in this workspace"
 
-GSD auto-detects language servers based on project files (e.g. `package.json` → TypeScript, `Cargo.toml` → Rust, `go.mod` → Go). If no servers are detected, the agent skips LSP features.
+SF auto-detects language servers based on project files (e.g. `package.json` → TypeScript, `Cargo.toml` → Rust, `go.mod` → Go). If no servers are detected, the agent skips LSP features.
 
 **Check status:**
 ```
@@ -382,7 +382,7 @@ This shows which servers are active and, if none are found, diagnoses why — in
 | Rust | `rustup component add rust-analyzer` |
 | Go | `go install golang.org/x/tools/gopls@latest` |
 
-After installing, run `lsp reload` to restart detection without restarting GSD.
+After installing, run `lsp reload` to restart detection without restarting SF.
 
 ## Notifications
 
@@ -390,7 +390,7 @@ After installing, run `lsp reload` to restart detection without restarting GSD.
 
 **Symptoms:** `notifications.enabled: true` in preferences, but no desktop notifications appear during auto-mode (no milestone complete alerts, no budget warnings, no error notifications). No error messages logged.
 
-**Cause:** GSD uses `osascript display notification` as a fallback on macOS. This command is attributed to your terminal app (Ghostty, iTerm2, Alacritty, Kitty, Warp, etc.). If that app doesn't have notification permissions in System Settings → Notifications, macOS silently drops the notification — `osascript` exits 0 with no error.
+**Cause:** SF uses `osascript display notification` as a fallback on macOS. This command is attributed to your terminal app (Ghostty, iTerm2, Alacritty, Kitty, Warp, etc.). If that app doesn't have notification permissions in System Settings → Notifications, macOS silently drops the notification — `osascript` exits 0 with no error.
 
 Most terminal apps don't appear in the Notifications settings panel until they've successfully delivered at least one notification, creating a chicken-and-egg problem.
 
@@ -400,16 +400,16 @@ Most terminal apps don't appear in the Notifications settings panel until they'v
 brew install terminal-notifier
 ```
 
-GSD automatically prefers `terminal-notifier` when available. On first use, macOS will prompt you to allow notifications — this is the expected behavior.
+SF automatically prefers `terminal-notifier` when available. On first use, macOS will prompt you to allow notifications — this is the expected behavior.
 
 **Fix (alternative):** Go to **System Settings → Notifications** and enable notifications for your terminal app. If your terminal doesn't appear in the list, try sending a test notification from Terminal.app first to register "Script Editor":
 
 ```bash
-osascript -e 'display notification "test" with title "GSD"'
+osascript -e 'display notification "test" with title "SF"'
 ```
 
 **Verify:** After applying either fix, test with:
 
 ```bash
-terminal-notifier -title "GSD" -message "working!" -sound Glass
+terminal-notifier -title "SF" -message "working!" -sound Glass
 ```

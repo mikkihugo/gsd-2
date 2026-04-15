@@ -59,7 +59,7 @@ function toolSummary(toolName: string, toolInput: Record<string, unknown>): { la
 }
 
 /**
- * TreeDataProvider that shows real-time tool executions from the GSD agent.
+ * TreeDataProvider that shows real-time tool executions from the SF agent.
  * Listens to tool_execution_start/end and agent_start/end events.
  */
 export class GsdActivityFeedProvider implements vscode.TreeDataProvider<ActivityItem>, vscode.Disposable {

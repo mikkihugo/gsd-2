@@ -1,4 +1,4 @@
-// GSD Dispatch Guard — prevents out-of-order slice dispatch
+// SF Dispatch Guard — prevents out-of-order slice dispatch
 
 import { resolveMilestoneFile } from "./paths.js";
 import { findMilestoneIds } from "./guided-flow.js";
@@ -27,12 +27,12 @@ export function getPriorSliceCompletionBlocker(
   const { milestone: targetMid, slice: targetSid } = parseUnitId(unitId);
   if (!targetMid || !targetSid) return null;
 
-  // Parallel worker isolation: when GSD_MILESTONE_LOCK is set, this worker
+  // Parallel worker isolation: when SF_MILESTONE_LOCK is set, this worker
   // is scoped to a single milestone. Skip the cross-milestone dependency
   // check — other milestones are being handled by their own workers.
   // Without this, the dispatch guard sees incomplete slices in M010/M011
   // (cloned into the worktree DB) and blocks M012 from ever starting. #2797
-  const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+  const milestoneLock = process.env.SF_MILESTONE_LOCK;
 
   // Use findMilestoneIds to respect custom queue order.
   // Only check milestones that come BEFORE the target in queue order.

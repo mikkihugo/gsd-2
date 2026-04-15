@@ -17,9 +17,9 @@ const SUBCOMMAND_HELP: Record<string, string> = {
   update: [
     'Usage: gsd update',
     '',
-    'Update GSD to the latest version.',
+    'Update SF to the latest version.',
     '',
-    'Equivalent to: npm install -g gsd-pi@latest',
+    'Equivalent to: npm install -g sf-run@latest',
   ].join('\n'),
 
   sessions: [
@@ -94,7 +94,7 @@ const SUBCOMMAND_HELP: Record<string, string> = {
   graph: [
     'Usage: gsd graph <subcommand> [options]',
     '',
-    'Manage the GSD project knowledge graph. Reads .gsd/ artifacts and builds',
+    'Manage the SF project knowledge graph. Reads .gsd/ artifacts and builds',
     'a queryable graph of milestones, slices, tasks, rules, patterns, and lessons.',
     '',
     'Subcommands:',
@@ -173,7 +173,7 @@ const SUBCOMMAND_HELP: Record<string, string> = {
 SUBCOMMAND_HELP['wt'] = SUBCOMMAND_HELP['worktree']
 
 export function printHelp(version: string): void {
-  process.stdout.write(`GSD v${version} — Get Shit Done\n\n`)
+  process.stdout.write(`SF v${version} — Singularity Forge\n\n`)
   process.stdout.write('Usage: gsd [options] [message...]\n\n')
   process.stdout.write('Options:\n')
   process.stdout.write('  --mode <text|json|rpc|mcp> Output mode (default: interactive)\n')
@@ -192,7 +192,7 @@ export function printHelp(version: string): void {
   process.stdout.write('  install <source>         Install a package/extension source\n')
   process.stdout.write('  remove <source>          Remove an installed package source\n')
   process.stdout.write('  list                     List installed package sources\n')
-  process.stdout.write('  update                   Update GSD to the latest version\n')
+  process.stdout.write('  update                   Update SF to the latest version\n')
   process.stdout.write('  sessions                 List and resume a past session\n')
   process.stdout.write('  worktree <cmd>           Manage worktrees (list, merge, clean, remove)\n')
   process.stdout.write('  auto [args]              Run auto-mode without TUI (pipeable)\n')
@@ -204,7 +204,7 @@ export function printHelp(version: string): void {
 export function printSubcommandHelp(subcommand: string, version: string): boolean {
   const help = SUBCOMMAND_HELP[subcommand]
   if (!help) return false
-  process.stdout.write(`GSD v${version} — Get Shit Done\n\n`)
+  process.stdout.write(`SF v${version} — Singularity Forge\n\n`)
   process.stdout.write(help + '\n')
   return true
 }

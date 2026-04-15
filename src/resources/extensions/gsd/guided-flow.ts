@@ -1,9 +1,9 @@
 /**
- * GSD Guided Flow — Workflow Entry Wizard
+ * SF Guided Flow — Workflow Entry Wizard
  *
  * Primary entrypoints: `showWorkflowEntry()` and the legacy `showSmartEntry()`
  * export. Reads state from disk, shows a contextual wizard via
- * `showNextAction()`, and dispatches through GSD-WORKFLOW.md.
+ * `showNextAction()`, and dispatches through SF-WORKFLOW.md.
  * No execution state, no hooks, no tools — the LLM does the rest.
  */
 
@@ -299,7 +299,7 @@ type UIContext = ExtensionContext;
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Read GSD-WORKFLOW.md and dispatch it to the LLM with a contextual note.
+ * Read SF-WORKFLOW.md and dispatch it to the LLM with a contextual note.
  * This is the only way the wizard triggers work — everything else is the LLM's job.
  *
  * When a unitType is provided, resolves the user's model preference for that
@@ -355,14 +355,14 @@ async function dispatchWorkflow(
   // Scope tools for discuss flows (#2949).
   // Providers with grammar-based constrained decoding (xAI/Grok) return
   // "Grammar is too complex" when the combined tool schema is too large.
-  // Discuss flows only need a small subset of GSD tools — strip the heavy
+  // Discuss flows only need a small subset of SF tools — strip the heavy
   // planning/execution/completion tools to keep the grammar within limits.
   let savedTools: string[] | null = null;
   if (unitType?.startsWith("discuss-")) {
     const currentTools = pi.getActiveTools();
     savedTools = currentTools;
-    // Keep all non-GSD tools (builtins, other extensions) and only the
-    // GSD tools on the discuss allowlist.
+    // Keep all non-SF tools (builtins, other extensions) and only the
+    // SF tools on the discuss allowlist.
     const scopedTools = currentTools.filter(
       (t) => !t.startsWith("gsd_") || DISCUSS_TOOLS_ALLOWLIST.includes(t),
     );
@@ -375,13 +375,13 @@ async function dispatchWorkflow(
     });
   }
 
-  const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
 
   pi.sendMessage(
     {
       customType,
-      content: `Read the following GSD workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${note}`,
+      content: `Read the following SF workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${note}`,
       display: false,
     },
     { triggerTurn: true },
@@ -718,7 +718,7 @@ export async function showDiscuss(
 ): Promise<void> {
   // Guard: no .gsd/ project
   if (!existsSync(gsdRoot(basePath))) {
-    ctx.ui.notify("No GSD project found. Run /gsd to start one first.", "warning");
+    ctx.ui.notify("No SF project found. Run /gsd to start one first.", "warning");
     return;
   }
 
@@ -759,7 +759,7 @@ export async function showDiscuss(
     const draftContent = draftFile ? await loadFile(draftFile) : null;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${mid}: ${milestoneTitle}`,
+      title: `SF — ${mid}: ${milestoneTitle}`,
       summary: ["This milestone has a draft context from a prior discussion.", "It needs a dedicated discussion before auto-planning can begin."],
       actions: [
         {
@@ -919,7 +919,7 @@ export async function showDiscuss(
     }
 
     const choice = await showNextAction(ctx, {
-      title: "GSD — Discuss a slice",
+      title: "SF — Discuss a slice",
       summary: [
         `${mid}: ${milestoneTitle}`,
         "Pick a slice to interview. Context file will be written when done.",
@@ -992,7 +992,7 @@ async function showDiscussQueuedMilestone(
   });
 
   const choice = await showNextAction(ctx, {
-    title: "GSD — Discuss a queued milestone",
+    title: "SF — Discuss a queued milestone",
     summary: [
       "Select a queued milestone to discuss.",
       "Discussing will update its context file. It will not be activated.",
@@ -1246,7 +1246,7 @@ export async function showWorkflowEntry(
   }
   if (dirCheck.severity === "warning") {
     const proceed = await showConfirm(ctx, {
-      title: "GSD — Unusual Directory",
+      title: "SF — Unusual Directory",
       message: dirCheck.reason!,
       confirmLabel: "Continue anyway",
       declineLabel: "Cancel",
@@ -1286,7 +1286,7 @@ export async function showWorkflowEntry(
     // which will detect "no milestones" and start the discuss prompt
   }
 
-  // ── Ensure git repo exists — GSD needs it for worktree isolation ──────
+  // ── Ensure git repo exists — SF needs it for worktree isolation ──────
   // Also handle inherited repos: if basePath is a subdirectory of another
   // git repo that has no .gsd, create a fresh repo to prevent cross-project
   // state leaks (#1639).
@@ -1323,7 +1323,7 @@ export async function showWorkflowEntry(
       ? "Resume with /gsd next"
       : "Resume with /gsd auto";
     const resume = await showNextAction(ctx, {
-      title: "GSD — Interrupted Session Detected",
+      title: "SF — Interrupted Session Detected",
       summary: formatInterruptedSessionSummary(interrupted),
       actions: [
         { id: "resume", label: resumeLabel, description: "Pick up where it left off", recommended: true },
@@ -1412,7 +1412,7 @@ export async function showWorkflowEntry(
       ), "gsd-run", ctx, "discuss-milestone");
     } else {
       const choice = await showNextAction(ctx, {
-        title: "GSD — Get Shit Done",
+        title: "SF — Singularity Forge",
         summary: ["No active milestone."],
         actions: [
           {
@@ -1442,7 +1442,7 @@ export async function showWorkflowEntry(
   // ── All milestones complete → New milestone ──────────────────────────
   if (state.phase === "complete") {
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+      title: `SF — ${milestoneId}: ${milestoneTitle}`,
       summary: ["All milestones complete."],
       actions: [
         {
@@ -1483,7 +1483,7 @@ export async function showWorkflowEntry(
     const draftContent = draftFile ? await loadFile(draftFile) : null;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+      title: `SF — ${milestoneId}: ${milestoneTitle}`,
       summary: ["This milestone has a draft context from a prior discussion.", "It needs a dedicated discussion before auto-planning can begin."],
       actions: [
         {
@@ -1590,7 +1590,7 @@ export async function showWorkflowEntry(
       ];
 
       const choice = await showNextAction(ctx, {
-        title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+        title: `SF — ${milestoneId}: ${milestoneTitle}`,
         summary: [hasContext ? "Context captured. Ready to create roadmap." : "New milestone — no roadmap yet."],
         actions,
         notYetMessage: "Run /gsd when ready.",
@@ -1668,7 +1668,7 @@ export async function showWorkflowEntry(
       ];
 
       const choice = await showNextAction(ctx, {
-        title: `GSD — ${milestoneId}: ${milestoneTitle}`,
+        title: `SF — ${milestoneId}: ${milestoneTitle}`,
         summary: ["Roadmap exists. Ready to execute."],
         actions,
         notYetMessage: "Run /gsd status for details.",
@@ -1734,7 +1734,7 @@ export async function showWorkflowEntry(
       : `${sliceId}: ${sliceTitle} — ready for planning.`;
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `SF — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: [summaryLine],
       actions,
       notYetMessage: "Run /gsd when ready.",
@@ -1789,7 +1789,7 @@ export async function showWorkflowEntry(
   // ── All tasks done → Complete slice ──────────────────────────────────
   if (state.phase === "summarizing") {
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `SF — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: ["All tasks complete. Ready for slice summary."],
       actions: [
         {
@@ -1852,7 +1852,7 @@ export async function showWorkflowEntry(
       !!(sDir && await loadFile(join(sDir, "continue.md")));
 
     const choice = await showNextAction(ctx, {
-      title: `GSD — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
+      title: `SF — ${milestoneId} / ${sliceId}: ${sliceTitle}`,
       summary: [
         hasInterrupted
           ? `Resuming: ${taskId} — ${taskTitle}`

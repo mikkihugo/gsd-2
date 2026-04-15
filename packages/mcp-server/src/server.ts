@@ -1,5 +1,5 @@
 /**
- * MCP Server — registers GSD orchestration, project-state, and workflow tools.
+ * MCP Server — registers SF orchestration, project-state, and workflow tools.
  *
  * Session tools (6): gsd_execute, gsd_status, gsd_result, gsd_cancel, gsd_query, gsd_resolve_blocker
  * Interactive tools (2): ask_user_questions, secure_env_collect via MCP form elicitation
@@ -355,7 +355,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   );
 
   // -----------------------------------------------------------------------
-  // gsd_execute — start a new GSD auto-mode session.
+  // gsd_execute — start a new SF auto-mode session.
   //
   // If the JSON-RPC request is aborted while the session is starting (or
   // immediately after), we cancel the session so we don't leak a background
@@ -364,7 +364,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_execute',
-    'Start a GSD auto-mode session for a project directory. Returns a sessionId for tracking.',
+    'Start a SF auto-mode session for a project directory. Returns a sessionId for tracking.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       command: z.string().optional().describe('Command to send (default: "/gsd auto")'),
@@ -397,7 +397,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_status',
-    'Get the current status of a GSD session including progress, recent events, and pending blockers.',
+    'Get the current status of a SF session including progress, recent events, and pending blockers.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -441,7 +441,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_result',
-    'Get the result of a GSD session. Returns partial results if the session is still running.',
+    'Get the result of a SF session. Returns partial results if the session is still running.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -461,7 +461,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_cancel',
-    'Cancel a running GSD session. Aborts the current operation and stops the process.',
+    'Cancel a running SF session. Aborts the current operation and stops the process.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
     },
@@ -486,7 +486,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_query',
-    'Query GSD project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
+    'Query SF project state from the filesystem. By default returns STATE.md, PROJECT.md, requirements, and milestone listing. Pass `query` to narrow the response (accepted: "state"/"status", "project", "requirements", "milestones", "all"). Does not require an active session.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       query: z
@@ -510,7 +510,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_resolve_blocker',
-    'Resolve a pending blocker in a GSD session by sending a response to the UI request.',
+    'Resolve a pending blocker in a SF session by sending a response to the UI request.',
     {
       sessionId: z.string().describe('Session ID returned from gsd_execute'),
       response: z.string().describe('Response to send for the pending blocker'),
@@ -803,7 +803,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   );
 
   // -----------------------------------------------------------------------
-  // gsd_graph — knowledge graph for GSD projects
+  // gsd_graph — knowledge graph for SF projects
   //
   // Modes:
   //   build   Parse .gsd/ artifacts and write graph.json atomically.
@@ -814,7 +814,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   server.tool(
     'gsd_graph',
     [
-      'Manage the GSD project knowledge graph. No session required.',
+      'Manage the SF project knowledge graph. No session required.',
       '',
       'Modes:',
       '  build   Parse .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',

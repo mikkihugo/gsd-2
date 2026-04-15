@@ -1,5 +1,5 @@
 /**
- * GSD Repo Identity — external state directory primitives.
+ * SF Repo Identity — external state directory primitives.
  *
  * Computes a stable per-repo identity hash, resolves the external
  * `~/.gsd/projects/<hash>/` state directory, and manages the
@@ -12,7 +12,7 @@ import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, re
 import { homedir } from "node:os";
 import { basename, dirname, join, resolve } from "node:path";
 
-const gsdHome = process.env.GSD_HOME || join(homedir(), ".gsd");
+const gsdHome = process.env.SF_HOME || join(homedir(), ".gsd");
 
 // ─── Repo Metadata ───────────────────────────────────────────────────────────
 
@@ -106,14 +106,14 @@ export function readRepoMeta(externalPath: string): RepoMeta | null {
  *   2. The resolved git root is a proper ancestor of basePath
  *   3. There is no *project* `.gsd` directory at the git root or any
  *      intermediate ancestor (the parent project has not been
- *      initialised with GSD)
+ *      initialised with SF)
  *
  * When true, the caller should run `git init` at basePath so that
  * `repoIdentity()` produces a hash unique to this directory, preventing
  * cross-project state leaks (#1639).
  *
  * When the git root already has a project `.gsd`, the directory is a
- * legitimate subdirectory of an existing GSD project — `cd src/ && /gsd`
+ * legitimate subdirectory of an existing SF project — `cd src/ && /gsd`
  * should still load the parent project's milestones.
  */
 export function isInheritedRepo(basePath: string): boolean {
@@ -124,12 +124,12 @@ export function isInheritedRepo(basePath: string): boolean {
     if (normalizedBase === normalizedRoot) return false; // basePath IS the root
 
     // The git root is a proper ancestor. Check whether it already has .gsd
-    // (i.e. the parent project was initialised with GSD).
+    // (i.e. the parent project was initialised with SF).
     if (isProjectGsd(join(root, ".gsd"))) return false;
 
     // Walk up from basePath's parent to the git root checking for .gsd.
     // Start at dirname(normalizedBase), NOT normalizedBase itself — finding
-    // .gsd at basePath means GSD state is set up for THIS project, which
+    // .gsd at basePath means SF state is set up for THIS project, which
     // says nothing about whether the git repo is inherited from an ancestor.
     let dir = dirname(normalizedBase);
     while (dir !== normalizedRoot && dir !== dirname(dir)) {
@@ -148,7 +148,7 @@ export function isInheritedRepo(basePath: string): boolean {
  *
  * A project `.gsd` is either:
  *   - A symlink to an external state directory (normal post-migration layout)
- *   - A legacy real directory that is NOT the global GSD home
+ *   - A legacy real directory that is NOT the global SF home
  *
  * When the user's home directory is itself a git repo (e.g. dotfile managers),
  * `~/.gsd` exists but is the global state directory — not a project `.gsd`.
@@ -164,11 +164,11 @@ function isProjectGsd(gsdPath: string): boolean {
     // Symlinks are always project .gsd (created by ensureGsdSymlink).
     if (stat.isSymbolicLink()) return true;
 
-    // For real directories, check that this isn't the global GSD home.
-    // Recompute gsdHome dynamically so env overrides (GSD_HOME) are
+    // For real directories, check that this isn't the global SF home.
+    // Recompute gsdHome dynamically so env overrides (SF_HOME) are
     // picked up at call time, not just at module load time.
     if (stat.isDirectory()) {
-      const currentGsdHome = process.env.GSD_HOME || join(homedir(), ".gsd");
+      const currentGsdHome = process.env.SF_HOME || join(homedir(), ".gsd");
       const normalizedGsdPath = canonicalizeExistingPath(gsdPath);
       const normalizedGsdHome = canonicalizeExistingPath(currentGsdHome);
       if (normalizedGsdPath === normalizedGsdHome) return false;
@@ -261,7 +261,7 @@ function resolveGitRoot(basePath: string): string {
 }
 
 /**
- * Validate a GSD_PROJECT_ID value.
+ * Validate a SF_PROJECT_ID value.
  *
  * Must contain only alphanumeric characters, hyphens, and underscores.
  * Call this once at startup so the user gets immediate feedback on bad values.
@@ -273,7 +273,7 @@ export function validateProjectId(id: string): boolean {
 /**
  * Compute a stable identity for a repository.
  *
- * If `GSD_PROJECT_ID` is set, returns it directly (validation is expected
+ * If `SF_PROJECT_ID` is set, returns it directly (validation is expected
  * to have already happened at startup via `validateProjectId`).
  *
  * For repos with a remote URL, returns SHA-256 of the remote URL only —
@@ -286,7 +286,7 @@ export function validateProjectId(id: string): boolean {
  * which worktree the caller is inside.
  */
 export function repoIdentity(basePath: string): string {
-  const projectId = process.env.GSD_PROJECT_ID;
+  const projectId = process.env.SF_PROJECT_ID;
   if (projectId) {
     return projectId;
   }
@@ -305,22 +305,22 @@ export function repoIdentity(basePath: string): string {
 // ─── External State Directory ───────────────────────────────────────────────
 
 /**
- * Compute the external GSD state directory for a repository.
+ * Compute the external SF state directory for a repository.
  *
- * Returns `$GSD_STATE_DIR/projects/<hash>` if `GSD_STATE_DIR` is set,
+ * Returns `$SF_STATE_DIR/projects/<hash>` if `SF_STATE_DIR` is set,
  * otherwise `~/.gsd/projects/<hash>`.
  */
 export function externalGsdRoot(basePath: string): string {
-  const base = process.env.GSD_STATE_DIR || gsdHome;
+  const base = process.env.SF_STATE_DIR || gsdHome;
   return join(base, "projects", repoIdentity(basePath));
 }
 
 /**
  * Resolve the root directory that stores project-scoped external state.
- * Honors GSD_STATE_DIR override before falling back to GSD_HOME.
+ * Honors SF_STATE_DIR override before falling back to SF_HOME.
  */
 export function externalProjectsRoot(): string {
-  const base = process.env.GSD_STATE_DIR || gsdHome;
+  const base = process.env.SF_STATE_DIR || gsdHome;
   return join(base, "projects");
 }
 
@@ -331,7 +331,7 @@ export function externalProjectsRoot(): string {
  *
  * When `symlinkSync` (or Finder) tries to create `.gsd` but a real directory
  * already exists at that path, macOS APFS silently renames the new entry to
- * `.gsd 2`, then `.gsd 3`, and so on. These numbered variants confuse GSD
+ * `.gsd 2`, then `.gsd 3`, and so on. These numbered variants confuse SF
  * because the canonical `.gsd` path no longer resolves to the external state
  * directory, making tracked planning files appear deleted.
  *
@@ -339,14 +339,14 @@ export function externalProjectsRoot(): string {
  * removes them. It is called early in `ensureGsdSymlink()` so that the
  * canonical `.gsd` path is always the one in use.
  */
-const GSD_NUMBERED_VARIANT_RE = /^\.gsd \d+$/;
+const SF_NUMBERED_VARIANT_RE = /^\.gsd \d+$/;
 
 export function cleanNumberedGsdVariants(projectPath: string): string[] {
   const removed: string[] = [];
   try {
     const entries = readdirSync(projectPath);
     for (const entry of entries) {
-      if (GSD_NUMBERED_VARIANT_RE.test(entry)) {
+      if (SF_NUMBERED_VARIANT_RE.test(entry)) {
         const fullPath = join(projectPath, entry);
         try {
           rmSync(fullPath, { recursive: true, force: true });
@@ -441,7 +441,7 @@ function resolveExternalPathWithRecovery(projectPath: string): string {
   const markerId = readGsdIdMarker(projectPath);
   if (markerId && markerId !== computedId) {
     // The marker points to a different identity — the repo was likely moved.
-    const base = process.env.GSD_STATE_DIR || gsdHome;
+    const base = process.env.SF_STATE_DIR || gsdHome;
     const markerPath = join(base, "projects", markerId);
     if (hasProjectState(markerPath)) {
       // Recover: use the old state directory and update the marker to the new identity.
@@ -507,7 +507,7 @@ function ensureGsdSymlinkCore(projectPath: string): string {
   const localGsd = join(projectPath, ".gsd");
   const inWorktree = isInsideWorktree(projectPath);
 
-  // Guard: Never create a symlink at ~/.gsd — that's the user-level GSD home,
+  // Guard: Never create a symlink at ~/.gsd — that's the user-level SF home,
   // not a project .gsd. This can happen if resolveProjectRoot() or
   // escapeStaleWorktree() returned ~ as the project root (#1676).
   const localGsdNormalized = localGsd.replaceAll("\\", "/");

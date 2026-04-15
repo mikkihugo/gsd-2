@@ -1,4 +1,4 @@
-// GSD-2 — Regression test for #3616: reload() must reset jiti extension loader cache
+// SF — Regression test for #3616: reload() must reset jiti extension loader cache
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test, { describe } from "node:test";

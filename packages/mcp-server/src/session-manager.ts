@@ -1,5 +1,5 @@
 /**
- * SessionManager — manages RpcClient lifecycle for background GSD execution.
+ * SessionManager — manages RpcClient lifecycle for background SF execution.
  *
  * One active session per projectDir. Tracks events in a ring buffer,
  * detects blockers, tracks terminal state, and accumulates cost using
@@ -56,7 +56,7 @@ export class SessionManager {
   private sessions = new Map<string, ManagedSession>();
 
   /**
-   * Start a new GSD auto-mode session for the given project directory.
+   * Start a new SF auto-mode session for the given project directory.
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
@@ -237,14 +237,14 @@ export class SessionManager {
   }
 
   /**
-   * Resolve the GSD CLI path.
+   * Resolve the SF CLI path.
    *
-   * 1. GSD_CLI_PATH env var (highest priority)
+   * 1. SF_CLI_PATH env var (highest priority)
    * 2. `which gsd` → resolve to the actual dist/cli.js
    */
   static resolveCLIPath(): string {
     // Check env var first
-    const envPath = process.env['GSD_CLI_PATH'];
+    const envPath = process.env['SF_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
     // Fallback: locate `gsd` via which
@@ -259,7 +259,7 @@ export class SessionManager {
     }
 
     throw new Error(
-      'Cannot find GSD CLI. Set GSD_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `gsd` is in PATH.'
     );
   }
 

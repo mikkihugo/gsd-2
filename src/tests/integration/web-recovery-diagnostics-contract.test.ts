@@ -229,9 +229,9 @@ test("/api/recovery returns structured recovery diagnostics and redacts secrets"
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     getOnboardingState: async () => readyOnboardingState({
@@ -300,9 +300,9 @@ test("/api/recovery prefers the current-project resumable session when the live 
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     getOnboardingState: async () => readyOnboardingState(),
@@ -351,9 +351,9 @@ test("/api/recovery returns a structured empty-project payload without leaking r
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     getOnboardingState: async () => readyOnboardingState(),

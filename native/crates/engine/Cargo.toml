@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "N-API native addon for GSD — exposes high-performance Rust modules to Node.js"
+description = "N-API native addon for SF — exposes high-performance Rust modules to Node.js"
 
 [lib]
 crate-type = ["cdylib", "rlib"]

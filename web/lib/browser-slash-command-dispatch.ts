@@ -13,7 +13,7 @@ export type BrowserSlashCommandSurface =
   | "logout"
   | "session"
   | "export"
-  // GSD subcommand surfaces (S02)
+  // SF subcommand surfaces (S02)
   | "gsd-status"
   | "gsd-visualize"
   | "gsd-forensics"
@@ -111,9 +111,9 @@ const SURFACE_COMMANDS = new Map<string, BrowserSlashCommandSurface>([
   ["export", "export"],
 ])
 
-// --- GSD subcommand dispatch (S02) ---
+// --- SF subcommand dispatch (S02) ---
 
-const GSD_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
+const SF_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
   ["status", "gsd-status"],
   ["visualize", "gsd-visualize"],
   ["forensics", "gsd-forensics"],
@@ -137,7 +137,7 @@ const GSD_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
   ["queue", "gsd-queue"],
 ])
 
-const GSD_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
+const SF_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
   "auto",
   "next",
   "stop",
@@ -149,7 +149,7 @@ const GSD_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
   "remote",
 ])
 
-export const GSD_HELP_TEXT = `Available /gsd subcommands:
+export const SF_HELP_TEXT = `Available /gsd subcommands:
 
 Workflow:    next · auto · stop · pause · skip · queue · quick · capture · triage
 Diagnostics: status · visualize · forensics · doctor · skill-health · inspect
@@ -203,7 +203,7 @@ function dispatchGSDSubcommand(
   }
 
   // Surface-routed subcommands — open browser-native UI
-  const surface = GSD_SURFACE_SUBCOMMANDS.get(subcommand)
+  const surface = SF_SURFACE_SUBCOMMANDS.get(subcommand)
   if (surface) {
     return {
       kind: "surface",
@@ -215,7 +215,7 @@ function dispatchGSDSubcommand(
   }
 
   // Bridge-passthrough subcommands — let the extension handle them
-  if (GSD_PASSTHROUGH_SUBCOMMANDS.has(subcommand)) {
+  if (SF_PASSTHROUGH_SUBCOMMANDS.has(subcommand)) {
     return {
       kind: "prompt",
       input,
@@ -342,7 +342,7 @@ export function dispatchBrowserSlashCommand(
     }
   }
 
-  // GSD subcommand dispatch — must precede SURFACE_COMMANDS to avoid
+  // SF subcommand dispatch — must precede SURFACE_COMMANDS to avoid
   // `/gsd export` colliding with the built-in `/export` surface.
   if (parsed.name === "gsd") {
     return dispatchGSDSubcommand(trimmed, parsed.args, options)

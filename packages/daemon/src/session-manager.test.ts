@@ -3,7 +3,7 @@
  *
  * Uses the MockRpcClient + TestableSessionManager pattern (K008) to test
  * session lifecycle, event handling, cost tracking, blocker detection,
- * and cleanup without spawning real GSD processes.
+ * and cleanup without spawning real SF processes.
  */
 
 import { describe, it, beforeEach, afterEach } from 'node:test';

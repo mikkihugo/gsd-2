@@ -1,5 +1,5 @@
 /**
- * GSD Milestone Actions — Park, Unpark, and Discard operations.
+ * SF Milestone Actions — Park, Unpark, and Discard operations.
  *
  * Park: Creates a PARKED.md marker file. deriveState() skips parked milestones
  * when finding the active milestone, but keeps them in the registry.

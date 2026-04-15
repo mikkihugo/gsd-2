@@ -29,7 +29,7 @@ export class SlackAdapter implements ChannelAdapter {
   async sendPrompt(prompt: RemotePrompt): Promise<RemoteDispatchResult> {
     const res = await this.slackApi("chat.postMessage", {
       channel: this.channelId,
-      text: "GSD needs your input",
+      text: "SF needs your input",
       blocks: formatForSlack(prompt),
     });
 

@@ -1,4 +1,4 @@
-// GSD Extension — Desktop Notification Helper
+// SF Extension — Desktop Notification Helper
 // Cross-platform desktop notifications for auto-mode events.
 
 import { execFileSync } from "node:child_process";
@@ -25,9 +25,9 @@ export function sendDesktopNotification(
   kind: NotificationKind = "complete",
   projectName?: string,
 ): void {
-  // When a projectName is provided and the title is the default "GSD",
+  // When a projectName is provided and the title is the default "SF",
   // replace it with a project-qualified title for multi-project clarity.
-  if (projectName && title === "GSD") {
+  if (projectName && title === "SF") {
     title = formatNotificationTitle(projectName);
   }
   const loaded = loadEffectiveGSDPreferences()?.preferences;
@@ -72,12 +72,12 @@ export function shouldSendDesktopNotification(
 
 /**
  * Format a notification title that includes the project name for context.
- * Returns "GSD — projectName" when a project name is available, otherwise "GSD".
+ * Returns "SF — projectName" when a project name is available, otherwise "SF".
  */
 export function formatNotificationTitle(projectName?: string): string {
   const trimmed = projectName?.trim();
-  if (trimmed) return `GSD — ${trimmed}`;
-  return "GSD";
+  if (trimmed) return `SF — ${trimmed}`;
+  return "SF";
 }
 
 export function buildDesktopNotificationCommand(

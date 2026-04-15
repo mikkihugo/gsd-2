@@ -3,7 +3,7 @@ title: "Git strategy"
 description: "Isolation modes, branching model, and merge behavior for milestone work."
 ---
 
-GSD uses git for milestone isolation and sequential commits. You choose an **isolation mode** that controls where work happens. The strategy is fully automated — no manual branch management needed.
+SF uses git for milestone isolation and sequential commits. You choose an **isolation mode** that controls where work happens. The strategy is fully automated — no manual branch management needed.
 
 ## Isolation modes
 
@@ -17,7 +17,7 @@ Configure via the `git.isolation` preference:
 
 ### `none` mode (default)
 
-Work happens directly on your current branch. No worktree, no milestone branch. GSD still commits sequentially with conventional commit messages, but there's no branch isolation. This is the simplest mode and works well for most projects.
+Work happens directly on your current branch. No worktree, no milestone branch. SF still commits sequentially with conventional commit messages, but there's no branch isolation. This is the simplest mode and works well for most projects.
 
 ### `worktree` mode
 
@@ -61,16 +61,16 @@ Merges happen sequentially to avoid conflicts.
 
 ### Commit format
 
-Conventional commit format with GSD metadata in trailers:
+Conventional commit format with SF metadata in trailers:
 
 ```
 feat: core type definitions
 
-GSD-Task: M001/S01/T01
+SF-Task: M001/S01/T01
 
 feat: markdown parser for plan files
 
-GSD-Task: M001/S01/T02
+SF-Task: M001/S01/T02
 ```
 
 ## Workflow modes
@@ -125,7 +125,7 @@ Pushes the milestone branch and creates a PR targeting your specified branch. Re
 
 ### `commit_docs: false`
 
-Adds `.gsd/` to `.gitignore` and keeps all planning artifacts local-only. Useful for teams where only some members use GSD.
+Adds `.gsd/` to `.gitignore` and keeps all planning artifacts local-only. Useful for teams where only some members use SF.
 
 ## Worktree management
 
@@ -148,7 +148,7 @@ Adds `.gsd/` to `.gitignore` and keeps all planning artifacts local-only. Useful
 
 ## Self-healing
 
-GSD includes automatic recovery for common git issues:
+SF includes automatic recovery for common git issues:
 
 - **Detached HEAD** — automatically reattaches to the correct branch
 - **Stale lock files** — removes `index.lock` files from crashed processes

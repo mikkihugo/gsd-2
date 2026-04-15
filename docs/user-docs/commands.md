@@ -7,7 +7,7 @@
 | `/gsd` | Step mode — execute one unit at a time, pause between each |
 | `/gsd next` | Explicit step mode (same as `/gsd`) |
 | `/gsd auto` | Autonomous mode — research, plan, execute, commit, repeat |
-| `/gsd quick` | Execute a quick task with GSD guarantees (atomic commits, state tracking) without full planning overhead |
+| `/gsd quick` | Execute a quick task with SF guarantees (atomic commits, state tracking) without full planning overhead |
 | `/gsd stop` | Stop auto mode gracefully |
 | `/gsd pause` | Pause auto-mode (preserves state, `/gsd auto` to resume) |
 | `/gsd steer` | Hard-steer plan documents during execution |
@@ -19,19 +19,19 @@
 | `/gsd triage` | Manually trigger triage of pending captures |
 | `/gsd dispatch` | Dispatch a specific phase directly (research, plan, execute, complete, reassess, uat, replan) |
 | `/gsd history` | View execution history (supports `--cost`, `--phase`, `--model` filters) |
-| `/gsd forensics` | Full-access GSD debugger — structured anomaly detection, unit traces, and LLM-guided root-cause analysis for auto-mode failures |
-| `/gsd cleanup` | Clean up GSD state files and stale worktrees |
+| `/gsd forensics` | Full-access SF debugger — structured anomaly detection, unit traces, and LLM-guided root-cause analysis for auto-mode failures |
+| `/gsd cleanup` | Clean up SF state files and stale worktrees |
 | `/gsd visualize` | Open workflow visualizer (progress, deps, metrics, timeline) |
 | `/gsd export --html` | Generate self-contained HTML report for current or completed milestone |
 | `/gsd export --html --all` | Generate retrospective reports for all milestones at once |
-| `/gsd update` | Update GSD to the latest version in-session |
+| `/gsd update` | Update SF to the latest version in-session |
 | `/gsd knowledge` | Add persistent project knowledge (rule, pattern, or lesson) |
 | `/gsd fast` | Toggle service tier for supported models (prioritized API routing) |
 | `/gsd rate` | Rate last unit's model tier (over/ok/under) — improves adaptive routing |
 | `/gsd changelog` | Show categorized release notes |
 | `/gsd logs` | Browse activity logs, debug logs, and metrics |
 | `/gsd remote` | Control remote auto-mode |
-| `/gsd help` | Categorized command reference with descriptions for all GSD subcommands |
+| `/gsd help` | Categorized command reference with descriptions for all SF subcommands |
 
 ## Configuration & Diagnostics
 
@@ -140,7 +140,7 @@ Enable with `github.enabled: true` in preferences. Requires `gh` CLI installed a
 |---------|-------------|
 | `/clear` | Start a new session (alias for `/new`) |
 | `/exit` | Graceful shutdown — saves session state before exiting |
-| `/kill` | Kill GSD process immediately |
+| `/kill` | Kill SF process immediately |
 | `/model` | Switch the active model |
 | `/login` | Log in to an LLM provider |
 | `/thinking` | Toggle thinking level during sessions |
@@ -181,7 +181,7 @@ Enable with `github.enabled: true` in preferences. Requires `gh` CLI installed a
 | `gsd sessions` | Interactive session picker — list all saved sessions for the current directory and choose one to resume |
 | `gsd --debug` | Enable structured JSONL diagnostic logging for troubleshooting dispatch and state issues |
 | `gsd config` | Set up global API keys for search and docs tools (saved to `~/.gsd/agent/auth.json`, applies to all projects). See [Global API Keys](./configuration.md#global-api-keys-gsd-config). |
-| `gsd update` | Update GSD to the latest version |
+| `gsd update` | Update SF to the latest version |
 | `gsd headless new-milestone` | Create a new milestone from a context file (headless — no TUI required) |
 
 ## Headless Mode
@@ -230,7 +230,7 @@ Any `/gsd` subcommand works as a positional argument — `gsd headless status`, 
 
 ### `gsd headless query`
 
-Returns a single JSON object with the full project snapshot — no LLM session, no RPC child, instant response (~50ms). This is the recommended way for orchestrators and scripts to inspect GSD state.
+Returns a single JSON object with the full project snapshot — no LLM session, no RPC child, instant response (~50ms). This is the recommended way for orchestrators and scripts to inspect SF state.
 
 ```bash
 gsd headless query | jq '.state.phase'
@@ -270,24 +270,24 @@ gsd headless query | jq '.cost.total'
 
 ## MCP Server Mode
 
-`gsd --mode mcp` runs GSD as a [Model Context Protocol](https://modelcontextprotocol.io) server over stdin/stdout. This exposes all GSD tools (read, write, edit, bash, etc.) to external AI clients — Claude Desktop, VS Code Copilot, and any MCP-compatible host.
+`gsd --mode mcp` runs SF as a [Model Context Protocol](https://modelcontextprotocol.io) server over stdin/stdout. This exposes all SF tools (read, write, edit, bash, etc.) to external AI clients — Claude Desktop, VS Code Copilot, and any MCP-compatible host.
 
 ```bash
-# Start GSD as an MCP server
+# Start SF as an MCP server
 gsd --mode mcp
 ```
 
-The server registers all tools from the agent session and maps MCP `tools/list` and `tools/call` requests to GSD tool definitions. It runs until the transport closes.
+The server registers all tools from the agent session and maps MCP `tools/list` and `tools/call` requests to SF tool definitions. It runs until the transport closes.
 
 ## In-Session Update
 
-`/gsd update` checks npm for a newer version of GSD and installs it without leaving the session.
+`/gsd update` checks npm for a newer version of SF and installs it without leaving the session.
 
 ```bash
 /gsd update
 # Current version: v2.36.0
 # Checking npm registry...
-# Updated to v2.37.0. Restart GSD to use the new version.
+# Updated to v2.37.0. Restart SF to use the new version.
 ```
 
 If already up to date, it reports so and takes no action.

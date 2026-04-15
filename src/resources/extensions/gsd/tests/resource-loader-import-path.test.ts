@@ -22,13 +22,13 @@ describe("resource-loader import path", () => {
     );
   });
 
-  test("uses GSD_PKG_ROOT to resolve resource-loader from package root", () => {
-    // The fix uses GSD_PKG_ROOT (set by loader.ts) to construct an absolute
+  test("uses SF_PKG_ROOT to resolve resource-loader from package root", () => {
+    // The fix uses SF_PKG_ROOT (set by loader.ts) to construct an absolute
     // file URL to dist/resource-loader.js — works in both source and deployed,
     // and on Windows where raw paths fail with ERR_UNSUPPORTED_ESM_URL_SCHEME.
     assert.ok(
-      autoSrc.includes('process.env.GSD_PKG_ROOT'),
-      "auto.ts should use GSD_PKG_ROOT to resolve resource-loader",
+      autoSrc.includes('process.env.SF_PKG_ROOT'),
+      "auto.ts should use SF_PKG_ROOT to resolve resource-loader",
     );
     assert.ok(
       autoSrc.includes('pathToFileURL'),

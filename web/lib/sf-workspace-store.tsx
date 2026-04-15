@@ -4078,7 +4078,7 @@ export class SFWorkspaceStore {
           this.patchState({
             terminalLines: withTerminalLine(
               withTerminalLine(this.state.terminalLines, createTerminalLine("input", trimmed)),
-              createTerminalLine("system", GSD_HELP_TEXT),
+              createTerminalLine("system", SF_HELP_TEXT),
             ),
           })
           return outcome

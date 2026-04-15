@@ -239,7 +239,7 @@ function ExitDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Stop the GSD web server?</DialogTitle>
+            <DialogTitle>Stop the SF web server?</DialogTitle>
             <DialogDescription>
               This will shut down the server process and close this tab. Run{" "}
               <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gsd --web</code> again to restart.

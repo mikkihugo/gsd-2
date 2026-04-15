@@ -1,5 +1,5 @@
 /**
- * GSD Worktree CLI — standalone subcommand and -w flag handling.
+ * SF Worktree CLI — standalone subcommand and -w flag handling.
  *
  * Manages the full worktree lifecycle from the command line:
  *   gsd -w                    Create auto-named worktree, start interactive session
@@ -10,7 +10,7 @@
  *   gsd worktree remove <n>   Remove a specific worktree
  *
  * On session exit (via session_shutdown event), auto-commits dirty work
- * so nothing is lost. The GSD extension reads GSD_CLI_WORKTREE to know
+ * so nothing is lost. The SF extension reads SF_CLI_WORKTREE to know
  * when a session was launched via -w.
  *
  * Note: Extension modules are .ts files loaded via jiti (not compiled to .js).
@@ -26,8 +26,8 @@ import { existsSync } from 'node:fs'
 import { resolveBundledSourceResource } from './bundled-resource-path.js'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })
-const gsdExtensionPath = (...segments: string[]) =>
-  resolveBundledSourceResource(import.meta.url, 'extensions', 'gsd', ...segments)
+const sfExtensionPath = (...segments: string[]) =>
+  resolveBundledSourceResource(import.meta.url, 'extensions', 'sf', ...segments)
 
 // Lazily-loaded extension modules (loaded once on first use via jiti)
 let _ext: ExtensionModules | null = null
@@ -52,11 +52,11 @@ interface ExtensionModules {
 async function loadExtensionModules(): Promise<ExtensionModules> {
   if (_ext) return _ext
   const [wtMgr, autoWt, gitBridge, gitSvc, wt] = await Promise.all([
-    jiti.import(gsdExtensionPath('worktree-manager.ts'), {}) as Promise<any>,
-    jiti.import(gsdExtensionPath('auto-worktree.ts'), {}) as Promise<any>,
-    jiti.import(gsdExtensionPath('native-git-bridge.ts'), {}) as Promise<any>,
-    jiti.import(gsdExtensionPath('git-service.ts'), {}) as Promise<any>,
-    jiti.import(gsdExtensionPath('worktree.ts'), {}) as Promise<any>,
+    jiti.import(sfExtensionPath('worktree-manager.ts'), {}) as Promise<any>,
+    jiti.import(sfExtensionPath('auto-worktree.ts'), {}) as Promise<any>,
+    jiti.import(sfExtensionPath('native-git-bridge.ts'), {}) as Promise<any>,
+    jiti.import(sfExtensionPath('git-service.ts'), {}) as Promise<any>,
+    jiti.import(sfExtensionPath('worktree.ts'), {}) as Promise<any>,
   ])
   _ext = {
     createWorktree: wtMgr.createWorktree,
@@ -330,8 +330,8 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
       // Single active worktree — resume it
       const wt = withChanges[0]
       process.chdir(wt.path)
-      process.env.GSD_CLI_WORKTREE = wt.name
-      process.env.GSD_CLI_WORKTREE_BASE = basePath
+      process.env.SF_CLI_WORKTREE = wt.name
+      process.env.SF_CLI_WORKTREE_BASE = basePath
       process.stderr.write(chalk.green(`✓ Resumed worktree ${chalk.bold(wt.name)}\n`))
       process.stderr.write(chalk.dim(`  path   ${wt.path}\n`))
       process.stderr.write(chalk.dim(`  branch ${wt.branch}\n\n`))
@@ -362,8 +362,8 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
 
   if (found) {
     process.chdir(found.path)
-    process.env.GSD_CLI_WORKTREE = name
-    process.env.GSD_CLI_WORKTREE_BASE = basePath
+    process.env.SF_CLI_WORKTREE = name
+    process.env.SF_CLI_WORKTREE_BASE = basePath
     process.stderr.write(chalk.green(`✓ Resumed worktree ${chalk.bold(name)}\n`))
     process.stderr.write(chalk.dim(`  path   ${found.path}\n`))
     process.stderr.write(chalk.dim(`  branch ${found.branch}\n\n`))
@@ -382,8 +382,8 @@ async function createAndEnter(ext: ExtensionModules, basePath: string, name: str
     }
 
     process.chdir(info.path)
-    process.env.GSD_CLI_WORKTREE = name
-    process.env.GSD_CLI_WORKTREE_BASE = basePath
+    process.env.SF_CLI_WORKTREE = name
+    process.env.SF_CLI_WORKTREE_BASE = basePath
     process.stderr.write(chalk.green(`✓ Created worktree ${chalk.bold(name)}\n`))
     process.stderr.write(chalk.dim(`  path   ${info.path}\n`))
     process.stderr.write(chalk.dim(`  branch ${info.branch}\n\n`))

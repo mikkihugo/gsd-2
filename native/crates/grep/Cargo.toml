@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 repository.workspace = true
-description = "Ripgrep-backed search library for GSD native engine"
+description = "Ripgrep-backed search library for SF native engine"
 
 [dependencies]
 grep-regex = "0.1"

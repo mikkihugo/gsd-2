@@ -72,8 +72,8 @@ function normalizePathForCompare(path) {
 
 function resolveProjectRoot(basePath) {
   // Layer 1: If the coordinator passed the real project root, use it.
-  if (process.env.GSD_PROJECT_ROOT) {
-    return process.env.GSD_PROJECT_ROOT;
+  if (process.env.SF_PROJECT_ROOT) {
+    return process.env.SF_PROJECT_ROOT;
   }
 
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -88,7 +88,7 @@ function resolveProjectRoot(basePath) {
     : basePath.slice(0, seg.gsdIdx);
 
   // Layer 2: Guard against resolving to the user's home directory.
-  const gsdHome = normalizePathForCompare(process.env.GSD_HOME || join(homedir(), ".gsd"));
+  const gsdHome = normalizePathForCompare(process.env.SF_HOME || join(homedir(), ".gsd"));
   const candidateGsdPath = normalizePathForCompare(join(candidate, ".gsd"));
 
   if (candidateGsdPath === gsdHome || candidateGsdPath.startsWith(gsdHome + "/")) {
@@ -104,7 +104,7 @@ function resolveProjectRoot(basePath) {
 
 const HASH = "abc123def456";
 const TEST_ROOT = mkdtempSync(join(tmpdir(), "gsd-verify-fix-"));
-const USER_GSD = process.env.GSD_HOME || join(TEST_ROOT, ".gsd");
+const USER_GSD = process.env.SF_HOME || join(TEST_ROOT, ".gsd");
 const USER_HOME = homedir();
 const PROJECT_GSD_STORAGE = `${USER_GSD}/projects/${HASH}`;
 const PROJECT_DIR = mkdtempSync(join(tmpdir(), "myproject-"));
@@ -112,7 +112,7 @@ const PROJECT_GSD_LINK = `${PROJECT_DIR}/.gsd`;
 const PROJECT_REAL = normalizePathForCompare(PROJECT_DIR);
 const EXPECTED_BUGGY_ROOT = normalizePathForCompare(resolve(USER_GSD, ".."));
 
-process.env.GSD_HOME = USER_GSD;
+process.env.SF_HOME = USER_GSD;
 
 console.log("=== Setting up filesystem layout ===\n");
 
@@ -150,18 +150,18 @@ function test(name, actual, expected) {
   }
 }
 
-// ── Test 1: GSD_PROJECT_ROOT env var (Layer 1) ──────────────────────────
+// ── Test 1: SF_PROJECT_ROOT env var (Layer 1) ──────────────────────────
 
-console.log("=== Layer 1: GSD_PROJECT_ROOT env var ===\n");
+console.log("=== Layer 1: SF_PROJECT_ROOT env var ===\n");
 
-process.env.GSD_PROJECT_ROOT = PROJECT_DIR;
+process.env.SF_PROJECT_ROOT = PROJECT_DIR;
 const resolvedPath = realpathSync(`${PROJECT_DIR}/.gsd/worktrees/M001`);
 test(
-  "GSD_PROJECT_ROOT overrides path resolution",
+  "SF_PROJECT_ROOT overrides path resolution",
   resolveProjectRoot(resolvedPath),
   PROJECT_DIR,
 );
-delete process.env.GSD_PROJECT_ROOT;
+delete process.env.SF_PROJECT_ROOT;
 
 // ── Test 2: Direct layout still works ────────────────────────────────────
 
@@ -241,7 +241,7 @@ function oldResolveProjectRoot(basePath) {
 const oldResult = oldResolveProjectRoot(workerCwd);
 console.log(`  Old (buggy) code returns: ${oldResult}`);
 test(
-  "Old code returns parent of GSD home (confirming bug existed)",
+  "Old code returns parent of SF home (confirming bug existed)",
   oldResult,
   EXPECTED_BUGGY_ROOT,
 );

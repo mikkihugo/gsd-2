@@ -4,16 +4,16 @@ services:
       context: .                        # Build context is the docker/ directory
       dockerfile: Dockerfile.sandbox    # Runtime sandbox image with entrypoint
       args:
-        GSD_VERSION: latest             # Pin a specific version: GSD_VERSION=2.51.0
+        SF_VERSION: latest             # Pin a specific version: SF_VERSION=2.51.0
 
     container_name: gsd-sandbox
 
     ports:
-      - "3000:3000"                     # GSD web UI
+      - "3000:3000"                     # SF web UI
 
     volumes:
       - ../:/workspace                  # Project root mounted into the container
-      - gsd-state:/home/gsd/.gsd        # Persistent GSD state across restarts
+      - gsd-state:/home/gsd/.gsd        # Persistent SF state across restarts
       # - ~/.ssh:/home/gsd/.ssh:ro      # SSH keys for git operations (read-only)
       # - ~/.gitconfig:/home/gsd/.gitconfig:ro  # Host git config
 
@@ -34,7 +34,7 @@ services:
     stdin_open: true                    # Keep stdin open for interactive use
     tty: true                           # Allocate a pseudo-TTY
 
-    # Health check — verify GSD is installed and responsive
+    # Health check — verify SF is installed and responsive
     healthcheck:
       test: ["CMD", "gsd", "--version"]
       interval: 30s

@@ -1,4 +1,4 @@
-Discuss milestone {{milestoneId}} ("{{milestoneTitle}}"). Identify gray areas, ask the user about them, and write `{{milestoneId}}-CONTEXT.md` in the milestone directory with the decisions. Use the **Context** output template below. If a `GSD Skill Preferences` block is present in system context, use it to decide which skills to load and follow; do not override required artifact rules.
+Discuss milestone {{milestoneId}} ("{{milestoneTitle}}"). Identify gray areas, ask the user about them, and write `{{milestoneId}}-CONTEXT.md` in the milestone directory with the decisions. Use the **Context** output template below. If a `SF Skill Preferences` block is present in system context, use it to decide which skills to load and follow; do not override required artifact rules.
 
 **Structured questions available: {{structuredQuestionsAvailable}}**
 

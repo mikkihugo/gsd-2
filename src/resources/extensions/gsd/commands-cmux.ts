@@ -32,7 +32,7 @@ export function autoEnableCmuxPreferences(): boolean {
   prefs.version = prefs.version || 1;
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
   if (preserved) body = preserved;
 
@@ -62,7 +62,7 @@ async function writeProjectCmuxPreferences(
   prefs.version = prefs.version || 1;
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;

@@ -1,5 +1,5 @@
 /**
- * GSD External State Migration
+ * SF External State Migration
  *
  * Migrates legacy in-project `.gsd/` directories to the external
  * `~/.gsd/projects/<hash>/` state directory. After migration, a

@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd backlog
+ * SF Command — /gsd backlog
  *
  * Structured backlog management with 999.x numbering.
  * Items stored in .gsd/BACKLOG.md as markdown checklist.

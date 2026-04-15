@@ -36,7 +36,7 @@ describe('symlink-numbered-variants', async () => {
   const stateDir = realpathSync(mkdtempSync(join(tmpdir(), "gsd-state-variants-")));
 
   try {
-    process.env.GSD_STATE_DIR = stateDir;
+    process.env.SF_STATE_DIR = stateDir;
 
     // Set up a minimal git repo
     run("git init -b main", base);
@@ -138,7 +138,7 @@ describe('symlink-numbered-variants', async () => {
     }
 
   } finally {
-    delete process.env.GSD_STATE_DIR;
+    delete process.env.SF_STATE_DIR;
     try { rmSync(base, { recursive: true, force: true }); } catch { /* ignore */ }
     try { rmSync(stateDir, { recursive: true, force: true }); } catch { /* ignore */ }
   }

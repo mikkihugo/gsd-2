@@ -1,7 +1,7 @@
 /**
- * GSD Configuration Overlay
+ * SF Configuration Overlay
  *
- * Read-only TUI overlay showing the effective GSD configuration:
+ * Read-only TUI overlay showing the effective SF configuration:
  * token profile, model assignments, dynamic routing, git settings,
  * budget, workflow toggles, and preference file sources.
  * Opened via `/gsd show-config` or `/gsd config`.
@@ -202,7 +202,7 @@ function collectConfigSections(): ConfigSection[] {
 
 export function formatConfigText(): string {
   const sections = collectConfigSections();
-  const lines: string[] = ["GSD Configuration\n"];
+  const lines: string[] = ["SF Configuration\n"];
 
   let maxLabel = 0;
   for (const section of sections) {
@@ -293,7 +293,7 @@ export class GSDConfigOverlay {
     const allLines: string[] = [];
 
     // Header
-    allLines.push(t.bold(t.fg("accent", " GSD Configuration ")));
+    allLines.push(t.bold(t.fg("accent", " SF Configuration ")));
     allLines.push(t.fg("muted", "\u2500".repeat(w)));
 
     // Find max label width for alignment

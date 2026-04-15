@@ -1,8 +1,8 @@
-// GSD MCP Server — knowledge graph reader
+// SF MCP Server — knowledge graph reader
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 /**
- * Knowledge Graph for GSD projects.
+ * Knowledge Graph for SF projects.
  *
  * Parses .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,
  * KNOWLEDGE.md) into a graph of nodes and edges. Parse errors in any

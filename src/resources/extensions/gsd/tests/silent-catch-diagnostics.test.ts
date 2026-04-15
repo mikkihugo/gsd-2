@@ -1,11 +1,11 @@
 /**
- * Verify that catch blocks across GSD source files use the centralized
+ * Verify that catch blocks across SF source files use the centralized
  * workflow-logger (logWarning/logError) instead of raw process.stderr.write,
  * console.error, or being completely empty (#3348, #3345).
  *
  * Two tests:
  * 1. Auto-mode files must have zero empty catch blocks (fully migrated).
- * 2. All GSD files must not use raw stderr/console in catch blocks.
+ * 2. All SF files must not use raw stderr/console in catch blocks.
  */
 
 import { describe, test } from "node:test";
@@ -261,7 +261,7 @@ describe("workflow-logger coverage (#3348)", () => {
 
   test("catch blocks use workflow-logger instead of raw stderr/console", () => {
     const files = getGsdSourceFiles();
-    assert.ok(files.length > 0, "should find GSD source files");
+    assert.ok(files.length > 0, "should find SF source files");
 
     const violations: string[] = [];
     for (const file of files) {

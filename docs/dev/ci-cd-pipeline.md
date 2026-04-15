@@ -2,14 +2,14 @@
 
 ## Overview
 
-GSD 2 uses a three-stage promotion pipeline that automatically moves merged PRs through **Dev → Test → Prod** environments using npm dist-tags.
+SF uses a three-stage promotion pipeline that automatically moves merged PRs through **Dev → Test → Prod** environments using npm dist-tags.
 
 ```
 PR merged to main
         │
         ▼
    ┌─────────┐    ci.yml passes (build, test, typecheck)
-   │   DEV   │    → publishes gsd-pi@<version>-dev.<sha> with @dev tag
+   │   DEV   │    → publishes sf-run@<version>-dev.<sha> with @dev tag
    └────┬────┘
         ▼ (automatic if green)
    ┌─────────┐    CLI smoke tests + LLM fixture replay
@@ -29,13 +29,13 @@ Every merged PR is immediately installable:
 
 ```bash
 # Latest dev build (bleeding edge, every merged PR)
-npx gsd-pi@dev
+npx sf-run@dev
 
 # Test candidate (passed smoke + fixture tests)
-npx gsd-pi@next
+npx sf-run@next
 
 # Stable production release
-npx gsd-pi@latest    # or just: npx gsd-pi
+npx sf-run@latest    # or just: npx sf-run
 ```
 
 ### Using Docker
@@ -51,10 +51,10 @@ docker run --rm -v $(pwd):/workspace ghcr.io/singularity-forge/sf-run:latest --v
 ### Checking if a Fix Landed
 
 1. Find the PR's merge commit SHA (first 7 chars)
-2. Check if it's in `@dev`: `npm view gsd-pi@dev version`
+2. Check if it's in `@dev`: `npm view sf-run@dev version`
    - If the version ends in `-dev.<your-sha>`, your PR is in dev
-3. Check if it promoted to `@next`: `npm view gsd-pi@next version`
-4. Check if it's in production: `npm view gsd-pi@latest version`
+3. Check if it promoted to `@next`: `npm view sf-run@next version`
+4. Check if it's in production: `npm view sf-run@latest version`
 
 ## For Maintainers
 
@@ -126,7 +126,7 @@ If a broken version reaches production:
 
 ```bash
 # Roll back npm
-npm dist-tag add gsd-pi@<previous-good-version> latest
+npm dist-tag add sf-run@<previous-good-version> latest
 
 # Roll back Docker
 docker pull ghcr.io/singularity-forge/sf-run:<previous-good-version>
@@ -172,7 +172,7 @@ npm run test:fixtures
 
 ```bash
 # Set your API key, then record
-GSD_FIXTURE_MODE=record GSD_FIXTURE_DIR=./tests/fixtures/recordings \
+SF_FIXTURE_MODE=record SF_FIXTURE_DIR=./tests/fixtures/recordings \
   node --experimental-strip-types tests/fixtures/record.ts
 ```
 

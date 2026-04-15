@@ -69,7 +69,7 @@ describe("native-git-bridge #4180: fallback paths use execFileSync not execSync"
 
 // ─── Integration tests ────────────────────────────────────────────────────
 // Verify correct runtime behaviour through the fallback path (native module
-// is disabled by default in tests — GSD_ENABLE_NATIVE_GSD_GIT is not set).
+// is disabled by default in tests — SF_ENABLE_NATIVE_GSD_GIT is not set).
 
 function git(args: string[], cwd: string): string {
   return execFileSync("git", args, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();

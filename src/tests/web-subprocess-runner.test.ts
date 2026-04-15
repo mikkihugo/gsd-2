@@ -62,14 +62,14 @@ test("resolveModulePaths returns env entries for each module", () => {
   const packageRoot = "/fake/package"
   const result = resolveModulePaths(packageRoot, {
     modules: [
-      { envKey: "GSD_MOD_A", relativePath: "src/a.ts" },
-      { envKey: "GSD_MOD_B", relativePath: "src/b.ts" },
+      { envKey: "SF_MOD_A", relativePath: "src/a.ts" },
+      { envKey: "SF_MOD_B", relativePath: "src/b.ts" },
     ],
     existsSync: () => true,
   })
   assert.deepEqual(result.env, {
-    GSD_MOD_A: "/fake/package/src/a.ts",
-    GSD_MOD_B: "/fake/package/src/b.ts",
+    SF_MOD_A: "/fake/package/src/a.ts",
+    SF_MOD_B: "/fake/package/src/b.ts",
   })
 })
 

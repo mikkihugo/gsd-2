@@ -1,25 +1,25 @@
 <div align="center">
 
-# GSD 2
+# SF
 
-**The evolution of [Get Shit Done](https://github.com/gsd-build/get-shit-done) — now a real coding agent.**
+**The evolution of [Singularity Forge](https://github.com/gsd-build/get-shit-done) — now a real coding agent.**
 
-[![npm version](https://img.shields.io/npm/v/gsd-pi?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/gsd-pi)
-[![npm downloads](https://img.shields.io/npm/dm/gsd-pi?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/gsd-pi)
-[![GitHub stars](https://img.shields.io/github/stars/gsd-build/GSD-2?style=for-the-badge&logo=github&color=181717)](https://github.com/gsd-build/GSD-2)
+[![npm version](https://img.shields.io/npm/v/sf-run?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/sf-run)
+[![npm downloads](https://img.shields.io/npm/dm/sf-run?style=for-the-badge&logo=npm&logoColor=white&color=CB3837)](https://www.npmjs.com/package/sf-run)
+[![GitHub stars](https://img.shields.io/github/stars/gsd-build/SF?style=for-the-badge&logo=github&color=181717)](https://github.com/gsd-build/SF)
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/nKXTsAcmbT)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)](LICENSE)
-[![$GSD Token](https://img.shields.io/badge/$GSD-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
+[![$SF Token](https://img.shields.io/badge/$SF-Dexscreener-1C1C1C?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0iIzAwRkYwMCIvPjwvc3ZnPg==&logoColor=00FF00)](https://dexscreener.com/solana/dwudwjvan7bzkw9zwlbyv6kspdlvhwzrqy6ebk8xzxkv)
 
-The original GSD went viral as a prompt framework for Claude Code. It worked, but it was fighting the tool — injecting prompts through slash commands, hoping the LLM would follow instructions, with no actual control over context windows, sessions, or execution.
+The original SF went viral as a prompt framework for Claude Code. It worked, but it was fighting the tool — injecting prompts through slash commands, hoping the LLM would follow instructions, with no actual control over context windows, sessions, or execution.
 
-This version is different. GSD is now a standalone CLI built on the [Pi SDK](https://github.com/badlogic/pi-mono), which gives it direct TypeScript access to the agent harness itself. That means GSD can actually _do_ what v1 could only _ask_ the LLM to do: clear context between tasks, inject exactly the right files at dispatch time, manage git branches, track cost and tokens, detect stuck loops, recover from crashes, and auto-advance through an entire milestone without human intervention.
+This version is different. SF is now a standalone CLI built on the [Pi SDK](https://github.com/badlogic/pi-mono), which gives it direct TypeScript access to the agent harness itself. That means SF can actually _do_ what v1 could only _ask_ the LLM to do: clear context between tasks, inject exactly the right files at dispatch time, manage git branches, track cost and tokens, detect stuck loops, recover from crashes, and auto-advance through an entire milestone without human intervention.
 
 One command. Walk away. Come back to a built project with clean git history.
 
-<pre><code>npm install -g gsd-pi@latest</code></pre>
+<pre><code>npm install -g sf-run@latest</code></pre>
 
-> GSD now provisions a managed [RTK](https://github.com/rtk-ai/rtk) binary on supported macOS, Linux, and Windows installs to compress shell-command output in `bash`, `async_bash`, `bg_shell`, and verification flows. GSD forces `RTK_TELEMETRY_DISABLED=1` for all managed invocations. Set `GSD_RTK_DISABLED=1` to disable the integration.
+> SF now provisions a managed [RTK](https://github.com/rtk-ai/rtk) binary on supported macOS, Linux, and Windows installs to compress shell-command output in `bash`, `async_bash`, `bg_shell`, and verification flows. SF forces `RTK_TELEMETRY_DISABLED=1` for all managed invocations. Set `SF_RTK_DISABLED=1` to disable the integration.
 
 > **📋 NOTICE: New to Node on Mac?** If you installed Node.js via Homebrew, you may be running a development release instead of LTS. **[Read this guide](./docs/user-docs/node-lts-macos.md)** to pin Node 24 LTS and avoid compatibility issues.
 
@@ -56,7 +56,7 @@ One command. Walk away. Come back to a built project with clean git history.
 ### TUI Improvements
 
 - **Overlay subscription fix** — resolved overlay subscription lifecycle and `Ctrl+Shift+P` shortcut conflict.
-- **Improved overlays and shortcuts** — GSD overlays, keyboard shortcuts, and notification flows redesigned for consistency.
+- **Improved overlays and shortcuts** — SF overlays, keyboard shortcuts, and notification flows redesigned for consistency.
 - **Pinned output restored** — pinned output bar displays above the editor during tool execution again.
 - **Turn completion cleanup** — pinned latest output is cleared on turn completion, preventing stale output from persisting.
 - **Secure input masking** — extension input values are masked in interactive mode when collecting secrets.
@@ -139,7 +139,7 @@ Full documentation is in the [`docs/`](./docs/) directory:
 - **[Dynamic Model Routing](./docs/user-docs/dynamic-model-routing.md)** — complexity-based model selection and budget pressure
 - **[Web Interface](./docs/user-docs/web-interface.md)** — browser-based project management and real-time progress
 - **[Migration from v1](./docs/user-docs/migration.md)** — `.planning` → `.gsd` migration
-- **[Docker Sandbox](./docker/README.md)** — run GSD auto mode in an isolated Docker container
+- **[Docker Sandbox](./docker/README.md)** — run SF auto mode in an isolated Docker container
 
 ### Developer Docs
 
@@ -152,14 +152,14 @@ Full documentation is in the [`docs/`](./docs/) directory:
 
 ## What Changed From v1
 
-The original GSD was a collection of markdown prompts installed into `~/.claude/commands/`. It relied entirely on the LLM reading those prompts and doing the right thing. That worked surprisingly well — but it had hard limits:
+The original SF was a collection of markdown prompts installed into `~/.claude/commands/`. It relied entirely on the LLM reading those prompts and doing the right thing. That worked surprisingly well — but it had hard limits:
 
 - **No context control.** The LLM accumulated garbage over a long session. Quality degraded.
 - **No real automation.** "Auto mode" was the LLM calling itself in a loop, burning context on orchestration overhead.
 - **No crash recovery.** If the session died mid-task, you started over.
 - **No observability.** No cost tracking, no progress dashboard, no stuck detection.
 
-GSD v2 solves all of these because it's not a prompt framework anymore — it's a TypeScript application that _controls_ the agent session.
+SF v2 solves all of these because it's not a prompt framework anymore — it's a TypeScript application that _controls_ the agent session.
 
 |                      | v1 (Prompt Framework)        | v2 (Agent Application)                                  |
 | -------------------- | ---------------------------- | ------------------------------------------------------- |
@@ -182,7 +182,7 @@ GSD v2 solves all of these because it's not a prompt framework anymore — it's 
 
 > **Note:** Migration works best with a `ROADMAP.md` file for milestone structure. Without one, milestones are inferred from the `phases/` directory.
 
-If you have projects with `.planning` directories from the original Get Shit Done, you can migrate them to GSD-2's `.gsd` format:
+If you have projects with `.planning` directories from the original Singularity Forge, you can migrate them to SF's `.gsd` format:
 
 ```bash
 # From within the project directory
@@ -207,7 +207,7 @@ Supports format variations including milestone-sectioned roadmaps with `<details
 
 ## How It Works
 
-GSD structures work into a hierarchy:
+SF structures work into a hierarchy:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -231,7 +231,7 @@ Plan (with integrated research) → Execute (per task) → Complete → Reassess
 
 ### `/gsd auto` — The Main Event
 
-This is what makes GSD different. Run it, walk away, come back to built software.
+This is what makes SF different. Run it, walk away, come back to built software.
 
 ```
 /gsd auto
@@ -285,7 +285,7 @@ Step mode is the on-ramp. Auto mode is the highway.
 ### Install
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 ### Log in to a provider
@@ -299,7 +299,7 @@ gsd
 
 Select from 20+ providers — Anthropic, OpenAI, Google, OpenRouter, GitHub Copilot, and more. If you have a Claude Max or Copilot subscription, the OAuth flow handles everything. Otherwise, paste your API key when prompted.
 
-GSD auto-selects a default model after login. To switch models later:
+SF auto-selects a default model after login. To switch models later:
 
 ```bash
 /model
@@ -313,11 +313,11 @@ Open a terminal in your project and run:
 gsd
 ```
 
-GSD opens an interactive agent session. From there, you have two ways to work:
+SF opens an interactive agent session. From there, you have two ways to work:
 
-**`/gsd` — step mode.** Type `/gsd` and GSD executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next. Same state machine as auto mode, but you stay in the loop. No project yet? It starts the discussion flow. Roadmap exists? It plans or executes the next step.
+**`/gsd` — step mode.** Type `/gsd` and SF executes one unit of work at a time, pausing between each with a wizard showing what completed and what's next. Same state machine as auto mode, but you stay in the loop. No project yet? It starts the discussion flow. Roadmap exists? It plans or executes the next step.
 
-**`/gsd auto` — autonomous mode.** Type `/gsd auto` and walk away. GSD researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete. Fresh context window per task. No babysitting.
+**`/gsd auto` — autonomous mode.** Type `/gsd auto` and walk away. SF researches, plans, executes, verifies, commits, and advances through every slice until the milestone is complete. Fresh context window per task. No babysitting.
 
 ### Two terminals, one project
 
@@ -364,11 +364,11 @@ gsd headless dispatch plan
 
 Headless auto-responds to interactive prompts, detects completion, and exits with structured codes: `0` complete, `1` error/timeout, `2` blocked. Auto-restarts on crash with exponential backoff. Use `gsd headless query` for instant, machine-readable state inspection — returns phase, next dispatch preview, and parallel worker costs as a single JSON object without spawning an LLM session. Pair with [remote questions](./docs/user-docs/remote-questions.md) to route decisions to Slack or Discord when human input is needed.
 
-**Multi-session orchestration** — headless mode supports file-based IPC in `.gsd/parallel/` for coordinating multiple GSD workers across milestones. Build orchestrators that spawn, monitor, and budget-cap a fleet of GSD workers.
+**Multi-session orchestration** — headless mode supports file-based IPC in `.gsd/parallel/` for coordinating multiple SF workers across milestones. Build orchestrators that spawn, monitor, and budget-cap a fleet of SF workers.
 
 ### First launch
 
-On first run, GSD launches a branded setup wizard that walks you through LLM provider selection (OAuth or API key), then optional tool API keys (Brave Search, Context7, Jina, Slack, Discord). Every step is skippable — press Enter to skip any. If you have an existing Pi installation, your provider credentials (LLM and tool keys) are imported automatically. Run `gsd config` anytime to re-run the wizard.
+On first run, SF launches a branded setup wizard that walks you through LLM provider selection (OAuth or API key), then optional tool API keys (Brave Search, Context7, Jina, Slack, Discord). Every step is skippable — press Enter to skip any. If you have an existing Pi installation, your provider credentials (LLM and tool keys) are imported automatically. Run `gsd config` anytime to re-run the wizard.
 
 ### Commands
 
@@ -377,7 +377,7 @@ On first run, GSD launches a branded setup wizard that walks you through LLM pro
 | `/gsd`                  | Step mode — executes one unit at a time, pauses between each    |
 | `/gsd next`             | Explicit step mode (same as bare `/gsd`)                        |
 | `/gsd auto`             | Autonomous mode — researches, plans, executes, commits, repeats |
-| `/gsd quick`            | Execute a quick task with GSD guarantees, skip planning overhead |
+| `/gsd quick`            | Execute a quick task with SF guarantees, skip planning overhead |
 | `/gsd stop`             | Stop auto mode gracefully                                       |
 | `/gsd steer`            | Hard-steer plan documents during execution                      |
 | `/gsd discuss`          | Discuss architecture and decisions (works alongside auto mode)  |
@@ -387,9 +387,9 @@ On first run, GSD launches a branded setup wizard that walks you through LLM pro
 | `/gsd queue`            | Queue future milestones (safe during auto mode)                 |
 | `/gsd prefs`            | Model selection, timeouts, budget ceiling                       |
 | `/gsd migrate`          | Migrate a v1 `.planning` directory to `.gsd` format             |
-| `/gsd help`             | Categorized command reference for all GSD subcommands           |
+| `/gsd help`             | Categorized command reference for all SF subcommands           |
 | `/gsd mode`             | Switch workflow mode (solo/team) with coordinated defaults      |
-| `/gsd forensics`        | Full-access GSD debugger for auto-mode failure investigation    |
+| `/gsd forensics`        | Full-access SF debugger for auto-mode failure investigation    |
 | `/gsd cleanup`          | Archive phase directories from completed milestones             |
 | `/gsd doctor`           | Runtime health checks — issues surface across widget, visualizer, and reports |
 | `/gsd keys`             | API key manager — list, add, remove, test, rotate, doctor       |
@@ -398,14 +398,14 @@ On first run, GSD launches a branded setup wizard that walks you through LLM pro
 | `/worktree` (`/wt`)     | Git worktree lifecycle — create, switch, merge, remove          |
 | `/voice`                | Toggle real-time speech-to-text (macOS, Linux)                  |
 | `/exit`                 | Graceful shutdown — saves session state before exiting          |
-| `/kill`                 | Kill GSD process immediately                                    |
+| `/kill`                 | Kill SF process immediately                                    |
 | `/clear`                | Start a new session (alias for `/new`)                          |
 | `Ctrl+Alt+G`            | Toggle dashboard overlay                                        |
 | `Ctrl+Alt+V`            | Toggle voice transcription                                      |
 | `Ctrl+Alt+B`            | Show background shell processes                                 |
 | `Alt+V`                 | Paste clipboard image (macOS)                                   |
 | `gsd config`            | Re-run the setup wizard (LLM provider + tool keys)              |
-| `gsd update`            | Update GSD to the latest version                                |
+| `gsd update`            | Update SF to the latest version                                |
 | `gsd headless [cmd]`    | Run `/gsd` commands without TUI (CI, cron, scripts)             |
 | `gsd headless query`    | Instant JSON snapshot — state, next dispatch, costs (no LLM)    |
 | `gsd --continue` (`-c`) | Resume the most recent session for the current directory        |
@@ -414,7 +414,7 @@ On first run, GSD launches a branded setup wizard that walks you through LLM pro
 
 ---
 
-## What GSD Manages For You
+## What SF Manages For You
 
 ### Context Engineering
 
@@ -476,7 +476,7 @@ The verification ladder: static checks → command execution → behavioral test
 
 ### HTML Reports
 
-After a milestone completes, GSD auto-generates a self-contained HTML report in `.gsd/reports/`. Each report includes project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base sections. No external dependencies — all CSS and JS are inlined, printable to PDF from any browser.
+After a milestone completes, SF auto-generates a self-contained HTML report in `.gsd/reports/`. Each report includes project summary, progress tree, slice dependency graph (SVG DAG), cost/token metrics with bar charts, execution timeline, changelog, and knowledge base sections. No external dependencies — all CSS and JS are inlined, printable to PDF from any browser.
 
 An auto-generated `index.html` shows all reports with progression metrics across milestones.
 
@@ -489,7 +489,7 @@ An auto-generated `index.html` shows all reports with progression metrics across
 
 ### Preferences
 
-GSD preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project). Manage with `/gsd prefs`.
+SF preferences live in `~/.gsd/PREFERENCES.md` (global) or `.gsd/PREFERENCES.md` (project). Manage with `/gsd prefs`.
 
 ```yaml
 ---
@@ -522,7 +522,7 @@ auto_report: true
 | Setting                | What it controls                                                                                      |
 | ---------------------- | ----------------------------------------------------------------------------------------------------- |
 | `models.*`             | Per-phase model selection — string for a single model, or `{model, fallbacks}` for automatic failover |
-| `skill_discovery`      | `auto` / `suggest` / `off` — how GSD finds and applies skills                                         |
+| `skill_discovery`      | `auto` / `suggest` / `off` — how SF finds and applies skills                                         |
 | `auto_supervisor.*`    | Timeout thresholds for auto mode supervision                                                          |
 | `budget_ceiling`       | USD ceiling — auto mode pauses when reached                                                           |
 | `uat_dispatch`         | Enable automatic UAT runs after slice completion                                                      |
@@ -531,7 +531,7 @@ auto_report: true
 | `skill_staleness_days` | Skills unused for N days get deprioritized (default: 60, 0 = disabled)                                |
 | `unique_milestone_ids` | Uses unique milestone names to avoid clashes when working in teams of people                          |
 | `git.isolation`        | `none` (default), `worktree`, or `branch` — enable worktree or branch isolation for milestone work               |
-| `git.manage_gitignore` | Set `false` to prevent GSD from modifying `.gitignore`                                                           |
+| `git.manage_gitignore` | Set `false` to prevent SF from modifying `.gitignore`                                                           |
 | `verification_commands`| Array of shell commands to run after task execution (e.g., `["npm run lint", "npm run test"]`)        |
 | `verification_auto_fix`| Auto-retry on verification failures (default: true)                                                   |
 | `verification_max_retries` | Max retries for verification failures (default: 2)                                               |
@@ -546,11 +546,11 @@ Place an `AGENTS.md` file in any directory to provide persistent behavioral guid
 
 ### Debug Mode
 
-Start GSD with `gsd --debug` to enable structured JSONL diagnostic logging. Debug logs capture dispatch decisions, state transitions, and timing data for troubleshooting auto-mode issues.
+Start SF with `gsd --debug` to enable structured JSONL diagnostic logging. Debug logs capture dispatch decisions, state transitions, and timing data for troubleshooting auto-mode issues.
 
 ### Token Optimization
 
-GSD includes a coordinated token optimization system that reduces usage by 40-60% on cost-sensitive workloads. Set a single preference to coordinate model selection, phase skipping, and context compression:
+SF includes a coordinated token optimization system that reduces usage by 40-60% on cost-sensitive workloads. Set a single preference to coordinate model selection, phase skipping, and context compression:
 
 ```yaml
 token_profile: budget      # or balanced (default), quality
@@ -570,11 +570,11 @@ See the full [Token Optimization Guide](./docs/user-docs/token-optimization.md) 
 
 ### Bundled Tools
 
-GSD ships with 24 extensions, all loaded automatically:
+SF ships with 24 extensions, all loaded automatically:
 
 | Extension              | What it provides                                                                                                       |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| **GSD**                | Core workflow engine, auto mode, commands, dashboard                                                                   |
+| **SF**                | Core workflow engine, auto mode, commands, dashboard                                                                   |
 | **Browser Tools**      | Playwright-based browser with form intelligence, intent-ranked element finding, semantic actions, PDF export, session state persistence, network mocking, device emulation, structured extraction, visual diffing, region zoom, test code generation, and prompt injection detection |
 | **Search the Web**     | Brave Search, Tavily, or Jina page extraction                                                                          |
 | **Google Search**      | Gemini-powered web search with AI-synthesized answers                                                                  |
@@ -620,7 +620,7 @@ The best practice for working in teams is to ensure unique milestone names acros
 ### Suggested .gitignore setup
 
 ```bash
-# ── GSD: Runtime / Ephemeral (per-developer, per-session) ──────────────────
+# ── SF: Runtime / Ephemeral (per-developer, per-session) ──────────────────
 # Crash detection sentinel — PID lock, written per auto-mode session
 .gsd/auto.lock
 # Auto-mode dispatch tracker — prevents re-running completed units (includes archived per-milestone files)
@@ -674,18 +674,18 @@ Milestone names will now be generated with a 6 char random string appended e.g. 
 1. Ensure you are not in the middle of any milestones (clean state)
 2. Update the `.gsd/` related entries in your `.gitignore` to follow the `Suggested .gitignore setup` section under `Working in teams` (ensure you are no longer blanket ignoring the whole `.gsd/` directory)
 3. Update your `.gsd/PREFERENCES.md` file within the repo as per section `Unique Milestone Names`
-4. If you want to update all your existing milestones use this prompt in GSD: `I have turned on unique milestone ids, please update all old milestone ids to use this new format e.g. M001-abc123 where abc123 is a random 6 char lowercase alpha numeric string. Update all references in all .gsd file contents, file names and directory names. Validate your work once done to ensure referential integrity.`
+4. If you want to update all your existing milestones use this prompt in SF: `I have turned on unique milestone ids, please update all old milestone ids to use this new format e.g. M001-abc123 where abc123 is a random 6 char lowercase alpha numeric string. Update all references in all .gsd file contents, file names and directory names. Validate your work once done to ensure referential integrity.`
 5. Commit to git
 
 ---
 
 ## Architecture
 
-GSD is a TypeScript application that embeds the Pi coding agent SDK.
+SF is a TypeScript application that embeds the Pi coding agent SDK.
 
 ```
 gsd (CLI binary)
-  └─ loader.ts          Sets PI_PACKAGE_DIR, GSD env vars, dynamic-imports cli.ts
+  └─ loader.ts          Sets PI_PACKAGE_DIR, SF env vars, dynamic-imports cli.ts
       └─ cli.ts         Wires SDK managers, loads extensions, starts InteractiveMode
           ├─ headless.ts     Headless orchestrator (spawns RPC child, auto-responds, detects completion)
           ├─ onboarding.ts   First-run setup wizard (LLM provider + tool keys)
@@ -693,10 +693,10 @@ gsd (CLI binary)
           ├─ app-paths.ts    ~/.gsd/agent/, ~/.gsd/sessions/, auth.json
           ├─ resource-loader.ts  Syncs bundled extensions + agents to ~/.gsd/agent/
           └─ src/resources/
-              ├─ extensions/gsd/    Core GSD extension (auto, state, commands, ...)
+              ├─ extensions/gsd/    Core SF extension (auto, state, commands, ...)
               ├─ extensions/...     21 supporting extensions
               ├─ agents/            scout, researcher, worker, javascript-pro, typescript-pro
-              └─ GSD-WORKFLOW.md    Manual bootstrap protocol
+              └─ SF-WORKFLOW.md    Manual bootstrap protocol
 ```
 
 **Key design decisions:**
@@ -726,7 +726,7 @@ Optional:
 
 ## Use Any Model
 
-GSD isn't locked to one provider. It runs on the [Pi SDK](https://github.com/badlogic/pi-mono), which supports **20+ model providers** out of the box. Use different models for different phases — Opus for planning, Sonnet for execution, a fast model for research.
+SF isn't locked to one provider. It runs on the [Pi SDK](https://github.com/badlogic/pi-mono), which supports **20+ model providers** out of the box. Use different models for different phases — Opus for planning, Sonnet for execution, a fast model for research.
 
 ### Built-in Providers
 
@@ -742,11 +742,11 @@ If you have a **Claude Max**, **Codex**, or **GitHub Copilot** subscription, you
 > - **Claude Max** — Anthropic's ToS may not explicitly permit OAuth use outside Claude's own applications.
 > - **GitHub Copilot** — Usage outside GitHub's own tools may be restricted by your subscription terms.
 >
-> GSD supports API key authentication for all providers as the safe alternative. **We strongly recommend using API keys over OAuth for Google Gemini.**
+> SF supports API key authentication for all providers as the safe alternative. **We strongly recommend using API keys over OAuth for Google Gemini.**
 
 ### OpenRouter
 
-[OpenRouter](https://openrouter.ai) gives you access to hundreds of models through a single API key. Use it to run GSD with Llama, DeepSeek, Qwen, or anything else OpenRouter supports.
+[OpenRouter](https://openrouter.ai) gives you access to hundreds of models through a single API key. Use it to run SF with Llama, DeepSeek, Qwen, or anything else OpenRouter supports.
 
 ### Per-Phase Model Selection
 
@@ -763,7 +763,7 @@ models:
   completion: claude-sonnet-4-6
 ```
 
-Use expensive models where quality matters (planning, complex execution) and cheaper/faster models where speed matters (research, simple completions). Each phase accepts a simple model string or an object with `model` and `fallbacks` — if the primary model fails (provider outage, rate limit, credit exhaustion), GSD automatically tries the next fallback. GSD tracks cost per-model so you can see exactly where your budget goes.
+Use expensive models where quality matters (planning, complex execution) and cheaper/faster models where speed matters (research, simple completions). Each phase accepts a simple model string or an object with `model` and `fallbacks` — if the primary model fails (provider outage, rate limit, credit exhaustion), SF automatically tries the next fallback. SF tracks cost per-model so you can see exactly where your budget goes.
 
 ---
 
@@ -771,7 +771,7 @@ Use expensive models where quality matters (planning, complex execution) and che
 
 | Project | Description |
 | ------- | ----------- |
-| [GSD2 Config Utility](https://github.com/jeremymcs/gsd2-config) | Standalone configuration tool for managing GSD preferences, providers, and API keys |
+| [GSD2 Config Utility](https://github.com/jeremymcs/gsd2-config) | Standalone configuration tool for managing SF preferences, providers, and API keys |
 
 ---
 
@@ -791,8 +791,8 @@ Use expensive models where quality matters (planning, complex execution) and che
 
 <div align="center">
 
-**The original GSD showed what was possible. This version delivers it.**
+**The original SF showed what was possible. This version delivers it.**
 
-**`npm install -g gsd-pi && gsd`**
+**`npm install -g sf-run && gsd`**
 
 </div>

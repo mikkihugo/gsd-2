@@ -3,7 +3,7 @@ title: "Working in teams"
 description: "Multi-user workflows with unique milestone IDs, push branches, and shared planning artifacts."
 ---
 
-GSD supports multi-user workflows where several developers work on the same repository concurrently.
+SF supports multi-user workflows where several developers work on the same repository concurrently.
 
 ## Setup
 
@@ -49,12 +49,12 @@ Share planning artifacts while keeping runtime files local:
 
 ```bash
 git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git commit -m "chore: enable SF team workflow"
 ```
 
 ## `commit_docs: false`
 
-For teams where only some members use GSD:
+For teams where only some members use SF:
 
 ```yaml
 git:
@@ -74,4 +74,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD enforces that dependent milestones complete before starting downstream work.
+SF enforces that dependent milestones complete before starting downstream work.

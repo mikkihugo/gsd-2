@@ -1,6 +1,6 @@
 # Provider Setup Guide
 
-Step-by-step setup instructions for every LLM provider GSD supports. If you ran the onboarding wizard (`gsd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
+Step-by-step setup instructions for every LLM provider SF supports. If you ran the onboarding wizard (`gsd config`) and picked a provider, you may already be configured — check with `/model` inside a session.
 
 ## Table of Contents
 
@@ -49,7 +49,7 @@ Step-by-step setup instructions for every LLM provider GSD supports. If you ran 
 
 ## Built-in Providers
 
-Built-in providers have models pre-registered in GSD. You only need to supply credentials.
+Built-in providers have models pre-registered in SF. You only need to supply credentials.
 
 ### Anthropic (Claude)
 
@@ -67,28 +67,28 @@ Or run `gsd config` and paste your key when prompted.
 
 **Option B — Claude Code CLI:**
 
-If you have a Claude Pro or Max subscription, you can authenticate through Anthropic's official Claude Code CLI. Install it, sign in with `claude`, then GSD will detect and route through it automatically:
+If you have a Claude Pro or Max subscription, you can authenticate through Anthropic's official Claude Code CLI. Install it, sign in with `claude`, then SF will detect and route through it automatically:
 
 ```bash
 # Install Claude Code CLI (see https://docs.anthropic.com/en/docs/claude-code)
 claude
-# Sign in when prompted, then start GSD
+# Sign in when prompted, then start SF
 gsd
 ```
 
-GSD detects your local Claude Code installation and uses it as the authenticated Anthropic surface. This is the TOS-compliant path for subscription users — GSD never handles your subscription credentials directly.
+SF detects your local Claude Code installation and uses it as the authenticated Anthropic surface. This is the TOS-compliant path for subscription users — SF never handles your subscription credentials directly.
 
-> **Note:** GSD does not support browser-based OAuth sign-in for Anthropic. Use an API key or the Claude Code CLI instead.
+> **Note:** SF does not support browser-based OAuth sign-in for Anthropic. Use an API key or the Claude Code CLI instead.
 
-**Option C — Use your Claude Pro/Max plan with GSD inside Claude Code:**
+**Option C — Use your Claude Pro/Max plan with SF inside Claude Code:**
 
-If you already have a Claude Pro or Max subscription and want to use GSD's planning, execution, and milestone orchestration directly from Claude Code — without switching to a separate terminal — you can connect GSD as an MCP server. This gives Claude Code access to GSD's full workflow toolset via the [Model Context Protocol](https://modelcontextprotocol.io), so you get GSD's structured project management powered by your existing Claude plan.
+If you already have a Claude Pro or Max subscription and want to use SF's planning, execution, and milestone orchestration directly from Claude Code — without switching to a separate terminal — you can connect SF as an MCP server. This gives Claude Code access to SF's full workflow toolset via the [Model Context Protocol](https://modelcontextprotocol.io), so you get SF's structured project management powered by your existing Claude plan.
 
 **Automatic setup (recommended):**
 
-When GSD detects a Claude Code model during startup, it automatically writes a `.mcp.json` file in your project root with the GSD workflow MCP server configured. No manual steps needed — just start GSD once with Claude Code as the provider and the config is created for you.
+When SF detects a Claude Code model during startup, it automatically writes a `.mcp.json` file in your project root with the SF workflow MCP server configured. No manual steps needed — just start SF once with Claude Code as the provider and the config is created for you.
 
-You can also trigger this manually from inside a GSD session:
+You can also trigger this manually from inside a SF session:
 
 ```bash
 /gsd mcp init
@@ -98,7 +98,7 @@ This writes (or updates) the `gsd-workflow` entry in your project's `.mcp.json`.
 
 **Manual setup:**
 
-If you prefer to configure it yourself, add GSD to your project's `.mcp.json`:
+If you prefer to configure it yourself, add SF to your project's `.mcp.json`:
 
 ```json
 {
@@ -107,7 +107,7 @@ If you prefer to configure it yourself, add GSD to your project's `.mcp.json`:
       "command": "npx",
       "args": ["gsd-mcp-server"],
       "env": {
-        "GSD_CLI_PATH": "/path/to/gsd"
+        "SF_CLI_PATH": "/path/to/gsd"
       }
     }
   }
@@ -126,15 +126,15 @@ Or if `gsd-mcp-server` is installed globally:
 }
 ```
 
-You can also add this to `~/.claude/settings.json` under `mcpServers` to make GSD available across all projects.
+You can also add this to `~/.claude/settings.json` under `mcpServers` to make SF available across all projects.
 
 **What's exposed:**
 
-The MCP server provides GSD's full workflow tool surface — milestone planning, task completion, slice management, roadmap reassessment, journal queries, and more. Session management tools (`gsd_execute`, `gsd_status`, `gsd_result`, `gsd_cancel`) let Claude Code start and monitor GSD auto-mode sessions. See [Commands → MCP Server Mode](./commands.md#mcp-server-mode) for the full tool list.
+The MCP server provides SF's full workflow tool surface — milestone planning, task completion, slice management, roadmap reassessment, journal queries, and more. Session management tools (`gsd_execute`, `gsd_status`, `gsd_result`, `gsd_cancel`) let Claude Code start and monitor SF auto-mode sessions. See [Commands → MCP Server Mode](./commands.md#mcp-server-mode) for the full tool list.
 
 **Verify the connection:**
 
-From inside a GSD session, check that the MCP server is reachable:
+From inside a SF session, check that the MCP server is reachable:
 
 ```bash
 /gsd mcp status
@@ -176,7 +176,7 @@ Or run `gsd config`, choose "Paste an API key", then "OpenRouter".
 
 **Step 3 — Switch to an OpenRouter model:**
 
-Inside a GSD session, type `/model` and select an OpenRouter model. Models are prefixed with `openrouter/` (e.g., `openrouter/anthropic/claude-sonnet-4`).
+Inside a SF session, type `/model` and select an OpenRouter model. Models are prefixed with `openrouter/` (e.g., `openrouter/anthropic/claude-sonnet-4`).
 
 **Optional — Add custom OpenRouter models via `models.json`:**
 
@@ -205,7 +205,7 @@ If you want models not in the built-in list, add them to `~/.gsd/agent/models.js
 }
 ```
 
-Note: the `apiKey` field here is the *name* of the environment variable, not the literal key. GSD resolves it automatically. You can also use a literal value or a shell command (see [Value Resolution](./custom-models.md#value-resolution)).
+Note: the `apiKey` field here is the *name* of the environment variable, not the literal key. SF resolves it automatically. You can also use a literal value or a shell command (see [Value Resolution](./custom-models.md#value-resolution)).
 
 **Optional — Route through specific providers:**
 
@@ -304,7 +304,7 @@ export AZURE_OPENAI_API_KEY="..."
 
 ## Local Providers
 
-Local providers run on your machine. They require a `models.json` configuration file because GSD needs to know the endpoint URL and which models are available.
+Local providers run on your machine. They require a `models.json` configuration file because SF needs to know the endpoint URL and which models are available.
 
 **Config file location:** `~/.gsd/agent/models.json`
 
@@ -355,7 +355,7 @@ The `apiKey` is required by the config schema but Ollama ignores it — any valu
 
 **Step 4 — Select the model:**
 
-Inside GSD, type `/model` and pick your Ollama model.
+Inside SF, type `/model` and pick your Ollama model.
 
 **Ollama tips:**
 - Ollama does not support the `developer` role or `reasoning_effort` — always set `compat.supportsDeveloperRole: false` and `compat.supportsReasoningEffort: false`.
@@ -460,7 +460,7 @@ The model `id` must match the `--model` flag you passed to `vllm serve`.
 
 ## Custom OpenAI-Compatible Endpoints
 
-Any server that implements the OpenAI Chat Completions API can work with GSD. This covers proxies (LiteLLM, Portkey, Helicone), self-hosted inference, and new providers.
+Any server that implements the OpenAI Chat Completions API can work with SF. This covers proxies (LiteLLM, Portkey, Helicone), self-hosted inference, and new providers.
 
 **Quickest path — use the onboarding wizard:**
 
@@ -538,15 +538,15 @@ For the full reference on `compat` fields, `modelOverrides`, value resolution, a
 
 ### "Authentication failed" with a valid key
 
-**Cause:** The key is set in your shell but not visible to GSD.
+**Cause:** The key is set in your shell but not visible to SF.
 
 **Fix:** Make sure the environment variable is exported in the same terminal where you run `gsd`. Or use `gsd config` to save the key to `~/.gsd/agent/auth.json` so it persists across sessions.
 
 ### OpenRouter models not appearing in `/model`
 
-**Cause:** No `OPENROUTER_API_KEY` set, so GSD hides OpenRouter models.
+**Cause:** No `OPENROUTER_API_KEY` set, so SF hides OpenRouter models.
 
-**Fix:** Set the key and restart GSD:
+**Fix:** Set the key and restart SF:
 
 ```bash
 export OPENROUTER_API_KEY="sk-or-..."
@@ -577,7 +577,7 @@ ollama pull llama3.1:8b
 
 **Cause:** Most local inference servers don't support the OpenAI `developer` message role.
 
-**Fix:** Add `compat.supportsDeveloperRole: false` to the provider config. This makes GSD send `system` messages instead:
+**Fix:** Add `compat.supportsDeveloperRole: false` to the provider config. This makes SF send `system` messages instead:
 
 ```json
 {
@@ -614,7 +614,7 @@ ollama pull llama3.1:8b
 
 ### Cost shows $0.00 for custom models
 
-**Expected behavior.** GSD defaults cost to zero for custom models. Override with the `cost` field if you want accurate cost tracking:
+**Expected behavior.** SF defaults cost to zero for custom models. Override with the `cost` field if you want accurate cost tracking:
 
 ```json
 "cost": { "input": 0.15, "output": 0.60, "cacheRead": 0.015, "cacheWrite": 0.19 }
@@ -628,7 +628,7 @@ Values are per million tokens.
 
 After configuring a provider:
 
-1. **Launch GSD:**
+1. **Launch SF:**
    ```bash
    gsd
    ```

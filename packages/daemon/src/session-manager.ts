@@ -1,5 +1,5 @@
 /**
- * SessionManager — manages RpcClient lifecycle for daemon-driven GSD execution.
+ * SessionManager — manages RpcClient lifecycle for daemon-driven SF execution.
  *
  * Extends EventEmitter to emit typed session lifecycle events.
  * One active session per projectDir. Tracks events in a ring buffer,
@@ -67,7 +67,7 @@ export class SessionManager extends EventEmitter {
   }
 
   /**
-   * Start a new GSD auto-mode session for the given project directory.
+   * Start a new SF auto-mode session for the given project directory.
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
@@ -275,13 +275,13 @@ export class SessionManager extends EventEmitter {
   }
 
   /**
-   * Resolve the GSD CLI path.
+   * Resolve the SF CLI path.
    *
-   * 1. GSD_CLI_PATH env var (highest priority)
+   * 1. SF_CLI_PATH env var (highest priority)
    * 2. `which gsd` → resolve to the actual dist/cli.js
    */
   static resolveCLIPath(): string {
-    const envPath = process.env['GSD_CLI_PATH'];
+    const envPath = process.env['SF_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
     try {
@@ -292,7 +292,7 @@ export class SessionManager extends EventEmitter {
     }
 
     throw new Error(
-      'Cannot find GSD CLI. Set GSD_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `gsd` is in PATH.'
     );
   }
 

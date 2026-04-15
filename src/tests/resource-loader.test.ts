@@ -190,7 +190,7 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
     // First sync — seeds the agent dir and writes the manifest.
     initResources(fakeAgentDir);
 
-    // Simulate a stale subdirectory extension left from a previous GSD version.
+    // Simulate a stale subdirectory extension left from a previous SF version.
     // This mirrors the mcporter scenario: it was bundled before, synced to
     // ~/.gsd/agent/extensions/, then removed from the bundle in a newer version.
     const staleExtDir = join(fakeAgentDir, "extensions", "mcporter");
@@ -209,7 +209,7 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
       "manifest should contain installedExtensionDirs array",
     );
 
-    // Bump the manifest version to force a re-sync (simulates upgrading GSD).
+    // Bump the manifest version to force a re-sync (simulates upgrading SF).
     manifest.gsdVersion = "0.0.0-force-resync";
     manifest.contentHash = "0000000000000000";
     writeFileSync(manifestPath, JSON.stringify(manifest));

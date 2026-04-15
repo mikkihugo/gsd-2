@@ -1,5 +1,5 @@
 /**
- * GSD Worktree Manager
+ * SF Worktree Manager
  *
  * Creates and manages git worktrees under .gsd/worktrees/<name>/.
  * Each worktree gets its own branch (worktree/<name>) and a full
@@ -18,7 +18,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { join, resolve, sep } from "node:path";
-import { GSDError, GSD_PARSE_ERROR, GSD_STALE_STATE, GSD_LOCK_HELD, GSD_GIT_ERROR, GSD_MERGE_CONFLICT } from "./errors.js";
+import { GSDError, SF_PARSE_ERROR, SF_STALE_STATE, SF_LOCK_HELD, SF_GIT_ERROR, SF_MERGE_CONFLICT } from "./errors.js";
 import { logWarning } from "./workflow-logger.js";
 import {
   nativeBranchDelete,
@@ -143,7 +143,7 @@ export function isInsideWorktreesDir(basePath: string, targetPath: string): bool
 export function createWorktree(basePath: string, name: string, opts: { branch?: string; startPoint?: string; reuseExistingBranch?: boolean } = {}): WorktreeInfo {
   // Validate name: alphanumeric, hyphens, underscores only
   if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    throw new GSDError(GSD_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
+    throw new GSDError(SF_PARSE_ERROR, `Invalid worktree name "${name}". Use only letters, numbers, hyphens, and underscores.`);
   }
 
   const wtPath = worktreePath(basePath, name);
@@ -159,7 +159,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
       logWarning("reconcile", `Removing stale worktree directory (no .git file): ${wtPath}`, { worktree: name });
       rmSync(wtPath, { recursive: true, force: true });
     } else {
-      throw new GSDError(GSD_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
+      throw new GSDError(SF_STALE_STATE, `Worktree "${name}" already exists at ${wtPath}`);
     }
   }
 
@@ -184,7 +184,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 
     if (branchInUse) {
       throw new GSDError(
-        GSD_LOCK_HELD,
+        SF_LOCK_HELD,
         `Branch "${branch}" is already in use by another worktree. ` +
         `Remove the existing worktree first with /worktree remove ${name}.`,
       );
@@ -213,7 +213,7 @@ export function createWorktree(basePath: string, name: string, opts: { branch?: 
 }
 
 /**
- * List all GSD-managed worktrees.
+ * List all SF-managed worktrees.
  * Uses native worktree list and filters to those under .gsd/worktrees/.
  */
 export function listWorktrees(basePath: string): WorktreeInfo[] {
@@ -406,7 +406,7 @@ export function removeWorktree(
     wtPath = gitReportedPath;
   } else if (gitReportedPath) {
     console.error(
-      `[GSD] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
+      `[SF] WARNING: git worktree list reported path outside .gsd/worktrees/: ${gitReportedPath}\n` +
         `  Refusing to use it for removal — falling back to computed path: ${wtPath}`,
     );
     // Still tell git to unregister the worktree entry via its reported path,
@@ -534,7 +534,7 @@ export function removeWorktree(
     // Path is outside containment — only do a non-force git worktree remove
     // (which refuses to delete dirty worktrees) and never fall back to rmSync.
     console.error(
-      `[GSD] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
+      `[SF] WARNING: Resolved worktree path is outside .gsd/worktrees/: ${resolvedWtPath}\n` +
         `  Skipping forced removal to prevent data loss.`,
     );
     try { nativeWorktreeRemove(basePath, resolvedWtPath, false); } catch (e) { logWarning("worktree", `non-force worktree remove failed for ${resolvedWtPath}: ${e instanceof Error ? e.message : String(e)}`); }
@@ -551,7 +551,7 @@ export function removeWorktree(
 /**
  * Paths to skip in all worktree diffs (internal/runtime artifacts).
  *
- * NOTE: These arrays must stay synchronized with GSD_RUNTIME_PATTERNS in gitignore.ts.
+ * NOTE: These arrays must stay synchronized with SF_RUNTIME_PATTERNS in gitignore.ts.
  * That file is the canonical source of truth for runtime ignore patterns.
  * This module uses a split representation (paths/exact/prefixes) for efficient matching.
  */
@@ -609,7 +609,7 @@ function parseDiffNameStatus(entries: { status: string; path: string }[]): Workt
 
 /**
  * Diff the .gsd/ directory between the worktree branch and main branch.
- * Returns a summary of added, modified, and removed GSD artifacts.
+ * Returns a summary of added, modified, and removed SF artifacts.
  */
 export function diffWorktreeGSD(basePath: string, name: string): WorktreeDiffSummary {
   const branch = worktreeBranchName(name);
@@ -698,12 +698,12 @@ export function mergeWorktreeToMain(basePath: string, name: string, commitMessag
   const current = nativeGetCurrentBranch(basePath);
 
   if (current !== mainBranch) {
-    throw new GSDError(GSD_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
+    throw new GSDError(SF_GIT_ERROR, `Must be on ${mainBranch} to merge. Currently on ${current}.`);
   }
 
   const result = nativeMergeSquash(basePath, branch);
   if (!result.success) {
-    throw new GSDError(GSD_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
+    throw new GSDError(SF_MERGE_CONFLICT, `Merge conflicts detected in: ${result.conflicts.join(", ")}`);
   }
 
   nativeCommit(basePath, commitMessage);

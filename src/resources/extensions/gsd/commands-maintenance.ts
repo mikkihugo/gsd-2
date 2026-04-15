@@ -1,5 +1,5 @@
 /**
- * GSD Maintenance — cleanup, skip, dry-run, and recover handlers.
+ * SF Maintenance — cleanup, skip, dry-run, and recover handlers.
  *
  * Contains: handleCleanupBranches, handleCleanupSnapshots, handleCleanupWorktrees, handleSkip, handleDryRun, handleRecover
  */
@@ -15,7 +15,7 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
     branches = nativeBranchList(basePath, "gsd/*");
   } catch (e) {
     logWarning("command", `branch list failed: ${(e as Error).message}`);
-    ctx.ui.notify("No GSD branches to clean up.", "info");
+    ctx.ui.notify("No SF branches to clean up.", "info");
     return;
   }
 
@@ -112,8 +112,8 @@ export async function handleCleanupBranches(ctx: ExtensionCommandContext, basePa
     const nonQuickCount = branches.filter((b) => !b.startsWith("gsd/quick/")).length;
     ctx.ui.notify(
       nonQuickCount > 0
-        ? `${nonQuickCount} GSD branch${nonQuickCount === 1 ? "" : "es"} found, none merged into ${mainBranch} yet.`
-        : "No non-quick GSD branches to clean up.",
+        ? `${nonQuickCount} SF branch${nonQuickCount === 1 ? "" : "es"} found, none merged into ${mainBranch} yet.`
+        : "No non-quick SF branches to clean up.",
       "info",
     );
     return;
@@ -176,7 +176,7 @@ export async function handleCleanupWorktrees(ctx: ExtensionCommandContext, baseP
   }
 
   if (statuses.length === 0) {
-    ctx.ui.notify("No GSD worktrees found.", "info");
+    ctx.ui.notify("No SF worktrees found.", "info");
     return;
   }
 
@@ -436,7 +436,7 @@ export async function handleCleanupProjects(args: string, ctx: ExtensionCommandC
   if (unknown.length > 0) {
     lines.push(`Unknown (${unknown.length}) — no metadata yet:`);
     for (const h of unknown) {
-      lines.push(`  ? ${h}  (open that project in GSD once to register metadata)`);
+      lines.push(`  ? ${h}  (open that project in SF once to register metadata)`);
     }
     lines.push("");
   }
@@ -493,7 +493,7 @@ export async function handleRecover(ctx: ExtensionCommandContext, basePath: stri
   const { invalidateStateCache } = await import("./state.js");
 
   if (!dbAvailable()) {
-    ctx.ui.notify("gsd recover: No database open. Run a GSD command first to initialize the DB.", "error");
+    ctx.ui.notify("gsd recover: No database open. Run a SF command first to initialize the DB.", "error");
     return;
   }
 

@@ -9,7 +9,7 @@ const DEPTH_VERIFICATION_MILESTONE_RE = /depth_verification[_-](M\d+(?:-[a-z0-9]
  * Path segment that identifies .gsd/ planning artifacts.
  * Writes to these paths are allowed during queue mode.
  */
-const GSD_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
+const SF_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
 
 /**
  * Read-only tool names that are always safe during queue mode.
@@ -71,7 +71,7 @@ export interface WriteGateSnapshot {
 }
 
 function shouldPersistWriteGateSnapshot(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.GSD_PERSIST_WRITE_GATE_STATE === "1";
+  return env.SF_PERSIST_WRITE_GATE_STATE === "1";
 }
 
 function writeGateSnapshotPath(basePath: string = process.cwd()): string {
@@ -437,7 +437,7 @@ export function shouldBlockQueueExecutionInSnapshot(
 
   // write/edit — allow if targeting .gsd/ planning artifacts
   if (toolName === "write" || toolName === "edit") {
-    if (GSD_DIR_RE.test(input)) return { block: false };
+    if (SF_DIR_RE.test(input)) return { block: false };
     return {
       block: true,
       reason: `Blocked: /gsd queue is a planning tool — it creates milestones, not executes work. ` +

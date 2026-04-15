@@ -2,7 +2,7 @@
 
 *Introduced in v2.17.0*
 
-GSD 2.17 introduces a coordinated token optimization system that can reduce token usage by 40-60% without sacrificing output quality for most workloads. The system has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
+SF.17 introduces a coordinated token optimization system that can reduce token usage by 40-60% without sacrificing output quality for most workloads. The system has three pillars: **token profiles**, **context compression**, and **complexity-based task routing**.
 
 ## Token Profiles
 
@@ -83,7 +83,7 @@ Dispatch prompt builders accept an `inlineLevel` parameter. At each level, speci
 - `buildExecuteTaskPrompt` — drops the decisions template, truncates prior summaries to the most recent one
 - `buildPlanMilestonePrompt` — drops `PROJECT.md`, `REQUIREMENTS.md`, decisions, and supplementary templates like `secrets-manifest`
 - `buildCompleteSlicePrompt` — drops requirements and UAT template inlining
-- `buildCompleteMilestonePrompt` — drops root GSD file inlining
+- `buildCompleteMilestonePrompt` — drops root SF file inlining
 - `buildReassessRoadmapPrompt` — drops project, requirements, and decisions files
 
 These are cumulative — `standard` drops a subset, `minimal` drops more. The `full` level preserves all context (the pre-2.17 behavior).
@@ -105,7 +105,7 @@ Explicit `phases` settings always override the profile defaults.
 
 ## Complexity-Based Task Routing
 
-GSD classifies each task by complexity and routes it to an appropriate model tier when dynamic routing is enabled. Simple documentation fixes use cheaper models while complex architectural work gets the reasoning power it needs.
+SF classifies each task by complexity and routes it to an appropriate model tier when dynamic routing is enabled. Simple documentation fixes use cheaper models while complex architectural work gets the reasoning power it needs.
 
 > **Prerequisite:** Dynamic routing requires explicit `models` in your preferences. Without a `models` section, routing is skipped and the session's launch model is used for all phases. Token profiles set `models` automatically.
 
@@ -165,7 +165,7 @@ This graduated approach preserves model quality for the most complex work while 
 
 ## Adaptive Learning (Routing History)
 
-GSD tracks the success and failure of each tier assignment over time and adjusts future classifications accordingly. This is opt-in — it happens automatically and persists in `.gsd/routing-history.json`.
+SF tracks the success and failure of each tier assignment over time and adjusts future classifications accordingly. This is opt-in — it happens automatically and persists in `.gsd/routing-history.json`.
 
 ### How It Works
 
@@ -319,7 +319,7 @@ Anchors are written automatically after successful completion of `research-miles
 
 *Introduced in v2.29.0*
 
-GSD can apply deterministic prompt compression before falling back to section-boundary truncation. This preserves more information when context exceeds the budget.
+SF can apply deterministic prompt compression before falling back to section-boundary truncation. This preserves more information when context exceeds the budget.
 
 ### Compression Strategy
 
@@ -363,7 +363,7 @@ At `budget` and `balanced` inline levels, decisions and requirements are formatt
 
 ### Summary Distillation
 
-When a slice has 3+ dependency summaries and the total exceeds the summary budget, GSD extracts essential structured data (provides, requires, key_files, key_decisions) and drops verbose prose sections before falling back to section-boundary truncation.
+When a slice has 3+ dependency summaries and the total exceeds the summary budget, SF extracts essential structured data (provides, requires, key_files, key_decisions) and drops verbose prose sections before falling back to section-boundary truncation.
 
 ### Cache Hit Rate Tracking
 

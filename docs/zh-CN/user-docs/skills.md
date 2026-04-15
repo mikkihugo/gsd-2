@@ -1,12 +1,12 @@
 # 技能
 
-技能（Skills）是当当前 task 匹配时由 GSD 加载的专用指令集。它们为 LLM 提供领域化指导，例如编码模式、框架惯用法、测试策略和工具使用方式。
+技能（Skills）是当当前 task 匹配时由 SF 加载的专用指令集。它们为 LLM 提供领域化指导，例如编码模式、框架惯用法、测试策略和工具使用方式。
 
-Skills 遵循开放的 [Agent Skills 标准](https://agentskills.io/)，并且**不是 GSD 专属格式**。它们同样适用于 Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf 以及其他 40+ agent。
+Skills 遵循开放的 [Agent Skills 标准](https://agentskills.io/)，并且**不是 SF 专属格式**。它们同样适用于 Claude Code、OpenAI Codex、Cursor、GitHub Copilot、Windsurf 以及其他 40+ agent。
 
 ## 技能目录
 
-GSD 会按优先级顺序从两个位置读取技能：
+SF 会按优先级顺序从两个位置读取技能：
 
 | 位置 | 范围 | 说明 |
 |------|------|------|
@@ -15,7 +15,7 @@ GSD 会按优先级顺序从两个位置读取技能：
 
 如果出现同名技能，全局技能优先于项目技能。
 
-> **从 `~/.gsd/agent/skills/` 迁移：** 升级后首次启动时，GSD 会自动把旧版 `~/.gsd/agent/skills/` 中的技能复制到 `~/.agents/skills/`。旧目录会保留，以兼容旧流程。
+> **从 `~/.gsd/agent/skills/` 迁移：** 升级后首次启动时，SF 会自动把旧版 `~/.gsd/agent/skills/` 中的技能复制到 `~/.agents/skills/`。旧目录会保留，以兼容旧流程。
 
 ## 安装技能
 
@@ -40,7 +40,7 @@ npx skills update
 
 ### 入门技能目录
 
-在执行 `gsd init` 时，GSD 会检测项目技术栈并推荐合适的技能包。对于 brownfield 项目，检测是自动的；对于 greenfield 项目，则由用户选择技术栈。
+在执行 `gsd init` 时，SF 会检测项目技术栈并推荐合适的技能包。对于 brownfield 项目，检测是自动的；对于 greenfield 项目，则由用户选择技术栈。
 
 这个精选目录维护在 `src/resources/extensions/gsd/skill-catalog.ts`。每一条目都会把一个技术栈映射到一个 skills.sh 仓库，以及其中的具体技能名称。
 
@@ -89,7 +89,7 @@ npx skills update
 
 ## 技能发现
 
-`skill_discovery` 偏好控制 GSD 在自动模式中如何发现技能：
+`skill_discovery` 偏好控制 SF 在自动模式中如何发现技能：
 
 | 模式 | 行为 |
 |------|------|
@@ -153,7 +153,7 @@ skill_rules:
 
 ## 技能生命周期管理
 
-GSD 会跨自动模式会话跟踪技能表现，并提供健康度数据，帮助你持续维护技能质量。
+SF 会跨自动模式会话跟踪技能表现，并提供健康度数据，帮助你持续维护技能质量。
 
 ### 技能遥测
 
@@ -190,6 +190,6 @@ skill_staleness_days: 60   # 默认 60；设为 0 表示关闭
 
 ### Heal-Skill（单元后分析）
 
-如果把它配置为 post-unit hook，GSD 可以分析 agent 在执行中是否偏离了某个技能的指令。如果检测到明显漂移（例如 API 模式过时、指导错误），它会把建议修复写到 `.gsd/skill-review-queue.md`，供人工审核。
+如果把它配置为 post-unit hook，SF 可以分析 agent 在执行中是否偏离了某个技能的指令。如果检测到明显漂移（例如 API 模式过时、指导错误），它会把建议修复写到 `.gsd/skill-review-queue.md`，供人工审核。
 
 一个关键设计原则是：技能**永远不会被自动修改**。研究表明，人工策展的技能明显优于自动生成技能，因此保留人工审核是必要的。

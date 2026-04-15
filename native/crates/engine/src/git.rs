@@ -1,6 +1,6 @@
 //! Native git operations via libgit2.
 //!
-//! Provides high-performance git operations for GSD, eliminating the need
+//! Provides high-performance git operations for SF, eliminating the need
 //! to spawn `git` child processes via execSync. Both read and write
 //! operations are implemented natively.
 //!

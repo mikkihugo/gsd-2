@@ -1,5 +1,5 @@
 /**
- * GSD file parser — native Rust implementation.
+ * SF file parser — native Rust implementation.
  *
  * Parses `.gsd/` directory markdown files containing YAML-like frontmatter
  * and structured sections. Replaces the JS regex-based parser for

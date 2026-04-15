@@ -59,7 +59,7 @@ export function encodeCwd(cwd: string): string {
 	return Buffer.from(cwd, "utf8").toString("base64url");
 }
 
-const gsdHome = process.env.GSD_HOME || path.join(os.homedir(), ".gsd");
+const gsdHome = process.env.SF_HOME || path.join(os.homedir(), ".gsd");
 
 function getIsolationBaseDir(cwd: string, taskId: string): string {
 	return path.join(gsdHome, "wt", encodeCwd(cwd), taskId);

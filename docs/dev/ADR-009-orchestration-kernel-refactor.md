@@ -2,12 +2,12 @@
 
 **Status:** Proposed
 **Date:** 2026-04-14
-**Deciders:** Jeremy McSpadden, GSD Core Team
+**Deciders:** Jeremy McSpadden, SF Core Team
 **Related:** ADR-001 (worktree architecture), ADR-003 (pipeline simplification), ADR-004 (capability-aware routing), ADR-005 (multi-provider strategy), ADR-008 (tools over MCP)
 
 ## Context
 
-GSD already ships many advanced features:
+SF already ships many advanced features:
 
 - dynamic model routing and multi-provider support
 - hooks (`pre_dispatch_hooks`, `post_unit_hooks`)
@@ -34,7 +34,7 @@ The target requirements for the next architecture are:
 
 ## Decision
 
-Refactor GSD into a **Unified Orchestration Kernel (UOK)** with explicit control planes, typed contracts, and an incremental strangler migration. This is a staged architectural replacement of orchestration internals, not a rewrite of user-facing CLI/web/MCP surfaces.
+Refactor SF into a **Unified Orchestration Kernel (UOK)** with explicit control planes, typed contracts, and an incremental strangler migration. This is a staged architectural replacement of orchestration internals, not a rewrite of user-facing CLI/web/MCP surfaces.
 
 ### Core Architectural Model
 

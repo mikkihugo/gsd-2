@@ -1,4 +1,4 @@
-// GSD Extension — workflow-logger wiring regression tests
+// SF Extension — workflow-logger wiring regression tests
 //
 // Verifies the plumbing between workflow-logger and the rest of the state
 // system (auto-loop phases, detect-stuck, notification store). Without this

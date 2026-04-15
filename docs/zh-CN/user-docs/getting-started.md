@@ -1,6 +1,6 @@
-# GSD 快速开始
+# SF 快速开始
 
-GSD 是一个 AI 编程代理，负责规划、执行、验证和交付，让你可以把注意力放在“要构建什么”上。本指南会带你完成 macOS、Windows 和 Linux 的安装，并启动你的第一个会话。
+SF 是一个 AI 编程代理，负责规划、执行、验证和交付，让你可以把注意力放在“要构建什么”上。本指南会带你完成 macOS、Windows 和 Linux 的安装，并启动你的第一个会话。
 
 ---
 
@@ -41,10 +41,10 @@ node --version   # 应输出 v22.x 或更高
 git --version    # 应输出 2.20+
 ```
 
-**第 4 步：安装 GSD：**
+**第 4 步：安装 SF：**
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **第 5 步：设置你的 LLM provider：**
@@ -66,7 +66,7 @@ source ~/.zshrc
 
 所有 20+ provider 的完整配置方式请见 [提供商设置指南](./providers.md)。
 
-**第 6 步：启动 GSD：**
+**第 6 步：启动 SF：**
 
 ```bash
 cd ~/my-project   # 进入任意项目目录
@@ -113,10 +113,10 @@ node --version   # 应输出 v22.x 或更高
 git --version    # 应输出 2.20+
 ```
 
-**第 4 步：安装 GSD：**
+**第 4 步：安装 SF：**
 
 ```powershell
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **第 5 步：设置你的 LLM provider：**
@@ -137,7 +137,7 @@ gsd config
 
 所有 20+ provider 的完整配置方式请见 [提供商设置指南](./providers.md)。
 
-**第 6 步：启动 GSD：**
+**第 6 步：启动 SF：**
 
 ```powershell
 cd C:\Users\you\my-project   # 进入任意项目目录
@@ -217,10 +217,10 @@ node --version   # 应输出 v22.x 或更高
 git --version    # 应输出 2.20+
 ```
 
-**第 3 步：安装 GSD：**
+**第 3 步：安装 SF：**
 
 ```bash
-npm install -g gsd-pi
+npm install -g sf-run
 ```
 
 **第 4 步：设置你的 LLM provider：**
@@ -242,7 +242,7 @@ source ~/.bashrc
 
 所有 20+ provider 的完整配置方式请见 [提供商设置指南](./providers.md)。
 
-**第 5 步：启动 GSD：**
+**第 5 步：启动 SF：**
 
 ```bash
 cd ~/my-project   # 进入任意项目目录
@@ -263,7 +263,7 @@ gsd --version     # 输出已安装版本
 > npm config set prefix '~/.npm-global'
 > echo 'export PATH="$HOME/.npm-global/bin:$PATH"' >> ~/.bashrc
 > source ~/.bashrc
-> npm install -g gsd-pi
+> npm install -g sf-run
 > ```
 
 ---
@@ -272,11 +272,11 @@ gsd --version     # 输出已安装版本
 
 > **下载链接：** [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-如果你不想在宿主机安装 Node.js，可以在隔离沙箱中运行 GSD。
+如果你不想在宿主机安装 Node.js，可以在隔离沙箱中运行 SF。
 
 **第 1 步：安装 Docker Desktop**（要求 4.58+）。
 
-**第 2 步：克隆 GSD 仓库：**
+**第 2 步：克隆 SF 仓库：**
 
 ```bash
 git clone https://github.com/singularity-forge/sf-run.git
@@ -290,7 +290,7 @@ docker sandbox create --template . --name gsd-sandbox
 docker sandbox exec -it gsd-sandbox bash
 ```
 
-**第 4 步：设置 API key 并运行 GSD：**
+**第 4 步：设置 API key 并运行 SF：**
 
 ```bash
 export ANTHROPIC_API_KEY="sk-ant-..."
@@ -305,7 +305,7 @@ gsd auto "implement the feature described in issue #42"
 
 ### 选择模型
 
-完成 provider 设置后，GSD 会自动选择一个默认模型。你可以在会话中随时切换：
+完成 provider 设置后，SF 会自动选择一个默认模型。你可以在会话中随时切换：
 
 ```
 /model
@@ -319,7 +319,7 @@ gsd auto "implement the feature described in issue #42"
 
 ### 步骤模式 — `/gsd`
 
-在会话内输入 `/gsd`。GSD 会一次执行一个工作单元，并在每一步之间暂停，通过向导展示刚完成了什么、下一步是什么。
+在会话内输入 `/gsd`。SF 会一次执行一个工作单元，并在每一步之间暂停，通过向导展示刚完成了什么、下一步是什么。
 
 - **没有 `.gsd/` 目录**：启动讨论流程，先收集你的项目愿景
 - **已有 milestone，但没有 roadmap**：讨论或研究该 milestone
@@ -330,7 +330,7 @@ gsd auto "implement the feature described in issue #42"
 
 ### 自动模式 — `/gsd auto`
 
-输入 `/gsd auto` 后就可以离开。GSD 会自主完成 research、planning、execution、verification、commit，并持续推进每个 slice，直到 milestone 完成。
+输入 `/gsd auto` 后就可以离开。SF 会自主完成 research、planning、execution、verification、commit，并持续推进每个 slice，直到 milestone 完成。
 
 ```
 /gsd auto
@@ -364,7 +364,7 @@ gsd
 
 ---
 
-## GSD 如何组织工作
+## SF 如何组织工作
 
 ```
 Milestone  →  一个可交付版本（4-10 个 slice）
@@ -396,19 +396,19 @@ Milestone  →  一个可交付版本（4-10 个 slice）
 
 ## VS Code 扩展
 
-GSD 也提供 VS Code 扩展。你可以从扩展市场安装（publisher: FluxLabs），或者在 VS Code 扩展面板中直接搜索 “GSD”：
+SF 也提供 VS Code 扩展。你可以从扩展市场安装（publisher: FluxLabs），或者在 VS Code 扩展面板中直接搜索 “SF”：
 
 - **`@gsd` 聊天参与者**：在 VS Code Chat 中直接与 agent 对话
 - **侧边栏仪表板**：显示连接状态、模型信息、Token 使用量
 - **完整命令面板**：启动 / 停止 agent、切换模型、导出会话
 
-CLI（`gsd-pi`）需要先安装好，扩展会通过 RPC 与其连接。
+CLI（`sf-run`）需要先安装好，扩展会通过 RPC 与其连接。
 
 ---
 
 ## Web 界面
 
-GSD 也提供一个基于浏览器的可视化项目管理界面：
+SF 也提供一个基于浏览器的可视化项目管理界面：
 
 ```bash
 gsd --web
@@ -434,12 +434,12 @@ gsd sessions
 
 ---
 
-## 更新 GSD
+## 更新 SF
 
-GSD 每 24 小时检查一次更新，并在启动时提示。你也可以手动更新：
+SF 每 24 小时检查一次更新，并在启动时提示。你也可以手动更新：
 
 ```bash
-npm update -g gsd-pi
+npm update -g sf-run
 ```
 
 或者在会话中执行：
@@ -456,7 +456,7 @@ npm update -g gsd-pi
 |------|----------|
 | `command not found: gsd` | 把 npm 全局 bin 目录加入 PATH（见上面的系统说明） |
 | `gsd` 实际执行了 `git svn dcommit` | oh-my-zsh 冲突，执行 `unalias gsd` 或改用 `gsd-cli` |
-| `npm install -g gsd-pi` 权限错误 | 修复 npm prefix（见 Linux 说明）或改用 nvm |
+| `npm install -g sf-run` 权限错误 | 修复 npm prefix（见 Linux 说明）或改用 nvm |
 | 无法连接到 LLM | 用 `gsd config` 检查 API key，并确认网络可用 |
 | `gsd` 启动时卡住 | 检查 Node.js 版本：`node --version`（需要 22+） |
 

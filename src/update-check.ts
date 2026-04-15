@@ -5,7 +5,7 @@ import { appRoot } from './app-paths.js'
 import { execSync } from 'node:child_process'
 
 const CACHE_FILE = join(appRoot, '.update-check')
-const NPM_PACKAGE_NAME = 'gsd-pi'
+const NPM_PACKAGE_NAME = 'sf-run'
 const CHECK_INTERVAL_MS = 24 * 60 * 60 * 1000 // 24 hours
 const FETCH_TIMEOUT_MS = 5000
 const DEFAULT_REGISTRY_URL = `https://registry.npmjs.org/${NPM_PACKAGE_NAME}/latest`
@@ -82,7 +82,7 @@ export function resolveInstallCommand(pkg: string): string {
 }
 
 function printUpdateBanner(current: string, latest: string): void {
-  const installCmd = resolveInstallCommand('gsd-pi')
+  const installCmd = resolveInstallCommand('sf-run')
   process.stderr.write(
     `  ${chalk.yellow('Update available:')} ${chalk.dim(`v${current}`)} → ${chalk.bold(`v${latest}`)}\n` +
     `  ${chalk.dim('Run')} ${installCmd} ${chalk.dim('or')} /gsd update ${chalk.dim('to upgrade')}\n\n`,
@@ -103,7 +103,7 @@ export interface UpdateCheckOptions {
  * caches the result, and prints a banner if a newer version is available.
  */
 export async function checkForUpdates(options: UpdateCheckOptions = {}): Promise<void> {
-  const currentVersion = options.currentVersion || process.env.GSD_VERSION || '0.0.0'
+  const currentVersion = options.currentVersion || process.env.SF_VERSION || '0.0.0'
   const cachePath = options.cachePath || CACHE_FILE
   const registryUrl = options.registryUrl || DEFAULT_REGISTRY_URL
   const checkIntervalMs = options.checkIntervalMs ?? CHECK_INTERVAL_MS
@@ -144,7 +144,7 @@ const PROMPT_TIMEOUT_MS = 30_000
  * Returns true if an update was performed, false otherwise.
  */
 export async function checkAndPromptForUpdates(options: UpdateCheckOptions = {}): Promise<boolean> {
-  const currentVersion = options.currentVersion || process.env.GSD_VERSION || '0.0.0'
+  const currentVersion = options.currentVersion || process.env.SF_VERSION || '0.0.0'
   const cachePath = options.cachePath || CACHE_FILE
   const registryUrl = options.registryUrl || DEFAULT_REGISTRY_URL
   const checkIntervalMs = options.checkIntervalMs ?? CHECK_INTERVAL_MS

@@ -1,4 +1,4 @@
-// GSD Extension — Projection Renderers (DB -> Markdown)
+// SF Extension — Projection Renderers (DB -> Markdown)
 // Renders PLAN.md, ROADMAP.md, SUMMARY.md, and STATE.md from database rows.
 // Projections are read-only views of engine state (Layer 3 of the architecture).
 
@@ -289,7 +289,7 @@ export function renderSummaryProjection(basePath: string, milestoneId: string, s
  */
 export function renderStateContent(state: GSDState): string {
   const lines: string[] = [];
-  lines.push("# GSD State", "");
+  lines.push("# SF State", "");
 
   const activeSlice = state.activeSlice
     ? `${state.activeSlice.id}: ${stripIdPrefix(state.activeSlice.title, state.activeSlice.id)}`

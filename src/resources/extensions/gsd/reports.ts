@@ -1,5 +1,5 @@
 /**
- * GSD Reports Registry
+ * SF Reports Registry
  *
  * Manages .gsd/reports/ — the persistent progression log of HTML snapshots.
  *
@@ -277,14 +277,14 @@ function buildIndexHtml(index: ReportsIndex): string {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GSD Reports — ${esc(projectName)}</title>
+<title>SF Reports — ${esc(projectName)}</title>
 <style>${INDEX_CSS}</style>
 </head>
 <body>
 <header>
   <div class="hdr-inner">
     <div class="branding">
-      <span class="logo">GSD</span>
+      <span class="logo">SF</span>
       <span class="ver">v${esc(gsdVersion)}</span>
     </div>
     <div class="hdr-meta">
@@ -324,7 +324,7 @@ function buildIndexHtml(index: ReportsIndex): string {
 
 <footer>
   <div class="ftr-inner">
-    <span class="ftr-brand">GSD v${esc(gsdVersion)}</span>
+    <span class="ftr-brand">SF v${esc(gsdVersion)}</span>
     <span class="ftr-sep">—</span>
     <span>${esc(projectName)}</span>
     <span class="ftr-sep">—</span>

@@ -387,15 +387,15 @@ describe("complete-milestone", () => {
       assert.ok(Array.isArray(sanitized.lessonsLearned), "lessonsLearned is array after sanitization");
       assert.strictEqual(typeof sanitized.verificationPassed, "boolean", "verificationPassed is boolean after sanitization");
 
-      // Calling handleCompleteMilestone may throw GSD_STALE_STATE (no DB in test env)
+      // Calling handleCompleteMilestone may throw SF_STALE_STATE (no DB in test env)
       // but it should NOT throw TypeError from type mismatches — that's the bug fix.
       try {
         await handleCompleteMilestone(sanitized, base);
       } catch (err: any) {
-        // GSD_STALE_STATE or "No database open" is acceptable — it means we got past
+        // SF_STALE_STATE or "No database open" is acceptable — it means we got past
         // the type-sensitive code and failed on DB access, which is expected in tests.
         assert.ok(
-          err.code === "GSD_STALE_STATE" || err.message?.includes("database"),
+          err.code === "SF_STALE_STATE" || err.message?.includes("database"),
           `expected DB error, got: ${err.message}`,
         );
       }

@@ -1,4 +1,4 @@
-// GSD Extension — post-mutation hook regression tests
+// SF Extension — post-mutation hook regression tests
 // Verifies that after a successful handleCompleteTask call, the post-mutation
 // hook fires: event-log.jsonl and state-manifest.json are both written.
 

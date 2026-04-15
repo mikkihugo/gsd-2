@@ -6,17 +6,17 @@
 
 ## Objective
 
-Implement the ADR-008 decision by exposing the core GSD workflow tool contract over MCP, then wiring MCP-backed access into provider paths that cannot use the native in-process GSD tool registry directly.
+Implement the ADR-008 decision by exposing the core SF workflow tool contract over MCP, then wiring MCP-backed access into provider paths that cannot use the native in-process SF tool registry directly.
 
 The first usable outcome is:
 
-- a Claude Code-backed execution session can complete a task using canonical GSD tools
+- a Claude Code-backed execution session can complete a task using canonical SF tools
 - no manual summary-writing fallback is needed
 - native provider behavior remains unchanged
 
 ## Non-Goals
 
-- Replacing native in-process GSD tools with MCP
+- Replacing native in-process SF tools with MCP
 - Exporting every historical alias in the first rollout
 - Reworking the entire session-oriented MCP server before proving the workflow-tool surface
 - Supporting every provider path before Claude Code is working end-to-end
@@ -25,7 +25,7 @@ The first usable outcome is:
 
 - Native and MCP tool paths must share business logic
 - MCP must not bypass write-gate or discussion-gate protections
-- Canonical GSD state transitions must remain DB-backed
+- Canonical SF state transitions must remain DB-backed
 - Provider capability mismatches must fail early, not degrade silently
 
 ## Workstreams
@@ -54,7 +54,7 @@ Exit criteria:
 
 ### 2. Workflow-Tool MCP Surface
 
-Goal: add an MCP server surface for real GSD workflow tools, distinct from the current session/read API.
+Goal: add an MCP server surface for real SF workflow tools, distinct from the current session/read API.
 
 Preferred first-cut tool set:
 
@@ -113,7 +113,7 @@ Exit criteria:
 
 ### 4. Claude Code Provider Integration
 
-Goal: attach the GSD workflow-tool MCP surface to Claude Code sessions.
+Goal: attach the SF workflow-tool MCP surface to Claude Code sessions.
 
 Targets:
 
@@ -122,13 +122,13 @@ Targets:
 
 Expected work:
 
-- build a GSD-managed `mcpServers` config for the Claude SDK session
-- attach the workflow MCP server only when the session requires GSD tools
+- build a SF-managed `mcpServers` config for the Claude SDK session
+- attach the workflow MCP server only when the session requires SF tools
 - keep current Claude Code streaming behavior intact
 
 Exit criteria:
 
-- Claude Code session can discover the GSD workflow MCP tools
+- Claude Code session can discover the SF workflow MCP tools
 - task execution path can call `gsd_task_complete` successfully
 
 ### 5. Capability Detection and Failure Path
@@ -137,14 +137,14 @@ Goal: refuse to start tool-dependent workflows when required capabilities are un
 
 Targets:
 
-- GSD dispatch / auto-mode preflight
+- SF dispatch / auto-mode preflight
 - provider selection and routing checks
 - user-facing compatibility errors
 
 Required behavior:
 
-- if native GSD tools are available, proceed
-- else if GSD workflow MCP tools are available, proceed
+- if native SF tools are available, proceed
+- else if SF workflow MCP tools are available, proceed
 - else fail fast with a precise message
 
 Exit criteria:
@@ -164,7 +164,7 @@ Targets:
 
 Rules:
 
-- prompts should keep requiring canonical GSD completion/planning tools
+- prompts should keep requiring canonical SF completion/planning tools
 - prompts should not imply “native in-process tool only”
 - docs should explain native vs MCP-backed fulfillment paths
 
@@ -278,7 +278,7 @@ High-probability files for the first implementation:
 
 ### End-to-End
 
-- plan or execute a small fixture task and complete it through canonical GSD tools
+- plan or execute a small fixture task and complete it through canonical SF tools
 - confirm DB row, rendered summary, and plan state stay in sync
 
 ## Risks
@@ -319,7 +319,7 @@ Mitigation:
 
 ADR-008 is considered implemented when:
 
-1. Claude Code-backed execution can use canonical GSD workflow tools over MCP.
+1. Claude Code-backed execution can use canonical SF workflow tools over MCP.
 2. Native provider behavior remains intact.
 3. Shared handlers back both native and MCP invocation.
 4. Gating and state integrity protections apply equally to MCP mutations.

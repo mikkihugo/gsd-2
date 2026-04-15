@@ -102,7 +102,7 @@ function getDefaultShell(): string {
 }
 
 function getProjectCwd(): string {
-  return process.env.GSD_WEB_PROJECT_CWD || process.cwd();
+  return process.env.SF_WEB_PROJECT_CWD || process.cwd();
 }
 
 function getShellArgs(): string[] {
@@ -145,10 +145,10 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
   if (command === "gsd") {
     try {
       const cliEntry = resolveGsdCliEntry({
-        packageRoot: process.env.GSD_WEB_PACKAGE_ROOT || process.cwd(),
+        packageRoot: process.env.SF_WEB_PACKAGE_ROOT || process.cwd(),
         cwd,
         execPath: process.execPath,
-        hostKind: process.env.GSD_WEB_HOST_KIND,
+        hostKind: process.env.SF_WEB_HOST_KIND,
         mode: "interactive",
         messages: commandArgs,
       });
@@ -177,7 +177,7 @@ function getNodePtyCandidateRoots(): string[] {
   const roots = new Set<string>();
   roots.add(process.cwd());
 
-  const packageRoot = process.env.GSD_WEB_PACKAGE_ROOT;
+  const packageRoot = process.env.SF_WEB_PACKAGE_ROOT;
   if (packageRoot) {
     roots.add(packageRoot);
     roots.add(join(packageRoot, "dist", "web", "standalone"));
@@ -285,10 +285,10 @@ export function getOrCreateSession(sessionId: string, projectCwd?: string, comma
   const spawnSpec = resolveTerminalSpawnSpec(cwd, command, commandArgs);
   console.log("[pty] Spawning command:", spawnSpec.label, "cwd:", cwd, "node-pty:", nodePtyRoot);
 
-  // Build a clean env — remove GSD-specific vars that would confuse a shell
+  // Build a clean env — remove SF-specific vars that would confuse a shell
   const cleanEnv: Record<string, string> = {};
   for (const [key, value] of Object.entries(process.env)) {
-    if (value !== undefined && !key.startsWith("GSD_WEB_")) {
+    if (value !== undefined && !key.startsWith("SF_WEB_")) {
       cleanEnv[key] = value;
     }
   }
@@ -300,7 +300,7 @@ export function getOrCreateSession(sessionId: string, projectCwd?: string, comma
   cleanEnv.LESSHISTFILE = "/dev/null";
   cleanEnv.NODE_REPL_HISTORY = "/dev/null";
   if (command) {
-    cleanEnv.GSD_WEB_PTY = "1";
+    cleanEnv.SF_WEB_PTY = "1";
   }
 
   let ptyProcess: IPty;

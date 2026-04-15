@@ -1,5 +1,5 @@
 /**
- * GSD Command Handlers — fire-and-forget handlers that delegate to other modules.
+ * SF Command Handlers — fire-and-forget handlers that delegate to other modules.
  *
  * Contains: handleDoctor, handleSteer, handleCapture, handleTriage, handleKnowledge,
  * handleRunHook, handleUpdate, handleSkillHealth
@@ -25,7 +25,7 @@ import { getAutoWorktreePath } from "./auto-worktree.js";
 import { projectRoot } from "./commands/context.js";
 import { loadPrompt } from "./prompt-loader.js";
 
-const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/gsd-pi/latest";
+const UPDATE_REGISTRY_URL = "https://registry.npmjs.org/sf-run/latest";
 const UPDATE_FETCH_TIMEOUT_MS = 5000;
 
 function resolveInstallCommand(pkg: string): string {
@@ -51,7 +51,7 @@ async function fetchLatestVersionForCommand(): Promise<string | null> {
 }
 
 export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, reportText: string, structuredIssues: string): void {
-  const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const prompt = loadPrompt("doctor-heal", {
     doctorSummary: reportText,
@@ -60,7 +60,7 @@ export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, 
     doctorCommandSuffix: scope ? ` ${scope}` : "",
   });
 
-  const content = `Read the following GSD workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`;
+  const content = `Read the following SF workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`;
 
   pi.sendMessage(
     { customType: "gsd-doctor-heal", content, display: false },
@@ -108,7 +108,7 @@ export async function handleDoctor(args: string, ctx: ExtensionCommandContext, p
     scope: effectiveScope,
     includeWarnings: mode === "audit",
     maxIssues: mode === "audit" ? 50 : 12,
-    title: mode === "audit" ? "GSD doctor audit." : mode === "heal" ? "GSD doctor heal prep." : undefined,
+    title: mode === "audit" ? "SF doctor audit." : mode === "heal" ? "SF doctor heal prep." : undefined,
   });
 
   ctx.ui.notify(reportText, report.ok ? "info" : "warning");
@@ -238,13 +238,13 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
     roadmapContext: roadmapContext || "(no active roadmap)",
   });
 
-  const workflowPath = process.env.GSD_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "GSD-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
 
   pi.sendMessage(
     {
       customType: "gsd-triage",
-      content: `Read the following GSD workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`,
+      content: `Read the following SF workflow protocol and execute exactly.\n\n${workflow}\n\n## Your Task\n\n${prompt}`,
       display: false,
     },
     { triggerTurn: true },
@@ -418,8 +418,8 @@ function compareSemverLocal(a: string, b: string): number {
 export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> {
   const { execSync } = await import("node:child_process");
 
-  const NPM_PACKAGE = "gsd-pi";
-  const current = process.env.GSD_VERSION || "0.0.0";
+  const NPM_PACKAGE = "sf-run";
+  const current = process.env.SF_VERSION || "0.0.0";
 
   ctx.ui.notify(`Current version: v${current}\nChecking npm registry...`, "info");
 
@@ -442,7 +442,7 @@ export async function handleUpdate(ctx: ExtensionCommandContext): Promise<void> 
       stdio: ["ignore", "pipe", "ignore"],
     });
     ctx.ui.notify(
-      `Updated to v${latest}. Restart your GSD session to use the new version.`,
+      `Updated to v${latest}. Restart your SF session to use the new version.`,
       "info",
     );
   } catch {

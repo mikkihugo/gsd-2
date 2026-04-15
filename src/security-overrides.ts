@@ -13,7 +13,7 @@ import { setFetchAllowedUrls } from './resources/extensions/search-the-web/url-u
 
 export function applySecurityOverrides(settingsManager: SettingsManager): void {
   // --- Command prefix allowlist ---
-  const envPrefixes = process.env.GSD_ALLOWED_COMMAND_PREFIXES
+  const envPrefixes = process.env.SF_ALLOWED_COMMAND_PREFIXES
   if (envPrefixes) {
     const prefixes = envPrefixes.split(',').map(s => s.trim()).filter(Boolean)
     if (prefixes.length > 0) {
@@ -27,7 +27,7 @@ export function applySecurityOverrides(settingsManager: SettingsManager): void {
   }
 
   // --- Fetch URL allowlist (SSRF exemptions) ---
-  const envUrls = process.env.GSD_FETCH_ALLOWED_URLS
+  const envUrls = process.env.SF_FETCH_ALLOWED_URLS
   if (envUrls) {
     const urls = envUrls.split(',').map(s => s.trim()).filter(Boolean)
     if (urls.length > 0) {

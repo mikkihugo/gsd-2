@@ -1,4 +1,4 @@
-// GSD Extension — Legacy Markdown to Engine Migration
+// SF Extension — Legacy Markdown to Engine Migration
 // Converts legacy markdown-only projects to engine state by parsing
 // existing ROADMAP.md, *-PLAN.md, and *-SUMMARY.md files.
 // Populates data into the already-existing v10 schema tables.

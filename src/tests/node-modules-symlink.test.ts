@@ -116,7 +116,7 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
   //   hoisted/node_modules/
   //     yaml/           ← external dep
   //     @sinclair/       ← external scoped dep
-  //     gsd-pi/          ← package root
+  //     sf-run/          ← package root
   //       node_modules/
   //         @sf-run/        ← workspace scope (NOT hoisted)
   //         @singularity-forge/  ← workspace scope (NOT hoisted)
@@ -124,7 +124,7 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const hoisted = join(tmp, "node_modules");
-  const pkgRoot = join(hoisted, "gsd-pi");
+  const pkgRoot = join(hoisted, "sf-run");
   const internal = join(pkgRoot, "node_modules");
   const agentNodeModules = join(tmp, "agent", "node_modules");
 
@@ -142,9 +142,9 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
   // Create merged directory manually (simulating what reconcileMergedNodeModules does)
   mkdirSync(agentNodeModules, { recursive: true });
 
-  // Link hoisted entries (skip gsd-pi itself and dotfiles)
+  // Link hoisted entries (skip sf-run itself and dotfiles)
   for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-    if (entry.name === "gsd-pi" || entry.name.startsWith(".")) continue;
+    if (entry.name === "sf-run" || entry.name.startsWith(".")) continue;
     symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name));
   }
 
@@ -166,8 +166,8 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
   assert.ok(existsSync(join(agentNodeModules, "@gsd", "pi-ai")), "@sf-run/pi-ai should resolve");
   assert.ok(existsSync(join(agentNodeModules, "@gsd-build")), "@gsd-build should resolve");
 
-  // Verify: gsd-pi itself is NOT symlinked (it's the package root, not a dep)
-  assert.ok(!existsSync(join(agentNodeModules, "gsd-pi")), "gsd-pi should not be in merged dir");
+  // Verify: sf-run itself is NOT symlinked (it's the package root, not a dep)
+  assert.ok(!existsSync(join(agentNodeModules, "sf-run")), "sf-run should not be in merged dir");
 
   // Verify: @gsd points to internal, not hoisted (internal takes precedence)
   const gsdTarget = readlinkSync(join(agentNodeModules, "@gsd"));
@@ -182,7 +182,7 @@ test("pnpm layout: non-@gsd internal deps (e.g. @anthropic-ai) are included in m
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
   const hoisted = join(tmp, "node_modules");
-  const pkgRoot = join(hoisted, "gsd-pi");
+  const pkgRoot = join(hoisted, "sf-run");
   const internal = join(pkgRoot, "node_modules");
   const agentNodeModules = join(tmp, "agent", "node_modules");
 
@@ -198,7 +198,7 @@ test("pnpm layout: non-@gsd internal deps (e.g. @anthropic-ai) are included in m
 
   // Link hoisted entries
   for (const entry of readdirSync(hoisted, { withFileTypes: true })) {
-    if (entry.name === "gsd-pi" || entry.name.startsWith(".")) continue;
+    if (entry.name === "sf-run" || entry.name.startsWith(".")) continue;
     symlinkSync(join(hoisted, entry.name), join(agentNodeModules, entry.name));
   }
 
@@ -265,7 +265,7 @@ test("merged node_modules marker uses fingerprint including directory entries", 
   // Build fingerprint the same way the production code does
   const h = readdirSync(hoisted).sort().join(",");
   const i = readdirSync(internal).sort().join(",");
-  const fakePackageRoot = "/usr/lib/node_modules/gsd-pi";
+  const fakePackageRoot = "/usr/lib/node_modules/sf-run";
   const fingerprint = `${fakePackageRoot}\n${h}\n${i}`;
 
   const agentNodeModules = join(tmp, "agent", "node_modules");

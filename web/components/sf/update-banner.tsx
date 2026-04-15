@@ -90,7 +90,7 @@ export function UpdateBanner() {
     >
       {isSuccess ? (
         <span className="flex-1" data-testid="update-banner-message">
-          Update complete — restart GSD to use v{targetLabel}
+          Update complete — restart SF to use v{targetLabel}
         </span>
       ) : isError ? (
         <>

@@ -1,6 +1,6 @@
 # Your First Project
 
-## Launch GSD
+## Launch SF
 
 Open a terminal in any project directory (or an empty one) and run:
 
@@ -8,22 +8,22 @@ Open a terminal in any project directory (or an empty one) and run:
 gsd
 ```
 
-GSD shows a welcome screen with your version, active model, and available tool keys.
+SF shows a welcome screen with your version, active model, and available tool keys.
 
 ## Start a Discussion
 
-Type `/gsd` to enter step mode. GSD reads the state of your project directory and determines the next logical action:
+Type `/gsd` to enter step mode. SF reads the state of your project directory and determines the next logical action:
 
 - **No `.gsd/` directory** — starts a discussion flow to capture your project vision
 - **Milestone exists, no roadmap** — discuss or research the milestone
 - **Roadmap exists, slices pending** — plan the next slice or execute a task
 - **Mid-task** — resume where you left off
 
-For a new project, GSD will ask you to describe what you want to build. Talk through your vision — GSD captures requirements, architectural decisions, and scope.
+For a new project, SF will ask you to describe what you want to build. Talk through your vision — SF captures requirements, architectural decisions, and scope.
 
 ## The Project Hierarchy
 
-After discussion, GSD organizes your work into:
+After discussion, SF organizes your work into:
 
 ```
 Milestone  →  a shippable version (4-10 slices)
@@ -35,13 +35,13 @@ The key rule: **a task must fit in one AI context window.** If it can't, it beco
 
 ## Run Auto Mode
 
-Once you have a milestone and roadmap, let GSD take the wheel:
+Once you have a milestone and roadmap, let SF take the wheel:
 
 ```
 /gsd auto
 ```
 
-GSD autonomously:
+SF autonomously:
 1. **Plans** each slice — scouts the codebase, researches docs, decomposes into tasks
 2. **Executes** each task — writes code in a fresh AI session
 3. **Completes** the slice — writes summaries, commits with meaningful messages

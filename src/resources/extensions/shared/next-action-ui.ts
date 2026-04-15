@@ -1,7 +1,7 @@
 /**
- * Shared next-action prompt for GSD extensions.
+ * Shared next-action prompt for SF extensions.
  *
- * Renders a consistent "step complete" UI at the end of every GSD stage:
+ * Renders a consistent "step complete" UI at the end of every SF stage:
  *
  *   ─────────────────────────────────────────
  *   ✓  Phase 1 research complete

@@ -1,4 +1,4 @@
-# ADR-008: Expose GSD Workflow Tools Over MCP for Provider Parity
+# ADR-008: Expose SF Workflow Tools Over MCP for Provider Parity
 
 **Status:** Proposed
 **Date:** 2026-04-09
@@ -7,7 +7,7 @@
 
 ## Context
 
-GSD currently has two different tool surfaces:
+SF currently has two different tool surfaces:
 
 1. **In-process extension tools** registered directly into the runtime via `pi.registerTool(...)`.
 2. **An external MCP server** that exposes session orchestration and read-only project inspection.
@@ -16,7 +16,7 @@ This split is now creating a real provider compatibility problem.
 
 ### What exists today
 
-The core GSD workflow tools are internal extension tools. Examples include:
+The core SF workflow tools are internal extension tools. Examples include:
 
 - `gsd_summary_save`
 - `gsd_plan_milestone`
@@ -29,7 +29,7 @@ The core GSD workflow tools are internal extension tools. Examples include:
 - `gsd_replan_slice`
 - `gsd_reassess_roadmap`
 
-These are registered in `src/resources/extensions/gsd/bootstrap/db-tools.ts` and related bootstrap files. GSD prompts assume these tools are available during discuss, plan, and execute flows.
+These are registered in `src/resources/extensions/gsd/bootstrap/db-tools.ts` and related bootstrap files. SF prompts assume these tools are available during discuss, plan, and execute flows.
 
 Separately, `packages/mcp-server/src/server.ts` exposes a different tool surface:
 
@@ -40,12 +40,12 @@ That MCP server is useful, but it is **not** a transport for the internal workfl
 
 ### The current failure mode
 
-The Claude Code CLI provider uses the Anthropic Agent SDK through `src/resources/extensions/claude-code-cli/stream-adapter.ts`. That adapter starts a Claude SDK session, but it does not forward the internal GSD tool registry into the SDK session, nor does it attach a GSD MCP server for those tools.
+The Claude Code CLI provider uses the Anthropic Agent SDK through `src/resources/extensions/claude-code-cli/stream-adapter.ts`. That adapter starts a Claude SDK session, but it does not forward the internal SF tool registry into the SDK session, nor does it attach a SF MCP server for those tools.
 
 As a result:
 
 - prompts tell the model to call tools like `gsd_complete_task`
-- the tools exist in GSD
+- the tools exist in SF
 - but Claude Code sessions do not actually receive those tools
 
 This produces a contract mismatch: the model is required to use tools that are unavailable in that provider path.
@@ -54,20 +54,20 @@ This produces a contract mismatch: the model is required to use tools that are u
 
 This is not a one-off Claude Code bug. It reveals a deeper architectural issue:
 
-- GSD’s core workflow contract is transport-specific
+- SF’s core workflow contract is transport-specific
 - prompt authors assume “internal extension tool availability”
 - provider integrations do not all share the same execution surface
 
-If GSD wants provider parity, its workflow tools need a transport-neutral exposure model.
+If SF wants provider parity, its workflow tools need a transport-neutral exposure model.
 
 ## Decision
 
-**Expose the GSD workflow tool contract over MCP as a first-class transport, and make MCP the compatibility layer for providers that cannot directly access the in-process GSD tool registry.**
+**Expose the SF workflow tool contract over MCP as a first-class transport, and make MCP the compatibility layer for providers that cannot directly access the in-process SF tool registry.**
 
 This means:
 
-1. GSD will keep its existing in-process tool registration for native runtime use.
-2. GSD will add an MCP execution surface for the same workflow tools.
+1. SF will keep its existing in-process tool registration for native runtime use.
+2. SF will add an MCP execution surface for the same workflow tools.
 3. Both surfaces must call the same underlying business logic.
 4. Provider integrations such as Claude Code will use the MCP surface when they cannot access native in-process tools directly.
 
@@ -77,7 +77,7 @@ The decision is explicitly **not** to replace the native tool system with MCP ev
 
 ### 1. One handler layer, multiple transports
 
-GSD tool behavior must not be implemented twice.
+SF tool behavior must not be implemented twice.
 
 The transport-neutral business logic for workflow tools should be shared by:
 
@@ -88,7 +88,7 @@ The MCP server should wrap the same handlers used by `db-tools.ts`, `query-tools
 
 ### 2. Add a workflow-tool MCP surface
 
-GSD will expose the workflow tools required for discuss, planning, execution, and completion over MCP.
+SF will expose the workflow tools required for discuss, planning, execution, and completion over MCP.
 
 Initial minimum set:
 
@@ -110,7 +110,7 @@ Aliases should be treated conservatively. MCP should prefer canonical names unle
 
 ### 3. Preserve safety semantics
 
-The current GSD safety model includes write gates, discussion gates, queue-mode restrictions, and state integrity guarantees.
+The current SF safety model includes write gates, discussion gates, queue-mode restrictions, and state integrity guarantees.
 
 Those guarantees must continue to apply when tools are invoked over MCP. In particular:
 
@@ -120,14 +120,14 @@ Those guarantees must continue to apply when tools are invoked over MCP. In part
 
 ### 4. Make provider capability checks explicit
 
-Before dispatching a workflow that requires GSD workflow tools, GSD should check whether the selected provider/session can access the required tool surface.
+Before dispatching a workflow that requires SF workflow tools, SF should check whether the selected provider/session can access the required tool surface.
 
 If a provider cannot access either:
 
-- native in-process GSD tools, or
-- the GSD MCP workflow tool surface
+- native in-process SF tools, or
+- the SF MCP workflow tool surface
 
-then GSD must fail early with a clear compatibility error rather than allowing execution to continue in a degraded, state-breaking mode.
+then SF must fail early with a clear compatibility error rather than allowing execution to continue in a degraded, state-breaking mode.
 
 ### 5. Keep the existing session/read MCP server
 
@@ -151,15 +151,15 @@ This would fix the immediate failure for multi-provider users, but it does not s
 
 This is a valid short-term guardrail and may still be used before MCP support is complete.
 
-**Rejected as the long-term architecture** because it permanently excludes a supported provider from first-class GSD execution.
+**Rejected as the long-term architecture** because it permanently excludes a supported provider from first-class SF execution.
 
-### Alternative C: Inject the internal GSD tool registry directly into the Claude Agent SDK without MCP
+### Alternative C: Inject the internal SF tool registry directly into the Claude Agent SDK without MCP
 
-This would tightly couple GSD’s internal extension runtime to a provider-specific integration path. It would not generalize well to other providers or external tool clients.
+This would tightly couple SF’s internal extension runtime to a provider-specific integration path. It would not generalize well to other providers or external tool clients.
 
 **Rejected** because it creates a provider-specific bridge instead of a transport-neutral contract.
 
-### Alternative D: Replace native GSD tools entirely with MCP
+### Alternative D: Replace native SF tools entirely with MCP
 
 This would simplify the conceptual model, but it would force all runtimes through an external protocol boundary even when the native in-process path is faster and already works well.
 
@@ -169,7 +169,7 @@ This would simplify the conceptual model, but it would force all runtimes throug
 
 ### Positive
 
-1. **Provider parity improves.** Providers that can consume MCP tools can participate in full GSD workflow execution.
+1. **Provider parity improves.** Providers that can consume MCP tools can participate in full SF workflow execution.
 2. **The workflow contract becomes transport-neutral.** Prompts can rely on capabilities rather than a specific runtime implementation detail.
 3. **One compatibility story for external clients.** Claude Code, Cursor, and other MCP-capable clients can use the same workflow tool surface.
 4. **Better long-term architecture.** Internal tools and external transports converge on shared handlers instead of diverging implementations.
@@ -213,25 +213,25 @@ Move or centralize write gates and related policy checks so MCP mutations cannot
 
 ### Phase 4: Attach MCP workflow tools to Claude Code sessions
 
-Update the Claude Code provider integration to pass a GSD-managed `mcpServers` configuration into the Claude Agent SDK session when required.
+Update the Claude Code provider integration to pass a SF-managed `mcpServers` configuration into the Claude Agent SDK session when required.
 
 ### Phase 5: Add provider capability gating
 
-Before tool-dependent flows begin, verify that the active provider can access the required GSD workflow tools via either native registration or MCP.
+Before tool-dependent flows begin, verify that the active provider can access the required SF workflow tools via either native registration or MCP.
 
 ### Phase 6: Update prompts and docs
 
-Prompt contracts should remain strict about using canonical GSD completion/planning tools, but documentation and runtime messaging must no longer assume that only native in-process tool registration satisfies that contract.
+Prompt contracts should remain strict about using canonical SF completion/planning tools, but documentation and runtime messaging must no longer assume that only native in-process tool registration satisfies that contract.
 
 ## Validation
 
 Success is defined by all of the following:
 
-1. A Claude Code-backed execution session can complete a task using canonical GSD workflow tools without manual summary writing.
+1. A Claude Code-backed execution session can complete a task using canonical SF workflow tools without manual summary writing.
 2. Native provider behavior remains unchanged.
 3. MCP-invoked workflow tools produce the same DB updates, rendered artifacts, and state transitions as native tool calls.
 4. Write-gate and discussion-gate protections still hold under MCP invocation.
-5. When required capabilities are unavailable, GSD fails early with a precise compatibility error.
+5. When required capabilities are unavailable, SF fails early with a precise compatibility error.
 
 ## Scope Notes
 

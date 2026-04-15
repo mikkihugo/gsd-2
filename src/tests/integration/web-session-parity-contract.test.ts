@@ -181,15 +181,15 @@ function git(basePath: string, args: string[]): string {
 }
 
 function withProjectGitEnv(projectCwd: string, run: () => Promise<void>): Promise<void> {
-  const previousProjectCwd = process.env.GSD_WEB_PROJECT_CWD
-  process.env.GSD_WEB_PROJECT_CWD = projectCwd
+  const previousProjectCwd = process.env.SF_WEB_PROJECT_CWD
+  process.env.SF_WEB_PROJECT_CWD = projectCwd
 
   return run().finally(() => {
     if (previousProjectCwd === undefined) {
-      delete process.env.GSD_WEB_PROJECT_CWD
+      delete process.env.SF_WEB_PROJECT_CWD
       return
     }
-    process.env.GSD_WEB_PROJECT_CWD = previousProjectCwd
+    process.env.SF_WEB_PROJECT_CWD = previousProjectCwd
   })
 }
 
@@ -226,9 +226,9 @@ function configureBridgeFixture(
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
   })
@@ -579,7 +579,7 @@ test("/api/git returns a current-project-scoped repo summary and ignores changes
   writeFileSync(join(docsDir, "outside.txt"), "baseline outside\n")
 
   git(repoRoot, ["init"])
-  git(repoRoot, ["config", "user.name", "GSD Test"])
+  git(repoRoot, ["config", "user.name", "SF Test"])
   git(repoRoot, ["config", "user.email", "gsd-test@example.com"])
   git(repoRoot, ["add", "."])
   git(repoRoot, ["commit", "-m", "initial"])

@@ -237,9 +237,9 @@ test("multi-project: getProjectBridgeServiceForCwd returns distinct instances fo
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: createHarness("unused").spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -269,9 +269,9 @@ test("multi-project: getProjectBridgeServiceForCwd returns same instance for sam
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: createHarness("unused").spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -310,9 +310,9 @@ test("multi-project: each bridge receives commands independently", async (t) => 
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: spawnRouter as any,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -365,9 +365,9 @@ test("multi-project: SSE subscribers are isolated per bridge", async (t) => {
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harnessA.spawn as any,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -430,12 +430,12 @@ test("multi-project: resolveProjectCwd reads ?project= from request URL", () => 
   assert.equal(result, "/tmp/my-project");
 });
 
-test("multi-project: resolveProjectCwd falls back to GSD_WEB_PROJECT_CWD when no ?project= present", (t) => {
+test("multi-project: resolveProjectCwd falls back to SF_WEB_PROJECT_CWD when no ?project= present", (t) => {
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: "/fallback/path",
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: "/fallback/path",
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: createHarness("unused").spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -458,9 +458,9 @@ test("multi-project: getProjectBridgeService backward compat shim works", async 
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixture.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixture.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixture.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: harness.spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -491,9 +491,9 @@ test("multi-project: resetBridgeServiceForTests clears all registry entries", as
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: createHarness("unused").spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),
@@ -519,9 +519,9 @@ test("multi-project: resetBridgeServiceForTests clears all registry entries", as
   bridge.configureBridgeServiceForTests({
     env: {
       ...process.env,
-      GSD_WEB_PROJECT_CWD: fixtureA.projectCwd,
-      GSD_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
-      GSD_WEB_PACKAGE_ROOT: repoRoot,
+      SF_WEB_PROJECT_CWD: fixtureA.projectCwd,
+      SF_WEB_PROJECT_SESSIONS_DIR: fixtureA.sessionsDir,
+      SF_WEB_PACKAGE_ROOT: repoRoot,
     },
     spawn: createHarness("unused").spawn,
     indexWorkspace: async () => fakeWorkspaceIndex(),

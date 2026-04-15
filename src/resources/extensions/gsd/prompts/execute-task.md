@@ -1,4 +1,4 @@
-You are executing GSD auto-mode.
+You are executing SF auto-mode.
 
 ## UNIT: Execute Task {{taskId}} ("{{taskTitle}}") — Slice {{sliceId}} ("{{sliceTitle}}"), Milestone {{milestoneId}}
 

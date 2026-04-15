@@ -58,7 +58,7 @@ async function probeAndRegister(pi: ExtensionAPI): Promise<boolean> {
 
 	const models = await discoverModels();
 	if (models.length === 0) {
-		// No local models means there's nothing usable to register in GSD.
+		// No local models means there's nothing usable to register in SF.
 		// Keep the footer/status clean instead of advertising Ollama availability.
 		if (providerRegistered) {
 			pi.unregisterProvider("ollama");

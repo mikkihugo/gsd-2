@@ -1,4 +1,4 @@
-// GSD MCP Server — readers barrel export
+// SF MCP Server — readers barrel export
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 export { resolveGsdRoot, resolveRootFile } from './paths.js';

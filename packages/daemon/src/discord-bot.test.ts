@@ -342,7 +342,7 @@ describe('ChannelManager', () => {
     const mgr = new ChannelManager({ guild: guild as any, logger: logger as any });
 
     const cat = await mgr.resolveCategory();
-    assert.equal(cat.name, 'GSD Projects');
+    assert.equal(cat.name, 'SF Projects');
     assert.equal(cat.type, ChannelType.GuildCategory);
   });
 
@@ -363,7 +363,7 @@ describe('ChannelManager', () => {
     // Pre-populate a matching category
     guild._channels.set('existing-cat', {
       id: 'existing-cat',
-      name: 'GSD Projects',
+      name: 'SF Projects',
       type: ChannelType.GuildCategory,
       parentId: null,
     });

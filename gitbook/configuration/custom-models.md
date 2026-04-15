@@ -4,7 +4,7 @@ Define custom models and providers in `~/.gsd/agent/models.json`. This lets you 
 
 ## File Location
 
-GSD looks for models.json at:
+SF looks for models.json at:
 1. `~/.gsd/agent/models.json` (primary)
 2. `~/.pi/agent/models.json` (fallback)
 
@@ -39,7 +39,7 @@ The file reloads each time you open `/model` — no restart needed.
 
 The `apiKey` field can be:
 
-- **An environment variable name**: `"OPENROUTER_API_KEY"` — GSD resolves it automatically
+- **An environment variable name**: `"OPENROUTER_API_KEY"` — SF resolves it automatically
 - **A literal value**: `"sk-abc123..."` — used directly
 - **A dummy value**: `"not-needed"` — for local servers that don't require auth
 
@@ -124,7 +124,7 @@ Without this, cost shows $0.00 — which is the expected default for custom mode
 
 ## Community Extensions
 
-For providers not built into GSD, community extensions add full provider support:
+For providers not built into SF, community extensions add full provider support:
 
 | Extension | Provider | Install |
 |-----------|----------|---------|

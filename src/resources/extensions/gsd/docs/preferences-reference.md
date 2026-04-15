@@ -1,4 +1,4 @@
-# GSD Preferences Reference
+# SF Preferences Reference
 
 Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md` (project).
 
@@ -9,7 +9,7 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 - Keep this skill-first.
 - Prefer explicit skill names or absolute paths.
 - Use absolute paths for personal/local skills when you want zero ambiguity.
-- These preferences guide which skills GSD should load and follow; they do not override higher-priority instructions in the current conversation.
+- These preferences guide which skills SF should load and follow; they do not override higher-priority instructions in the current conversation.
 - For Claude marketplace/plugin import behavior, see `~/.gsd/agent/extensions/gsd/docs/claude-marketplace-import.md`.
 
 ---
@@ -18,7 +18,7 @@ Full documentation for `~/.gsd/PREFERENCES.md` (global) and `.gsd/PREFERENCES.md
 
 ### Empty Arrays vs Omitted Fields
 
-**Empty arrays (`[]`) are equivalent to omitting the field entirely.** During validation, GSD deletes empty arrays from the preferences object (see `validatePreferences()` in `preferences.ts`):
+**Empty arrays (`[]`) are equivalent to omitting the field entirely.** During validation, SF deletes empty arrays from the preferences object (see `validatePreferences()` in `preferences.ts`):
 
 ```typescript
 for (const key of [
@@ -68,7 +68,7 @@ These are **separate concerns**:
 
 | Field                                                | What it controls                                          | Code reference                                           |
 | ---------------------------------------------------- | --------------------------------------------------------- | -------------------------------------------------------- |
-| `skill_discovery`                                    | **Whether** GSD looks for relevant skills during research | `resolveSkillDiscoveryMode()` in `preferences.ts`        |
+| `skill_discovery`                                    | **Whether** SF looks for relevant skills during research | `resolveSkillDiscoveryMode()` in `preferences.ts`        |
 | `always_use_skills`, `prefer_skills`, `avoid_skills` | **Which** skills to use when they're found relevant       | `renderPreferencesForSystemPrompt()` in `preferences.ts` |
 
 Setting `prefer_skills: []` does **not** disable skill discovery — it just means you have no preference overrides. Use `skill_discovery: off` to disable discovery entirely.
@@ -92,11 +92,11 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
   Quick setup: `/gsd mode` (global) or `/gsd mode project` (project-level).
 
-- `always_use_skills`: skills GSD should use whenever they are relevant.
+- `always_use_skills`: skills SF should use whenever they are relevant.
 
-- `prefer_skills`: soft defaults GSD should prefer when relevant.
+- `prefer_skills`: soft defaults SF should prefer when relevant.
 
-- `avoid_skills`: skills GSD should avoid unless clearly needed.
+- `avoid_skills`: skills SF should avoid unless clearly needed.
 
 - `skill_rules`: situational rules with a human-readable `when` trigger and one or more of `use`, `prefer`, or `avoid`.
 
@@ -115,7 +115,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `skill_staleness_days`: number — skills unused for this many days get deprioritized during discovery. Set to `0` to disable staleness tracking. Default: `60`.
 
-- `skill_discovery`: controls how GSD discovers and applies skills during auto-mode. Valid values:
+- `skill_discovery`: controls how SF discovers and applies skills during auto-mode. Valid values:
   - `auto` — skills are found and applied automatically without prompting.
   - `suggest` — (default) skills are identified during research but not installed automatically.
   - `off` — skill discovery is disabled entirely.
@@ -126,7 +126,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `idle_timeout_minutes`: minutes of inactivity before the supervisor intervenes (default: 10).
   - `hard_timeout_minutes`: minutes before the supervisor forces termination (default: 30).
 
-- `git`: configures GSD's git behavior. All fields are optional — omit any to use defaults. Keys:
+- `git`: configures SF's git behavior. All fields are optional — omit any to use defaults. Keys:
   - `auto_push`: boolean — automatically push commits to the remote after committing. Default: `false`.
   - `push_branches`: boolean — push the milestone branch to the remote after commits. Default: `false`.
   - `remote`: string — git remote name to push to. Default: `"origin"`.
@@ -136,7 +136,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `main_branch`: string — the primary branch name for new git repos (e.g., `"main"`, `"master"`, `"trunk"`). Also used by `getMainBranch()` as the preferred branch when auto-detection is ambiguous. Default: `"main"`.
   - `merge_strategy`: `"squash"` or `"merge"` — controls how worktree branches are merged back. `"squash"` combines all commits into one; `"merge"` preserves individual commits. Default: `"squash"`.
   - `isolation`: `"worktree"`, `"branch"`, or `"none"` — controls auto-mode git isolation strategy. `"worktree"` creates a milestone worktree for isolated work; `"branch"` works directly in the project root but creates a milestone branch (useful for submodule-heavy repos); `"none"` works directly on the current branch with no worktree or milestone branch (ideal for step-mode with hot reloads). Default: `"worktree"`.
-  - `manage_gitignore`: boolean — when `false`, GSD will not touch `.gitignore` at all. Useful when your project has a strictly managed `.gitignore` and you don't want GSD adding entries. Default: `true`.
+  - `manage_gitignore`: boolean — when `false`, SF will not touch `.gitignore` at all. Useful when your project has a strictly managed `.gitignore` and you don't want SF adding entries. Default: `true`.
   - `worktree_post_create`: string — script to run after a worktree is created (both auto-mode and manual `/worktree`). Receives `SOURCE_DIR` and `WORKTREE_DIR` as environment variables. Can be absolute or relative to project root. Runs with 30-second timeout. Failure is non-fatal (logged as warning). Default: none.
   - `auto_pr`: boolean — automatically create a GitHub pull request after a milestone branch is merged. Requires `gh` CLI to be installed. Default: `false`.
   - `pr_target_branch`: string — branch to target when `auto_pr` is enabled. Defaults to `main_branch` when omitted.
@@ -177,7 +177,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `on_milestone`: boolean — notify when a milestone finishes. Default: `true`.
   - `on_attention`: boolean — notify when manual attention is needed. Default: `true`.
 
-- `cmux`: configures cmux terminal integration when GSD is running inside a cmux workspace. Keys:
+- `cmux`: configures cmux terminal integration when SF is running inside a cmux workspace. Keys:
   - `enabled`: boolean — master toggle for cmux integration. Default: `false`.
   - `notifications`: boolean — route desktop notifications through cmux. Default: `true` when enabled.
   - `sidebar`: boolean — publish status, progress, and log metadata to the cmux sidebar. Default: `true` when enabled.
@@ -196,7 +196,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 - `uok`: orchestration kernel controls. Keys:
   - `enabled`: boolean — enable kernel wrappers and contract observers. Default: `true`.
   - `legacy_fallback.enabled`: boolean — emergency release fallback that forces legacy orchestration behavior even when `uok.enabled` is `true`. Default: `false`.
-    - Runtime override: set `GSD_UOK_FORCE_LEGACY=1` (or `GSD_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
+    - Runtime override: set `SF_UOK_FORCE_LEGACY=1` (or `SF_UOK_LEGACY_FALLBACK=1`) to force legacy behavior for the current process.
   - `gates.enabled`: boolean — route checks through the unified gate runner and persist `gate_runs`.
   - `model_policy.enabled`: boolean — enforce policy filtering before model capability scoring.
   - `execution_graph.enabled`: boolean — enable DAG scheduler facade/adapters for execution.
@@ -210,7 +210,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `observation_masking`: boolean — mask old tool results to reduce context bloat. Default: `true`.
   - `observation_mask_turns`: number — keep this many recent turns verbatim (1-50). Default: `8`.
   - `compaction_threshold_percent`: number — trigger compaction at this % of context window (0.5-0.95). Lower values fire compaction earlier, reducing drift. Default: `0.70`.
-  - `tool_result_max_chars`: number — max chars per tool result in GSD sessions (200-10000). Default: `800`.
+  - `tool_result_max_chars`: number — max chars per tool result in SF sessions (200-10000). Default: `800`.
 
 - `auto_visualize`: boolean — show a visualizer hint after each milestone completion in auto-mode. Default: `false`.
 
@@ -267,7 +267,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   **Known unit types for `before`/`after`:** `research-milestone`, `plan-milestone`, `research-slice`, `plan-slice`, `execute-task`, `complete-slice`, `replan-slice`, `reassess-roadmap`, `run-uat`.
 
 - `experimental`: opt-in experimental features. All features here are **off by default** — you must explicitly set each one to `true` to enable it. Features in this block may change or be removed without a deprecation cycle while in experimental status. Keys:
-  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, GSD wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `GSD_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
+  - `rtk`: boolean — enable RTK (Real-Time Kompression) shell-command compression. When enabled, SF wraps shell commands through the RTK binary to reduce token usage during command execution. RTK is downloaded automatically on first use if not already installed. **Default: `false`** (opt-in required). Set `SF_RTK_DISABLED=1` in the environment to force-disable regardless of this preference.
 
 ---
 
@@ -378,7 +378,7 @@ models:
 ---
 ```
 
-When a model fails to switch (provider unavailable, rate limited, credits exhausted), GSD automatically tries the next model in the `fallbacks` list. This ensures auto-mode continues even when your preferred provider hits limits.
+When a model fails to switch (provider unavailable, rate limited, credits exhausted), SF automatically tries the next model in the `fallbacks` list. This ensures auto-mode continues even when your preferred provider hits limits.
 
 ## Provider Targeting
 
@@ -401,7 +401,7 @@ models:
 ---
 ```
 
-If you use a bare model ID (no provider prefix) and it exists in multiple providers, GSD will warn you and resolve to the first available match. Use `provider/model` format to avoid ambiguity.
+If you use a bare model ID (no provider prefix) and it exists in multiple providers, SF will warn you and resolve to the first available match. Use `provider/model` format to avoid ambiguity.
 
 **Cost-optimized example** — use cheap models with expensive ones as fallback for critical phases:
 
@@ -524,7 +524,7 @@ cmux:
 ---
 ```
 
-Enables cmux-aware notifications, sidebar metadata, and visible subagent splits when GSD is running inside a cmux terminal.
+Enables cmux-aware notifications, sidebar metadata, and visible subagent splits when SF is running inside a cmux terminal.
 
 ---
 
@@ -691,4 +691,4 @@ experimental:
 ---
 ```
 
-Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `GSD_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.
+Opts in to RTK shell-command compression. RTK is downloaded automatically on first use. Set `SF_RTK_DISABLED=1` to force-disable at the environment level regardless of this setting.

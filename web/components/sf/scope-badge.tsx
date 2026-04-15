@@ -53,7 +53,7 @@ const toneDot: Record<PhaseTone, string> = {
 }
 
 /**
- * Strip leading zeros from GSD IDs: M002 → M2, S01 → S1, T03 → T3.
+ * Strip leading zeros from SF IDs: M002 → M2, S01 → S1, T03 → T3.
  * Handles compound paths like "M001/S02/T03" → "M1/S2/T3".
  */
 function normalizeScopeId(raw: string): string {

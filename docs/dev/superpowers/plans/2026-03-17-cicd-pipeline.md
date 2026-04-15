@@ -28,7 +28,7 @@
 | `tests/smoke/test-init.ts` | Verify `gsd init` creates expected files in a temp dir |
 | `tests/fixtures/provider.ts` | `FixtureProvider` — wraps `ApiProvider`, records/replays turns |
 | `tests/fixtures/run.ts` | Fixture test runner — loads recordings, replays via `FixtureProvider` |
-| `tests/fixtures/record.ts` | Recording helper — runs a session with `GSD_FIXTURE_MODE=record` |
+| `tests/fixtures/record.ts` | Recording helper — runs a session with `SF_FIXTURE_MODE=record` |
 | `tests/fixtures/recordings/agent-creates-file.json` | Sample fixture: single-turn file creation |
 | `tests/fixtures/recordings/agent-reads-and-edits.json` | Fixture: multi-turn read + edit flow |
 | `tests/fixtures/recordings/agent-handles-error.json` | Fixture: error response handling |
@@ -129,14 +129,14 @@ RUN node --version && rustc --version && cargo --version
 # ──────────────────────────────────────────────
 FROM node:22-slim AS runtime
 
-# Git is required for GSD's git operations
+# Git is required for SF's git operations
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GSD globally — version is controlled by the build arg
-ARG GSD_VERSION=latest
-RUN npm install -g gsd-pi@${GSD_VERSION}
+# Install SF globally — version is controlled by the build arg
+ARG SF_VERSION=latest
+RUN npm install -g sf-run@${SF_VERSION}
 
 # Default working directory for user projects
 WORKDIR /workspace
@@ -152,12 +152,12 @@ Expected: Completes successfully (may take 5-10 min first time)
 
 - [ ] **Step 3: Verify runtime stage builds**
 
-Run: `docker build --target runtime -t gsd-pi-test .`
+Run: `docker build --target runtime -t sf-run-test .`
 Expected: Completes successfully
 
 - [ ] **Step 4: Verify runtime image works**
 
-Run: `docker run --rm gsd-pi-test --version`
+Run: `docker run --rm sf-run-test --version`
 Expected: Outputs a version string
 
 - [ ] **Step 5: Commit**
@@ -226,15 +226,15 @@ if (failed > 0) process.exit(1);
 ```typescript
 // tests/smoke/test-version.ts
 // Verifies that `gsd --version` outputs valid semver-like string.
-// When GSD_SMOKE_BINARY is set (CI), uses that binary directly.
-// Otherwise falls back to npx gsd-pi.
+// When SF_SMOKE_BINARY is set (CI), uses that binary directly.
+// Otherwise falls back to npx sf-run.
 
 import { execFileSync } from "child_process";
 
-const bin = process.env.GSD_SMOKE_BINARY;
+const bin = process.env.SF_SMOKE_BINARY;
 const output = bin
   ? execFileSync(bin, ["--version"], { encoding: "utf8", timeout: 30_000 }).trim()
-  : execFileSync("npx", ["gsd-pi", "--version"], { encoding: "utf8", timeout: 30_000 }).trim();
+  : execFileSync("npx", ["sf-run", "--version"], { encoding: "utf8", timeout: 30_000 }).trim();
 
 if (!/^\d+\.\d+\.\d+/.test(output)) {
   console.error(`Unexpected version output: "${output}"`);
@@ -252,10 +252,10 @@ console.log(`version: ${output}`);
 
 import { execFileSync } from "child_process";
 
-const bin = process.env.GSD_SMOKE_BINARY;
+const bin = process.env.SF_SMOKE_BINARY;
 const output = bin
   ? execFileSync(bin, ["--help"], { encoding: "utf8", timeout: 30_000 })
-  : execFileSync("npx", ["gsd-pi", "--help"], { encoding: "utf8", timeout: 30_000 });
+  : execFileSync("npx", ["sf-run", "--help"], { encoding: "utf8", timeout: 30_000 });
 
 const requiredKeywords = ["gsd", "usage"];
 for (const keyword of requiredKeywords) {
@@ -282,13 +282,13 @@ import { tmpdir } from "os";
 const tmp = mkdtempSync(join(tmpdir(), "gsd-smoke-init-"));
 
 try {
-  const bin = process.env.GSD_SMOKE_BINARY;
-  const args = bin ? [bin, "init"] : ["npx", "gsd-pi", "init"];
+  const bin = process.env.SF_SMOKE_BINARY;
+  const args = bin ? [bin, "init"] : ["npx", "sf-run", "init"];
   execFileSync(args[0], args.slice(1), {
     encoding: "utf8",
     cwd: tmp,
     timeout: 30_000,
-    env: { ...process.env, GSD_NON_INTERACTIVE: "1" },
+    env: { ...process.env, SF_NON_INTERACTIVE: "1" },
   });
 
   // Check that .gsd directory was created
@@ -353,8 +353,8 @@ The provider is registered via `registerApiProvider()` from `packages/pi-ai/src/
 // Replay mode: loads saved JSON, serves responses by turn index.
 //
 // Controlled via environment variables:
-//   GSD_FIXTURE_MODE=record|replay
-//   GSD_FIXTURE_DIR=./tests/fixtures/recordings
+//   SF_FIXTURE_MODE=record|replay
+//   SF_FIXTURE_DIR=./tests/fixtures/recordings
 
 import { readFileSync, writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
@@ -383,13 +383,13 @@ export interface FixtureFile {
 export type FixtureMode = "record" | "replay" | "off";
 
 export function getFixtureMode(): FixtureMode {
-  const mode = process.env.GSD_FIXTURE_MODE;
+  const mode = process.env.SF_FIXTURE_MODE;
   if (mode === "record" || mode === "replay") return mode;
   return "off";
 }
 
 export function getFixtureDir(): string {
-  return process.env.GSD_FIXTURE_DIR || join(process.cwd(), "tests/fixtures/recordings");
+  return process.env.SF_FIXTURE_DIR || join(process.cwd(), "tests/fixtures/recordings");
 }
 
 export function loadFixture(filepath: string): FixtureFile {
@@ -809,13 +809,13 @@ git commit -m "feat(ci): add additional fixture recordings for multi-turn and er
 
 ```typescript
 // tests/live/run.ts
-// Runs real LLM integration tests. Only executes when GSD_LIVE_TESTS=1.
+// Runs real LLM integration tests. Only executes when SF_LIVE_TESTS=1.
 // These tests cost real money — used in the Prod gate only.
 //
-// Usage: GSD_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts
+// Usage: SF_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts
 
-if (process.env.GSD_LIVE_TESTS !== "1") {
-  console.log("Skipping live tests (set GSD_LIVE_TESTS=1 to enable)");
+if (process.env.SF_LIVE_TESTS !== "1") {
+  console.log("Skipping live tests (set SF_LIVE_TESTS=1 to enable)");
   process.exit(0);
 }
 
@@ -944,8 +944,8 @@ console.log(`OpenAI roundtrip OK: "${text.substring(0, 50)}"`);
 
 Add to `package.json` `scripts`:
 ```json
-"test:fixtures:record": "GSD_FIXTURE_MODE=record node --experimental-strip-types tests/fixtures/record.ts",
-"test:live": "GSD_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts",
+"test:fixtures:record": "SF_FIXTURE_MODE=record node --experimental-strip-types tests/fixtures/record.ts",
+"test:live": "SF_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts",
 "pipeline:version-stamp": "node scripts/version-stamp.mjs",
 "docker:build-runtime": "docker build --target runtime -t ghcr.io/singularity-forge/sf-run .",
 "docker:build-builder": "docker build --target builder -t ghcr.io/singularity-forge/sf-ci-builder ."
@@ -954,7 +954,7 @@ Add to `package.json` `scripts`:
 - [ ] **Step 5: Verify live tests skip without env var**
 
 Run: `npm run test:live`
-Expected: `Skipping live tests (set GSD_LIVE_TESTS=1 to enable)` and exit 0
+Expected: `Skipping live tests (set SF_LIVE_TESTS=1 to enable)` and exit 0
 
 - [ ] **Step 6: Commit**
 
@@ -1037,7 +1037,7 @@ jobs:
         run: |
           mkdir /tmp/smoke-test && cd /tmp/smoke-test
           npm init -y
-          npm install gsd-pi@dev
+          npm install sf-run@dev
           npx gsd --version
 
   # ─── TEST STAGE ────────────────────────────────────────────
@@ -1059,7 +1059,7 @@ jobs:
           registry-url: "https://registry.npmjs.org"
 
       - name: Install published dev package globally
-        run: npm install -g gsd-pi@dev
+        run: npm install -g sf-run@dev
 
       - name: Install dev dependencies for test runners
         run: npm ci
@@ -1067,13 +1067,13 @@ jobs:
       - name: Run CLI smoke tests
         run: npm run test:smoke
         env:
-          GSD_SMOKE_BINARY: gsd  # Use globally installed binary, not npx
+          SF_SMOKE_BINARY: gsd  # Use globally installed binary, not npx
 
       - name: Run fixture replay tests
         run: npm run test:fixtures
 
       - name: Promote to @next
-        run: npm dist-tag add gsd-pi@${{ needs.dev-publish.outputs.dev-version }} next
+        run: npm dist-tag add sf-run@${{ needs.dev-publish.outputs.dev-version }} next
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -1081,7 +1081,7 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker build --target runtime \
-            --build-arg GSD_VERSION=${{ needs.dev-publish.outputs.dev-version }} \
+            --build-arg SF_VERSION=${{ needs.dev-publish.outputs.dev-version }} \
             -t ghcr.io/singularity-forge/sf-run:next \
             -t ghcr.io/singularity-forge/sf-run:${{ needs.dev-publish.outputs.dev-version }} \
             .
@@ -1111,13 +1111,13 @@ jobs:
         run: |
           npm ci
           npm run build
-          GSD_LIVE_TESTS=1 npm run test:live
+          SF_LIVE_TESTS=1 npm run test:live
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
       - name: Promote to @latest
-        run: npm dist-tag add gsd-pi@${{ needs.dev-publish.outputs.dev-version }} latest
+        run: npm dist-tag add sf-run@${{ needs.dev-publish.outputs.dev-version }} latest
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -1140,7 +1140,7 @@ jobs:
         run: |
           mkdir /tmp/prod-smoke && cd /tmp/prod-smoke
           npm init -y
-          npm install gsd-pi@latest
+          npm install sf-run@latest
           npx gsd --version
 
   # ─── CI BUILDER IMAGE (conditional) ────────────────────────
@@ -1222,7 +1222,7 @@ jobs:
 
       - name: Remove old dev versions
         run: |
-          VERSIONS=$(npm view gsd-pi versions --json 2>/dev/null || echo "[]")
+          VERSIONS=$(npm view sf-run versions --json 2>/dev/null || echo "[]")
 
           DEV_VERSIONS=$(echo "$VERSIONS" | node -e "
             const stdin = require('fs').readFileSync('/dev/stdin', 'utf8');
@@ -1242,7 +1242,7 @@ jobs:
           THIRTY_DAYS_MS=2592000000
 
           for VERSION in $DEV_VERSIONS; do
-            PUBLISH_TIME=$(npm view "gsd-pi@$VERSION" time --json 2>/dev/null || echo "")
+            PUBLISH_TIME=$(npm view "sf-run@$VERSION" time --json 2>/dev/null || echo "")
 
             if [ -n "$PUBLISH_TIME" ]; then
               AGE_MS=$(node -e "
@@ -1251,10 +1251,10 @@ jobs:
               " 2>/dev/null || echo "0")
 
               if [ "$AGE_MS" -gt "$THIRTY_DAYS_MS" ]; then
-                echo "Unpublishing gsd-pi@$VERSION"
-                npm unpublish "gsd-pi@$VERSION" || echo "Failed to unpublish $VERSION"
+                echo "Unpublishing sf-run@$VERSION"
+                npm unpublish "sf-run@$VERSION" || echo "Failed to unpublish $VERSION"
               else
-                echo "Keeping gsd-pi@$VERSION (within 30 days)"
+                echo "Keeping sf-run@$VERSION (within 30 days)"
               fi
             fi
           done
@@ -1290,8 +1290,8 @@ git commit -m "feat(ci): add weekly dev version cleanup workflow"
 // Helper for recording new LLM fixtures.
 //
 // Usage:
-//   GSD_FIXTURE_MODE=record \
-//   GSD_FIXTURE_DIR=./tests/fixtures/recordings \
+//   SF_FIXTURE_MODE=record \
+//   SF_FIXTURE_DIR=./tests/fixtures/recordings \
 //   node --experimental-strip-types tests/fixtures/record.ts
 //
 // This is a developer tool, not used in CI.
@@ -1303,10 +1303,10 @@ const mode = getFixtureMode();
 const dir = getFixtureDir();
 
 if (mode !== "record") {
-  console.error("Recording requires GSD_FIXTURE_MODE=record");
+  console.error("Recording requires SF_FIXTURE_MODE=record");
   console.error("");
   console.error("Usage:");
-  console.error("  GSD_FIXTURE_MODE=record GSD_FIXTURE_DIR=./tests/fixtures/recordings \\");
+  console.error("  SF_FIXTURE_MODE=record SF_FIXTURE_DIR=./tests/fixtures/recordings \\");
   console.error("  node --experimental-strip-types tests/fixtures/record.ts");
   process.exit(1);
 }
@@ -1315,8 +1315,8 @@ console.log("Fixture recording mode enabled");
 console.log(`Recordings will be saved to: ${dir}`);
 console.log("");
 console.log("To record a fixture:");
-console.log("1. Set GSD_FIXTURE_MODE=record in your environment");
-console.log("2. Run your GSD session normally");
+console.log("1. Set SF_FIXTURE_MODE=record in your environment");
+console.log("2. Run your SF session normally");
 console.log("3. The FixtureProvider will intercept and save all LLM calls");
 console.log("4. Review the generated JSON in the recordings directory");
 console.log("5. Commit the fixture to version control");
@@ -1350,7 +1350,7 @@ npm run test:live
 Expected:
 - Smoke tests: 3 passed
 - Fixture tests: 1 passed
-- Live tests: Skipped (no `GSD_LIVE_TESTS=1`)
+- Live tests: Skipped (no `SF_LIVE_TESTS=1`)
 
 - [ ] **Step 2: Validate all workflow YAML files**
 

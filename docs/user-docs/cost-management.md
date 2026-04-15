@@ -1,6 +1,6 @@
 # Cost Management
 
-GSD tracks token usage and cost for every unit of work dispatched during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
+SF tracks token usage and cost for every unit of work dispatched during auto mode. This data powers the dashboard, budget enforcement, and cost projections.
 
 ## Cost Tracking
 
@@ -51,7 +51,7 @@ budget_enforcement: pause    # default when ceiling is set
 
 ## Cost Projections
 
-Once at least two slices have completed, GSD projects the remaining cost:
+Once at least two slices have completed, SF projects the remaining cost:
 
 ```
 Projected remaining: $12.40 ($6.20/slice avg × 2 remaining)

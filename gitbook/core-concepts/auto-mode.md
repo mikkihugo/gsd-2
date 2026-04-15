@@ -1,6 +1,6 @@
 # Auto Mode
 
-Auto mode is GSD's autonomous execution engine. Run `/gsd auto`, walk away, come back to built software with clean git history.
+Auto mode is SF's autonomous execution engine. Run `/gsd auto`, walk away, come back to built software with clean git history.
 
 ## Starting Auto Mode
 
@@ -8,7 +8,7 @@ Auto mode is GSD's autonomous execution engine. Run `/gsd auto`, walk away, come
 /gsd auto
 ```
 
-GSD reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh AI session with all relevant context, and lets the AI execute. When it finishes, GSD reads disk state again and dispatches the next unit. This continues until the milestone is complete.
+SF reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh AI session with all relevant context, and lets the AI execute. When it finishes, SF reads disk state again and dispatches the next unit. This continues until the milestone is complete.
 
 ## The Execution Loop
 
@@ -70,7 +70,7 @@ Every task gets a clean AI context window. No accumulated garbage, no quality de
 
 ## Git Isolation
 
-GSD isolates milestone work using one of three modes:
+SF isolates milestone work using one of three modes:
 
 | Mode | How It Works | Best For |
 |------|-------------|----------|
@@ -88,7 +88,7 @@ In headless mode (`gsd headless auto`), crashes trigger automatic restart with e
 
 ## Provider Error Recovery
 
-GSD handles provider errors automatically:
+SF handles provider errors automatically:
 
 | Error Type | Examples | What Happens |
 |-----------|----------|-------------|
@@ -143,7 +143,7 @@ Auto mode pauses before each slice, showing the plan for your approval before bu
 
 ## Stuck Detection
 
-GSD uses sliding-window analysis to detect stuck loops — not just "same unit dispatched twice" but also cycles like A→B→A→B. On detection, GSD retries once with a diagnostic prompt. If it fails again, auto mode stops with details so you can intervene.
+SF uses sliding-window analysis to detect stuck loops — not just "same unit dispatched twice" but also cycles like A→B→A→B. On detection, SF retries once with a diagnostic prompt. If it fails again, auto mode stops with details so you can intervene.
 
 ## Cost Tracking
 
@@ -163,7 +163,7 @@ Every unit's token usage and cost is captured, broken down by phase, slice, and 
 
 ## HTML Reports
 
-After a milestone completes, GSD generates a self-contained HTML report in `.gsd/reports/` with project summary, progress tree, dependency graph, cost metrics, timeline, and changelog. Generate manually with:
+After a milestone completes, SF generates a self-contained HTML report in `.gsd/reports/` with project summary, progress tree, dependency graph, cost metrics, timeline, and changelog. Generate manually with:
 
 ```
 /gsd export --html
@@ -172,7 +172,7 @@ After a milestone completes, GSD generates a self-contained HTML report in `.gsd
 
 ## Diagnostic Tools
 
-If auto mode has issues, GSD provides two diagnostic tools:
+If auto mode has issues, SF provides two diagnostic tools:
 
 - **`/gsd doctor`** — validates `.gsd/` integrity, checks referential consistency, fixes structural issues
 - **`/gsd forensics`** — full post-mortem debugger with anomaly detection, unit traces, metrics analysis, and AI-guided investigation

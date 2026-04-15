@@ -17,7 +17,7 @@ export interface Checkpoint {
 }
 
 /**
- * Tracks file changes made by the GSD agent. Stores original file content
+ * Tracks file changes made by the SF agent. Stores original file content
  * before the agent modifies it, enabling diff views, SCM integration,
  * and checkpoint/rollback functionality.
  */

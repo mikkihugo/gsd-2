@@ -1,4 +1,4 @@
-// GSD Extension — Workflow Logger Audit Persistence Tests
+// SF Extension — Workflow Logger Audit Persistence Tests
 // Validates error-only persistence, sanitization, and warning ephemeral behavior.
 
 import { describe, test, beforeEach, afterEach } from "node:test";

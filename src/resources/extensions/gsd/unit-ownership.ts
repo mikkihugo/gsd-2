@@ -1,4 +1,4 @@
-// GSD Extension — Unit Ownership
+// SF Extension — Unit Ownership
 // Opt-in per-unit ownership claims for multi-agent safety.
 //
 // An agent can claim a unit (task, slice) before working on it.

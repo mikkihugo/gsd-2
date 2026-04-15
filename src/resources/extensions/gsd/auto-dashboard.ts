@@ -651,7 +651,7 @@ export function updateProgressWidget(
             : "x";
         const healthStr = `  ${theme.fg(healthColor, healthIcon)} ${theme.fg(healthColor, score.summary)}`;
 
-        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("GSD"))}  ${theme.fg("success", modeTag)}${healthStr}`;
+        const headerLeft = `${pad}${dot} ${theme.fg("accent", theme.bold("SF"))}  ${theme.fg("success", modeTag)}${healthStr}`;
 
         // ETA in header right, after elapsed
         const eta = estimateTimeRemaining();

@@ -35,7 +35,7 @@ parallel:
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Coordinator (your GSD session)                      │
+│  Coordinator (your SF session)                      │
 │                                                      │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
 │  │ Worker 1 │  │ Worker 2 │  │ Worker 3 │  ...       │
@@ -53,13 +53,13 @@ parallel:
 |----------|-----------------|
 | Filesystem | Git worktree — separate checkout |
 | Git branch | `milestone/<MID>` per milestone |
-| State | `GSD_MILESTONE_LOCK` — each worker sees only its milestone |
+| State | `SF_MILESTONE_LOCK` — each worker sees only its milestone |
 | Context | Separate process with its own agent sessions |
 | Metrics | Each worktree has its own `metrics.json` |
 
 ## Eligibility analysis
 
-Before starting, GSD checks which milestones can run concurrently:
+Before starting, SF checks which milestones can run concurrently:
 
 1. **Not complete** — finished milestones are skipped
 2. **Dependencies satisfied** — all `dependsOn` entries must be complete

@@ -39,10 +39,10 @@ The `--answers` flag takes a path to a JSON file containing pre-supplied answers
 
 ## How Secrets Work
 
-Secrets are injected as environment variables into the GSD child process:
+Secrets are injected as environment variables into the SF child process:
 
 1. The orchestrator passes the answer file via `--answers`
-2. GSD reads the file and sets secret values as env vars in the child process
+2. SF reads the file and sets secret values as env vars in the child process
 3. When `secure_env_collect` runs inside the agent, it finds the keys already in `process.env`
 4. The tool skips the interactive prompt and reports the keys as "already configured"
 
@@ -52,7 +52,7 @@ Secrets are never logged or included in event streams.
 
 Two-phase correlation:
 
-1. **Observe** — GSD monitors `tool_execution_start` events for `ask_user_questions` to extract question metadata (ID, options, allowMultiple)
+1. **Observe** — SF monitors `tool_execution_start` events for `ask_user_questions` to extract question metadata (ID, options, allowMultiple)
 2. **Match** — Subsequent `extension_ui_request` events are correlated to the metadata and responded to with the pre-supplied answer
 
 Handles out-of-order events (extension_ui_request can arrive before tool_execution_start) via a deferred processing queue with 500ms timeout.

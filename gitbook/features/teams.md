@@ -1,6 +1,6 @@
 # Working in Teams
 
-GSD supports multi-user workflows where several developers work on the same repository concurrently.
+SF supports multi-user workflows where several developers work on the same repository concurrently.
 
 ## Quick Setup
 
@@ -57,12 +57,12 @@ Share planning artifacts while keeping runtime files local:
 
 ```bash
 git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git commit -m "chore: enable SF team workflow"
 ```
 
 ## Keeping `.gsd/` Local
 
-For teams where only some members use GSD:
+For teams where only some members use SF:
 
 ```yaml
 git:
@@ -88,4 +88,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD enforces that dependent milestones complete before starting downstream work.
+SF enforces that dependent milestones complete before starting downstream work.

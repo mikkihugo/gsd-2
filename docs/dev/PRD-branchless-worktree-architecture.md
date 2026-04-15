@@ -9,7 +9,7 @@
 
 ## Problem Statement
 
-GSD's auto-mode is unreliable. Users experience:
+SF's auto-mode is unreliable. Users experience:
 
 1. **Infinite loop detection failures** — the agent writes planning artifacts on slice branches that become invisible after branch switching, causing `verifyExpectedArtifact()` to fail repeatedly. Auto-mode burns budget retrying the same unit 3-6 times before hard-stopping. This is the #1 user complaint.
 
@@ -28,7 +28,7 @@ Auto-mode uses git worktrees for isolation and sequential commits for history. N
 | Criterion | Measurement |
 |-----------|-------------|
 | Zero loop detection failures from branch visibility | No `verifyExpectedArtifact()` failures caused by branch mismatch in 50 consecutive auto-mode runs |
-| Zero `.gsd/` state corruption | Manual worktrees created via `git worktree add` have correct `.gsd/` state without any GSD-specific initialization |
+| Zero `.gsd/` state corruption | Manual worktrees created via `git worktree add` have correct `.gsd/` state without any SF-specific initialization |
 | Code deletion | Net removal of ≥500 lines of merge/conflict/branch-switching code |
 | Test simplification | Removal or simplification of ≥6 merge-specific test files |
 | Backwards compatibility | Existing projects with `gsd/M001/S01` slice branches continue to work (read-only; new work uses new model) |
@@ -77,7 +77,7 @@ Agent writes file → on slice branch → handleAgentEnd → auto-commit on slic
 ### `.gsd/` Tracking (Current — Contradictory)
 
 - `.gitignore` line 52: `.gsd/` — ignores everything
-- `smartStage()` lines 338-349: force-adds `GSD_DURABLE_PATHS` — tracks milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md
+- `smartStage()` lines 338-349: force-adds `SF_DURABLE_PATHS` — tracks milestones/, DECISIONS.md, PROJECT.md, REQUIREMENTS.md, QUEUE.md
 - Result: `.gsd/milestones/` is partially tracked on some branches, fully ignored on others. The code fights the config.
 
 ## Proposed Architecture
@@ -146,7 +146,7 @@ Agent writes file → on milestone branch → handleAgentEnd → auto-commit on 
 | Artifact invisibility after branch switch | No branch switching. Artifacts commit on the one branch. |
 | `.gsd/` state clobbering | Artifacts tracked in git. Each branch carries its own `.gsd/`. `git worktree add` and `git checkout` give correct state. |
 | Merge conflict complexity | No merges within a worktree. Only merge is milestone→main (squash). |
-| Manual worktree initialization | Tracked artifacts are checked out with the branch. No GSD-specific bootstrap needed. |
+| Manual worktree initialization | Tracked artifacts are checked out with the branch. No SF-specific bootstrap needed. |
 | Dual isolation mode maintenance | Single mode: worktree. Branch-mode (`git.isolation: "branch"`) deprecated. |
 
 ## Implementation Plan
@@ -171,7 +171,7 @@ Agent writes file → on milestone branch → handleAgentEnd → auto-commit on 
 
 4. Update README suggested `.gitignore` section
 
-5. Remove `smartStage()` force-add of `GSD_DURABLE_PATHS` — no longer needed since `.gitignore` doesn't block them
+5. Remove `smartStage()` force-add of `SF_DURABLE_PATHS` — no longer needed since `.gitignore` doesn't block them
 
 **Verification:** `git status` shows planning artifacts tracked, runtime files untracked. `git worktree add` on a new worktree has correct `.gsd/milestones/` state.
 
@@ -221,7 +221,7 @@ The function becomes:
 
 No conflict categorization. No runtime file stripping (runtime files are gitignored, not in the merge). No `.gsd/` special handling.
 
-If squash-merge conflicts (parallel milestone edge case): stop auto-mode with clear error, user resolves manually or GSD dispatches a one-time resolution session.
+If squash-merge conflicts (parallel milestone edge case): stop auto-mode with clear error, user resolves manually or SF dispatches a one-time resolution session.
 
 **Verification:** Complete a full milestone in auto-mode. `main` receives one squash commit with all code and planning artifacts.
 
@@ -257,7 +257,7 @@ If squash-merge conflicts (parallel milestone edge case): stop auto-mode with cl
 1. State derivation (`deriveState()`) continues to read `gsd/M001/S01` branch naming for legacy detection
 2. On first run after upgrade:
    - Detect existing slice branches
-   - Notify user: "GSD no longer creates slice branches. Existing branches are preserved but new work commits directly to the milestone branch."
+   - Notify user: "SF no longer creates slice branches. Existing branches are preserved but new work commits directly to the milestone branch."
    - No forced migration — legacy branches are read-only context
 3. Doctor check: `legacy_slice_branches` — informational, not auto-fix
 4. Update `shouldUseWorktreeIsolation()` preference handling:
@@ -265,7 +265,7 @@ If squash-merge conflicts (parallel milestone edge case): stop auto-mode with cl
    - `git.isolation: "branch"` → warning, treated as worktree
    - Remove preference UI for isolation mode
 
-**Verification:** Open a project with existing `gsd/M001/S01` branches. GSD reads state correctly, new work commits on milestone branch without slice branches.
+**Verification:** Open a project with existing `gsd/M001/S01` branches. SF reads state correctly, new work commits on milestone branch without slice branches.
 
 ## Stress Test Results
 
@@ -315,7 +315,7 @@ git rebase main
 # Then squash-merge
 ```
 
-This is standard git workflow. GSD can automate the rebase step as a pre-merge check.
+This is standard git workflow. SF can automate the rebase step as a pre-merge check.
 
 ### Edge Case: Agent Crash Mid-Commit
 
@@ -380,4 +380,4 @@ Resolution: Worktree is on `milestone/M001` branch, independent of `main`. Manua
 
 2. **Should `worktrees/` move outside `.gsd/`?** Having worktrees inside `.gsd/` creates a nesting-doll pattern (worktree contains `.gsd/` which is inside `.gsd/worktrees/`). Relocating to `.gsd-worktrees/` or `~/.gsd/worktrees/<repo-hash>/` is cleaner but changes the filesystem layout. Recommendation: defer, address separately if it causes issues.
 
-3. **Pre-flight rebase automation?** Before milestone→main squash-merge, should GSD automatically `git rebase main`? Gemini recommends yes. Risk: rebase can fail with conflicts, adding a code path. Recommendation: implement as a doctor check ("milestone branch is behind main by N commits") with manual resolution, automate later if needed.
+3. **Pre-flight rebase automation?** Before milestone→main squash-merge, should SF automatically `git rebase main`? Gemini recommends yes. Risk: rebase can fail with conflicts, adding a code path. Recommendation: implement as a doctor check ("milestone branch is behind main by N commits") with manual resolution, automate later if needed.

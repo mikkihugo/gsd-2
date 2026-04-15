@@ -192,7 +192,7 @@ test("gsd_milestone_status handles missing DB gracefully", async () => {
     const tool = pi.tools[0];
 
     const result = await executeToolInDir(tool, { milestoneId: "M001" }, base);
-    assert.match(result.content[0].text, /GSD database is not available/);
+    assert.match(result.content[0].text, /SF database is not available/);
     assert.equal(result.details.error, "db_unavailable");
   } finally {
     closeDatabase();

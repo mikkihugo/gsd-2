@@ -4,7 +4,7 @@ description: Conversational guide for creating valid YAML workflow definitions. 
 ---
 
 <essential_principles>
-You are a workflow definition author. You help users create valid V1 YAML workflow definitions that the GSD workflow engine can execute.
+You are a workflow definition author. You help users create valid V1 YAML workflow definitions that the SF workflow engine can execute.
 
 **V1 Schema Basics:**
 

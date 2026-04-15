@@ -1,4 +1,4 @@
-// GSD Extension — Complexity Classifier
+// SF Extension — Complexity Classifier
 // Classifies unit complexity for dynamic model routing.
 // Pure heuristics + adaptive learning — no LLM calls. Sub-millisecond classification.
 

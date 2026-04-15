@@ -2,7 +2,7 @@
 
 *引入于 v2.19.0*
 
-Captures 允许你在自动模式执行过程中随手记录想法，而不必打断当前流程。你可以把新想法、bug 或范围变更记录下来，让 GSD 在 tasks 之间的自然间隙中进行分流处理。
+Captures 允许你在自动模式执行过程中随手记录想法，而不必打断当前流程。你可以把新想法、bug 或范围变更记录下来，让 SF 在 tasks 之间的自然间隙中进行分流处理。
 
 ## 快速开始
 
@@ -24,7 +24,7 @@ capture → triage → confirm → resolve → resume
 ```
 
 1. **Capture**：`/gsd capture "thought"` 会带着时间戳和唯一 ID 追加到 `.gsd/CAPTURES.md`
-2. **Triage**：在 tasks 之间的自然衔接点（`handleAgentEnd` 中），GSD 会检测待处理 capture 并进行分类
+2. **Triage**：在 tasks 之间的自然衔接点（`handleAgentEnd` 中），SF 会检测待处理 capture 并进行分类
 3. **Confirm**：向用户展示建议的处理方式，由用户确认或调整
 4. **Resolve**：应用该处理方案（插入 task、触发重规划、延期等）
 5. **Resume**：自动模式继续运行

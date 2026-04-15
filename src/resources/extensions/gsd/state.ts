@@ -1,4 +1,4 @@
-// GSD Extension — State Derivation
+// SF Extension — State Derivation
 // DB-primary state derivation with filesystem fallback for unmigrated projects.
 // Pure TypeScript, zero Pi dependencies.
 
@@ -170,7 +170,7 @@ export function invalidateStateCache(): void {
  */
 export async function getActiveMilestoneId(basePath: string): Promise<string | null> {
   // Parallel worker isolation
-  const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+  const milestoneLock = process.env.SF_MILESTONE_LOCK;
   if (milestoneLock) {
     const milestoneIds = findMilestoneIds(basePath);
     if (!milestoneIds.includes(milestoneLock)) return null;
@@ -222,7 +222,7 @@ export async function getActiveMilestoneId(basePath: string): Promise<string | n
 }
 
 /**
- * Reconstruct GSD state from DB (primary) or filesystem (fallback).
+ * Reconstruct SF state from DB (primary) or filesystem (fallback).
  * STATE.md is a rendered cache of this output.
  *
  * When DB is available, queries milestone/slice/task tables directly.
@@ -316,7 +316,7 @@ function extractContextTitle(content: string | null, fallback: string): string {
 const isStatusDone = isClosedStatus;
 
 /**
- * Derive GSD state from the milestones/slices/tasks DB tables.
+ * Derive SF state from the milestones/slices/tasks DB tables.
  * Flag files (PARKED, VALIDATION, CONTINUE, REPLAN, REPLAN-TRIGGER, CONTEXT-DRAFT)
  * are still checked on the filesystem since they aren't in DB tables.
  * Requirements also stay file-based via parseRequirementCounts().
@@ -636,13 +636,13 @@ function resolveSliceDependencies(activeMilestoneSlices: SliceRow[]): { activeSl
     activeMilestoneSlices.filter(s => isStatusDone(s.status)).map(s => s.id)
   );
 
-  const sliceLock = process.env.GSD_SLICE_LOCK;
+  const sliceLock = process.env.SF_SLICE_LOCK;
   if (sliceLock) {
     const lockedSlice = activeMilestoneSlices.find(s => s.id === sliceLock);
     if (lockedSlice) {
       return { activeSlice: { id: lockedSlice.id, title: lockedSlice.title }, activeSliceRow: lockedSlice };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
+      logWarning("state", `SF_SLICE_LOCK=${sliceLock} not found in active slices — worker has no assigned work`);
       return { activeSlice: null, activeSliceRow: null };
     }
   }
@@ -785,7 +785,7 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
   allMilestones.length = 0;
   for (const id of sortedIds) allMilestones.push(byId.get(id)!);
 
-  const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+  const milestoneLock = process.env.SF_MILESTONE_LOCK;
   const milestones = milestoneLock
     ? allMilestones.filter(m => m.id === milestoneLock)
     : allMilestones;
@@ -852,10 +852,10 @@ export async function deriveStateFromDb(basePath: string): Promise<GSDState> {
   const activeSliceContext = resolveSliceDependencies(activeMilestoneSlices);
   if (!activeSliceContext.activeSlice) {
     // If locked slice wasn't found, it returns null but logs warning, we need to return 'blocked'
-    if (process.env.GSD_SLICE_LOCK) {
+    if (process.env.SF_SLICE_LOCK) {
       return {
         activeMilestone, activeSlice: null, activeTask: null,
-        phase: 'blocked', recentDecisions: [], blockers: [`GSD_SLICE_LOCK=${process.env.GSD_SLICE_LOCK} not found in active milestone slices`],
+        phase: 'blocked', recentDecisions: [], blockers: [`SF_SLICE_LOCK=${process.env.SF_SLICE_LOCK} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry, requirements,
         progress: { milestones: milestoneProgress, slices: sliceProgress },
@@ -1006,12 +1006,12 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
   const milestoneIds = sortByQueueOrder(diskIds, customOrder);
 
   // ── Parallel worker isolation ──────────────────────────────────────────
-  // When GSD_MILESTONE_LOCK is set, this process is a parallel worker
+  // When SF_MILESTONE_LOCK is set, this process is a parallel worker
   // scoped to a single milestone. Filter the milestone list so this worker
   // only sees its assigned milestone (all others are treated as if they
   // don't exist). This gives each worker complete isolation without
   // modifying any other state derivation logic.
-  const milestoneLock = process.env.GSD_MILESTONE_LOCK;
+  const milestoneLock = process.env.SF_MILESTONE_LOCK;
   if (milestoneLock && milestoneIds.includes(milestoneLock)) {
     milestoneIds.length = 0;
     milestoneIds.push(milestoneLock);
@@ -1449,21 +1449,21 @@ export async function _deriveStateImpl(basePath: string): Promise<GSDState> {
   let activeSlice: ActiveRef | null = null;
 
   // ── Slice-level parallel worker isolation ─────────────────────────────
-  // When GSD_SLICE_LOCK is set, override activeSlice to only the locked slice.
-  const sliceLockLegacy = process.env.GSD_SLICE_LOCK;
+  // When SF_SLICE_LOCK is set, override activeSlice to only the locked slice.
+  const sliceLockLegacy = process.env.SF_SLICE_LOCK;
   if (sliceLockLegacy) {
     const lockedSlice = activeRoadmap.slices.find(s => s.id === sliceLockLegacy);
     if (lockedSlice) {
       activeSlice = { id: lockedSlice.id, title: lockedSlice.title };
     } else {
-      logWarning("state", `GSD_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
+      logWarning("state", `SF_SLICE_LOCK=${sliceLockLegacy} not found in active slices — worker has no assigned work`);
       return {
         activeMilestone,
         activeSlice: null,
         activeTask: null,
         phase: 'blocked',
         recentDecisions: [],
-        blockers: [`GSD_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
+        blockers: [`SF_SLICE_LOCK=${sliceLockLegacy} not found in active milestone slices`],
         nextAction: 'Slice lock references a non-existent slice — check orchestrator dispatch.',
         registry,
         requirements,

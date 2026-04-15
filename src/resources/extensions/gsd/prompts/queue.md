@@ -39,7 +39,7 @@ Don't go deep — just enough that your next question reflects what's actually t
 
 **Then use ask_user_questions** to dig into gray areas — scope boundaries, proof expectations, integration choices, tech preferences when they materially matter, and what's in vs out. Ask 1-3 questions per round, then wait for the user's response before asking the next round.
 
-If a `GSD Skill Preferences` block is present in system context, use it to decide which skills to load and follow during discuss/planning work, but do not let it override the required discuss flow or artifact requirements.
+If a `SF Skill Preferences` block is present in system context, use it to decide which skills to load and follow during discuss/planning work, but do not let it override the required discuss flow or artifact requirements.
 
 **Self-regulate:** Do **not** ask a meta "ready to queue?" question after every round. Keep going until you have enough depth to write the context well, then use a single wrap-up prompt if needed. Do not infer permission to continue from silence or from partial prior answers — each new round requires an actual user response.
 

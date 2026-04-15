@@ -29,11 +29,11 @@ function defaults(): DaemonConfig {
 
 /**
  * Resolve the config file path.
- * Priority: explicit CLI arg → GSD_DAEMON_CONFIG env → ~/.gsd/daemon.yaml
+ * Priority: explicit CLI arg → SF_DAEMON_CONFIG env → ~/.gsd/daemon.yaml
  */
 export function resolveConfigPath(cliPath?: string): string {
   if (cliPath) return expandTilde(cliPath);
-  const envPath = process.env['GSD_DAEMON_CONFIG'];
+  const envPath = process.env['SF_DAEMON_CONFIG'];
   if (envPath) return expandTilde(envPath);
   return resolve(homedir(), '.gsd', 'daemon.yaml');
 }

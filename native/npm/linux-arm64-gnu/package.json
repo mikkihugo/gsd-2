@@ -1,7 +1,7 @@
 {
   "name": "@singularity-forge/engine-linux-arm64-gnu",
   "version": "2.74.0",
-  "description": "GSD native engine binary for Linux ARM64 (glibc)",
+  "description": "SF native engine binary for Linux ARM64 (glibc)",
   "os": [
     "linux"
   ],

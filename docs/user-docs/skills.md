@@ -1,12 +1,12 @@
 # Skills
 
-Skills are specialized instruction sets that GSD loads when the task matches. They provide domain-specific guidance for the LLM — coding patterns, framework idioms, testing strategies, and tool usage.
+Skills are specialized instruction sets that SF loads when the task matches. They provide domain-specific guidance for the LLM — coding patterns, framework idioms, testing strategies, and tool usage.
 
-Skills follow the open [Agent Skills standard](https://agentskills.io/) and are **not GSD-specific** — they work with Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, and 40+ other agents.
+Skills follow the open [Agent Skills standard](https://agentskills.io/) and are **not SF-specific** — they work with Claude Code, OpenAI Codex, Cursor, GitHub Copilot, Windsurf, and 40+ other agents.
 
 ## Skill Directories
 
-GSD reads skills from two locations, in priority order:
+SF reads skills from two locations, in priority order:
 
 | Location                          | Scope   | Description                                              |
 |-----------------------------------|---------|----------------------------------------------------------|
@@ -15,7 +15,7 @@ GSD reads skills from two locations, in priority order:
 
 Global skills take precedence over project skills when names collide.
 
-> **Migration from `~/.gsd/agent/skills/`:** On first launch after upgrading, GSD automatically copies skills from the legacy `~/.gsd/agent/skills/` directory to `~/.agents/skills/`. The old directory is preserved for backward compatibility.
+> **Migration from `~/.gsd/agent/skills/`:** On first launch after upgrading, SF automatically copies skills from the legacy `~/.gsd/agent/skills/` directory to `~/.agents/skills/`. The old directory is preserved for backward compatibility.
 
 ## Installing Skills
 
@@ -40,7 +40,7 @@ npx skills update
 
 ### Onboarding Catalog
 
-During `gsd init`, GSD detects the project's tech stack and recommends relevant skill packs. For brownfield projects, detection is automatic; for greenfield projects, the user picks a tech stack.
+During `gsd init`, SF detects the project's tech stack and recommends relevant skill packs. For brownfield projects, detection is automatic; for greenfield projects, the user picks a tech stack.
 
 The curated catalog is maintained in `src/resources/extensions/gsd/skill-catalog.ts`. Each entry maps a tech stack to a skills.sh repo and specific skill names.
 
@@ -84,7 +84,7 @@ The skill catalog lives in [`src/resources/extensions/gsd/skill-catalog.ts`](../
 
 ## Skill Discovery
 
-The `skill_discovery` preference controls how GSD finds skills during auto mode:
+The `skill_discovery` preference controls how SF finds skills during auto mode:
 
 | Mode | Behavior |
 |------|----------|
@@ -147,7 +147,7 @@ Project-local skills can be committed to version control so team members share t
 
 ## Skill Lifecycle Management
 
-GSD tracks skill performance across auto-mode sessions and surfaces health data to help you maintain skill quality.
+SF tracks skill performance across auto-mode sessions and surfaces health data to help you maintain skill quality.
 
 ### Skill Telemetry
 
@@ -183,6 +183,6 @@ Stale skills are excluded from automatic matching but remain invokable explicitl
 
 ### Heal-Skill (Post-Unit Analysis)
 
-When configured as a post-unit hook, GSD can analyze whether the agent deviated from a skill's instructions during execution. If significant drift is detected (outdated API patterns, incorrect guidance), it writes proposed fixes to `.gsd/skill-review-queue.md` for human review.
+When configured as a post-unit hook, SF can analyze whether the agent deviated from a skill's instructions during execution. If significant drift is detected (outdated API patterns, incorrect guidance), it writes proposed fixes to `.gsd/skill-review-queue.md` for human review.
 
 Key design principle: skills are **never auto-modified**. Research shows curated skills outperform auto-generated ones significantly, so the human review step is critical.

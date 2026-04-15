@@ -1,4 +1,4 @@
-You are executing a GSD quick task — a lightweight, focused unit of work outside the milestone/slice ceremony.
+You are executing a SF quick task — a lightweight, focused unit of work outside the milestone/slice ceremony.
 
 ## QUICK TASK: {{description}}
 
@@ -8,7 +8,7 @@ You are executing a GSD quick task — a lightweight, focused unit of work outsi
 ## Instructions
 
 1. Read the task description above carefully. This is a focused, self-contained task.
-2. If a `GSD Skill Preferences` block is present in system context, follow it.
+2. If a `SF Skill Preferences` block is present in system context, follow it.
 3. Read relevant code before modifying. Understand existing patterns.
 4. Execute the task completely:
    - Build the real thing, not stubs or placeholders.

@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { loadRegistry } from "../workflow-templates.js";
 import { resolveProjectRoot } from "../worktree.js";
 
-const gsdHome = process.env.GSD_HOME || join(homedir(), ".gsd");
+const gsdHome = process.env.SF_HOME || join(homedir(), ".gsd");
 
 export interface GsdCommandDefinition {
   cmd: string;
@@ -14,8 +14,8 @@ export interface GsdCommandDefinition {
 
 type CompletionMap = Record<string, readonly GsdCommandDefinition[]>;
 
-export const GSD_COMMAND_DESCRIPTION =
-  "GSD — Get Shit Done: /gsd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|parallel|cmux|park|unpark|init|setup|inspect|extensions|update|fast|mcp|rethink|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests";
+export const SF_COMMAND_DESCRIPTION =
+  "SF — Singularity Forge: /gsd help|start|templates|next|auto|stop|pause|status|widget|visualize|queue|quick|discuss|capture|triage|dispatch|history|undo|undo-task|reset-slice|rate|skip|export|cleanup|model|mode|prefs|config|keys|hooks|run-hook|skill-health|doctor|logs|forensics|changelog|migrate|remote|steer|knowledge|new-milestone|parallel|cmux|park|unpark|init|setup|inspect|extensions|update|fast|mcp|rethink|codebase|notifications|ship|do|session-report|backlog|pr-branch|add-tests";
 
 export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "help", desc: "Categorized command reference with descriptions" },
@@ -65,7 +65,7 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "cmux", desc: "Manage cmux integration (status, sidebar, notifications, splits)" },
   { cmd: "park", desc: "Park a milestone — skip without deleting" },
   { cmd: "unpark", desc: "Reactivate a parked milestone" },
-  { cmd: "update", desc: "Update GSD to the latest version" },
+  { cmd: "update", desc: "Update SF to the latest version" },
   { cmd: "start", desc: "Start a workflow template (bugfix, spike, feature, etc.)" },
   { cmd: "templates", desc: "List available workflow templates" },
   { cmd: "extensions", desc: "Manage extensions (list, enable, disable, info)" },
@@ -75,7 +75,7 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "workflow", desc: "Custom workflow lifecycle (new, run, list, validate, pause, resume)" },
   { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.gsd/CODEBASE.md)" },
   { cmd: "ship", desc: "Create PR from milestone artifacts and open for review" },
-  { cmd: "do", desc: "Route freeform text to the right GSD command" },
+  { cmd: "do", desc: "Route freeform text to the right SF command" },
   { cmd: "session-report", desc: "Session cost, tokens, and work summary" },
   { cmd: "backlog", desc: "Manage backlog items (add, promote, remove, list)" },
   { cmd: "pr-branch", desc: "Create clean PR branch filtering .gsd/ commits" },
@@ -184,7 +184,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
     { cmd: "refactor", desc: "Inventory, plan waves, migrate, verify" },
     { cmd: "security-audit", desc: "Scan, triage, remediate, re-scan" },
     { cmd: "dep-upgrade", desc: "Assess, upgrade, fix breaks, verify" },
-    { cmd: "full-project", desc: "Complete GSD workflow with full ceremony" },
+    { cmd: "full-project", desc: "Complete SF workflow with full ceremony" },
     { cmd: "resume", desc: "Resume an in-progress workflow" },
     { cmd: "--list", desc: "List all available templates" },
     { cmd: "--dry-run", desc: "Preview workflow without executing" },
@@ -207,7 +207,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
   mcp: [
     { cmd: "status", desc: "Show all MCP server statuses (default)" },
     { cmd: "check", desc: "Detailed status for a specific server" },
-    { cmd: "init", desc: "Write .mcp.json for the local GSD workflow MCP server" },
+    { cmd: "init", desc: "Write .mcp.json for the local SF workflow MCP server" },
   ],
   doctor: [
     { cmd: "fix", desc: "Auto-fix detected issues" },

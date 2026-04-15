@@ -1,9 +1,9 @@
 import { execFileSync } from "child_process";
 
-const binary = process.env.GSD_SMOKE_BINARY || "npx";
-const args = process.env.GSD_SMOKE_BINARY
+const binary = process.env.SF_SMOKE_BINARY || "npx";
+const args = process.env.SF_SMOKE_BINARY
   ? ["--help"]
-  : ["gsd-pi", "--help"];
+  : ["sf-run", "--help"];
 
 const output = execFileSync(binary, args, {
   encoding: "utf8",

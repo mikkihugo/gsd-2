@@ -14,19 +14,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const gsdDir = join(__dirname, "..");
 
 describe("slice-parallel-orchestrator structural tests", () => {
-  it("orchestrator uses GSD_SLICE_LOCK env var", () => {
+  it("orchestrator uses SF_SLICE_LOCK env var", () => {
     const source = readFileSync(join(gsdDir, "slice-parallel-orchestrator.ts"), "utf-8");
     assert.ok(
-      source.includes("GSD_SLICE_LOCK"),
-      "Orchestrator must use GSD_SLICE_LOCK env var to isolate slice workers",
+      source.includes("SF_SLICE_LOCK"),
+      "Orchestrator must use SF_SLICE_LOCK env var to isolate slice workers",
     );
   });
 
-  it("orchestrator sets GSD_PARALLEL_WORKER=1 to prevent nesting", () => {
+  it("orchestrator sets SF_PARALLEL_WORKER=1 to prevent nesting", () => {
     const source = readFileSync(join(gsdDir, "slice-parallel-orchestrator.ts"), "utf-8");
     assert.ok(
-      source.includes("GSD_PARALLEL_WORKER"),
-      "Orchestrator must set GSD_PARALLEL_WORKER to prevent nested parallel",
+      source.includes("SF_PARALLEL_WORKER"),
+      "Orchestrator must set SF_PARALLEL_WORKER to prevent nested parallel",
     );
   });
 
@@ -39,11 +39,11 @@ describe("slice-parallel-orchestrator structural tests", () => {
     );
   });
 
-  it("orchestrator imports GSD_MILESTONE_LOCK for milestone isolation", () => {
+  it("orchestrator imports SF_MILESTONE_LOCK for milestone isolation", () => {
     const source = readFileSync(join(gsdDir, "slice-parallel-orchestrator.ts"), "utf-8");
     assert.ok(
-      source.includes("GSD_MILESTONE_LOCK"),
-      "Orchestrator must also pass GSD_MILESTONE_LOCK for milestone context",
+      source.includes("SF_MILESTONE_LOCK"),
+      "Orchestrator must also pass SF_MILESTONE_LOCK for milestone context",
     );
   });
 });
@@ -65,11 +65,11 @@ describe("slice_parallel preference gating", () => {
     );
   });
 
-  it("state.ts checks GSD_SLICE_LOCK for slice isolation", () => {
+  it("state.ts checks SF_SLICE_LOCK for slice isolation", () => {
     const source = readFileSync(join(gsdDir, "state.ts"), "utf-8");
     assert.ok(
-      source.includes("GSD_SLICE_LOCK"),
-      "State derivation should check GSD_SLICE_LOCK for slice-level parallel isolation",
+      source.includes("SF_SLICE_LOCK"),
+      "State derivation should check SF_SLICE_LOCK for slice-level parallel isolation",
     );
   });
 

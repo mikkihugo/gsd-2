@@ -1,12 +1,12 @@
 # Working in Teams
 
-GSD supports multi-user workflows where several developers work on the same repository concurrently.
+SF supports multi-user workflows where several developers work on the same repository concurrently.
 
 ## Setup
 
 ### 1. Set Team Mode
 
-The simplest way to configure GSD for team use is to set `mode: team` in your project preferences. This enables unique milestone IDs, push branches, and pre-merge checks in one setting:
+The simplest way to configure SF for team use is to set `mode: team` in your project preferences. This enables unique milestone IDs, push branches, and pre-merge checks in one setting:
 
 ```yaml
 # .gsd/PREFERENCES.md (project-level, committed to git)
@@ -25,7 +25,7 @@ Alternatively, you can configure each setting individually without using a mode 
 Share planning artifacts (milestones, roadmaps, decisions) while keeping runtime files local:
 
 ```bash
-# ── GSD: Runtime / Ephemeral (per-developer, per-session) ──────
+# ── SF: Runtime / Ephemeral (per-developer, per-session) ──────
 .gsd/auto.lock
 .gsd/completed-units.json
 .gsd/STATE.md
@@ -51,19 +51,19 @@ Share planning artifacts (milestones, roadmaps, decisions) while keeping runtime
 
 ```bash
 git add .gsd/PREFERENCES.md
-git commit -m "chore: enable GSD team workflow"
+git commit -m "chore: enable SF team workflow"
 ```
 
 ## `commit_docs: false`
 
-For teams where only some members use GSD, or when company policy requires a clean repo:
+For teams where only some members use SF, or when company policy requires a clean repo:
 
 ```yaml
 git:
   commit_docs: false
 ```
 
-This adds `.gsd/` to `.gitignore` entirely and keeps all artifacts local. The developer gets the benefits of structured planning without affecting teammates who don't use GSD.
+This adds `.gsd/` to `.gitignore` entirely and keeps all artifacts local. The developer gets the benefits of structured planning without affecting teammates who don't use SF.
 
 ## Migrating an Existing Project
 
@@ -98,4 +98,4 @@ depends_on: [M001-eh88as]
 ---
 ```
 
-GSD enforces that dependent milestones complete before starting downstream work.
+SF enforces that dependent milestones complete before starting downstream work.

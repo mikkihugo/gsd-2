@@ -1,6 +1,6 @@
 ---
 title: "Auto mode"
-description: "GSD's autonomous execution engine — run /gsd auto, walk away, come back to built software with clean git history."
+description: "SF's autonomous execution engine — run /gsd auto, walk away, come back to built software with clean git history."
 ---
 
 Auto mode is a **state machine driven by files on disk**. It reads `.gsd/STATE.md`, determines the next unit of work, creates a fresh agent session with pre-loaded context, and lets the LLM execute. When the LLM finishes, auto mode reads disk state again and dispatches the next unit.
@@ -40,7 +40,7 @@ The amount of context inlined is controlled by your [token profile](/guides/toke
 
 ### Git isolation
 
-GSD isolates milestone work using one of three modes (configured via `git.isolation` in preferences):
+SF isolates milestone work using one of three modes (configured via `git.isolation` in preferences):
 
 - **`none`** (default) — work happens on your current branch. No isolation overhead.
 - **`worktree`** — each milestone runs in its own git worktree. Squash-merged to main on completion.
@@ -64,7 +64,7 @@ A lock file tracks the current unit. If the session dies, the next `/gsd auto` s
 
 ### Stuck detection
 
-A sliding-window analysis detects stuck loops — catching cycles like A→B→A→B as well as single-unit repeats. On detection, GSD retries once with a diagnostic prompt. If it fails again, auto mode stops with the exact file it expected.
+A sliding-window analysis detects stuck loops — catching cycles like A→B→A→B as well as single-unit repeats. On detection, SF retries once with a diagnostic prompt. If it fails again, auto mode stops with the exact file it expected.
 
 ### Timeout supervision
 
@@ -85,7 +85,7 @@ auto_supervisor:
 
 ### Incremental memory
 
-GSD maintains a `KNOWLEDGE.md` file — an append-only register of project-specific rules, patterns, and lessons learned. The agent reads it at the start of every unit and appends when discovering recurring issues or non-obvious patterns.
+SF maintains a `KNOWLEDGE.md` file — an append-only register of project-specific rules, patterns, and lessons learned. The agent reads it at the start of every unit and appends when discovering recurring issues or non-obvious patterns.
 
 ### Verification enforcement
 
@@ -101,7 +101,7 @@ Failures trigger auto-fix retries — the agent sees the output and attempts to 
 
 ### HTML reports
 
-After milestone completion, GSD auto-generates a self-contained HTML report with progress tree, dependency graph, cost/token metrics, execution timeline, and changelog.
+After milestone completion, SF auto-generates a self-contained HTML report with progress tree, dependency graph, cost/token metrics, execution timeline, and changelog.
 
 ```yaml
 auto_report: true    # enabled by default
@@ -111,7 +111,7 @@ Generate manually with `/gsd export --html`, or for all milestones with `/gsd ex
 
 ### Reactive task execution
 
-When `reactive_execution: true` is set, GSD derives a dependency graph from IO annotations in task plans. Tasks that don't conflict are dispatched in parallel via subagents.
+When `reactive_execution: true` is set, SF derives a dependency graph from IO annotations in task plans. Tasks that don't conflict are dispatched in parallel via subagents.
 
 ```yaml
 reactive_execution: true    # disabled by default

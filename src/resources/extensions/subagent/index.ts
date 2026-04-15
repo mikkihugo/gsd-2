@@ -353,7 +353,7 @@ async function runSingleAgent(
 		};
 	}
 
-	// GSD phase guard: block agents that conflict with the active GSD phase
+	// SF phase guard: block agents that conflict with the active SF phase
 	if (agent.conflictsWith && agent.conflictsWith.length > 0) {
 		const activePhase = getCurrentPhase();
 		if (activePhase && agent.conflictsWith.includes(activePhase)) {
@@ -363,7 +363,7 @@ async function runSingleAgent(
 				task,
 				exitCode: 1,
 				messages: [],
-				stderr: `Agent "${agentName}" is blocked: it conflicts with the active GSD phase "${activePhase}". Use the built-in GSD workflow instead.`,
+				stderr: `Agent "${agentName}" is blocked: it conflicts with the active SF phase "${activePhase}". Use the built-in SF workflow instead.`,
 				usage: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, contextTokens: 0, turns: 0 },
 				step,
 			};
@@ -404,11 +404,11 @@ async function runSingleAgent(
 		let wasAborted = false;
 
 		const exitCode = await new Promise<number>((resolve) => {
-			const bundledPaths = (process.env.GSD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map(s => s.trim()).filter(Boolean);
+			const bundledPaths = (process.env.SF_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map(s => s.trim()).filter(Boolean);
 			const extensionArgs = bundledPaths.flatMap(p => ["--extension", p]);
 			const proc = spawn(
 				process.execPath,
-				[process.env.GSD_BIN_PATH!, ...extensionArgs, ...args],
+				[process.env.SF_BIN_PATH!, ...extensionArgs, ...args],
 				{ cwd: cwd ?? defaultCwd, shell: false, stdio: ["ignore", "pipe", "pipe"] },
 			);
 			liveSubagentProcesses.add(proc);
@@ -531,9 +531,9 @@ async function runSingleAgentInCmuxSplit(
 			return runSingleAgent(defaultCwd, agents, agentName, task, cwd, step, signal, onUpdate, makeDetails);
 		}
 
-		const bundledPaths = (process.env.GSD_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map((s) => s.trim()).filter(Boolean);
+		const bundledPaths = (process.env.SF_BUNDLED_EXTENSION_PATHS ?? "").split(path.delimiter).map((s) => s.trim()).filter(Boolean);
 		const extensionArgs = bundledPaths.flatMap((p) => ["--extension", p]);
-		const processArgs = [process.env.GSD_BIN_PATH!, ...extensionArgs, ...buildSubagentProcessArgs(agent, task, tmpPromptPath)];
+		const processArgs = [process.env.SF_BIN_PATH!, ...extensionArgs, ...buildSubagentProcessArgs(agent, task, tmpPromptPath)];
 		// Normalize all paths to forward slashes before embedding in bash strings.
 		// On Windows, backslashes are interpreted as escape characters by bash,
 		// mangling paths like C:\Users\user into C:Useruser (#1436).

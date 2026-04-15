@@ -12,7 +12,7 @@ const gsdRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
 const firstArg = args[0]
 
-// Read package.json once — reused for version, banner, and GSD_VERSION below
+// Read package.json once — reused for version, banner, and SF_VERSION below
 let gsdVersion = '0.0.0'
 try {
   const pkg = JSON.parse(readFileSync(join(gsdRoot, 'package.json'), 'utf-8'))
@@ -91,7 +91,7 @@ process.env.PI_SKIP_VERSION_CHECK = '1'  // SF runs its own update check in cli.
 process.title = 'sf'
 
 // Print branded banner on first launch (before ~/.gsd/ exists).
-// Set GSD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
+// Set SF_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
 if (!existsSync(appRoot)) {
   const cyan  = '\x1b[36m'
   const green = '\x1b[32m'
@@ -104,19 +104,19 @@ if (!existsSync(appRoot)) {
     `  Singularity Forge ${dim}v${gsdVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
-  process.env.GSD_FIRST_RUN_BANNER = '1'
+  process.env.SF_FIRST_RUN_BANNER = '1'
 }
 
-// GSD_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
-process.env.GSD_CODING_AGENT_DIR = agentDir
+// SF_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
+process.env.SF_CODING_AGENT_DIR = agentDir
 
-// GSD_PKG_ROOT — absolute path to gsd-pi package root. Used by deployed extensions
+// SF_PKG_ROOT — absolute path to sf-run package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
 // in the package tree, not in the deployed ~/.gsd/agent/ tree.
-process.env.GSD_PKG_ROOT = gsdRoot
+process.env.SF_PKG_ROOT = gsdRoot
 
 // RTK environment — make ~/.gsd/agent/bin visible to all child-process paths,
-// not just the bash tool, and force-disable RTK telemetry for GSD-managed use.
+// not just the bash tool, and force-disable RTK telemetry for SF-managed use.
 applyRtkProcessEnv(process.env)
 
 // NODE_PATH — make gsd's own node_modules available to extensions loaded via jiti.
@@ -133,24 +133,24 @@ process.env.NODE_PATH = [gsdNodeModules, process.env.NODE_PATH]
 const { Module } = await import('module');
 (Module as any)._initPaths?.()
 
-// GSD_VERSION — expose package version so extensions can display it
-process.env.GSD_VERSION = gsdVersion
+// SF_VERSION — expose package version so extensions can display it
+process.env.SF_VERSION = gsdVersion
 
-// GSD_BIN_PATH — absolute path to this loader (dist/loader.js), used by patched subagent
+// SF_BIN_PATH — absolute path to this loader (dist/loader.js), used by patched subagent
 // to spawn gsd instead of pi when dispatching workflow tasks.
 // Respect a pre-set value so a source-mode wrapper (e.g. bin/gsd-from-source) can
 // advertise the executable shim instead of the .ts loader path (which spawn() can't exec).
-process.env.GSD_BIN_PATH = process.env.GSD_BIN_PATH || process.argv[1]
+process.env.SF_BIN_PATH = process.env.SF_BIN_PATH || process.argv[1]
 
-// GSD_WORKFLOW_PATH — absolute path to bundled GSD-WORKFLOW.md, used by patched gsd extension
+// SF_WORKFLOW_PATH — absolute path to bundled SF-WORKFLOW.md, used by patched gsd extension
 // when dispatching workflow prompts. Prefers dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree) — see resource-loader.ts for rationale.
 const distRes = join(gsdRoot, 'dist', 'resources')
 const srcRes = join(gsdRoot, 'src', 'resources')
 const resourcesDir = existsSync(distRes) ? distRes : srcRes
-process.env.GSD_WORKFLOW_PATH = join(resourcesDir, 'GSD-WORKFLOW.md')
+process.env.SF_WORKFLOW_PATH = join(resourcesDir, 'SF-WORKFLOW.md')
 
-// GSD_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
+// SF_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
 // Uses the shared discoverExtensionEntryPaths() to scan the bundled resources
 // directory, then remaps discovered paths to agentDir (~/.gsd/agent/extensions/)
 // where initResources() will sync them.
@@ -165,10 +165,10 @@ const discoveredExtensionPaths = discoverExtensionEntryPaths(bundledExtDir)
     return isExtensionEnabled(registry, manifest.id)
   })
 
-process.env.GSD_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
+process.env.SF_BUNDLED_EXTENSION_PATHS = serializeBundledExtensionPaths(discoveredExtensionPaths)
 
 // Respect HTTP_PROXY / HTTPS_PROXY / NO_PROXY env vars for all outbound requests.
-// pi-coding-agent's cli.ts sets this, but GSD bypasses that entry point — so we
+// pi-coding-agent's cli.ts sets this, but SF bypasses that entry point — so we
 // must set it here before any SDK clients are created.
 // Lazy-load undici (~200ms) only when proxy env vars are actually set.
 if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy || process.env.https_proxy) {
@@ -209,13 +209,13 @@ const missingPackages = criticalPackages.filter(pkg => !existsSync(join(gsdScope
 if (missingPackages.length > 0) {
   const missing = missingPackages.map(p => `@sf-run/${p}`).join(', ')
   process.stderr.write(
-    `\nError: GSD installation is broken — missing packages: ${missing}\n\n` +
+    `\nError: SF installation is broken — missing packages: ${missing}\n\n` +
     `This is usually caused by one of:\n` +
-    `  • An outdated version installed from npm (run: npm install -g gsd-pi@latest)\n` +
+    `  • An outdated version installed from npm (run: npm install -g sf-run@latest)\n` +
     `  • The packages/ directory was excluded from the installed tarball\n` +
     `  • A filesystem error prevented linking or copying the workspace packages\n\n` +
     `Fix it by reinstalling:\n\n` +
-    `  npm install -g gsd-pi@latest\n\n` +
+    `  npm install -g sf-run@latest\n\n` +
     `If the issue persists, please open an issue at:\n` +
     `  https://github.com/singularity-forge/sf-run/issues\n`
   )

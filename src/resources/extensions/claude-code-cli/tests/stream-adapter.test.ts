@@ -453,18 +453,18 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 	test("buildSdkOptions includes workflow MCP server config when env is set", () => {
 		const prev = {
-			GSD_WORKFLOW_MCP_COMMAND: process.env.GSD_WORKFLOW_MCP_COMMAND,
-			GSD_WORKFLOW_MCP_NAME: process.env.GSD_WORKFLOW_MCP_NAME,
-			GSD_WORKFLOW_MCP_ARGS: process.env.GSD_WORKFLOW_MCP_ARGS,
-			GSD_WORKFLOW_MCP_ENV: process.env.GSD_WORKFLOW_MCP_ENV,
-			GSD_WORKFLOW_MCP_CWD: process.env.GSD_WORKFLOW_MCP_CWD,
+			SF_WORKFLOW_MCP_COMMAND: process.env.SF_WORKFLOW_MCP_COMMAND,
+			SF_WORKFLOW_MCP_NAME: process.env.SF_WORKFLOW_MCP_NAME,
+			SF_WORKFLOW_MCP_ARGS: process.env.SF_WORKFLOW_MCP_ARGS,
+			SF_WORKFLOW_MCP_ENV: process.env.SF_WORKFLOW_MCP_ENV,
+			SF_WORKFLOW_MCP_CWD: process.env.SF_WORKFLOW_MCP_CWD,
 		};
 		try {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = "node";
-			process.env.GSD_WORKFLOW_MCP_NAME = "gsd-workflow";
-			process.env.GSD_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
-			process.env.GSD_WORKFLOW_MCP_ENV = JSON.stringify({ GSD_CLI_PATH: "/tmp/gsd" });
-			process.env.GSD_WORKFLOW_MCP_CWD = "/tmp/project";
+			process.env.SF_WORKFLOW_MCP_COMMAND = "node";
+			process.env.SF_WORKFLOW_MCP_NAME = "gsd-workflow";
+			process.env.SF_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
+			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/gsd" });
+			process.env.SF_WORKFLOW_MCP_CWD = "/tmp/project";
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
@@ -473,9 +473,9 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			assert.equal(srv.command, "node");
 			assert.deepEqual(srv.args, ["packages/mcp-server/dist/cli.js"]);
 			assert.equal(srv.cwd, "/tmp/project");
-			assert.equal(srv.env.GSD_CLI_PATH, "/tmp/gsd");
-			assert.equal(srv.env.GSD_PERSIST_WRITE_GATE_STATE, "1");
-			assert.equal(srv.env.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+			assert.equal(srv.env.SF_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.SF_PERSIST_WRITE_GATE_STATE, "1");
+			assert.equal(srv.env.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
 			assert.deepEqual(options.allowedTools, [
 				"Read",
@@ -488,28 +488,28 @@ describe("stream-adapter — session persistence (#2859)", () => {
 				"mcp__gsd-workflow__*",
 			]);
 		} finally {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = prev.GSD_WORKFLOW_MCP_COMMAND;
-			process.env.GSD_WORKFLOW_MCP_NAME = prev.GSD_WORKFLOW_MCP_NAME;
-			process.env.GSD_WORKFLOW_MCP_ARGS = prev.GSD_WORKFLOW_MCP_ARGS;
-			process.env.GSD_WORKFLOW_MCP_ENV = prev.GSD_WORKFLOW_MCP_ENV;
-			process.env.GSD_WORKFLOW_MCP_CWD = prev.GSD_WORKFLOW_MCP_CWD;
+			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;
+			process.env.SF_WORKFLOW_MCP_NAME = prev.SF_WORKFLOW_MCP_NAME;
+			process.env.SF_WORKFLOW_MCP_ARGS = prev.SF_WORKFLOW_MCP_ARGS;
+			process.env.SF_WORKFLOW_MCP_ENV = prev.SF_WORKFLOW_MCP_ENV;
+			process.env.SF_WORKFLOW_MCP_CWD = prev.SF_WORKFLOW_MCP_CWD;
 		}
 	});
 
 	test("buildSdkOptions disables AskUserQuestion for custom workflow MCP server names", () => {
 		const prev = {
-			GSD_WORKFLOW_MCP_COMMAND: process.env.GSD_WORKFLOW_MCP_COMMAND,
-			GSD_WORKFLOW_MCP_NAME: process.env.GSD_WORKFLOW_MCP_NAME,
-			GSD_WORKFLOW_MCP_ARGS: process.env.GSD_WORKFLOW_MCP_ARGS,
-			GSD_WORKFLOW_MCP_ENV: process.env.GSD_WORKFLOW_MCP_ENV,
-			GSD_WORKFLOW_MCP_CWD: process.env.GSD_WORKFLOW_MCP_CWD,
+			SF_WORKFLOW_MCP_COMMAND: process.env.SF_WORKFLOW_MCP_COMMAND,
+			SF_WORKFLOW_MCP_NAME: process.env.SF_WORKFLOW_MCP_NAME,
+			SF_WORKFLOW_MCP_ARGS: process.env.SF_WORKFLOW_MCP_ARGS,
+			SF_WORKFLOW_MCP_ENV: process.env.SF_WORKFLOW_MCP_ENV,
+			SF_WORKFLOW_MCP_CWD: process.env.SF_WORKFLOW_MCP_CWD,
 		};
 		try {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = "node";
-			process.env.GSD_WORKFLOW_MCP_NAME = "custom-workflow";
-			process.env.GSD_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
-			process.env.GSD_WORKFLOW_MCP_ENV = JSON.stringify({ GSD_CLI_PATH: "/tmp/gsd" });
-			process.env.GSD_WORKFLOW_MCP_CWD = "/tmp/project";
+			process.env.SF_WORKFLOW_MCP_COMMAND = "node";
+			process.env.SF_WORKFLOW_MCP_NAME = "custom-workflow";
+			process.env.SF_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
+			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/gsd" });
+			process.env.SF_WORKFLOW_MCP_CWD = "/tmp/project";
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
@@ -526,28 +526,28 @@ describe("stream-adapter — session persistence (#2859)", () => {
 				"mcp__custom-workflow__*",
 			]);
 		} finally {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = prev.GSD_WORKFLOW_MCP_COMMAND;
-			process.env.GSD_WORKFLOW_MCP_NAME = prev.GSD_WORKFLOW_MCP_NAME;
-			process.env.GSD_WORKFLOW_MCP_ARGS = prev.GSD_WORKFLOW_MCP_ARGS;
-			process.env.GSD_WORKFLOW_MCP_ENV = prev.GSD_WORKFLOW_MCP_ENV;
-			process.env.GSD_WORKFLOW_MCP_CWD = prev.GSD_WORKFLOW_MCP_CWD;
+			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;
+			process.env.SF_WORKFLOW_MCP_NAME = prev.SF_WORKFLOW_MCP_NAME;
+			process.env.SF_WORKFLOW_MCP_ARGS = prev.SF_WORKFLOW_MCP_ARGS;
+			process.env.SF_WORKFLOW_MCP_ENV = prev.SF_WORKFLOW_MCP_ENV;
+			process.env.SF_WORKFLOW_MCP_CWD = prev.SF_WORKFLOW_MCP_CWD;
 		}
 	});
 
 	test("buildSdkOptions auto-discovers bundled MCP server even without env hints", () => {
 		const prev = {
-			GSD_WORKFLOW_MCP_COMMAND: process.env.GSD_WORKFLOW_MCP_COMMAND,
-			GSD_WORKFLOW_MCP_NAME: process.env.GSD_WORKFLOW_MCP_NAME,
-			GSD_WORKFLOW_MCP_ARGS: process.env.GSD_WORKFLOW_MCP_ARGS,
-			GSD_WORKFLOW_MCP_ENV: process.env.GSD_WORKFLOW_MCP_ENV,
-			GSD_WORKFLOW_MCP_CWD: process.env.GSD_WORKFLOW_MCP_CWD,
+			SF_WORKFLOW_MCP_COMMAND: process.env.SF_WORKFLOW_MCP_COMMAND,
+			SF_WORKFLOW_MCP_NAME: process.env.SF_WORKFLOW_MCP_NAME,
+			SF_WORKFLOW_MCP_ARGS: process.env.SF_WORKFLOW_MCP_ARGS,
+			SF_WORKFLOW_MCP_ENV: process.env.SF_WORKFLOW_MCP_ENV,
+			SF_WORKFLOW_MCP_CWD: process.env.SF_WORKFLOW_MCP_CWD,
 		};
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
+			delete process.env.SF_WORKFLOW_MCP_COMMAND;
+			delete process.env.SF_WORKFLOW_MCP_NAME;
+			delete process.env.SF_WORKFLOW_MCP_ARGS;
+			delete process.env.SF_WORKFLOW_MCP_ENV;
+			delete process.env.SF_WORKFLOW_MCP_CWD;
 
 			const originalCwd = process.cwd();
 			const emptyDir = mkdtempSync(join(tmpdir(), "claude-mcp-none-"));
@@ -566,32 +566,32 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			}
 			rmSync(emptyDir, { recursive: true, force: true });
 		} finally {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = prev.GSD_WORKFLOW_MCP_COMMAND;
-			process.env.GSD_WORKFLOW_MCP_NAME = prev.GSD_WORKFLOW_MCP_NAME;
-			process.env.GSD_WORKFLOW_MCP_ARGS = prev.GSD_WORKFLOW_MCP_ARGS;
-			process.env.GSD_WORKFLOW_MCP_ENV = prev.GSD_WORKFLOW_MCP_ENV;
-			process.env.GSD_WORKFLOW_MCP_CWD = prev.GSD_WORKFLOW_MCP_CWD;
+			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;
+			process.env.SF_WORKFLOW_MCP_NAME = prev.SF_WORKFLOW_MCP_NAME;
+			process.env.SF_WORKFLOW_MCP_ARGS = prev.SF_WORKFLOW_MCP_ARGS;
+			process.env.SF_WORKFLOW_MCP_ENV = prev.SF_WORKFLOW_MCP_ENV;
+			process.env.SF_WORKFLOW_MCP_CWD = prev.SF_WORKFLOW_MCP_CWD;
 		}
 	});
 
 	test("buildSdkOptions auto-detects local workflow MCP dist CLI when present", () => {
 		const prev = {
-			GSD_WORKFLOW_MCP_COMMAND: process.env.GSD_WORKFLOW_MCP_COMMAND,
-			GSD_WORKFLOW_MCP_NAME: process.env.GSD_WORKFLOW_MCP_NAME,
-			GSD_WORKFLOW_MCP_ARGS: process.env.GSD_WORKFLOW_MCP_ARGS,
-			GSD_WORKFLOW_MCP_ENV: process.env.GSD_WORKFLOW_MCP_ENV,
-			GSD_WORKFLOW_MCP_CWD: process.env.GSD_WORKFLOW_MCP_CWD,
-			GSD_CLI_PATH: process.env.GSD_CLI_PATH,
+			SF_WORKFLOW_MCP_COMMAND: process.env.SF_WORKFLOW_MCP_COMMAND,
+			SF_WORKFLOW_MCP_NAME: process.env.SF_WORKFLOW_MCP_NAME,
+			SF_WORKFLOW_MCP_ARGS: process.env.SF_WORKFLOW_MCP_ARGS,
+			SF_WORKFLOW_MCP_ENV: process.env.SF_WORKFLOW_MCP_ENV,
+			SF_WORKFLOW_MCP_CWD: process.env.SF_WORKFLOW_MCP_CWD,
+			SF_CLI_PATH: process.env.SF_CLI_PATH,
 		};
 		const originalCwd = process.cwd();
 		const repoDir = mkdtempSync(join(tmpdir(), "claude-mcp-detect-"));
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
-			process.env.GSD_CLI_PATH = "/tmp/gsd";
+			delete process.env.SF_WORKFLOW_MCP_COMMAND;
+			delete process.env.SF_WORKFLOW_MCP_NAME;
+			delete process.env.SF_WORKFLOW_MCP_ARGS;
+			delete process.env.SF_WORKFLOW_MCP_ENV;
+			delete process.env.SF_WORKFLOW_MCP_CWD;
+			process.env.SF_CLI_PATH = "/tmp/gsd";
 
 			const distDir = join(repoDir, "packages", "mcp-server", "dist");
 			mkdirSync(distDir, { recursive: true });
@@ -606,45 +606,45 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			assert.equal(srv.command, process.execPath);
 			assert.deepEqual(srv.args, [realpathSync(resolve(repoDir, "packages", "mcp-server", "dist", "cli.js"))]);
 			assert.equal(srv.cwd, resolvedRepoDir);
-			assert.equal(srv.env.GSD_CLI_PATH, "/tmp/gsd");
-			assert.equal(srv.env.GSD_PERSIST_WRITE_GATE_STATE, "1");
-			assert.equal(srv.env.GSD_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
+			assert.equal(srv.env.SF_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.SF_PERSIST_WRITE_GATE_STATE, "1");
+			assert.equal(srv.env.SF_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
 		} finally {
 			process.chdir(originalCwd);
 			rmSync(repoDir, { recursive: true, force: true });
-			process.env.GSD_WORKFLOW_MCP_COMMAND = prev.GSD_WORKFLOW_MCP_COMMAND;
-			process.env.GSD_WORKFLOW_MCP_NAME = prev.GSD_WORKFLOW_MCP_NAME;
-			process.env.GSD_WORKFLOW_MCP_ARGS = prev.GSD_WORKFLOW_MCP_ARGS;
-			process.env.GSD_WORKFLOW_MCP_ENV = prev.GSD_WORKFLOW_MCP_ENV;
-			process.env.GSD_WORKFLOW_MCP_CWD = prev.GSD_WORKFLOW_MCP_CWD;
-			process.env.GSD_CLI_PATH = prev.GSD_CLI_PATH;
+			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;
+			process.env.SF_WORKFLOW_MCP_NAME = prev.SF_WORKFLOW_MCP_NAME;
+			process.env.SF_WORKFLOW_MCP_ARGS = prev.SF_WORKFLOW_MCP_ARGS;
+			process.env.SF_WORKFLOW_MCP_ENV = prev.SF_WORKFLOW_MCP_ENV;
+			process.env.SF_WORKFLOW_MCP_CWD = prev.SF_WORKFLOW_MCP_CWD;
+			process.env.SF_CLI_PATH = prev.SF_CLI_PATH;
 		}
 	});
 
 	test("buildSdkOptions preserves runtime callbacks such as onElicitation", () => {
 		const prev = {
-			GSD_WORKFLOW_MCP_COMMAND: process.env.GSD_WORKFLOW_MCP_COMMAND,
-			GSD_WORKFLOW_MCP_NAME: process.env.GSD_WORKFLOW_MCP_NAME,
-			GSD_WORKFLOW_MCP_ARGS: process.env.GSD_WORKFLOW_MCP_ARGS,
-			GSD_WORKFLOW_MCP_ENV: process.env.GSD_WORKFLOW_MCP_ENV,
-			GSD_WORKFLOW_MCP_CWD: process.env.GSD_WORKFLOW_MCP_CWD,
+			SF_WORKFLOW_MCP_COMMAND: process.env.SF_WORKFLOW_MCP_COMMAND,
+			SF_WORKFLOW_MCP_NAME: process.env.SF_WORKFLOW_MCP_NAME,
+			SF_WORKFLOW_MCP_ARGS: process.env.SF_WORKFLOW_MCP_ARGS,
+			SF_WORKFLOW_MCP_ENV: process.env.SF_WORKFLOW_MCP_ENV,
+			SF_WORKFLOW_MCP_CWD: process.env.SF_WORKFLOW_MCP_CWD,
 		};
 		const onElicitation = async () => ({ action: "decline" as const });
 		try {
-			delete process.env.GSD_WORKFLOW_MCP_COMMAND;
-			delete process.env.GSD_WORKFLOW_MCP_NAME;
-			delete process.env.GSD_WORKFLOW_MCP_ARGS;
-			delete process.env.GSD_WORKFLOW_MCP_ENV;
-			delete process.env.GSD_WORKFLOW_MCP_CWD;
+			delete process.env.SF_WORKFLOW_MCP_COMMAND;
+			delete process.env.SF_WORKFLOW_MCP_NAME;
+			delete process.env.SF_WORKFLOW_MCP_ARGS;
+			delete process.env.SF_WORKFLOW_MCP_ENV;
+			delete process.env.SF_WORKFLOW_MCP_CWD;
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test", undefined, { onElicitation });
 			assert.equal(options.onElicitation, onElicitation);
 		} finally {
-			process.env.GSD_WORKFLOW_MCP_COMMAND = prev.GSD_WORKFLOW_MCP_COMMAND;
-			process.env.GSD_WORKFLOW_MCP_NAME = prev.GSD_WORKFLOW_MCP_NAME;
-			process.env.GSD_WORKFLOW_MCP_ARGS = prev.GSD_WORKFLOW_MCP_ARGS;
-			process.env.GSD_WORKFLOW_MCP_ENV = prev.GSD_WORKFLOW_MCP_ENV;
-			process.env.GSD_WORKFLOW_MCP_CWD = prev.GSD_WORKFLOW_MCP_CWD;
+			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;
+			process.env.SF_WORKFLOW_MCP_NAME = prev.SF_WORKFLOW_MCP_NAME;
+			process.env.SF_WORKFLOW_MCP_ARGS = prev.SF_WORKFLOW_MCP_ARGS;
+			process.env.SF_WORKFLOW_MCP_ENV = prev.SF_WORKFLOW_MCP_ENV;
+			process.env.SF_WORKFLOW_MCP_CWD = prev.SF_WORKFLOW_MCP_CWD;
 		}
 	});
 });
@@ -978,18 +978,18 @@ describe("stream-adapter — final-turn tool-call merge (F3)", () => {
 // ---------------------------------------------------------------------------
 
 describe("stream-adapter — permission mode (F10)", () => {
-	// Earlier tests in this file set GSD_WORKFLOW_MCP_* env vars and restore
+	// Earlier tests in this file set SF_WORKFLOW_MCP_* env vars and restore
 	// them by reassigning from `prev.*`. When `prev.*` was undefined, node
 	// coerces the assignment to the literal string "undefined", which then
 	// fails JSON.parse inside buildWorkflowMcpServers. Clear the relevant
 	// slots before each permission-mode test so buildSdkOptions doesn't throw.
 	function clearWorkflowMcpEnv(): void {
 		for (const key of [
-			"GSD_WORKFLOW_MCP_COMMAND",
-			"GSD_WORKFLOW_MCP_NAME",
-			"GSD_WORKFLOW_MCP_ARGS",
-			"GSD_WORKFLOW_MCP_ENV",
-			"GSD_WORKFLOW_MCP_CWD",
+			"SF_WORKFLOW_MCP_COMMAND",
+			"SF_WORKFLOW_MCP_NAME",
+			"SF_WORKFLOW_MCP_ARGS",
+			"SF_WORKFLOW_MCP_ENV",
+			"SF_WORKFLOW_MCP_CWD",
 		]) {
 			if (process.env[key] === undefined || process.env[key] === "undefined") {
 				delete process.env[key];
@@ -1015,14 +1015,14 @@ describe("stream-adapter — permission mode (F10)", () => {
 		);
 	});
 
-	test("resolveClaudePermissionMode honours the GSD_CLAUDE_CODE_PERMISSION_MODE env override", async () => {
-		const env = { GSD_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits" } as NodeJS.ProcessEnv;
+	test("resolveClaudePermissionMode honours the SF_CLAUDE_CODE_PERMISSION_MODE env override", async () => {
+		const env = { SF_CLAUDE_CODE_PERMISSION_MODE: "acceptEdits" } as NodeJS.ProcessEnv;
 		const mode = await resolveClaudePermissionMode(env);
 		assert.equal(mode, "acceptEdits");
 	});
 
 	test("resolveClaudePermissionMode rejects unknown override values (fallback path)", async () => {
-		const env = { GSD_CLAUDE_CODE_PERMISSION_MODE: "nonsense" } as NodeJS.ProcessEnv;
+		const env = { SF_CLAUDE_CODE_PERMISSION_MODE: "nonsense" } as NodeJS.ProcessEnv;
 		const mode = await resolveClaudePermissionMode(env);
 		// Unknown override falls back to auto-detect → either bypass or acceptEdits
 		assert.ok(

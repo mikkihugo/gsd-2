@@ -1,4 +1,4 @@
-// GSD — reopen-task handler tests
+// SF — reopen-task handler tests
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import test from 'node:test';

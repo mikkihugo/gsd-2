@@ -1,10 +1,10 @@
 # Choosing a Model
 
-GSD auto-selects a default model after you log in to a provider. You can switch models at any time.
+SF auto-selects a default model after you log in to a provider. You can switch models at any time.
 
 ## Switch Models
 
-Inside a GSD session, type:
+Inside a SF session, type:
 
 ```
 /model
@@ -30,7 +30,7 @@ Omit a key to use whatever model is currently active for that phase.
 
 ## Model Fallbacks
 
-If a model is unavailable (provider down, rate limited, credits exhausted), GSD can automatically fall back to another:
+If a model is unavailable (provider down, rate limited, credits exhausted), SF can automatically fall back to another:
 
 ```yaml
 models:
@@ -61,7 +61,7 @@ See [Token Optimization](../features/token-optimization.md) for details.
 
 ## Dynamic Model Routing
 
-When enabled, GSD automatically picks cheaper models for simple tasks and reserves expensive ones for complex work:
+When enabled, SF automatically picks cheaper models for simple tasks and reserves expensive ones for complex work:
 
 ```yaml
 dynamic_routing:
@@ -74,7 +74,7 @@ See [Dynamic Model Routing](../features/dynamic-model-routing.md) for the full g
 
 ## Supported Providers
 
-GSD supports 20+ providers out of the box. See [Provider Setup](../configuration/providers.md) for setup instructions:
+SF supports 20+ providers out of the box. See [Provider Setup](../configuration/providers.md) for setup instructions:
 
 | Provider | Auth Method |
 |----------|-------------|

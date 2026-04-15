@@ -12,7 +12,7 @@ import { join } from 'node:path'
  * On Windows, fileURLToPath() rejects this with "File URL path must be
  * absolute". The fix wraps the derivation in safePackageRootFromImportUrl()
  * so the module-level constant never throws, and resolveBridgeRuntimeConfig
- * falls through to the GSD_WEB_PACKAGE_ROOT env var.
+ * falls through to the SF_WEB_PACKAGE_ROOT env var.
  */
 
 import { safePackageRootFromImportUrl } from '../web/safe-import-meta-resolve.ts'
@@ -65,7 +65,7 @@ test('bridge-service.ts uses safePackageRootFromImportUrl for DEFAULT_PACKAGE_RO
 test('bridge-service resolveBridgeRuntimeConfig falls back to lazy default', () => {
   const source = readFileSync(join(process.cwd(), 'src', 'web', 'bridge-service.ts'), 'utf-8')
   assert.ok(
-    source.includes('env.GSD_WEB_PACKAGE_ROOT || getDefaultPackageRoot()'),
+    source.includes('env.SF_WEB_PACKAGE_ROOT || getDefaultPackageRoot()'),
     'resolveBridgeRuntimeConfig must fall back to lazy default package root',
   )
 })

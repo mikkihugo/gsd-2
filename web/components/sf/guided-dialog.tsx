@@ -25,7 +25,7 @@ export interface GuidedDialogProps {
 function getDialogTitle(detectionKind?: string): string {
   switch (detectionKind) {
     case "v1-legacy":
-      return "Migrating to GSD v2"
+      return "Migrating to SF v2"
     case "brownfield":
       return "Mapping Your Project"
     case "blank":

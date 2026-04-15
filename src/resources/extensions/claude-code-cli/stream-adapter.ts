@@ -1,10 +1,10 @@
 /**
- * Stream adapter: bridges the Claude Agent SDK into GSD's streamSimple contract.
+ * Stream adapter: bridges the Claude Agent SDK into SF's streamSimple contract.
  *
  * The SDK runs the full agentic loop (multi-turn, tool execution, compaction)
  * in one call. This adapter translates the SDK's streaming output into
  * AssistantMessageEvents for TUI rendering, then strips tool-call blocks from
- * the final AssistantMessage so GSD's agent loop doesn't try to dispatch them.
+ * the final AssistantMessage so SF's agent loop doesn't try to dispatch them.
  */
 
 import type {
@@ -207,7 +207,7 @@ function extractMessageText(msg: { role: string; content: unknown }): string {
 }
 
 /**
- * Build a full conversational prompt from GSD's context messages.
+ * Build a full conversational prompt from SF's context messages.
  *
  * Previous behaviour sent only the last user message, making every SDK
  * call effectively stateless. This version serialises the complete
@@ -629,7 +629,7 @@ export function createClaudeCodeElicitationHandler(
 }
 
 /**
- * Aborted by the caller's AbortSignal — distinct from exhaustion. GSD's
+ * Aborted by the caller's AbortSignal — distinct from exhaustion. SF's
  * agent loop keys off `stopReason === "aborted"` to treat this as a clean
  * user cancel instead of a retry-eligible provider failure.
  */
@@ -656,23 +656,23 @@ export function makeAbortedMessage(model: string, lastTextContent: string): Assi
 /**
  * Resolve the Claude Code permission mode for the current run.
  *
- * GSD subagents run underneath a host Claude Code session the user has
+ * SF subagents run underneath a host Claude Code session the user has
  * already consented to, and their work (edits, shell inspection, MCP calls)
  * spans the full workflow toolset. Defaulting the inner SDK to
  * `bypassPermissions` avoids per-tool approval prompts that offer no
  * meaningful safety beyond what the host session and the subagent prompts
- * already enforce. `GSD_CLAUDE_CODE_PERMISSION_MODE` lets security-conscious
+ * already enforce. `SF_CLAUDE_CODE_PERMISSION_MODE` lets security-conscious
  * users opt into a stricter mode (`acceptEdits`, `default`, `plan`).
  *
  * Tradeoff: bypass means a prompt-injection payload read from an untrusted
- * file could trigger tool calls without a second gate. Accepted for GSD
+ * file could trigger tool calls without a second gate. Accepted for SF
  * because the workflow is explicit user intent and the alternative
  * (#4099) is continuous approval fatigue that blocks real work.
  */
 export async function resolveClaudePermissionMode(
 	env: NodeJS.ProcessEnv = process.env,
 ): Promise<"bypassPermissions" | "acceptEdits" | "default" | "plan"> {
-	const override = env.GSD_CLAUDE_CODE_PERMISSION_MODE?.trim();
+	const override = env.SF_CLAUDE_CODE_PERMISSION_MODE?.trim();
 	if (override === "bypassPermissions" || override === "acceptEdits" || override === "default" || override === "plan") {
 		return override;
 	}
@@ -704,7 +704,7 @@ export function buildSdkOptions(
 	// server's tools. `acceptEdits` mode (the interactive default) only
 	// auto-approves file edits — Read/Glob/Grep, basic shell inspection, and
 	// every `mcp__gsd-workflow__*` call still surface as "This command
-	// requires approval" and block GSD actions (#4099).
+	// requires approval" and block SF actions (#4099).
 	const allowedTools = [
 		"Read",
 		"Write",
@@ -870,7 +870,7 @@ export function mergePendingToolCalls(
 // ---------------------------------------------------------------------------
 
 /**
- * GSD streamSimple function that delegates to the Claude Agent SDK.
+ * SF streamSimple function that delegates to the Claude Agent SDK.
  *
  * Emits AssistantMessageEvent deltas for real-time TUI rendering
  * (thinking, text, tool calls). The final AssistantMessage has tool-call
@@ -914,7 +914,7 @@ async function pumpSdkMessages(
 			}) => AsyncIterable<SDKMessage>;
 		};
 
-		// Bridge GSD's AbortSignal to SDK's AbortController
+		// Bridge SF's AbortSignal to SDK's AbortController
 		const controller = new AbortController();
 		if (options?.signal) {
 			options.signal.addEventListener("abort", () => controller.abort(), { once: true });
@@ -1141,7 +1141,7 @@ async function pumpSdkMessages(
 		}
 
 		// Generator exhaustion without a terminal result is a stream interruption,
-		// not a successful completion. Emitting an error lets GSD classify it as a
+		// not a successful completion. Emitting an error lets SF classify it as a
 		// transient provider failure instead of advancing auto-mode state.
 		const fallback = makeStreamExhaustedErrorMessage(modelId, lastTextContent);
 		stream.push({ type: "error", reason: "error", error: fallback });

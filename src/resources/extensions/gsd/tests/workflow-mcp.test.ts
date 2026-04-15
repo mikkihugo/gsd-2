@@ -45,12 +45,12 @@ test("auto execute-task requires legacy completion alias until prompt contract i
 
 test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
   const launch = detectWorkflowMcpLaunchConfig("/tmp/project", {
-    GSD_WORKFLOW_MCP_NAME: "workflow-tools",
-    GSD_WORKFLOW_MCP_COMMAND: "node",
-    GSD_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
-    GSD_WORKFLOW_MCP_ENV: JSON.stringify({ FOO: "bar" }),
-    GSD_WORKFLOW_MCP_CWD: "/tmp/project",
-    GSD_CLI_PATH: "/tmp/gsd",
+    SF_WORKFLOW_MCP_NAME: "workflow-tools",
+    SF_WORKFLOW_MCP_COMMAND: "node",
+    SF_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
+    SF_WORKFLOW_MCP_ENV: JSON.stringify({ FOO: "bar" }),
+    SF_WORKFLOW_MCP_CWD: "/tmp/project",
+    SF_CLI_PATH: "/tmp/gsd",
   });
 
   assert.deepEqual(launch, {
@@ -61,17 +61,17 @@ test("detectWorkflowMcpLaunchConfig prefers explicit env override", () => {
     env: launch?.env,
   });
   assert.equal(launch?.env?.FOO, "bar");
-  assert.equal(launch?.env?.GSD_CLI_PATH, "/tmp/gsd");
-  assert.equal(launch?.env?.GSD_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal(launch?.env?.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match(launch?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match(launch?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/gsd");
+  assert.equal(launch?.env?.SF_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
 test("buildWorkflowMcpServers mirrors explicit launch config", () => {
   const servers = buildWorkflowMcpServers("/tmp/project", {
-    GSD_WORKFLOW_MCP_COMMAND: "node",
-    GSD_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
+    SF_WORKFLOW_MCP_COMMAND: "node",
+    SF_WORKFLOW_MCP_ARGS: JSON.stringify(["dist/cli.js"]),
   });
 
   assert.deepEqual(servers, {
@@ -81,13 +81,13 @@ test("buildWorkflowMcpServers mirrors explicit launch config", () => {
       env: servers?.["gsd-workflow"]?.env,
     },
   });
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GSD_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match((servers?.["gsd-workflow"]?.env as Record<string, string> | undefined)?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
-test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_PROJECT_ROOT", () => {
+test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_PROJECT_ROOT", () => {
   const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
   const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
@@ -96,7 +96,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_PROJECT
   writeFileSync(cliPath, "#!/usr/bin/env node\n", "utf-8");
 
   const launch = detectWorkflowMcpLaunchConfig(worktreeRoot, {
-    GSD_PROJECT_ROOT: repoRoot,
+    SF_PROJECT_ROOT: repoRoot,
   });
 
   assert.deepEqual(launch, {
@@ -106,13 +106,13 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_PROJECT
     cwd: repoRoot,
     env: launch?.env,
   });
-  assert.equal(launch?.env?.GSD_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal(launch?.env?.GSD_WORKFLOW_PROJECT_ROOT, repoRoot);
-  assert.match(launch?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match(launch?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal(launch?.env?.SF_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, repoRoot);
+  assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
-test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_BIN_PATH ancestry", () => {
+test("detectWorkflowMcpLaunchConfig resolves the bundled server from SF_BIN_PATH ancestry", () => {
   const repoRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-root-"));
   const worktreeRoot = mkdtempSync(join(tmpdir(), "gsd-workflow-worktree-"));
   const cliPath = join(repoRoot, "packages", "mcp-server", "dist", "cli.js");
@@ -124,7 +124,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_BIN_PAT
   writeFileSync(devCliPath, "#!/usr/bin/env node\n", "utf-8");
 
   const launch = detectWorkflowMcpLaunchConfig(worktreeRoot, {
-    GSD_BIN_PATH: devCliPath,
+    SF_BIN_PATH: devCliPath,
   });
 
   assert.deepEqual(launch, {
@@ -134,24 +134,24 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server from GSD_BIN_PAT
     cwd: worktreeRoot,
     env: launch?.env,
   });
-  assert.equal(launch?.env?.GSD_CLI_PATH, devCliPath);
-  assert.equal(launch?.env?.GSD_PERSIST_WRITE_GATE_STATE, "1");
-  assert.equal(launch?.env?.GSD_WORKFLOW_PROJECT_ROOT, worktreeRoot);
-  assert.match(launch?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match(launch?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal(launch?.env?.SF_CLI_PATH, devCliPath);
+  assert.equal(launch?.env?.SF_PERSIST_WRITE_GATE_STATE, "1");
+  assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, worktreeRoot);
+  assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
 });
 
-test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the installed GSD package", () => {
+test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the installed SF package", () => {
   const launch = detectWorkflowMcpLaunchConfig("/tmp/project", {
-    GSD_BIN_PATH: "/tmp/gsd-loader.js",
+    SF_BIN_PATH: "/tmp/gsd-loader.js",
   });
 
   assert.equal(launch?.command, process.execPath);
   assert.equal(launch?.cwd, "/tmp/project");
-  assert.equal(launch?.env?.GSD_CLI_PATH, "/tmp/gsd-loader.js");
-  assert.equal(launch?.env?.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match(launch?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match(launch?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal(launch?.env?.SF_CLI_PATH, "/tmp/gsd-loader.js");
+  assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
   assert.equal(typeof launch?.args?.[0], "string");
   assert.match(launch?.args?.[0] ?? "", /packages[\/\\]mcp-server[\/\\](dist[\/\\]cli\.js|src[\/\\]cli\.ts)$/);
   if ((launch?.args?.[0] ?? "").endsWith(".ts")) {
@@ -165,10 +165,10 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 
   assert.equal(launch?.command, process.execPath);
   assert.equal(launch?.cwd, "/tmp/project");
-  assert.equal(launch?.env?.GSD_CLI_PATH, undefined);
-  assert.equal(launch?.env?.GSD_WORKFLOW_PROJECT_ROOT, "/tmp/project");
-  assert.match(launch?.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
-  assert.match(launch?.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
+  assert.equal(launch?.env?.SF_CLI_PATH, undefined);
+  assert.equal(launch?.env?.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
+  assert.match(launch?.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "", /workflow-tool-executors\.(js|ts)$/);
+  assert.match(launch?.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "", /write-gate\.(js|ts)$/);
   assert.equal(typeof launch?.args?.[0], "string");
   assert.match(launch?.args?.[0] ?? "", /packages[\/\\]mcp-server[\/\\](dist[\/\\]cli\.js|src[\/\\]cli\.ts)$/);
   if ((launch?.args?.[0] ?? "").endsWith(".ts")) {
@@ -184,14 +184,14 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
   assert.match(
-    launch.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "",
+    launch.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "",
     /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]tools[\/\\]workflow-tool-executors\.(js|ts))$/,
   );
   assert.match(
-    launch.env?.GSD_WORKFLOW_WRITE_GATE_MODULE ?? "",
+    launch.env?.SF_WORKFLOW_WRITE_GATE_MODULE ?? "",
     /(dist[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.js|src[\/\\]resources[\/\\]extensions[\/\\]gsd[\/\\]bootstrap[\/\\]write-gate\.(js|ts))$/,
   );
-  if ((launch.env?.GSD_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
+  if ((launch.env?.SF_WORKFLOW_EXECUTORS_MODULE ?? "").endsWith(".ts")) {
     assert.match(launch.env?.NODE_OPTIONS ?? "", /--experimental-strip-types/);
     assert.match(launch.env?.NODE_OPTIONS ?? "", /resolve-ts\.mjs/);
   }
@@ -471,7 +471,7 @@ test("transport compatibility passes when required tools fit current MCP surface
     ["gsd_task_complete"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "guided flow",
       unitType: "execute-task",
       authMode: "externalCli",
@@ -505,7 +505,7 @@ test("transport compatibility now allows auto execute-task over workflow MCP sur
     ["gsd_complete_task"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "execute-task",
       authMode: "externalCli",
@@ -539,7 +539,7 @@ test("transport compatibility now allows plan-slice over workflow MCP surface", 
     ["gsd_plan_slice"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "plan-slice",
       authMode: "externalCli",
@@ -556,7 +556,7 @@ test("transport compatibility now allows complete-slice over workflow MCP surfac
     ["gsd_complete_slice"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "complete-slice",
       authMode: "externalCli",
@@ -573,7 +573,7 @@ test("transport compatibility now allows reassess-roadmap over workflow MCP surf
     ["gsd_milestone_status", "gsd_reassess_roadmap"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "reassess-roadmap",
       authMode: "externalCli",
@@ -590,7 +590,7 @@ test("transport compatibility now allows gate-evaluate over workflow MCP surface
     ["gsd_save_gate_result"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "gate-evaluate",
       authMode: "externalCli",
@@ -607,7 +607,7 @@ test("transport compatibility now allows validate-milestone over workflow MCP su
     ["gsd_milestone_status", "gsd_validate_milestone"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "validate-milestone",
       authMode: "externalCli",
@@ -624,7 +624,7 @@ test("transport compatibility now allows complete-milestone over workflow MCP su
     ["gsd_milestone_status", "gsd_complete_milestone"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "complete-milestone",
       authMode: "externalCli",
@@ -641,7 +641,7 @@ test("transport compatibility now allows replan-slice over workflow MCP surface"
     ["gsd_replan_slice"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "replan-slice",
       authMode: "externalCli",
@@ -658,7 +658,7 @@ test("transport compatibility still blocks units whose MCP tools are not exposed
     ["secure_env_collect"],
     {
       projectRoot: "/tmp/project",
-      env: { GSD_WORKFLOW_MCP_COMMAND: "node" },
+      env: { SF_WORKFLOW_MCP_COMMAND: "node" },
       surface: "auto-mode",
       unitType: "guided-discussion",
       authMode: "externalCli",

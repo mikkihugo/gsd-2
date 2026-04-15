@@ -195,7 +195,7 @@ estimated_files: 3
 
 ## Description
 
-Add the \`completing-milestone\` phase to the GSD state machine.
+Add the \`completing-milestone\` phase to the SF state machine.
 
 ## Steps
 

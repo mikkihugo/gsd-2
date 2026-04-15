@@ -1,5 +1,5 @@
 /**
- * GSD Preferences Wizard — TUI wizard for configuring GSD preferences.
+ * SF Preferences Wizard — TUI wizard for configuring SF preferences.
  *
  * Contains: handlePrefsWizard, buildCategorySummaries, all configure* functions,
  * serializePreferencesToFrontmatter, yamlSafeString, ensurePreferencesFile,
@@ -84,7 +84,7 @@ export async function handlePrefs(args: string, ctx: ExtensionCommandContext): P
       : `missing: ${canonicalGlobal}`;
     const projectStatus = projectPrefs ? `present: ${projectPrefs.path}` : `missing: ${getProjectGSDPreferencesPath()}`;
 
-    const lines = [`GSD skill prefs — global ${globalStatus}; project ${projectStatus}`];
+    const lines = [`SF skill prefs — global ${globalStatus}; project ${projectStatus}`];
 
     const effective = loadEffectiveGSDPreferences();
     let hasUnresolved = false;
@@ -123,7 +123,7 @@ export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "g
   const writePrefs = async (prefs: Record<string, unknown>): Promise<void> => {
     prefs.version = prefs.version || 1;
     const frontmatter = serializePreferencesToFrontmatter(prefs);
-    let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+    let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
     if (existsSync(path)) {
       const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
       if (preserved) body = preserved;
@@ -145,7 +145,7 @@ export async function handlePrefsMode(ctx: ExtensionCommandContext, scope: "glob
   prefs.version = prefs.version || 1;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;
@@ -704,7 +704,7 @@ export async function handlePrefsWizard(
   const existing = scope === "project" ? loadProjectGSDPreferences() : loadGlobalGSDPreferences();
   const prefs: Record<string, unknown> = existing?.preferences ? { ...existing.preferences } : {};
 
-  ctx.ui.notify(`GSD preferences (${scope}) — pick a category to configure.`, "info");
+  ctx.ui.notify(`SF preferences (${scope}) — pick a category to configure.`, "info");
 
   while (true) {
     const summaries = buildCategorySummaries(prefs);
@@ -720,7 +720,7 @@ export async function handlePrefsWizard(
       `── Save & Exit ──`,
     ];
 
-    const raw = await ctx.ui.select("GSD Preferences", options);
+    const raw = await ctx.ui.select("SF Preferences", options);
     const choice = typeof raw === "string" ? raw : "";
     if (!choice || choice.includes("Save & Exit")) break;
 
@@ -739,7 +739,7 @@ export async function handlePrefsWizard(
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
   // Preserve existing body content (everything after closing ---)
-  let body = "\n# GSD Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/gsd/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;
@@ -853,12 +853,12 @@ export async function ensurePreferencesFile(
   if (!existsSync(path)) {
     const template = await loadFile(join(dirname(fileURLToPath(import.meta.url)), "templates", "PREFERENCES.md"));
     if (!template) {
-      ctx.ui.notify("Could not load GSD preferences template.", "error");
+      ctx.ui.notify("Could not load SF preferences template.", "error");
       return;
     }
     await saveFile(path, template);
-    ctx.ui.notify(`Created ${scope} GSD skill preferences at ${path}`, "info");
+    ctx.ui.notify(`Created ${scope} SF skill preferences at ${path}`, "info");
   } else {
-    ctx.ui.notify(`Using existing ${scope} GSD skill preferences at ${path}`, "info");
+    ctx.ui.notify(`Using existing ${scope} SF skill preferences at ${path}`, "info");
   }
 }

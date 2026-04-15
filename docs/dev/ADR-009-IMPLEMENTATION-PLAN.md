@@ -7,7 +7,7 @@
 
 ## Objective
 
-Implement ADR-009 by migrating GSD orchestration internals to a Unified Orchestration Kernel (UOK) with six control planes:
+Implement ADR-009 by migrating SF orchestration internals to a Unified Orchestration Kernel (UOK) with six control planes:
 
 1. Plan
 2. Execution

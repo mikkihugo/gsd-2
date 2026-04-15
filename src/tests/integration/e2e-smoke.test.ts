@@ -1,5 +1,5 @@
 /**
- * E2E smoke tests for the GSD CLI binary (dist/loader.js).
+ * E2E smoke tests for the SF CLI binary (dist/loader.js).
  *
  * These tests exercise the CLI entry point as a black box by spawning child
  * processes and asserting on exit codes and output text.  They do NOT require

@@ -1,5 +1,5 @@
 /**
- * GSD Command — /gsd session-report
+ * SF Command — /gsd session-report
  *
  * Summarizes the current session: tasks completed, cost, tokens,
  * duration, model usage breakdown.

@@ -18,9 +18,9 @@ test("docker/Dockerfile.sandbox exists and uses Node 24 base", () => {
   assert.match(content, /FROM node:24/);
 });
 
-test("docker/Dockerfile.sandbox installs gsd-pi globally", () => {
+test("docker/Dockerfile.sandbox installs sf-run globally", () => {
   const content = readFile("docker/Dockerfile.sandbox");
-  assert.match(content, /npm install -g gsd-pi/);
+  assert.match(content, /npm install -g sf-run/);
 });
 
 test("docker/Dockerfile.sandbox creates a non-root user", () => {

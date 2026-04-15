@@ -1137,7 +1137,7 @@ export function FilesView() {
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
-            GSD
+            SF
           </button>
           <button
             onClick={() => { setLeftPanel("tree"); handleTreeRootChange("project") }}

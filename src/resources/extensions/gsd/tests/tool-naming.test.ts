@@ -1,4 +1,4 @@
-// tool-naming — Verifies canonical + alias tool registration for GSD DB tools.
+// tool-naming — Verifies canonical + alias tool registration for SF DB tools.
 //
 // Each DB tool must register under its canonical gsd_concept_action name
 // AND under a backward-compatible alias name.

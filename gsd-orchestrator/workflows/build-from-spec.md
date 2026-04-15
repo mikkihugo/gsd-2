@@ -4,7 +4,7 @@ End-to-end workflow: take a product idea or specification, produce working softw
 
 ## Prerequisites
 
-- `gsd` CLI installed (`npm install -g gsd-pi`)
+- `gsd` CLI installed (`npm install -g sf-run`)
 - A directory for the project (can be empty)
 - Git initialized in the directory
 
@@ -16,7 +16,7 @@ End-to-end workflow: take a product idea or specification, produce working softw
 PROJECT_DIR="/tmp/my-project-name"
 mkdir -p "$PROJECT_DIR"
 cd "$PROJECT_DIR"
-git init 2>/dev/null  # GSD needs a git repo
+git init 2>/dev/null  # SF needs a git repo
 ```
 
 ### Step 2: Write the spec file
@@ -52,7 +52,7 @@ SPEC
 
 ### Step 3: Launch the build
 
-**Fire-and-forget (simplest — GSD does everything):**
+**Fire-and-forget (simplest — SF does everything):**
 ```bash
 cd "$PROJECT_DIR"
 RESULT=$(gsd headless --output-format json --timeout 0 --context spec.md new-milestone --auto 2>/dev/null)

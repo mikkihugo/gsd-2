@@ -1,4 +1,4 @@
-# GSD Commands Reference
+# SF Commands Reference
 
 All commands run as subprocesses via `gsd headless [flags] [command] [args...]`.
 
@@ -193,7 +193,7 @@ gsd headless knowledge "Always use UTC timestamps in API responses"
 
 ## Phases
 
-GSD workflows progress through these phases:
+SF workflows progress through these phases:
 
 ```
 pre-planning → needs-discussion → discussing → researching → planning →

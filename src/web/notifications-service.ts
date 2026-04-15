@@ -1,4 +1,4 @@
-// GSD Web — Notifications Service
+// SF Web — Notifications Service
 // Loads notification data via a child process that imports the notification store.
 
 import { execFile } from "node:child_process"
@@ -23,7 +23,7 @@ export interface NotificationsData {
 }
 
 const NOTIFICATIONS_MAX_BUFFER = 2 * 1024 * 1024
-const NOTIFICATIONS_MODULE_ENV = "GSD_NOTIFICATIONS_MODULE"
+const NOTIFICATIONS_MODULE_ENV = "SF_NOTIFICATIONS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
   return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
@@ -49,7 +49,7 @@ export async function collectNotificationsData(projectCwdOverride?: string): Pro
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${NOTIFICATIONS_MODULE_ENV}).href);`,
-    'const basePath = process.env.GSD_NOTIFICATIONS_BASE;',
+    'const basePath = process.env.SF_NOTIFICATIONS_BASE;',
     'const entries = mod.readNotifications(basePath);',
     'const unread = entries.filter(e => !e.read).length;',
     'const result = { entries, unreadCount: unread, totalCount: entries.length };',
@@ -71,7 +71,7 @@ export async function collectNotificationsData(projectCwdOverride?: string): Pro
         env: {
           ...process.env,
           [NOTIFICATIONS_MODULE_ENV]: modulePath,
-          GSD_NOTIFICATIONS_BASE: projectCwd,
+          SF_NOTIFICATIONS_BASE: projectCwd,
         },
         maxBuffer: NOTIFICATIONS_MAX_BUFFER,
         timeout: 10_000,
@@ -107,7 +107,7 @@ export async function clearNotificationsData(projectCwdOverride?: string): Promi
   const script = [
     'const { pathToFileURL } = await import("node:url");',
     `const mod = await import(pathToFileURL(process.env.${NOTIFICATIONS_MODULE_ENV}).href);`,
-    'mod.clearNotifications(process.env.GSD_NOTIFICATIONS_BASE);',
+    'mod.clearNotifications(process.env.SF_NOTIFICATIONS_BASE);',
     'process.stdout.write("ok");',
   ].join(" ")
 
@@ -126,7 +126,7 @@ export async function clearNotificationsData(projectCwdOverride?: string): Promi
         env: {
           ...process.env,
           [NOTIFICATIONS_MODULE_ENV]: modulePath,
-          GSD_NOTIFICATIONS_BASE: projectCwd,
+          SF_NOTIFICATIONS_BASE: projectCwd,
         },
         maxBuffer: NOTIFICATIONS_MAX_BUFFER,
         timeout: 10_000,

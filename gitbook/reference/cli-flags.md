@@ -1,6 +1,6 @@
 # CLI Flags
 
-## Starting GSD
+## Starting SF
 
 | Flag | Description |
 |------|-------------|

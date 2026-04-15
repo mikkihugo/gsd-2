@@ -7,7 +7,7 @@ Reality diverges from plans. This guide covers every situation where you need to
 
 ## Mental model
 
-GSD's pipeline looks like this:
+SF's pipeline looks like this:
 
 ```
 M001 complete → M002 complete → M003 → M004 → ...
@@ -27,7 +27,7 @@ Between milestones you have the most freedom. Inside a running milestone you hav
 /gsd quick "fix the date formatting bug in the invoice renderer"
 ```
 
-`/gsd quick` executes immediately with full GSD guarantees (atomic commit, state tracking) but skips milestone ceremony. It doesn't touch the milestone pipeline.
+`/gsd quick` executes immediately with full SF guarantees (atomic commit, state tracking) but skips milestone ceremony. It doesn't touch the milestone pipeline.
 
 ---
 
@@ -76,7 +76,7 @@ For structural changes (adding tasks, removing tasks), the agent triggers a slic
     ```
     /gsd new-milestone
     ```
-    Describe the bugs and features. GSD creates a milestone — the title is what matters, not the number.
+    Describe the bugs and features. SF creates a milestone — the title is what matters, not the number.
   </Step>
   <Step title="Check and reorder the queue">
     ```
@@ -107,7 +107,7 @@ For structural changes (adding tasks, removing tasks), the agent triggers a slic
 
 **You want to change M003's scope — add slices, remove slices, change the approach — before it starts.**
 
-Since M003 hasn't started, its plan files can be edited directly. Use `/gsd discuss` to talk through the changes and let GSD rewrite the artifacts:
+Since M003 hasn't started, its plan files can be edited directly. Use `/gsd discuss` to talk through the changes and let SF rewrite the artifacts:
 
 ```
 /gsd discuss
@@ -117,7 +117,7 @@ Since M003 hasn't started, its plan files can be edited directly. Use `/gsd disc
 
 Or use `/gsd steer` to edit plan files directly.
 
-If M003 is partially done (some slices complete), auto-mode calls `reassess-roadmap` automatically after each slice. You can also discuss changes during a pause — GSD can add, modify, or remove pending slices without touching the completed ones.
+If M003 is partially done (some slices complete), auto-mode calls `reassess-roadmap` automatically after each slice. You can also discuss changes during a pause — SF can add, modify, or remove pending slices without touching the completed ones.
 
 ---
 
@@ -125,7 +125,7 @@ If M003 is partially done (some slices complete), auto-mode calls `reassess-road
 
 **Your "Milestone 3" is effectively now "Milestone 4" because new work must insert before it.**
 
-GSD milestone numbers are labels, not positions. Execution order is controlled by the queue, not the ID. The procedure is the same as above: create the new milestone, confirm queue order with `/gsd queue`, park M003 if needed.
+SF milestone numbers are labels, not positions. Execution order is controlled by the queue, not the ID. The procedure is the same as above: create the new milestone, confirm queue order with `/gsd queue`, park M003 if needed.
 
 The milestone IDs stay as-is — M003 just executes later. No renumbering needed.
 
@@ -139,7 +139,7 @@ The milestone IDs stay as-is — M003 just executes later. No renumbering needed
 /gsd new-milestone
 ```
 
-Describe the full bug list. GSD creates a milestone with slices organized by system or severity. Run it in auto-mode like any other milestone. When done, all bugs land as clean commits with a formal milestone summary — readable as a bugfix release.
+Describe the full bug list. SF creates a milestone with slices organized by system or severity. Run it in auto-mode like any other milestone. When done, all bugs land as clean commits with a formal milestone summary — readable as a bugfix release.
 
 ---
 
@@ -151,7 +151,7 @@ Describe the full bug list. GSD creates a milestone with slices organized by sys
 /gsd capture "dark mode toggle on the dashboard"
 ```
 
-Deferred captures surface during roadmap reassessment. GSD can fold them into a later milestone when the timing makes sense. Or queue a dedicated features milestone directly:
+Deferred captures surface during roadmap reassessment. SF can fold them into a later milestone when the timing makes sense. Or queue a dedicated features milestone directly:
 
 ```
 /gsd queue

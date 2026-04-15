@@ -6,7 +6,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-authors = ["GSD Contributors"]
+authors = ["SF Contributors"]
 repository = "https://github.com/gsd-build/gsd-2"
 
 [profile.release]
