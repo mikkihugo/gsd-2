@@ -22,18 +22,19 @@ const { resolve, join } = require('path')
 const root = resolve(__dirname, '..')
 const packagesDir = join(root, 'packages')
 const scopeDirs = {
-  '@gsd': join(root, 'node_modules', '@gsd'),
-  '@gsd-build': join(root, 'node_modules', '@gsd-build'),
+  '@sf-run': join(root, 'node_modules', '@sf-run'),
+  '@singularity-forge': join(root, 'node_modules', '@singularity-forge'),
 }
 
 // Map directory names to scoped package names
 const packageMap = {
-  'native': { scope: '@gsd', name: 'native' },
-  'pi-agent-core': { scope: '@gsd', name: 'pi-agent-core' },
-  'pi-ai': { scope: '@gsd', name: 'pi-ai' },
-  'pi-coding-agent': { scope: '@gsd', name: 'pi-coding-agent' },
-  'pi-tui': { scope: '@gsd', name: 'pi-tui' },
-  'rpc-client': { scope: '@gsd-build', name: 'rpc-client' },
+  'native': { scope: '@sf-run', name: 'native' },
+  'pi-agent-core': { scope: '@sf-run', name: 'pi-agent-core' },
+  'pi-ai': { scope: '@sf-run', name: 'pi-ai' },
+  'pi-coding-agent': { scope: '@sf-run', name: 'pi-coding-agent' },
+  'pi-tui': { scope: '@sf-run', name: 'pi-tui' },
+  'rpc-client': { scope: '@singularity-forge', name: 'rpc-client' },
+  'mcp-server': { scope: '@singularity-forge', name: 'mcp-server' },
 }
 
 for (const scopeDir of Object.values(scopeDirs)) {
