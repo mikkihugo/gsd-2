@@ -24,19 +24,19 @@ import type { Logger } from './logger.js';
 export function buildCommands(): RESTPostAPIChatInputApplicationCommandsJSONBody[] {
   return [
     new SlashCommandBuilder()
-      .setName('gsd-status')
+      .setName('sf-status')
       .setDescription('Show status of all active SF sessions')
       .toJSON(),
     new SlashCommandBuilder()
-      .setName('gsd-start')
+      .setName('sf-start')
       .setDescription('Start a new SF session')
       .toJSON(),
     new SlashCommandBuilder()
-      .setName('gsd-stop')
+      .setName('sf-stop')
       .setDescription('Stop a running SF session')
       .toJSON(),
     new SlashCommandBuilder()
-      .setName('gsd-verbose')
+      .setName('sf-verbose')
       .setDescription('Set event verbosity level for this channel')
       .addStringOption((option) =>
         option
