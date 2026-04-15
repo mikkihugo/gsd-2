@@ -101,8 +101,8 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `pre-exec-pause-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
   
-  // Create .gsd directory structure
-  const sfDir = join(tempDir, ".gsd");
+  // Create .sf directory structure
+  const sfDir = join(tempDir, ".sf");
   mkdirSync(sfDir, { recursive: true });
   
   // Create milestones directory structure
@@ -112,7 +112,7 @@ function setupTestEnvironment(): void {
   // Change cwd so loadEffectiveSFPreferences finds our PREFERENCES.md
   process.chdir(tempDir);
   
-  // Clear sfRoot cache so it finds the new .gsd directory
+  // Clear sfRoot cache so it finds the new .sf directory
   _clearGsdRootCache();
   
   // Initialize DB
@@ -156,7 +156,7 @@ ${yamlLines.join("\n")}
 
 # SF Preferences
 `;
-  writeFileSync(join(tempDir, ".gsd", "PREFERENCES.md"), prefsContent);
+  writeFileSync(join(tempDir, ".sf", "PREFERENCES.md"), prefsContent);
   // Invalidate caches so the new preferences file is found
   invalidateAllCaches();
   _clearGsdRootCache();

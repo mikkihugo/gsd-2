@@ -20,12 +20,12 @@ import {
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-derive-db-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
 function writeFile(base: string, relativePath: string, content: string): void {
-  const full = join(base, '.gsd', relativePath);
+  const full = join(base, '.sf', relativePath);
   mkdirSync(join(full, '..'), { recursive: true });
   writeFileSync(full, content);
 }
@@ -275,7 +275,7 @@ describe('derive-state-db', async () => {
     const base = createFixtureBase();
     try {
       // Write minimal milestone dir (needed for milestone discovery)
-      mkdirSync(join(base, '.gsd', 'milestones', 'M001'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M001'), { recursive: true });
       // Write REQUIREMENTS.md to disk (DB content is no longer used by deriveState)
       writeFile(base, 'REQUIREMENTS.md', REQUIREMENTS_CONTENT);
 
@@ -320,8 +320,8 @@ describe('derive-state-db', async () => {
       // Create milestone dirs on disk (needed for directory scanning)
       // Also write roadmap files to disk — resolveMilestoneFile checks file existence
       // The DB only provides content, not file discovery
-      mkdirSync(join(base, '.gsd', 'milestones', 'M001'), { recursive: true });
-      mkdirSync(join(base, '.gsd', 'milestones', 'M002'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M001'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M002'), { recursive: true });
       writeFile(base, 'milestones/M001/M001-ROADMAP.md', completedRoadmap);
       writeFile(base, 'milestones/M001/M001-VALIDATION.md', `---\nverdict: pass\nremediation_round: 0\n---\n\n# Validation\nPassed.`);
       writeFile(base, 'milestones/M001/M001-SUMMARY.md', summaryContent);
@@ -940,8 +940,8 @@ describe('derive-state-db', async () => {
     const base = createFixtureBase();
     try {
       // Ghost: milestone dir exists with only META.json, no context/roadmap/summary
-      mkdirSync(join(base, '.gsd', 'milestones', 'M001'), { recursive: true });
-      writeFileSync(join(base, '.gsd', 'milestones', 'M001', 'META.json'), '{}');
+      mkdirSync(join(base, '.sf', 'milestones', 'M001'), { recursive: true });
+      writeFileSync(join(base, '.sf', 'milestones', 'M001', 'META.json'), '{}');
       // Real milestone
       writeFile(base, 'milestones/M002/M002-CONTEXT.md', '# M002: Real\n\nReal milestone.');
 
@@ -1062,10 +1062,10 @@ describe('derive-state-db', async () => {
       // M002: queued milestone — directory + slices dir exists, but no content files.
       // This is what happens when ensureMilestoneDbRow creates M002 but the DB row
       // is lost during worktree teardown.
-      mkdirSync(join(base, '.gsd', 'milestones', 'M002', 'slices'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M002', 'slices'), { recursive: true });
 
       // A worktree exists for M002, proving it's a legitimate milestone
-      mkdirSync(join(base, '.gsd', 'worktrees', 'M002'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'worktrees', 'M002'), { recursive: true });
 
       // isGhostMilestone should NOT treat M002 as ghost when worktree exists
       assert.ok(!isGhostMilestone(base, 'M002'), 'ghost-wt: M002 with worktree is NOT a ghost');
@@ -1100,7 +1100,7 @@ describe('derive-state-db', async () => {
       writeFile(base, 'milestones/M001/M001-SUMMARY.md', '# M001 Summary\n\nDone.');
 
       // M002: queued milestone — directory exists with CONTEXT file and DB row
-      mkdirSync(join(base, '.gsd', 'milestones', 'M002', 'slices'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M002', 'slices'), { recursive: true });
       writeFile(base, 'milestones/M002/M002-CONTEXT.md', '# M002 Context\n\nPlanned milestone.');
 
       // DB has both M001 complete and M002 queued

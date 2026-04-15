@@ -129,7 +129,7 @@ export function findMilestoneIds(basePath: string): string[] {
   } catch (err) {
     // Log why milestone scanning failed — silent [] here causes infinite loops (#456)
     if (existsSync(dir)) {
-      logWarning("engine", `findMilestoneIds: .gsd/milestones/ exists but readdirSync failed — ${getErrorMessage(err)}`);
+      logWarning("engine", `findMilestoneIds: .sf/milestones/ exists but readdirSync failed — ${getErrorMessage(err)}`);
     }
     return [];
   }

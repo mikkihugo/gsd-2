@@ -46,11 +46,11 @@ run("git config user.name 'Pi Test'", base);
 run("git config user.email 'pi@example.com'", base);
 
 // Create a project with one milestone and two slices
-mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
-mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S02", "tasks"), { recursive: true });
+mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S02", "tasks"), { recursive: true });
 writeFileSync(join(base, "README.md"), "# Test Project\n", "utf-8");
 writeFileSync(
-  join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+  join(base, ".sf", "milestones", "M001", "M001-ROADMAP.md"),
   [
     "# M001: Demo",
     "",
@@ -63,12 +63,12 @@ writeFileSync(
   "utf-8",
 );
 writeFileSync(
-  join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+  join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
   "# S01: First\n\n**Goal:** Demo\n**Demo:** Demo\n\n## Must-Haves\n- done\n\n## Tasks\n- [ ] **T01: Implement** `est:10m`\n  do it\n",
   "utf-8",
 );
 writeFileSync(
-  join(base, ".gsd", "milestones", "M001", "slices", "S02", "S02-PLAN.md"),
+  join(base, ".sf", "milestones", "M001", "slices", "S02", "S02-PLAN.md"),
   "# S02: Second\n\n**Goal:** Demo\n**Demo:** Demo\n\n## Must-Haves\n- done\n\n## Tasks\n- [ ] **T01: Implement** `est:10m`\n  do it\n",
   "utf-8",
 );

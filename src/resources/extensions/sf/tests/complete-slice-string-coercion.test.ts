@@ -174,10 +174,10 @@ describe("handleCompleteSlice with coerced string arrays (#3565)", () => {
     openDatabase(dbPath);
 
     basePath = fs.mkdtempSync(path.join(os.tmpdir(), "sf-coerce-handler-"));
-    const sliceDir = path.join(basePath, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
+    const sliceDir = path.join(basePath, ".sf", "milestones", "M001", "slices", "S01", "tasks");
     fs.mkdirSync(sliceDir, { recursive: true });
 
-    const roadmapPath = path.join(basePath, ".gsd", "milestones", "M001", "M001-ROADMAP.md");
+    const roadmapPath = path.join(basePath, ".sf", "milestones", "M001", "M001-ROADMAP.md");
     fs.writeFileSync(
       roadmapPath,
       [

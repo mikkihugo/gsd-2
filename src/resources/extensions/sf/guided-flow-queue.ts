@@ -45,7 +45,7 @@ export async function showQueue(
   pi: ExtensionAPI,
   basePath: string,
 ): Promise<void> {
-  // ── Ensure .gsd/ exists ─────────────────────────────────────────────
+  // ── Ensure .sf/ exists ─────────────────────────────────────────────
   const sf = sfRoot(basePath);
   if (!existsSync(sf)) {
     ctx.ui.notify("No SF project found. Run /sf to start one first.", "warning");
@@ -139,9 +139,9 @@ export async function handleQueueReorder(
   syncProjectMdSequence(basePath, state.registry, result.order);
 
   // Commit the change
-  const filesToAdd = [".gsd/QUEUE-ORDER.json", ".gsd/PROJECT.md"];
+  const filesToAdd = [".sf/QUEUE-ORDER.json", ".sf/PROJECT.md"];
   for (const r of result.depsToRemove) {
-    filesToAdd.push(`.gsd/milestones/${r.milestone}/${r.milestone}-CONTEXT.md`);
+    filesToAdd.push(`.sf/milestones/${r.milestone}/${r.milestone}-CONTEXT.md`);
   }
   try {
     nativeAddPaths(basePath, filesToAdd);
@@ -200,7 +200,7 @@ export async function showQueueAdd(
     preamble,
     existingMilestonesContext: existingContext,
     inlinedTemplates: queueInlinedTemplates,
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .sf/ is managed externally.",
   });
 
   pi.sendMessage(

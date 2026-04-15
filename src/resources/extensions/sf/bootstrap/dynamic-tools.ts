@@ -9,34 +9,34 @@ import { setLogBasePath, logWarning } from "../workflow-logger.js";
 
 /**
  * Resolve the correct DB path for the current working directory.
- * If `basePath` is inside a `.gsd/worktrees/<MID>/` directory, returns
- * the project root's `.gsd/sf.db` (shared WAL — R012). Otherwise
- * returns `<basePath>/.gsd/sf.db`.
+ * If `basePath` is inside a `.sf/worktrees/<MID>/` directory, returns
+ * the project root's `.sf/sf.db` (shared WAL — R012). Otherwise
+ * returns `<basePath>/.sf/sf.db`.
  */
 export function resolveProjectRootDbPath(basePath: string): string {
-  // Detect worktree: look for `.gsd/worktrees/` in the path segments.
-  // A worktree path looks like: /project/root/.gsd/worktrees/M001/...
-  // We need to resolve back to /project/root/.gsd/sf.db
-  const marker = `${sep}.gsd${sep}worktrees${sep}`;
+  // Detect worktree: look for `.sf/worktrees/` in the path segments.
+  // A worktree path looks like: /project/root/.sf/worktrees/M001/...
+  // We need to resolve back to /project/root/.sf/sf.db
+  const marker = `${sep}.sf${sep}worktrees${sep}`;
   const idx = basePath.indexOf(marker);
   if (idx !== -1) {
     const projectRoot = basePath.slice(0, idx);
-    return join(projectRoot, ".gsd", "sf.db");
+    return join(projectRoot, ".sf", "sf.db");
   }
 
   // Also handle forward-slash paths on all platforms
-  const fwdMarker = "/.gsd/worktrees/";
+  const fwdMarker = "/.sf/worktrees/";
   const fwdIdx = basePath.indexOf(fwdMarker);
   if (fwdIdx !== -1) {
     const projectRoot = basePath.slice(0, fwdIdx);
-    return join(projectRoot, ".gsd", "sf.db");
+    return join(projectRoot, ".sf", "sf.db");
   }
 
-  // External-state layout: ~/.gsd/projects/<hash>/worktrees/<MID>/...
-  // Resolve to ~/.gsd/projects/<hash>/sf.db (the canonical project DB) (#2952).
+  // External-state layout: ~/.sf/projects/<hash>/worktrees/<MID>/...
+  // Resolve to ~/.sf/projects/<hash>/sf.db (the canonical project DB) (#2952).
   // Must be checked before the generic symlink-resolved handler: both match
-  // /.gsd/projects/<hash>/worktrees/ but require different resolution targets.
-  const extRe = /[/\\]\.gsd[/\\]projects[/\\][a-f0-9]+[/\\]worktrees(?:[/\\]|$)/;
+  // /.sf/projects/<hash>/worktrees/ but require different resolution targets.
+  const extRe = /[/\\]\.sf[/\\]projects[/\\][a-f0-9]+[/\\]worktrees(?:[/\\]|$)/;
   const extMatch = extRe.exec(basePath);
   if (extMatch) {
     const matchStr = extMatch[0];
@@ -46,9 +46,9 @@ export function resolveProjectRootDbPath(basePath: string): string {
     return join(projectStateRoot, "sf.db");
   }
 
-  // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/M001/...
-  // The project root is everything before /.gsd/projects/ (#2517)
-  const symlinkMarker = `${sep}.gsd${sep}projects${sep}`;
+  // Symlink-resolved layout: /.sf/projects/<hash>/worktrees/M001/...
+  // The project root is everything before /.sf/projects/ (#2517)
+  const symlinkMarker = `${sep}.sf${sep}projects${sep}`;
   const symlinkIdx = basePath.indexOf(symlinkMarker);
   if (symlinkIdx !== -1) {
     const afterProjects = basePath.slice(symlinkIdx + symlinkMarker.length);
@@ -56,32 +56,32 @@ export function resolveProjectRootDbPath(basePath: string): string {
     const worktreeSeg = `${sep}worktrees${sep}`;
     if (afterProjects.includes(worktreeSeg)) {
       const projectRoot = basePath.slice(0, symlinkIdx);
-      return join(projectRoot, ".gsd", "sf.db");
+      return join(projectRoot, ".sf", "sf.db");
     }
   }
 
   // Forward-slash variant for symlink-resolved layout
-  const fwdSymlinkMarker = "/.gsd/projects/";
+  const fwdSymlinkMarker = "/.sf/projects/";
   const fwdSymlinkIdx = basePath.indexOf(fwdSymlinkMarker);
   if (fwdSymlinkIdx !== -1) {
     const afterProjects = basePath.slice(fwdSymlinkIdx + fwdSymlinkMarker.length);
     if (afterProjects.includes("/worktrees/")) {
       const projectRoot = basePath.slice(0, fwdSymlinkIdx);
-      return join(projectRoot, ".gsd", "sf.db");
+      return join(projectRoot, ".sf", "sf.db");
     }
   }
 
 
-  return join(basePath, ".gsd", "sf.db");
+  return join(basePath, ".sf", "sf.db");
 }
 
 export async function ensureDbOpen(basePath: string = process.cwd()): Promise<boolean> {
   try {
     const db = await import("../sf-db.js");
     const dbPath = resolveProjectRootDbPath(basePath);
-    const sfDir = join(basePath, ".gsd");
+    const sfDir = join(basePath, ".sf");
 
-    // Derive the project root from the DB path (strip .gsd/sf.db)
+    // Derive the project root from the DB path (strip .sf/sf.db)
     const projectRoot = join(dbPath, "..", "..");
 
     // Open existing DB file (may be at project root for worktrees)
@@ -91,7 +91,7 @@ export async function ensureDbOpen(basePath: string = process.cwd()): Promise<bo
       return opened;
     }
 
-    // No DB file — create + migrate from Markdown if .gsd/ has content
+    // No DB file — create + migrate from Markdown if .sf/ has content
     if (existsSync(sfDir)) {
       const hasDecisions = existsSync(join(sfDir, "DECISIONS.md"));
       const hasRequirements = existsSync(join(sfDir, "REQUIREMENTS.md"));
@@ -110,13 +110,13 @@ export async function ensureDbOpen(basePath: string = process.cwd()): Promise<bo
         return opened;
       }
 
-      // .gsd/ exists but has no Markdown content (fresh project) — create empty DB
+      // .sf/ exists but has no Markdown content (fresh project) — create empty DB
       const opened = db.openDatabase(dbPath);
       if (opened) setLogBasePath(projectRoot);
       return opened;
     }
 
-    logWarning("bootstrap", "ensureDbOpen failed — no .gsd directory found");
+    logWarning("bootstrap", "ensureDbOpen failed — no .sf directory found");
     return false;
   } catch (err) {
     logWarning("bootstrap", `ensureDbOpen failed: ${(err as Error).message ?? String(err)}`);

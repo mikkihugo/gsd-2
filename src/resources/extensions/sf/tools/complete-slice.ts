@@ -325,7 +325,7 @@ export async function handleCompleteSlice(
     summaryPath = join(sliceDir, `${params.sliceId}-SUMMARY.md`);
   } else {
     // Slice dir doesn't exist on disk yet — build path manually and ensure dirs
-    const sfDir = join(basePath, ".gsd");
+    const sfDir = join(basePath, ".sf");
     const manualSliceDir = join(sfDir, "milestones", params.milestoneId, "slices", params.sliceId);
     mkdirSync(manualSliceDir, { recursive: true });
     summaryPath = join(manualSliceDir, `${params.sliceId}-SUMMARY.md`);

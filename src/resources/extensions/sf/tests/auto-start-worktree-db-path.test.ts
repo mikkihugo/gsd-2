@@ -21,7 +21,7 @@ assertTrue(
 );
 
 assertTrue(
-  !dbLifecycleRegion.includes('join(s.basePath, ".gsd", "sf.db")'),
+  !dbLifecycleRegion.includes('join(s.basePath, ".sf", "sf.db")'),
   "DB lifecycle no longer derives sf.db directly from the worktree path (#3822)",
 );
 

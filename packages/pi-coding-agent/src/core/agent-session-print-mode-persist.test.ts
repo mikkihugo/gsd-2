@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * Regression #4251: `gsd -p --model <provider>/<id> "msg"` must never mutate
+ * Regression #4251: `sf -p --model <provider>/<id> "msg"` must never mutate
  * the persisted defaultProvider/defaultModel in settings.json. The one-shot
  * print invocation used to verify a provider (e.g. Bearer-auth smoke test)
  * was silently overwriting the global default.
@@ -55,7 +55,7 @@ test("AgentSession stores persistModelChanges and defaults it to false (#4251)",
 	);
 });
 
-test("gsd src/cli.ts interactive branch opts into persistence (#4251)", () => {
+test("sf src/cli.ts interactive branch opts into persistence (#4251)", () => {
 	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");
 	// Interactive createAgentSession call lives after the print-mode branch.
 	const interactiveCreateIdx = gsdCliSource.indexOf("createAgentSession({", printGuardIdx + 10);
@@ -107,7 +107,7 @@ test("CreateAgentSessionOptions forwards persistModelChanges to AgentSession (#4
 // assignment, now that the AgentSessionConfig default is false. The assertion
 // moved to the "main.ts sets persistModelChanges = isInteractive" test below.
 
-test("gsd src/cli.ts print-mode createAgentSession passes persistModelChanges: false (#4251)", () => {
+test("sf src/cli.ts print-mode createAgentSession passes persistModelChanges: false (#4251)", () => {
 	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");
 	assert.ok(printGuardIdx >= 0, "missing isPrintMode branch in src/cli.ts");
 	const createIdx = gsdCliSource.indexOf("createAgentSession({", printGuardIdx);
@@ -119,7 +119,7 @@ test("gsd src/cli.ts print-mode createAgentSession passes persistModelChanges: f
 	);
 });
 
-test("gsd src/cli.ts print-mode --model override calls setModel with persist: false (#4251)", () => {
+test("sf src/cli.ts print-mode --model override calls setModel with persist: false (#4251)", () => {
 	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");
 	const overrideIdx = gsdCliSource.indexOf("if (cliFlags.model)", printGuardIdx);
 	assert.ok(overrideIdx >= 0, "missing --model override block in print-mode branch");
@@ -130,7 +130,7 @@ test("gsd src/cli.ts print-mode --model override calls setModel with persist: fa
 	);
 });
 
-test("gsd src/cli.ts print-mode skips validateConfiguredModel when --model is set (#4251)", () => {
+test("sf src/cli.ts print-mode skips validateConfiguredModel when --model is set (#4251)", () => {
 	const printGuardIdx = gsdCliSource.indexOf("if (isPrintMode)");
 	const validateIdx = gsdCliSource.indexOf("validateConfiguredModel(", printGuardIdx);
 	assert.ok(validateIdx >= 0, "missing validateConfiguredModel call in print-mode branch");

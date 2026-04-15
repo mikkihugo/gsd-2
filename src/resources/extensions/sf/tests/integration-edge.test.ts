@@ -49,7 +49,7 @@ function generateDecisionsMarkdown(count: number): string {
 
 test('integration-edge: empty project', () => {
   const base = mkdtempSync(join(tmpdir(), 'sf-int-edge-empty-'));
-  const sfDir = join(base, '.gsd');
+  const sfDir = join(base, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   const dbPath = join(sfDir, 'test-edge-empty.db');
@@ -106,7 +106,7 @@ test('integration-edge: empty project', () => {
 
 test('integration-edge: partial migration', () => {
   const base = mkdtempSync(join(tmpdir(), 'sf-int-edge-partial-'));
-  const sfDir = join(base, '.gsd');
+  const sfDir = join(base, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   // Write DECISIONS.md but NOT REQUIREMENTS.md
@@ -160,7 +160,7 @@ test('integration-edge: partial migration', () => {
 
 test('integration-edge: fallback mode', () => {
   const base = mkdtempSync(join(tmpdir(), 'sf-int-edge-fallback-'));
-  const sfDir = join(base, '.gsd');
+  const sfDir = join(base, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   const decisionsMarkdown = generateDecisionsMarkdown(4);

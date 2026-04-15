@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
  * absent by design (worktrees symlink to the project root's node_modules and
  * the symlink may not yet exist at check time).
  *
- * Fix: when the basePath contains `.gsd/worktrees/`, resolve the project root
+ * Fix: when the basePath contains `.sf/worktrees/`, resolve the project root
  * and check its node_modules instead.
  */
 
@@ -45,8 +45,8 @@ describe('doctor-environment-worktree', async () => {
       mkdirSync(join(projectRoot, "node_modules"), { recursive: true });
       cleanups.push(projectRoot);
 
-      // Simulate a worktree inside .gsd/worktrees/<name>/
-      const worktreeDir = join(projectRoot, ".gsd", "worktrees", "slice-abc");
+      // Simulate a worktree inside .sf/worktrees/<name>/
+      const worktreeDir = join(projectRoot, ".sf", "worktrees", "slice-abc");
       mkdirSync(worktreeDir, { recursive: true });
       writeFileSync(
         join(worktreeDir, "package.json"),
@@ -73,7 +73,7 @@ describe('doctor-environment-worktree', async () => {
       cleanups.push(projectRoot);
       // No node_modules at project root either
 
-      const worktreeDir = join(projectRoot, ".gsd", "worktrees", "slice-xyz");
+      const worktreeDir = join(projectRoot, ".sf", "worktrees", "slice-xyz");
       mkdirSync(worktreeDir, { recursive: true });
       writeFileSync(
         join(worktreeDir, "package.json"),
@@ -94,7 +94,7 @@ describe('doctor-environment-worktree', async () => {
       mkdirSync(join(projectRoot, "node_modules"), { recursive: true });
       cleanups.push(projectRoot);
 
-      const worktreeDir = join(projectRoot, ".gsd", "worktrees", "slice-pr");
+      const worktreeDir = join(projectRoot, ".sf", "worktrees", "slice-pr");
       mkdirSync(worktreeDir, { recursive: true });
       writeFileSync(
         join(worktreeDir, "package.json"),
@@ -131,7 +131,7 @@ describe('doctor-environment-worktree', async () => {
       mkdirSync(join(projectRoot, "node_modules"), { recursive: true });
       cleanups.push(projectRoot);
 
-      // Create a directory that doesn't have .gsd/worktrees in path but
+      // Create a directory that doesn't have .sf/worktrees in path but
       // has SF_WORKTREE env pointing to project root
       const someDir = createDir({
         "package.json": JSON.stringify({ name: "test-project" }),

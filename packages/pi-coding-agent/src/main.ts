@@ -407,7 +407,7 @@ export async function main(args: string[]) {
 		// Auto-detect: all models are local, enable offline mode
 		process.env.PI_OFFLINE = "1";
 		process.env.PI_SKIP_VERSION_CHECK = "1";
-		console.log("[gsd] All configured models are local \u2014 enabling offline mode automatically.");
+		console.log("[sf] All configured models are local \u2014 enabling offline mode automatically.");
 	}
 
 	const resourceLoader = new DefaultResourceLoader({

@@ -106,7 +106,7 @@ export function DualTerminal() {
         <div style={{ width: `${100 - splitPosition}%` }} className="h-full min-w-0 overflow-hidden bg-terminal">
           <ShellTerminal
             className="h-full"
-            command="gsd"
+            command="sf"
             sessionPrefix="sf-interactive"
             fontSize={terminalFontSize}
             hideInitialSfHeader

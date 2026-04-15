@@ -132,7 +132,7 @@ const SYSTEM_LINE_PATTERNS = [
   /^\[thinking[.\u2026]*/i,
   /^\[done\]/i,
   /^\[error/i,
-  /^gsd\s+v[\d.]+/i,       // version banner
+  /^sf\s+v[\d.]+/i,       // version banner
   /^✓\s/,                   // short success lines
   /^✗\s/,                   // short failure lines
 ]

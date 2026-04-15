@@ -45,7 +45,7 @@ describe("#2823: reconcileWorktreeDb same-file guard", () => {
   });
 
   test("returns zero result when both paths resolve to the same file", () => {
-    const mainGsd = join(tmpDir, "main", ".gsd");
+    const mainGsd = join(tmpDir, "main", ".sf");
     mkdirSync(mainGsd, { recursive: true });
     const mainDbPath = join(mainGsd, "sf.db");
 
@@ -64,7 +64,7 @@ describe("#2823: reconcileWorktreeDb same-file guard", () => {
     });
 
     // Create a worktree path that resolves to the same file via symlink
-    const wtGsd = join(tmpDir, "worktree", ".gsd");
+    const wtGsd = join(tmpDir, "worktree", ".sf");
     mkdirSync(join(tmpDir, "worktree"), { recursive: true });
     symlinkSync(mainGsd, wtGsd, "junction");
     const worktreeDbPath = join(wtGsd, "sf.db");
@@ -83,7 +83,7 @@ describe("#2823: reconcileWorktreeDb same-file guard", () => {
   });
 
   test("returns zero result when both paths are identical strings", () => {
-    const mainGsd = join(tmpDir, "project", ".gsd");
+    const mainGsd = join(tmpDir, "project", ".sf");
     mkdirSync(mainGsd, { recursive: true });
     const dbPath = join(mainGsd, "sf.db");
 
@@ -109,7 +109,7 @@ describe("#2823: reconcileWorktreeDb same-file guard", () => {
 
   test("still reconciles when paths are genuinely different files", () => {
     // Main DB
-    const mainGsd = join(tmpDir, "main", ".gsd");
+    const mainGsd = join(tmpDir, "main", ".sf");
     mkdirSync(mainGsd, { recursive: true });
     const mainDbPath = join(mainGsd, "sf.db");
 
@@ -128,7 +128,7 @@ describe("#2823: reconcileWorktreeDb same-file guard", () => {
     closeDatabase();
 
     // Create a separate worktree DB with different data
-    const wtGsd = join(tmpDir, "worktree", ".gsd");
+    const wtGsd = join(tmpDir, "worktree", ".sf");
     mkdirSync(wtGsd, { recursive: true });
     const worktreeDbPath = join(wtGsd, "sf.db");
 

@@ -1,4 +1,4 @@
-// SF MCP Server — .gsd/ directory resolution
+// SF MCP Server — .sf/ directory resolution
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { existsSync, statSync, readdirSync } from 'node:fs';
@@ -6,19 +6,19 @@ import { join, resolve, dirname, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 /**
- * Resolve the .gsd/ root directory for a project.
+ * Resolve the .sf/ root directory for a project.
  *
  * Probes in order:
- *   1. projectDir/.gsd (fast path)
- *   2. git repo root/.gsd
+ *   1. projectDir/.sf (fast path)
+ *   2. git repo root/.sf
  *   3. Walk up from projectDir
- *   4. Fallback: projectDir/.gsd (even if missing — for init)
+ *   4. Fallback: projectDir/.sf (even if missing — for init)
  */
 export function resolveGsdRoot(projectDir: string): string {
   const resolved = resolve(projectDir);
 
-  // Fast path: .gsd/ in the given directory
-  const direct = join(resolved, '.gsd');
+  // Fast path: .sf/ in the given directory
+  const direct = join(resolved, '.sf');
   if (existsSync(direct) && statSync(direct).isDirectory()) {
     return direct;
   }
@@ -30,7 +30,7 @@ export function resolveGsdRoot(projectDir: string): string {
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'pipe'],
     }).trim();
-    const gitGsd = join(gitRoot, '.gsd');
+    const gitGsd = join(gitRoot, '.sf');
     if (existsSync(gitGsd) && statSync(gitGsd).isDirectory()) {
       return gitGsd;
     }
@@ -41,7 +41,7 @@ export function resolveGsdRoot(projectDir: string): string {
   // Walk up from projectDir
   let dir = resolved;
   while (dir !== dirname(dir)) {
-    const candidate = join(dir, '.gsd');
+    const candidate = join(dir, '.sf');
     if (existsSync(candidate) && statSync(candidate).isDirectory()) {
       return candidate;
     }
@@ -52,7 +52,7 @@ export function resolveGsdRoot(projectDir: string): string {
   return direct;
 }
 
-/** Resolve path to a .gsd/ root file (STATE.md, KNOWLEDGE.md, etc.) */
+/** Resolve path to a .sf/ root file (STATE.md, KNOWLEDGE.md, etc.) */
 export function resolveRootFile(gsdRoot: string, name: string): string {
   return join(gsdRoot, name);
 }

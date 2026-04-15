@@ -657,7 +657,7 @@ async function handleSaveGateResult(
 
 async function ensureMilestoneDbRow(milestoneId: string): Promise<void> {
   try {
-    const { insertMilestone } = await importLocalModule<any>("../../../src/resources/extensions/sf/gsd-db.js");
+    const { insertMilestone } = await importLocalModule<any>("../../../src/resources/extensions/sf/sf-db.js");
     insertMilestone({ id: milestoneId, status: "queued" });
   } catch {
     // Ignore pre-existing rows or transient DB availability issues.
@@ -1249,7 +1249,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
       const { projectDir, milestoneId, sliceId, reason } = parseWorkflowArgs(skipSliceSchema, args);
       await enforceWorkflowWriteGate("gsd_skip_slice", projectDir, milestoneId);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
-        const { getSlice, updateSliceStatus } = await importLocalModule<any>("../../../src/resources/extensions/sf/gsd-db.js");
+        const { getSlice, updateSliceStatus } = await importLocalModule<any>("../../../src/resources/extensions/sf/sf-db.js");
         const { invalidateStateCache } = await importLocalModule<any>("../../../src/resources/extensions/sf/state.js");
         const { rebuildState } = await importLocalModule<any>("../../../src/resources/extensions/sf/doctor.js");
         const slice = getSlice(milestoneId, sliceId);

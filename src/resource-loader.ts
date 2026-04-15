@@ -1,5 +1,5 @@
 import { DefaultResourceLoader, sortExtensionPaths } from '@sf-run/pi-coding-agent'
-if (process.env.SF_DEBUG_EXTENSIONS) process.stderr.write("[gsd-debug] resource-loader.ts loaded\n")
+if (process.env.SF_DEBUG_EXTENSIONS) process.stderr.write("[sf-debug] resource-loader.ts loaded\n")
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, openSync, closeSync, readFileSync, readlinkSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -12,9 +12,9 @@ import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled, ensureRegi
 // Resolve resources directory — prefer dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree, changes with git branch).
 //
-// Why this matters: with `npm link`, src/resources/ points into the gsd-2 repo's
+// Why this matters: with `npm link`, src/resources/ points into the sf-2 repo's
 // working tree. Switching branches there changes src/resources/ for ALL projects
-// that use gsd — causing stale/broken extensions to be synced to ~/.gsd/agent/.
+// that use sf — causing stale/broken extensions to be synced to ~/.sf/agent/.
 // dist/resources/ is populated by the build step (`npm run copy-resources`) and
 // reflects the built state, not the currently checked-out branch.
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -285,7 +285,7 @@ function copyDirRecursive(src: string, dest: string): void {
  *
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
  * up the directory tree from the importing file. Extension files synced to
- * ~/.gsd/agent/extensions/ have no ancestor node_modules, so imports of
+ * ~/.sf/agent/extensions/ have no ancestor node_modules, so imports of
  * @sf-run/* packages fail. The symlink makes Node's standard resolution find
  * them without requiring every call site to use jiti.
  *
@@ -368,7 +368,7 @@ function reconcileMergedNodeModules(
 ): void {
   // Fast path: if already merged for this packageRoot + same directory contents, skip.
   // The fingerprint includes entry names from both roots so `pnpm add/remove` triggers rebuild.
-  const marker = join(agentNodeModules, '.gsd-merged')
+  const marker = join(agentNodeModules, '.sf-merged')
   const fingerprint = mergedFingerprint(hoisted, internal)
   try {
     if (existsSync(marker) && readFileSync(marker, 'utf-8').trim() === fingerprint) return
@@ -440,7 +440,7 @@ function mergedFingerprint(hoisted: string, internal: string): string {
  * 1. Manifest-based (preferred): the manifest records which root files were installed
  *    last time; any that are no longer in the current bundle are deleted.
  * 2. Known-stale fallback: for upgrades from versions before manifest tracking,
- *    explicitly delete files known to have been moved (e.g. env-utils.js → gsd/).
+ *    explicitly delete files known to have been moved (e.g. env-utils.js → sf/).
  */
 function pruneRemovedBundledExtensions(
   manifest: ManagedResourceManifest | null,
@@ -501,16 +501,16 @@ function pruneRemovedBundledExtensions(
   // Always remove known stale files regardless of manifest state.
   // These were installed by pre-manifest versions so they may not appear in
   // installedExtensionRootFiles even when a manifest exists.
-  // env-utils.js was moved from extensions/ root → gsd/ in v2.39.x (#1634)
+  // env-utils.js was moved from extensions/ root → sf/ in v2.39.x (#1634)
   removeFileIfStale('env-utils.js')
 }
 
 /**
- * Syncs all bundled resources to agentDir (~/.gsd/agent/) on every launch.
+ * Syncs all bundled resources to agentDir (~/.sf/agent/) on every launch.
  *
- * - extensions/ → ~/.gsd/agent/extensions/   (overwrite when version changes)
- * - agents/     → ~/.gsd/agent/agents/        (overwrite when version changes)
- * - SF-WORKFLOW.md → ~/.gsd/agent/SF-WORKFLOW.md (fallback for env var miss)
+ * - extensions/ → ~/.sf/agent/extensions/   (overwrite when version changes)
+ * - agents/     → ~/.sf/agent/agents/        (overwrite when version changes)
+ * - SF-WORKFLOW.md → ~/.sf/agent/SF-WORKFLOW.md (fallback for env var miss)
  *
  * Skills are NOT synced here. They are installed by the user via the
  * skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ — the
@@ -518,10 +518,10 @@ function pruneRemovedBundledExtensions(
  *
  * Skips the copy when the managed-resources.json version matches the current
  * SF version, avoiding ~128ms of synchronous cpSync on every startup.
- * After `npm update -g @glittercowboy/gsd`, versions will differ and the
+ * After `npm update -g @glittercowboy/sf`, versions will differ and the
  * copy runs once to land the new resources.
  *
- * Inspectable: `ls ~/.gsd/agent/extensions/`
+ * Inspectable: `ls ~/.sf/agent/extensions/`
  */
 export function initResources(agentDir: string): void {
   mkdirSync(agentDir, { recursive: true })
@@ -537,7 +537,7 @@ export function initResources(agentDir: string): void {
   pruneRemovedBundledExtensions(manifest, agentDir)
   pruneStaleSiblingFiles(bundledExtensionsDir, extensionsDir)
 
-  // Ensure ~/.gsd/agent/node_modules symlinks to SF's node_modules on EVERY
+  // Ensure ~/.sf/agent/node_modules symlinks to SF's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
   // extensions fail to resolve @sf-run/* packages, rendering SF non-functional.
   ensureNodeModulesSymlink(agentDir)
@@ -566,7 +566,7 @@ export function initResources(agentDir: string): void {
   // skills.sh CLI (`npx skills add <repo>`) into ~/.agents/skills/ which
   // is the industry-standard Agent Skills ecosystem directory.
   //
-  // Migration from the legacy ~/.gsd/agent/skills/ directory is handled
+  // Migration from the legacy ~/.sf/agent/skills/ directory is handled
   // above the manifest check so it runs on every launch (including retries
   // after partial copy failures).
 
@@ -589,7 +589,7 @@ export function initResources(agentDir: string): void {
 
 /**
  * One-time migration: copy user-customized skills from the old
- * ~/.gsd/agent/skills/ directory into ~/.agents/skills/.
+ * ~/.sf/agent/skills/ directory into ~/.agents/skills/.
  *
  * The migration is conservative:
  *  - Only skill directories containing a SKILL.md are considered.
@@ -653,7 +653,7 @@ function migrateSkillsToEcosystemDir(agentDir: string): void {
         if (isSymlink) {
           // Recreate the symlink in the ecosystem directory using an absolute
           // target. Relative symlinks would resolve from the new parent dir
-          // (~/.agents/skills/) instead of the original (~/.gsd/agent/skills/),
+          // (~/.agents/skills/) instead of the original (~/.sf/agent/skills/),
           // pointing to the wrong location.
           const rawTarget = readlinkSync(sourcePath)
           const absTarget = resolve(dirname(sourcePath), rawTarget)
@@ -716,7 +716,7 @@ export function hasStaleCompiledExtensionSiblings(extensionsDir: string, sourceD
 
 /**
  * Constructs a DefaultResourceLoader that loads extensions from both
- * ~/.gsd/agent/extensions/ (SF's default) and ~/.pi/agent/extensions/ (pi's default).
+ * ~/.sf/agent/extensions/ (SF's default) and ~/.pi/agent/extensions/ (pi's default).
  * This allows users to use extensions from either location.
  */
 // Cache bundled extension keys at module load — avoids re-scanning the extensions

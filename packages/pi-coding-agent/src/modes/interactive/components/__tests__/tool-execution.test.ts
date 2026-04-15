@@ -52,11 +52,11 @@ describe("ToolExecutionComponent", () => {
 		const rendered = renderTool(
 			"Bash",
 			{ command: "pwd" },
-			{ content: [{ type: "text", text: "/tmp/gsd-pr-fix" }], isError: false },
+			{ content: [{ type: "text", text: "/tmp/sf-pr-fix" }], isError: false },
 		);
 
 		assert.match(rendered, /\$ pwd/);
-		assert.match(rendered, /\/tmp\/gsd-pr-fix/);
+		assert.match(rendered, /\/tmp\/sf-pr-fix/);
 		assert.doesNotMatch(rendered, /^\{\s*\}$/m);
 	});
 

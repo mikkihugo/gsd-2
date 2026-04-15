@@ -1053,8 +1053,8 @@ function ExportTab({ data }: { data: VisualizerData }) {
     return lines.join("\n")
   }, [data])
 
-  const handleMarkdown = () => downloadBlob(generateMarkdown(), "gsd-report.md", "text/markdown")
-  const handleJSON = () => downloadBlob(JSON.stringify(data, null, 2), "gsd-report.json", "application/json")
+  const handleMarkdown = () => downloadBlob(generateMarkdown(), "sf-report.md", "text/markdown")
+  const handleJSON = () => downloadBlob(JSON.stringify(data, null, 2), "sf-report.json", "application/json")
 
   return (
     <div className="space-y-6">

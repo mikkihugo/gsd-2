@@ -8,7 +8,7 @@
 // ─── Single-writer invariant ─────────────────────────────────────────────
 // This file is the ONLY place in the codebase that issues write SQL
 // (INSERT / UPDATE / DELETE / REPLACE / BEGIN-COMMIT transactions) against
-// the engine database at `.gsd/sf.db`. All other modules must call the
+// the engine database at `.sf/sf.db`. All other modules must call the
 // typed wrappers exported here. The structural test
 // `tests/single-writer-invariant.test.ts` fails CI if a new bypass appears.
 //
@@ -16,7 +16,7 @@
 // (context-store, memory-store queries, doctor checks, projections).
 // Do NOT use it for writes — add a wrapper here instead.
 //
-// The separate `.gsd/unit-claims.db` managed by `unit-ownership.ts` is an
+// The separate `.sf/unit-claims.db` managed by `unit-ownership.ts` is an
 // intentionally independent store for cross-worktree claim races and is
 // excluded from this invariant.
 

@@ -99,7 +99,7 @@ export {
 // ─── Path Constants & Getters ───────────────────────────────────────────────
 
 function sfHome(): string {
-  return process.env.SF_HOME || join(homedir(), ".gsd");
+  return process.env.SF_HOME || join(homedir(), ".sf");
 }
 
 function globalPreferencesPath(): string {

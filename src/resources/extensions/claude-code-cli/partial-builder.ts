@@ -27,7 +27,7 @@ import type { BetaContentBlock, BetaRawMessageStreamEvent, NonNullableUsage } fr
  * Split a Claude Code MCP tool name (`mcp__<server>__<tool>`) into its parts.
  * Returns null for non-prefixed names so callers can fall through unchanged.
  *
- * Server names may contain hyphens (`gsd-workflow`); the SDK uses the literal
+ * Server names may contain hyphens (`sf-workflow`); the SDK uses the literal
  * `__` delimiter between the server name and the tool name.
  */
 export function parseMcpToolName(name: string): { server: string; tool: string } | null {

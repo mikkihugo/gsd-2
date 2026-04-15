@@ -150,8 +150,8 @@ try {
   console.log('==> Verifying @sf-run/* workspace package resolution...');
   const installedRoot = join(installDir, 'node_modules', 'sf-run');
   const criticalPackages = [
-    { scope: '@gsd', name: 'pi-coding-agent' },
-    { scope: '@gsd-build', name: 'rpc-client' },
+    { scope: '@sf', name: 'pi-coding-agent' },
+    { scope: '@sf-build', name: 'rpc-client' },
   ];
   let resolutionFailed = false;
   for (const pkg of criticalPackages) {
@@ -174,7 +174,7 @@ try {
   console.log('    @sf-run/* packages are resolvable.');
 
   // --- Run the binary to confirm end-to-end resolution ---
-  console.log('==> Running installed binary (gsd -v)...');
+  console.log('==> Running installed binary (sf -v)...');
   const loaderPath = join(installedRoot, 'dist', 'loader.js');
   const bundledWorkflowMcpCliPath = join(installedRoot, 'packages', 'mcp-server', 'dist', 'cli.js');
   if (!existsSync(bundledWorkflowMcpCliPath)) {
@@ -190,13 +190,13 @@ try {
       timeout: 15000,
       maxBuffer: DEFAULT_MAX_BUFFER,
     }).trim();
-    console.log(`    gsd -v => ${versionOutput}`);
+    console.log(`    sf -v => ${versionOutput}`);
     if (!versionOutput.match(/^\d+\.\d+\.\d+/)) {
-      console.log('ERROR: gsd -v returned unexpected output (expected a version string).');
+      console.log('ERROR: sf -v returned unexpected output (expected a version string).');
       process.exit(1);
     }
   } catch (err) {
-    console.log('ERROR: Running gsd -v failed after install.');
+    console.log('ERROR: Running sf -v failed after install.');
     if (err.stdout) console.log(err.stdout);
     if (err.stderr) console.log(err.stderr);
     process.exit(1);

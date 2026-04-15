@@ -29,7 +29,7 @@ test("checkEngineHealth reports db_unavailable when sf.db exists but the DB is c
   const base = mkdtempSync(join(tmpdir(), "sf-doctor-db-unavailable-"));
   t.after(() => rmSync(base, { recursive: true, force: true }));
 
-  const sfDir = join(base, ".gsd");
+  const sfDir = join(base, ".sf");
   mkdirSync(sfDir, { recursive: true });
   writeFileSync(join(sfDir, "sf.db"), "");
 
@@ -39,5 +39,5 @@ test("checkEngineHealth reports db_unavailable when sf.db exists but the DB is c
   const dbIssue = issues.find((issue) => issue.code === "db_unavailable");
   assert.ok(dbIssue, "doctor should surface degraded DB mode when a DB file exists");
   assert.equal(dbIssue.unitId, "project");
-  assert.equal(dbIssue.file, ".gsd/sf.db");
+  assert.equal(dbIssue.file, ".sf/sf.db");
 });

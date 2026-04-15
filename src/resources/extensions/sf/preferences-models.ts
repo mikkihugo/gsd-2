@@ -189,7 +189,7 @@ export function resolveDefaultSessionModel(
 
 /**
  * Returns true if `provider` is defined as a custom provider in the user's
- * `~/.gsd/agent/models.json` (Ollama, vLLM, LM Studio, OpenAI-compatible
+ * `~/.sf/agent/models.json` (Ollama, vLLM, LM Studio, OpenAI-compatible
  * proxies, etc.).
  *
  * Used by auto-mode bootstrap to decide whether the session model
@@ -208,7 +208,7 @@ export function resolveDefaultSessionModel(
 export function isCustomProvider(provider: string | undefined): boolean {
   if (!provider) return false;
   const candidates = [
-    join(homedir(), ".gsd", "agent", "models.json"),
+    join(homedir(), ".sf", "agent", "models.json"),
     join(homedir(), ".pi", "agent", "models.json"),
   ];
   for (const path of candidates) {

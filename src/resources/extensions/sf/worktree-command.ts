@@ -1,7 +1,7 @@
 /**
  * SF Worktree Command — /worktree
  *
- * Create, list, merge, and remove git worktrees under .gsd/worktrees/.
+ * Create, list, merge, and remove git worktrees under .sf/worktrees/.
  *
  * Usage:
  *   /worktree <name>        — create a new worktree
@@ -50,7 +50,7 @@ export function getWorktreeOriginalCwd(): string | null {
 export function getActiveWorktreeName(): string | null {
   if (!originalCwd) return null;
   const cwd = process.cwd();
-  const wtDir = join(originalCwd, ".gsd", "worktrees");
+  const wtDir = join(originalCwd, ".sf", "worktrees");
   if (!cwd.startsWith(wtDir)) return null;
   const rel = cwd.slice(wtDir.length + 1);
   const name = rel.split("/")[0] ?? rel.split("\\")[0];
@@ -243,7 +243,7 @@ export function registerWorktreeCommand(pi: ExtensionAPI): void {
   // but process.cwd() is still inside the worktree. Detect this and recover.
   if (!originalCwd) {
     const cwd = process.cwd();
-    const marker = `${sep}.gsd${sep}worktrees${sep}`;
+    const marker = `${sep}.sf${sep}worktrees${sep}`;
     const markerIdx = cwd.indexOf(marker);
     if (markerIdx !== -1) {
       originalCwd = cwd.slice(0, markerIdx);
@@ -289,7 +289,7 @@ function hasExistingMilestones(wtPath: string): boolean {
 
 /**
  * Clear SF planning artifacts so auto-mode starts fresh with the discuss flow.
- * Keeps the .gsd/ directory structure intact but removes milestones and root planning files.
+ * Keeps the .sf/ directory structure intact but removes milestones and root planning files.
  */
 function clearSFPlans(wtPath: string): void {
   const mDir = milestonesDir(wtPath);
@@ -582,7 +582,7 @@ async function handleMerge(
       return;
     }
 
-    // Gather merge context — full repo diff, not just .gsd/
+    // Gather merge context — full repo diff, not just .sf/
     const diffSummary = diffWorktreeAll(basePath, name);
     const numstat = diffWorktreeNumstat(basePath, name);
     const sfDiff = getWorktreeSFDiff(basePath, name);
@@ -605,7 +605,7 @@ async function handleMerge(
     for (const s of numstat) { totalAdded += s.added; totalRemoved += s.removed; }
 
     // Split files into code vs SF for the preview
-    const isSF = (f: string) => f.startsWith(".gsd/");
+    const isSF = (f: string) => f.startsWith(".sf/");
     const codeChanges = diffSummary.added.filter(f => !isSF(f)).length
       + diffSummary.modified.filter(f => !isSF(f)).length
       + diffSummary.removed.filter(f => !isSF(f)).length;
@@ -664,8 +664,8 @@ async function handleMerge(
     const commitMessage = `${commitType}: merge worktree ${name}\n\nSF-Worktree: ${name}`;
 
     // Reconcile worktree DB into main DB before squash merge
-    const wtDbPath = join(worktreePath(basePath, name), ".gsd", "sf.db");
-    const mainDbPath = join(basePath, ".gsd", "sf.db");
+    const wtDbPath = join(worktreePath(basePath, name), ".sf", "sf.db");
+    const mainDbPath = join(basePath, ".sf", "sf.db");
     if (existsSync(wtDbPath) && existsSync(mainDbPath)) {
       try {
         const { reconcileWorktreeDb } = await import("./sf-db.js");

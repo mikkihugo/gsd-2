@@ -8,7 +8,7 @@ import { loadStoredCredentialEnvKeys, resolveAuthPath } from "./tool-credentials
 
 describe("tool credentials", () => {
   it("hydrates supported model and tool keys from auth.json", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "gsd-mcp-auth-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "sf-mcp-auth-"));
     const authPath = join(tempRoot, "auth.json");
     const env: NodeJS.ProcessEnv = {};
 
@@ -37,7 +37,7 @@ describe("tool credentials", () => {
   });
 
   it("does not overwrite explicit environment variables", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "gsd-mcp-auth-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "sf-mcp-auth-"));
     const authPath = join(tempRoot, "auth.json");
     const env: NodeJS.ProcessEnv = {
       BRAVE_API_KEY: "already-set",
@@ -59,7 +59,7 @@ describe("tool credentials", () => {
   });
 
   it("ignores oauth credentials because they are resolved through auth storage, not env hydration", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "gsd-mcp-auth-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "sf-mcp-auth-"));
     const authPath = join(tempRoot, "auth.json");
     const env: NodeJS.ProcessEnv = {};
 
@@ -79,7 +79,7 @@ describe("tool credentials", () => {
   });
 
   it("resolves auth.json from SF_CODING_AGENT_DIR", () => {
-    const tempRoot = mkdtempSync(join(tmpdir(), "gsd-mcp-agent-dir-"));
+    const tempRoot = mkdtempSync(join(tmpdir(), "sf-mcp-agent-dir-"));
     const agentDir = join(tempRoot, "agent");
     mkdirSync(agentDir, { recursive: true });
 

@@ -8,7 +8,7 @@ export type UserMode = "expert" | "vibe-coder"
 
 // ─── Storage ────────────────────────────────────────────────────────
 
-const STORAGE_KEY = "gsd-user-mode"
+const STORAGE_KEY = "sf-user-mode"
 const DEFAULT_MODE: UserMode = "expert"
 
 const listeners = new Set<() => void>()

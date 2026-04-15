@@ -8,7 +8,7 @@ import { pathToFileURL } from "node:url";
 const { resolveGsdCliEntry } = await import("../../web/cli-entry.ts");
 
 function makeFixture(paths: string[]): string {
-  const root = mkdtempSync(join(tmpdir(), "gsd-cli-entry-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-cli-entry-"));
   for (const relativePath of paths) {
     const fullPath = join(root, relativePath);
     mkdirSync(join(fullPath, ".."), { recursive: true });
@@ -62,7 +62,7 @@ test("resolveGsdCliEntry prefers the source loader for source-dev interactive se
     command: "/custom/node",
     args: [
       "--import",
-      pathToFileURL(join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")).href,
+      pathToFileURL(join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")).href,
       "--experimental-strip-types",
       join(packageRoot, "src", "loader.ts"),
     ],
@@ -81,7 +81,7 @@ test("resolveGsdCliEntry appends rpc arguments for bridge sessions", (t) => {
     execPath: "/custom/node",
     hostKind: "packaged-standalone",
     mode: "rpc",
-    sessionDir: "/tmp/.gsd/sessions/project-c",
+    sessionDir: "/tmp/.sf/sessions/project-c",
   });
 
   assert.deepEqual(entry, {
@@ -92,7 +92,7 @@ test("resolveGsdCliEntry appends rpc arguments for bridge sessions", (t) => {
       "rpc",
       "--continue",
       "--session-dir",
-      "/tmp/.gsd/sessions/project-c",
+      "/tmp/.sf/sessions/project-c",
     ],
     cwd: "/tmp/project-c",
   });

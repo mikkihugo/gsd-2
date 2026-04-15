@@ -21,7 +21,7 @@ const dirEntryCache = new Map<string, Dirent[]>();
 const dirListCache = new Map<string, string[]>();
 
 // ─── Native Tree Cache ────────────────────────────────────────────────────────
-// When the native module is available, scan the entire .gsd/ tree in one call
+// When the native module is available, scan the entire .sf/ tree in one call
 // and serve directory listings from memory instead of individual readdirSync calls.
 
 let nativeTreeCache: Map<string, GsdTreeEntry[]> | null = null;
@@ -62,7 +62,7 @@ function cachedReaddirWithTypes(dirPath: string): Dirent[] {
   const cached = dirEntryCache.get(dirPath);
   if (cached) return cached;
 
-  // Try native tree cache for paths under .gsd/
+  // Try native tree cache for paths under .sf/
   if (nativeTreeBase) {
     const key = nativeTreeKey(dirPath, nativeTreeBase);
     if (key && nativeTreeCache) {
@@ -104,7 +104,7 @@ function cachedReaddir(dirPath: string): string[] {
   const cached = dirListCache.get(dirPath);
   if (cached) return cached;
 
-  // Try native tree cache for paths under .gsd/
+  // Try native tree cache for paths under .sf/
   if (nativeTreeBase) {
     const key = nativeTreeKey(dirPath, nativeTreeBase);
     if (key && nativeTreeCache) {
@@ -292,13 +292,13 @@ export function _clearGsdRootCache(): void {
 }
 
 /**
- * Resolve the `.gsd` directory for a given project base path.
+ * Resolve the `.sf` directory for a given project base path.
  *
  * Probe order:
- *   1. basePath/.gsd         — fast path (common case)
+ *   1. basePath/.sf         — fast path (common case)
  *   2. git rev-parse root    — handles cwd-is-a-subdirectory
- *   3. Walk up from basePath — handles moved .gsd in an ancestor (bounded by git root)
- *   4. basePath/.gsd         — creation fallback (init scenario)
+ *   3. Walk up from basePath — handles moved .sf in an ancestor (bounded by git root)
+ *   4. basePath/.sf         — creation fallback (init scenario)
  *
  * Result is cached per basePath for the process lifetime.
  */
@@ -314,23 +314,23 @@ export function sfRoot(basePath: string): string {
 export const gsdRoot = sfRoot;
 
 /**
- * Detect if a path is inside a .gsd/worktrees/<name>/ structure.
+ * Detect if a path is inside a .sf/worktrees/<name>/ structure.
  *
- * SF auto-worktrees live at <project>/.gsd/worktrees/<milestoneId>/.
+ * SF auto-worktrees live at <project>/.sf/worktrees/<milestoneId>/.
  * When sfRoot() is called with such a path, we must NOT walk up to the
- * project root's .gsd — each worktree manages its own .gsd state (#2594).
+ * project root's .sf — each worktree manages its own .sf state (#2594).
  *
  * Matches both forward-slash and platform-native separators to handle
  * Windows paths (path.sep = '\\') and normalized Unix paths.
  */
 function isInsideGsdWorktree(p: string): boolean {
-  // Match /.gsd/worktrees/<name> where <name> is the final segment or
+  // Match /.sf/worktrees/<name> where <name> is the final segment or
   // followed by a separator. The <name> segment must be non-empty.
   const sepFwd = "/";
   const sepNative = "\\";
   const markers = [
-    `${sepFwd}.gsd${sepFwd}worktrees${sepFwd}`,
-    `${sepNative}.gsd${sepNative}worktrees${sepNative}`,
+    `${sepFwd}.sf${sepFwd}worktrees${sepFwd}`,
+    `${sepNative}.sf${sepNative}worktrees${sepNative}`,
   ];
   for (const marker of markers) {
     const idx = p.indexOf(marker);
@@ -347,13 +347,13 @@ function isInsideGsdWorktree(p: string): boolean {
 
 function probeGsdRoot(rawBasePath: string): string {
   // 1. Fast path — check the input path directly
-  const local = join(rawBasePath, ".gsd");
+  const local = join(rawBasePath, ".sf");
   if (existsSync(local)) return local;
 
-  // 1b. Worktree guard (#2594) — if basePath is inside a .gsd/worktrees/<name>/
-  //     structure, return the worktree-local .gsd path immediately. Without this,
+  // 1b. Worktree guard (#2594) — if basePath is inside a .sf/worktrees/<name>/
+  //     structure, return the worktree-local .sf path immediately. Without this,
   //     the git-root probe (step 2) or walk-up (step 3) escapes to the project
-  //     root's .gsd, causing ensurePreconditions() and deriveState() to read/write
+  //     root's .sf, causing ensurePreconditions() and deriveState() to read/write
   //     state in the wrong location.
   if (isInsideGsdWorktree(rawBasePath)) return local;
 
@@ -381,7 +381,7 @@ function probeGsdRoot(rawBasePath: string): string {
   } catch { /* git not available */ }
 
   if (gitRoot) {
-    const candidate = join(gitRoot, ".gsd");
+    const candidate = join(gitRoot, ".sf");
     if (existsSync(candidate)) return candidate;
   }
 
@@ -389,7 +389,7 @@ function probeGsdRoot(rawBasePath: string): string {
   if (gitRoot && basePath !== gitRoot) {
     let cur = dirname(basePath);
     while (cur !== basePath) {
-      const candidate = join(cur, ".gsd");
+      const candidate = join(cur, ".sf");
       if (existsSync(candidate)) return candidate;
       if (cur === gitRoot) break;
       basePath = cur;
@@ -420,7 +420,7 @@ export function resolveSfRootFile(basePath: string, key: SFRootFileKey): string 
 export const resolveGsdRootFile = resolveSfRootFile;
 
 export function relSfRootFile(key: SFRootFileKey): string {
-  return `.gsd/${SF_ROOT_FILES[key]}`;
+  return `.sf/${SF_ROOT_FILES[key]}`;
 }
 
 export const relGsdRootFile = relSfRootFile;
@@ -496,20 +496,20 @@ export function resolveTaskFile(
   return file ? join(tDir, file) : null;
 }
 
-// ─── Relative Path Builders (for prompts — .gsd/milestones/...) ────────────
+// ─── Relative Path Builders (for prompts — .sf/milestones/...) ────────────
 
 /**
- * Build relative .gsd/ path to a milestone directory.
+ * Build relative .sf/ path to a milestone directory.
  * Uses the actual directory name on disk if it exists, otherwise bare ID.
  */
 export function relMilestonePath(basePath: string, milestoneId: string): string {
   const dir = resolveDir(milestonesDir(basePath), milestoneId);
-  if (dir) return `.gsd/milestones/${dir}`;
-  return `.gsd/milestones/${milestoneId}`;
+  if (dir) return `.sf/milestones/${dir}`;
+  return `.sf/milestones/${milestoneId}`;
 }
 
 /**
- * Build relative .gsd/ path to a milestone file.
+ * Build relative .sf/ path to a milestone file.
  */
 export function relMilestoneFile(
   basePath: string, milestoneId: string, suffix: string
@@ -524,7 +524,7 @@ export function relMilestoneFile(
 }
 
 /**
- * Build relative .gsd/ path to a slice directory.
+ * Build relative .sf/ path to a slice directory.
  */
 export function relSlicePath(
   basePath: string, milestoneId: string, sliceId: string
@@ -540,7 +540,7 @@ export function relSlicePath(
 }
 
 /**
- * Build relative .gsd/ path to a slice file.
+ * Build relative .sf/ path to a slice file.
  */
 export function relSliceFile(
   basePath: string, milestoneId: string, sliceId: string, suffix: string
@@ -555,7 +555,7 @@ export function relSliceFile(
 }
 
 /**
- * Build relative .gsd/ path to a task file.
+ * Build relative .sf/ path to a task file.
  */
 export function relTaskFile(
   basePath: string, milestoneId: string, sliceId: string,

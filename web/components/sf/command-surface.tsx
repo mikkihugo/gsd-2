@@ -417,43 +417,43 @@ export function CommandSurface() {
   const remainingCommands = commandSurface.remainingCommands
   useEffect(() => {
     if (!commandSurface.open) return
-    if (commandSurface.section === "gsd-forensics" && diagnostics.forensics.phase === "idle") {
+    if (commandSurface.section === "sf-forensics" && diagnostics.forensics.phase === "idle") {
       void loadForensicsDiagnostics()
-    } else if (commandSurface.section === "gsd-doctor" && diagnostics.doctor.phase === "idle") {
+    } else if (commandSurface.section === "sf-doctor" && diagnostics.doctor.phase === "idle") {
       void loadDoctorDiagnostics()
-    } else if (commandSurface.section === "gsd-skill-health" && diagnostics.skillHealth.phase === "idle") {
+    } else if (commandSurface.section === "sf-skill-health" && diagnostics.skillHealth.phase === "idle") {
       void loadSkillHealthDiagnostics()
     } else if (
-      commandSurface.section === "gsd-knowledge" &&
+      commandSurface.section === "sf-knowledge" &&
       knowledgeCaptures.knowledge.phase === "idle"
     ) {
       void loadKnowledgeData()
       void loadCapturesData()
     } else if (
-      (commandSurface.section === "gsd-capture" || commandSurface.section === "gsd-triage") &&
+      (commandSurface.section === "sf-capture" || commandSurface.section === "sf-triage") &&
       knowledgeCaptures.captures.phase === "idle"
     ) {
       void loadCapturesData()
       void loadKnowledgeData()
     } else if (
-      (commandSurface.section === "gsd-prefs" ||
-       commandSurface.section === "gsd-mode" ||
-       commandSurface.section === "gsd-config" ||
+      (commandSurface.section === "sf-prefs" ||
+       commandSurface.section === "sf-mode" ||
+       commandSurface.section === "sf-config" ||
        commandSurface.section === "experimental") &&
       settingsData.phase === "idle"
     ) {
       void loadSettingsData()
-    } else if (commandSurface.section === "gsd-history" && remainingCommands.history.phase === "idle") {
+    } else if (commandSurface.section === "sf-history" && remainingCommands.history.phase === "idle") {
       void loadHistoryData()
-    } else if (commandSurface.section === "gsd-inspect" && remainingCommands.inspect.phase === "idle") {
+    } else if (commandSurface.section === "sf-inspect" && remainingCommands.inspect.phase === "idle") {
       void loadInspectData()
-    } else if (commandSurface.section === "gsd-hooks" && remainingCommands.hooks.phase === "idle") {
+    } else if (commandSurface.section === "sf-hooks" && remainingCommands.hooks.phase === "idle") {
       void loadHooksData()
-    } else if (commandSurface.section === "gsd-undo" && remainingCommands.undo.phase === "idle") {
+    } else if (commandSurface.section === "sf-undo" && remainingCommands.undo.phase === "idle") {
       void loadUndoInfo()
-    } else if (commandSurface.section === "gsd-cleanup" && remainingCommands.cleanup.phase === "idle") {
+    } else if (commandSurface.section === "sf-cleanup" && remainingCommands.cleanup.phase === "idle") {
       void loadCleanupData()
-    } else if (commandSurface.section === "gsd-steer" && remainingCommands.steer.phase === "idle") {
+    } else if (commandSurface.section === "sf-steer" && remainingCommands.steer.phase === "idle") {
       void loadSteerData()
     }
   }, [
@@ -2048,7 +2048,7 @@ export function CommandSurface() {
 
       <div className="rounded-lg border border-border/50 bg-card/50 px-3 py-2.5 text-xs text-muted-foreground">
         This tab is only visible when running via{" "}
-        <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">npm run gsd:web</code>.
+        <code className="rounded bg-muted px-1 py-0.5 font-mono text-[11px]">npm run sf:web</code>.
         Overrides reset on page refresh.
       </div>
     </div>
@@ -2130,13 +2130,13 @@ export function CommandSurface() {
       case "compact": return renderCompactSection()
       case "workspace": return <DevRootSettingsSection />
       case "integrations": return <RemoteQuestionsPanel />
-      case "gsd-forensics": return <ForensicsPanel />
-      case "gsd-doctor": return <DoctorPanel />
-      case "gsd-skill-health": return <SkillHealthPanel />
-      case "gsd-knowledge": return <KnowledgeCapturesPanel initialTab="knowledge" />
-      case "gsd-capture": return <KnowledgeCapturesPanel initialTab="captures" />
-      case "gsd-triage": return <KnowledgeCapturesPanel initialTab="captures" />
-      case "gsd-prefs": return (
+      case "sf-forensics": return <ForensicsPanel />
+      case "sf-doctor": return <DoctorPanel />
+      case "sf-skill-health": return <SkillHealthPanel />
+      case "sf-knowledge": return <KnowledgeCapturesPanel initialTab="knowledge" />
+      case "sf-capture": return <KnowledgeCapturesPanel initialTab="captures" />
+      case "sf-triage": return <KnowledgeCapturesPanel initialTab="captures" />
+      case "sf-prefs": return (
         <div className="space-y-6">
           <DevRootSettingsSection />
           <PrefsPanel />
@@ -2147,24 +2147,24 @@ export function CommandSurface() {
           <ExperimentalPanel />
         </div>
       )
-      case "gsd-mode": return <ModelRoutingPanel />
-      case "gsd-config": return <BudgetPanel />
-      case "gsd-quick": return <QuickPanel />
-      case "gsd-history": return <HistoryPanel />
-      case "gsd-undo": return <UndoPanel />
-      case "gsd-steer": return <SteerPanel />
-      case "gsd-hooks": return <HooksPanel />
-      case "gsd-inspect": return <InspectPanel />
-      case "gsd-export": return <ExportPanel />
-      case "gsd-cleanup": return <CleanupPanel />
-      case "gsd-queue": return <QueuePanel />
-      case "gsd-status": return <StatusPanel />
+      case "sf-mode": return <ModelRoutingPanel />
+      case "sf-config": return <BudgetPanel />
+      case "sf-quick": return <QuickPanel />
+      case "sf-history": return <HistoryPanel />
+      case "sf-undo": return <UndoPanel />
+      case "sf-steer": return <SteerPanel />
+      case "sf-hooks": return <HooksPanel />
+      case "sf-inspect": return <InspectPanel />
+      case "sf-export": return <ExportPanel />
+      case "sf-cleanup": return <CleanupPanel />
+      case "sf-queue": return <QueuePanel />
+      case "sf-status": return <StatusPanel />
       default:
         // Safety net for any unknown SF surface
-        if (commandSurface.section?.startsWith("gsd-")) {
+        if (commandSurface.section?.startsWith("sf-")) {
           return (
-            <div className="p-4 text-sm text-muted-foreground" data-testid={`gsd-surface-${commandSurface.section}`}>
-              <p className="font-medium text-foreground">/gsd {commandSurface.section.slice(4)}</p>
+            <div className="p-4 text-sm text-muted-foreground" data-testid={`sf-surface-${commandSurface.section}`}>
+              <p className="font-medium text-foreground">/sf {commandSurface.section.slice(4)}</p>
               <p className="mt-1">Unknown SF surface.</p>
             </div>
           )

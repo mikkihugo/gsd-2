@@ -120,39 +120,39 @@ function parseHeadlessArgs(argv: string[]): HeadlessOptions {
 // ─── --output-format flag parsing ──────────────────────────────────────────
 
 test('--output-format text sets outputFormat to text', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--output-format', 'text', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--output-format', 'text', 'auto'])
   assert.equal(opts.outputFormat, 'text')
   assert.equal(opts.json, false)
 })
 
 test('--output-format json sets outputFormat to json and json=true', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--output-format', 'json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--output-format', 'json', 'auto'])
   assert.equal(opts.outputFormat, 'json')
   assert.equal(opts.json, true)
 })
 
 test('--output-format stream-json sets outputFormat to stream-json and json=true', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--output-format', 'stream-json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--output-format', 'stream-json', 'auto'])
   assert.equal(opts.outputFormat, 'stream-json')
   assert.equal(opts.json, true)
 })
 
 test('default output format is text', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', 'auto'])
   assert.equal(opts.outputFormat, 'text')
   assert.equal(opts.json, false)
 })
 
 test('invalid --output-format value throws', () => {
   assert.throws(
-    () => parseHeadlessArgs(['node', 'gsd', 'headless', '--output-format', 'yaml', 'auto']),
+    () => parseHeadlessArgs(['node', 'sf', 'headless', '--output-format', 'yaml', 'auto']),
     /Invalid output format: yaml/,
   )
 })
 
 test('invalid --output-format value (empty) throws', () => {
   assert.throws(
-    () => parseHeadlessArgs(['node', 'gsd', 'headless', '--output-format', 'xml', 'auto']),
+    () => parseHeadlessArgs(['node', 'sf', 'headless', '--output-format', 'xml', 'auto']),
     /Invalid output format/,
   )
 })
@@ -160,13 +160,13 @@ test('invalid --output-format value (empty) throws', () => {
 // ─── --json backward compatibility ─────────────────────────────────────────
 
 test('--json is alias for --output-format stream-json', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--json', 'auto'])
   assert.equal(opts.outputFormat, 'stream-json')
   assert.equal(opts.json, true)
 })
 
 test('--json before --output-format json: last writer wins', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--json', '--output-format', 'json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--json', '--output-format', 'json', 'auto'])
   assert.equal(opts.outputFormat, 'json')
   assert.equal(opts.json, true)
 })
@@ -174,13 +174,13 @@ test('--json before --output-format json: last writer wins', () => {
 // ─── --resume flag ─────────────────────────────────────────────────────────
 
 test('--resume parses session ID', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--resume', 'abc-123', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--resume', 'abc-123', 'auto'])
   assert.equal(opts.resumeSession, 'abc-123')
   assert.equal(opts.command, 'auto')
 })
 
 test('no --resume means undefined', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', 'auto'])
   assert.equal(opts.resumeSession, undefined)
 })
 
@@ -292,7 +292,7 @@ test('VALID_OUTPUT_FORMATS contains exactly text, json, stream-json', () => {
 // ─── Regression: existing flags still parse correctly ──────────────────────
 
 test('--events still works with new outputFormat default', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--events', 'agent_end,tool_execution_start', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--events', 'agent_end,tool_execution_start', 'auto'])
   assert.ok(opts.eventFilter instanceof Set)
   assert.equal(opts.eventFilter!.size, 2)
   assert.equal(opts.json, true)
@@ -300,30 +300,30 @@ test('--events still works with new outputFormat default', () => {
 })
 
 test('--timeout still works', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--timeout', '60000', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--timeout', '60000', 'auto'])
   assert.equal(opts.timeout, 60000)
 })
 
 test('--supervised still works and implies stream-json', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--supervised', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--supervised', 'auto'])
   assert.equal(opts.supervised, true)
   assert.equal(opts.json, true)
   assert.equal(opts.outputFormat, 'stream-json')
 })
 
 test('--answers still works', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--answers', 'answers.json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--answers', 'answers.json', 'auto'])
   assert.equal(opts.answers, 'answers.json')
 })
 
 test('positional command parsing still works', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', 'next'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', 'next'])
   assert.equal(opts.command, 'next')
 })
 
 test('combined flags parse correctly', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     '--output-format', 'json',
     '--timeout', '120000',
     '--resume', 'sess-xyz',
@@ -341,25 +341,25 @@ test('combined flags parse correctly', () => {
 // ─── --bare flag ───────────────────────────────────────────────────────────
 
 test('--bare sets bare to true', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--bare', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--bare', 'auto'])
   assert.equal(opts.bare, true)
   assert.equal(opts.command, 'auto')
 })
 
 test('no --bare means bare is undefined', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', 'auto'])
   assert.equal(opts.bare, undefined)
 })
 
 test('--bare is a boolean flag (no value needed)', () => {
-  const opts = parseHeadlessArgs(['node', 'gsd', 'headless', '--bare', '--json', 'auto'])
+  const opts = parseHeadlessArgs(['node', 'sf', 'headless', '--bare', '--json', 'auto'])
   assert.equal(opts.bare, true)
   assert.equal(opts.json, true)
 })
 
 test('--bare combined with --output-format json', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     '--bare',
     '--output-format', 'json',
     'auto',
@@ -374,7 +374,7 @@ test('--bare combined with --output-format json', () => {
 
 test('command before flags: new-milestone --context-text --auto --verbose', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     'new-milestone',
     '--context-text', 'build something cool',
     '--auto',
@@ -388,7 +388,7 @@ test('command before flags: new-milestone --context-text --auto --verbose', () =
 
 test('command before flags: next --json --timeout', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     'next',
     '--json',
     '--timeout', '60000',
@@ -400,7 +400,7 @@ test('command before flags: next --json --timeout', () => {
 
 test('command between flags: --auto new-milestone --verbose', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     '--auto',
     'new-milestone',
     '--verbose',
@@ -412,7 +412,7 @@ test('command between flags: --auto new-milestone --verbose', () => {
 
 test('--bare does not affect other flags', () => {
   const opts = parseHeadlessArgs([
-    'node', 'gsd', 'headless',
+    'node', 'sf', 'headless',
     '--bare',
     '--timeout', '60000',
     '--resume', 'sess-abc',

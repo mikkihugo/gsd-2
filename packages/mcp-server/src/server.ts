@@ -31,7 +31,7 @@ import { applySecrets, checkExistingEnvKeys, detectDestination } from './env-wri
 // ---------------------------------------------------------------------------
 
 const MCP_PKG = '@modelcontextprotocol/sdk';
-const SERVER_NAME = 'gsd';
+const SERVER_NAME = 'sf';
 const SERVER_VERSION = '2.53.0';
 
 // ---------------------------------------------------------------------------
@@ -82,7 +82,7 @@ function normalizeQuery(query: string | undefined): QueryCategory {
 }
 
 async function readProjectState(projectDir: string, query: string | undefined): Promise<Record<string, unknown>> {
-  const gsdDir = join(resolve(projectDir), '.gsd');
+  const gsdDir = join(resolve(projectDir), '.sf');
   const category = normalizeQuery(query);
   const wanted = new Set<ProjectStateField>(QUERY_FIELDS[category]);
 
@@ -367,7 +367,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
     'Start a SF auto-mode session for a project directory. Returns a sessionId for tracking.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
-      command: z.string().optional().describe('Command to send (default: "/gsd auto")'),
+      command: z.string().optional().describe('Command to send (default: "/sf auto")'),
       model: z.string().optional().describe('Model ID override'),
       bare: z.boolean().optional().describe('Run in bare mode (skip user config)'),
     },
@@ -689,7 +689,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_progress',
-    'Get structured project progress: active milestone/slice/task, phase, completion counts, blockers, and next action. No session required — reads directly from .gsd/ on disk.',
+    'Get structured project progress: active milestone/slice/task, phase, completion counts, blockers, and next action. No session required — reads directly from .sf/ on disk.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
     },
@@ -748,7 +748,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // -----------------------------------------------------------------------
   server.tool(
     'gsd_doctor',
-    'Run a lightweight structural health check on the .gsd/ directory. Checks for missing files, status inconsistencies, and orphaned state. No session required.',
+    'Run a lightweight structural health check on the .sf/ directory. Checks for missing files, status inconsistencies, and orphaned state. No session required.',
     {
       projectDir: z.string().describe('Absolute path to the project directory'),
       scope: z.string().optional().describe('Limit checks to a specific milestone (e.g. "M001")'),
@@ -806,7 +806,7 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
   // gsd_graph — knowledge graph for SF projects
   //
   // Modes:
-  //   build   Parse .gsd/ artifacts and write graph.json atomically.
+  //   build   Parse .sf/ artifacts and write graph.json atomically.
   //   query   Search the graph for nodes matching a term (BFS, budget-trimmed).
   //   status  Check whether graph.json exists and whether it is stale (>24h).
   //   diff    Compare graph.json with the last build snapshot.
@@ -817,8 +817,8 @@ export async function createMcpServer(sessionManager: SessionManager): Promise<{
       'Manage the SF project knowledge graph. No session required.',
       '',
       'Modes:',
-      '  build   Parse .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',
-      '          KNOWLEDGE.md) and write .gsd/graphs/graph.json atomically.',
+      '  build   Parse .sf/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,',
+      '          KNOWLEDGE.md) and write .sf/graphs/graph.json atomically.',
       '  query   Search graph nodes by term (BFS from seed matches, budget-trimmed).',
       '          Returns matching nodes and reachable edges within the token budget.',
       '  status  Show whether graph.json exists, its age, node/edge counts, and',

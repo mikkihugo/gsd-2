@@ -94,7 +94,7 @@ function enqueueSidecar(
   if (notification) ctx.ui.notify(notification, "info");
   return "continue";
 }
-/** Unit types that only touch `.gsd/` internal state files (no code changes).
+/** Unit types that only touch `.sf/` internal state files (no code changes).
  *  Auto-commit is skipped for these — their state files are picked up by the
  *  next actual task commit via `smartStage()`. */
 const LIFECYCLE_ONLY_UNITS = new Set([

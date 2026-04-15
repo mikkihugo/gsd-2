@@ -13,7 +13,7 @@ function run(cmd: string, cwd: string): string {
   return execSync(cmd, { cwd, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" }).trim();
 }
 
-/** Create a temp git repo with .gsd structure and DB. */
+/** Create a temp git repo with .sf structure and DB. */
 function createRepo(): string {
   const dir = realpathSync(mkdtempSync(join(tmpdir(), "orphan-audit-test-")));
   run("git init", dir);
@@ -25,8 +25,8 @@ function createRepo(): string {
   run("git commit -m init", dir);
   run("git branch -M main", dir);
 
-  // Create .gsd structure on disk (not tracked in git)
-  mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
+  // Create .sf structure on disk (not tracked in git)
+  mkdirSync(join(dir, ".sf", "milestones", "M001"), { recursive: true });
 
   return dir;
 }
@@ -36,7 +36,7 @@ describe("auditOrphanedMilestoneBranches", () => {
 
   beforeEach(() => {
     dir = createRepo();
-    openDatabase(join(dir, ".gsd", "sf.db"));
+    openDatabase(join(dir, ".sf", "sf.db"));
   });
 
   afterEach(() => {
@@ -127,7 +127,7 @@ describe("auditOrphanedMilestoneBranches", () => {
     insertMilestone({ id: "M001", title: "Test", status: "complete" });
 
     // Create orphaned worktree directory
-    const wtDir = join(dir, ".gsd", "worktrees", "M001");
+    const wtDir = join(dir, ".sf", "worktrees", "M001");
     mkdirSync(wtDir, { recursive: true });
     writeFileSync(join(wtDir, "leftover.txt"), "orphaned file\n");
 

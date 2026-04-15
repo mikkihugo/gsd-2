@@ -6,7 +6,7 @@
  * lockfile) which eliminates the TOCTOU race condition that existed with
  * the old advisory JSON lock approach.
  *
- * The lock file (.gsd/auto.lock) contains JSON metadata (PID, start time,
+ * The lock file (.sf/auto.lock) contains JSON metadata (PID, start time,
  * unit info) for diagnostics, but the actual exclusion is enforced by the
  * OS-level lock held via proper-lockfile.
  *
@@ -99,7 +99,7 @@ const LOCK_FILE = "auto.lock";
  * Derive the effective lock file name for the current process.
  * In parallel worker mode (SF_PARALLEL_WORKER + SF_MILESTONE_LOCK),
  * each worker uses a per-milestone lock file (`auto-<milestoneId>.lock`)
- * to avoid contending on the shared `.gsd/auto.lock` (#2184).
+ * to avoid contending on the shared `.sf/auto.lock` (#2184).
  */
 export function effectiveLockFile(): string {
   const mid = process.env.SF_PARALLEL_WORKER ? process.env.SF_MILESTONE_LOCK : null;
@@ -108,8 +108,8 @@ export function effectiveLockFile(): string {
 
 /**
  * Derive the OS-level lock target directory for the current process.
- * In parallel worker mode, uses `.gsd/parallel/<milestoneId>/` instead of
- * `.gsd/` so workers don't contend on the same proper-lockfile directory (#2184).
+ * In parallel worker mode, uses `.sf/parallel/<milestoneId>/` instead of
+ * `.sf/` so workers don't contend on the same proper-lockfile directory (#2184).
  */
 export function effectiveLockTarget(sfDir: string): string {
   const mid = process.env.SF_PARALLEL_WORKER ? process.env.SF_MILESTONE_LOCK : null;
@@ -129,12 +129,12 @@ function lockPath(basePath: string): string {
  * that accumulate from macOS file conflict resolution (iCloud/Dropbox/OneDrive)
  * or other filesystem-level copy-on-conflict behavior (#1315).
  *
- * Also removes stray proper-lockfile directories beyond the canonical `.gsd.lock/`.
+ * Also removes stray proper-lockfile directories beyond the canonical `.sf.lock/`.
  */
 export function cleanupStrayLockFiles(basePath: string): void {
   const sfDir = sfRoot(basePath);
 
-  // Clean numbered auto lock files inside .gsd/
+  // Clean numbered auto lock files inside .sf/
   try {
     if (existsSync(sfDir)) {
       for (const entry of readdirSync(sfDir)) {
@@ -146,14 +146,14 @@ export function cleanupStrayLockFiles(basePath: string): void {
     }
   } catch { /* non-fatal: directory read failure */ }
 
-  // Clean stray proper-lockfile directories (e.g. ".gsd 2.lock/")
-  // The canonical one is ".gsd.lock/" — anything else is stray.
+  // Clean stray proper-lockfile directories (e.g. ".sf 2.lock/")
+  // The canonical one is ".sf.lock/" — anything else is stray.
   try {
     const parentDir = dirname(sfDir);
-    const sfDirName = sfDir.split("/").pop() || ".gsd";
+    const sfDirName = sfDir.split("/").pop() || ".sf";
     if (existsSync(parentDir)) {
       for (const entry of readdirSync(parentDir)) {
-        // Match ".gsd <N>.lock" or ".gsd (<N>).lock" directories but NOT ".gsd.lock"
+        // Match ".sf <N>.lock" or ".sf (<N>).lock" directories but NOT ".sf.lock"
         if (entry !== `${sfDirName}.lock` && entry.startsWith(sfDirName) && entry.endsWith(".lock")) {
           const fullPath = join(parentDir, entry);
           try {
@@ -185,7 +185,7 @@ function ensureExitHandler(_sfDir: string): void {
       if (_releaseFunction) { _releaseFunction(); _releaseFunction = null; }
     } catch { /* best-effort */ }
     // Clean ALL registered lock paths, not just the current one (#1578).
-    // Lock files accumulate across main project .gsd/, worktree .gsd/,
+    // Lock files accumulate across main project .sf/, worktree .sf/,
     // and projects registry paths — cleanup must cover all of them.
     for (const dir of _lockDirRegistry) {
       try {
@@ -318,7 +318,7 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
     // Try to acquire an exclusive OS-level lock on the lock target.
     // We lock a directory since proper-lockfile works best on directories,
     // and the lock file itself may not exist yet.
-    // In parallel worker mode, lockTarget is .gsd/parallel/<MID>/ (#2184).
+    // In parallel worker mode, lockTarget is .sf/parallel/<MID>/ (#2184).
     mkdirSync(lockTarget, { recursive: true });
 
     const release = lockfile.lockSync(lockTarget, {
@@ -339,7 +339,7 @@ export function acquireSessionLock(basePath: string): SessionLockResult {
 
     return { acquired: true };
   } catch (err) {
-    // Lock is held by another process — or the .gsd.lock/ directory is stranded.
+    // Lock is held by another process — or the .sf.lock/ directory is stranded.
     // Check: if auto.lock is gone and no process is alive, the lock dir is stale.
     const existingData = readExistingLockData(lp);
     const existingPid = existingData?.pid;
@@ -535,7 +535,7 @@ export function releaseSessionLock(basePath: string): void {
   }
 
   // Remove the proper-lockfile directory for the current lock target.
-  // In parallel worker mode, this is .gsd/parallel/<MID>.lock/ (#2184).
+  // In parallel worker mode, this is .sf/parallel/<MID>.lock/ (#2184).
   const sfDir = sfRoot(basePath);
   const lockTarget = effectiveLockTarget(sfDir);
   try {
@@ -554,7 +554,7 @@ export function releaseSessionLock(basePath: string): void {
   }
 
   // Clean ALL registered lock paths (#1578) — lock files accumulate across
-  // main project .gsd/, worktree .gsd/, and projects registry paths.
+  // main project .sf/, worktree .sf/, and projects registry paths.
   for (const dir of _lockDirRegistry) {
     try {
       const lockFile = join(dir, LOCK_FILE);

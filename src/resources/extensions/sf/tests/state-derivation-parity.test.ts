@@ -12,7 +12,7 @@ import { deriveState, isGhostMilestone, invalidateStateCache } from "../state.ts
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "sf-parity-test-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones"), { recursive: true });
   return base;
 }
 
@@ -21,13 +21,13 @@ function cleanup(base: string): void {
 }
 
 function writeMilestoneFile(base: string, mid: string, suffix: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-${suffix}.md`), content);
 }
 
 function writeMilestoneValidation(base: string, mid: string, verdict: string = "pass"): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(
     join(dir, `${mid}-VALIDATION.md`),
@@ -55,7 +55,7 @@ describe("state-derivation-parity", () => {
   test("ghost milestone with only META.json is correctly detected", () => {
     const base = createFixtureBase();
     try {
-      const dir = join(base, ".gsd", "milestones", "M001");
+      const dir = join(base, ".sf", "milestones", "M001");
       mkdirSync(dir, { recursive: true });
       // Write only META.json — no CONTEXT, CONTEXT-DRAFT, ROADMAP, or SUMMARY
       writeFileSync(join(dir, "META.json"), JSON.stringify({ id: "M001", createdAt: new Date().toISOString() }));
@@ -106,7 +106,7 @@ describe("state-derivation-parity", () => {
     const base = createFixtureBase();
     try {
       // Provide a milestone with a ROADMAP that has a single incomplete slice
-      const dir = join(base, ".gsd", "milestones", "M001");
+      const dir = join(base, ".sf", "milestones", "M001");
       mkdirSync(dir, { recursive: true });
       writeFileSync(
         join(dir, "M001-ROADMAP.md"),
@@ -155,7 +155,7 @@ describe("state-derivation-parity", () => {
     const base = createFixtureBase();
     try {
       // M001: ghost — just an empty directory
-      mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
 
       // M002: has CONTEXT-DRAFT — should become active
       writeMilestoneFile(
@@ -187,7 +187,7 @@ describe("state-derivation-parity", () => {
   test("isGhostMilestone returns true for milestone directory with no files", () => {
     const base = createFixtureBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
       // No files at all in the directory
       assert.ok(
         isGhostMilestone(base, "M001"),
@@ -231,8 +231,8 @@ describe("state-derivation-parity", () => {
     const base = createFixtureBase();
     try {
       // M001 and M002: ghosts
-      mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
-      mkdirSync(join(base, ".gsd", "milestones", "M002"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M002"), { recursive: true });
 
       // M003: has CONTEXT-DRAFT — first real milestone
       writeMilestoneFile(base, "M003", "CONTEXT-DRAFT", "# M003 Draft\n\nFirst substantive milestone.");

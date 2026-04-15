@@ -1,5 +1,5 @@
 /**
- * /sf migrate — one-shot migration from .planning to .gsd
+ * /sf migrate — one-shot migration from .planning to .sf
  *
  * Thin UX orchestrator: resolves paths, runs the validate → parse → transform →
  * preview → write pipeline, and shows confirmation UI via showNextAction.
@@ -98,7 +98,7 @@ export async function handleMigrate(
   if (!existsSync(sourcePath)) {
     ctx.ui.notify(
       `Directory not found: ${sourcePath}\n\n` +
-      'Migration converts a .planning/ directory (from older SF versions) into .gsd/ format.\n' +
+      'Migration converts a .planning/ directory (from older SF versions) into .sf/ format.\n' +
       'If you are starting a new project, use /sf:new-project instead.\n' +
       'If migrating, ensure the path contains a .planning/ directory.',
       "error",
@@ -148,7 +148,7 @@ export async function handleMigrate(
   const targetGsdExists = existsSync(sfRoot(process.cwd()));
   if (targetGsdExists) {
     lines.push("");
-    lines.push("⚠ A .gsd directory already exists in the current working directory — it will be overwritten.");
+    lines.push("⚠ A .sf directory already exists in the current working directory — it will be overwritten.");
   }
 
   // ── Confirmation via showNextAction ────────────────────────────────────────
@@ -158,8 +158,8 @@ export async function handleMigrate(
     actions: [
       {
         id: "confirm",
-        label: "Write .gsd directory",
-        description: `Migrate ${preview.milestoneCount} milestone(s) to ${process.cwd()}/.gsd`,
+        label: "Write .sf directory",
+        description: `Migrate ${preview.milestoneCount} milestone(s) to ${process.cwd()}/.sf`,
         recommended: true,
       },
       {
@@ -177,13 +177,13 @@ export async function handleMigrate(
   }
 
   // ── Write ──────────────────────────────────────────────────────────────────
-  ctx.ui.notify("Writing .gsd directory…", "info");
+  ctx.ui.notify("Writing .sf directory…", "info");
 
   const result = await writeSFDirectory(project, process.cwd());
   const sfPath = sfRoot(process.cwd());
 
   ctx.ui.notify(
-    `✓ Migration complete — ${result.paths.length} file(s) written to .gsd/`,
+    `✓ Migration complete — ${result.paths.length} file(s) written to .sf/`,
     "info",
   );
 
@@ -191,7 +191,7 @@ export async function handleMigrate(
   const reviewChoice = await showNextAction(ctx, {
     title: "Migration written",
     summary: [
-      `${result.paths.length} files written to .gsd/`,
+      `${result.paths.length} files written to .sf/`,
       "",
       "The agent can now review the migrated output against SF-2 standards —",
       "checking structure, content quality, deriveState() round-trip, and",
@@ -201,7 +201,7 @@ export async function handleMigrate(
       {
         id: "review",
         label: "Review migration",
-        description: "Agent audits the .gsd output and reports PASS/FAIL per category",
+        description: "Agent audits the .sf output and reports PASS/FAIL per category",
         recommended: true,
       },
       {
@@ -210,7 +210,7 @@ export async function handleMigrate(
         description: "Trust the migration output as-is",
       },
     ],
-    notYetMessage: "Run /sf migrate again to re-migrate, or review .gsd manually.",
+    notYetMessage: "Run /sf migrate again to re-migrate, or review .sf manually.",
   });
 
   if (reviewChoice === "review") {

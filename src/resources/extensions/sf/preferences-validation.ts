@@ -874,7 +874,7 @@ export function validatePreferences(preferences: SFPreferences): {
       }
     }
     if (g.commit_docs !== undefined) {
-      warnings.push("git.commit_docs is deprecated — .gsd/ is managed externally and always gitignored. Remove this setting.");
+      warnings.push("git.commit_docs is deprecated — .sf/ is managed externally and always gitignored. Remove this setting.");
     }
     if (g.manage_gitignore !== undefined) {
       if (typeof g.manage_gitignore === "boolean") git.manage_gitignore = g.manage_gitignore;

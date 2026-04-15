@@ -164,7 +164,7 @@ test("buildReactiveExecutePrompt: output contains model string when subagentMode
   const repo = mkdtempSync(join(tmpdir(), "sf-subagent-model-reactive-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
 
-  const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+  const sf = join(repo, ".sf", "milestones", "M001", "slices", "S01");
   mkdirSync(join(sf, "tasks"), { recursive: true });
 
   writeFileSync(
@@ -217,7 +217,7 @@ test("buildReactiveExecutePrompt: no model instruction when subagentModel omitte
   const repo = mkdtempSync(join(tmpdir(), "sf-subagent-model-none-"));
   t.after(() => rmSync(repo, { recursive: true, force: true }));
 
-  const sf = join(repo, ".gsd", "milestones", "M001", "slices", "S01");
+  const sf = join(repo, ".sf", "milestones", "M001", "slices", "S01");
   mkdirSync(join(sf, "tasks"), { recursive: true });
 
   writeFileSync(

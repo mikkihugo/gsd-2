@@ -52,57 +52,57 @@ test("syncWorktreeStateBack copies task summaries from tasks/ subdirectory (#167
 
   try {
     // Set up worktree with milestone, slice, and task files
-    writeFile(wtBase, `.gsd/milestones/${mid}/${mid}-ROADMAP.md`, "# Roadmap\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/${mid}-SUMMARY.md`, "# Summary\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-PLAN.md`, "# Plan\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-SUMMARY.md`, "# Slice Summary\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-UAT.md`, "# UAT\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-PLAN.md`, "# Task 1 Plan\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# Task 1 Summary\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T02-PLAN.md`, "# Task 2 Plan\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T02-SUMMARY.md`, "# Task 2 Summary\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/${mid}-ROADMAP.md`, "# Roadmap\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/${mid}-SUMMARY.md`, "# Summary\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-PLAN.md`, "# Plan\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-SUMMARY.md`, "# Slice Summary\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-UAT.md`, "# UAT\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-PLAN.md`, "# Task 1 Plan\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# Task 1 Summary\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T02-PLAN.md`, "# Task 2 Plan\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T02-SUMMARY.md`, "# Task 2 Summary\n");
 
-    // Set up main with empty .gsd
-    mkdirSync(join(mainBase, ".gsd"), { recursive: true });
+    // Set up main with empty .sf
+    mkdirSync(join(mainBase, ".sf"), { recursive: true });
 
     // Run sync — currentMid is skipped, mid (M001) should be synced
     const result = syncWorktreeStateBack(mainBase, wtBase, currentMid);
 
     // Verify milestone-level files synced
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/${mid}-ROADMAP.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/${mid}-ROADMAP.md`)),
       "ROADMAP should be synced",
     );
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/${mid}-SUMMARY.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/${mid}-SUMMARY.md`)),
       "SUMMARY should be synced",
     );
 
     // Verify slice-level files synced
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/S01-PLAN.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/S01-PLAN.md`)),
       "S01-PLAN should be synced",
     );
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/S01-SUMMARY.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/S01-SUMMARY.md`)),
       "S01-SUMMARY should be synced",
     );
 
     // Verify task-level files synced (THE BUG FIX)
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-PLAN.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-PLAN.md`)),
       "T01-PLAN should be synced (was dropped before fix)",
     );
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)),
       "T01-SUMMARY should be synced (was dropped before fix)",
     );
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T02-PLAN.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T02-PLAN.md`)),
       "T02-PLAN should be synced (was dropped before fix)",
     );
     assert.ok(
-      existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T02-SUMMARY.md`)),
+      existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T02-SUMMARY.md`)),
       "T02-SUMMARY should be synced (was dropped before fix)",
     );
 
@@ -115,7 +115,7 @@ test("syncWorktreeStateBack copies task summaries from tasks/ subdirectory (#167
 
     // Verify content integrity
     const t1Summary = readFileSync(
-      join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`),
+      join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`),
       "utf-8",
     );
     assert.equal(t1Summary, "# Task 1 Summary\n");
@@ -132,26 +132,26 @@ test("syncWorktreeStateBack handles multiple slices with tasks (#1678)", () => {
 
   try {
     // Set up two slices with tasks
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-SUMMARY.md`, "# S01\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# S01-T01\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S02/S02-SUMMARY.md`, "# S02\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S02/tasks/T01-SUMMARY.md`, "# S02-T01\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S02/tasks/T02-SUMMARY.md`, "# S02-T02\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`, "# S02-T03\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-SUMMARY.md`, "# S01\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# S01-T01\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S02/S02-SUMMARY.md`, "# S02\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S02/tasks/T01-SUMMARY.md`, "# S02-T01\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S02/tasks/T02-SUMMARY.md`, "# S02-T02\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`, "# S02-T03\n");
 
-    mkdirSync(join(mainBase, ".gsd"), { recursive: true });
+    mkdirSync(join(mainBase, ".sf"), { recursive: true });
 
     const result = syncWorktreeStateBack(mainBase, wtBase, currentMid);
 
     // All task summaries from both slices should be synced
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)));
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S02/tasks/T01-SUMMARY.md`)));
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S02/tasks/T02-SUMMARY.md`)));
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S02/tasks/T01-SUMMARY.md`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S02/tasks/T02-SUMMARY.md`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`)));
 
     // Verify content integrity across slices
     assert.equal(
-      readFileSync(join(mainBase, `.gsd/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`), "utf-8"),
+      readFileSync(join(mainBase, `.sf/milestones/${mid}/slices/S02/tasks/T03-SUMMARY.md`), "utf-8"),
       "# S02-T03\n",
     );
   } finally {
@@ -167,14 +167,14 @@ test("syncWorktreeStateBack handles slices without tasks/ directory", () => {
 
   try {
     // Slice with no tasks/ subdirectory (legitimate case: pre-planning)
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-RESEARCH.md`, "# Research\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-RESEARCH.md`, "# Research\n");
 
-    mkdirSync(join(mainBase, ".gsd"), { recursive: true });
+    mkdirSync(join(mainBase, ".sf"), { recursive: true });
 
     const result = syncWorktreeStateBack(mainBase, wtBase, currentMid);
 
     // Should sync the slice file without errors
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/S01-RESEARCH.md`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/S01-RESEARCH.md`)));
     // Should not have any task entries
     const taskSynced = result.synced.filter(p => p.includes("/tasks/"));
     assert.equal(taskSynced.length, 0);
@@ -190,20 +190,20 @@ test("syncWorktreeStateBack ignores non-md files in tasks/", () => {
   const mid = "M004";        // other milestone that should be synced
 
   try {
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/S01-PLAN.md`, "# Plan\n");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# T01\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/S01-PLAN.md`, "# Plan\n");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`, "# T01\n");
     // Non-md file should be ignored
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/.DS_Store`, "junk");
-    writeFile(wtBase, `.gsd/milestones/${mid}/slices/S01/tasks/notes.txt`, "notes");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/.DS_Store`, "junk");
+    writeFile(wtBase, `.sf/milestones/${mid}/slices/S01/tasks/notes.txt`, "notes");
 
-    mkdirSync(join(mainBase, ".gsd"), { recursive: true });
+    mkdirSync(join(mainBase, ".sf"), { recursive: true });
 
     const result = syncWorktreeStateBack(mainBase, wtBase, currentMid);
 
     // Only .md files should be synced
-    assert.ok(existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)));
-    assert.ok(!existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/.DS_Store`)));
-    assert.ok(!existsSync(join(mainBase, `.gsd/milestones/${mid}/slices/S01/tasks/notes.txt`)));
+    assert.ok(existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/T01-SUMMARY.md`)));
+    assert.ok(!existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/.DS_Store`)));
+    assert.ok(!existsSync(join(mainBase, `.sf/milestones/${mid}/slices/S01/tasks/notes.txt`)));
   } finally {
     cleanup(mainBase, wtBase);
   }

@@ -11,7 +11,7 @@ import { join } from "node:path";
 import { homedir } from "node:os";
 import { sfRoot } from "./paths.js";
 
-const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
 
 // ─── Types ──────────────────────────────────────────────────────────────────────
 
@@ -22,7 +22,7 @@ export interface ProjectDetection {
   /** Is this the first time SF has been used on this machine? */
   isFirstEverLaunch: boolean;
 
-  /** Does ~/.gsd/ exist with preferences? */
+  /** Does ~/.sf/ exist with preferences? */
   hasGlobalSetup: boolean;
 
   /** v1 details (only when state === 'v1-planning') */
@@ -242,7 +242,7 @@ const TEST_MARKERS = [
 /** Directories skipped during bounded recursive project scans. */
 const RECURSIVE_SCAN_IGNORED_DIRS = new Set([
   ".git",
-  ".gsd",
+  ".sf",
   ".planning",
   ".plans",
   ".claude",
@@ -716,7 +716,7 @@ function detectVerificationCommands(
 // ─── Global Setup Detection ─────────────────────────────────────────────────────
 
 /**
- * Check if global SF setup exists (has ~/.gsd/ with preferences).
+ * Check if global SF setup exists (has ~/.sf/ with preferences).
  */
 export function hasGlobalSetup(): boolean {
   return (
@@ -727,7 +727,7 @@ export function hasGlobalSetup(): boolean {
 
 /**
  * Check if this is the very first time SF has been used on this machine.
- * Returns true if ~/.gsd/ doesn't exist or has no preferences or auth.
+ * Returns true if ~/.sf/ doesn't exist or has no preferences or auth.
  */
 export function isFirstEverLaunch(): boolean {
   if (!existsSync(sfHome)) return true;

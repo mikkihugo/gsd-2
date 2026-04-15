@@ -64,7 +64,7 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `post-exec-retry-test-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
 
-  const sfDir = join(tempDir, ".gsd");
+  const sfDir = join(tempDir, ".sf");
   mkdirSync(sfDir, { recursive: true });
 
   const milestonesDir = join(sfDir, "milestones", "M001", "slices", "S01", "tasks");
@@ -103,7 +103,7 @@ ${yamlLines.join("\n")}
 
 # SF Preferences
 `;
-  writeFileSync(join(tempDir, ".gsd", "PREFERENCES.md"), prefsContent);
+  writeFileSync(join(tempDir, ".sf", "PREFERENCES.md"), prefsContent);
   invalidateAllCaches();
   _clearGsdRootCache();
 }

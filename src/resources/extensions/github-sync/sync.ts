@@ -10,15 +10,15 @@
 
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { loadFile, parseSummary } from "../gsd/files.js";
-import { parseRoadmap, parsePlan } from "../gsd/parsers-legacy.js";
+import { loadFile, parseSummary } from "../sf/files.js";
+import { parseRoadmap, parsePlan } from "../sf/parsers-legacy.js";
 import {
   resolveMilestoneFile,
   resolveSliceFile,
   resolveTaskFile,
-} from "../gsd/paths.js";
-import { debugLog } from "../gsd/debug-logger.js";
-import { loadEffectiveGSDPreferences } from "../gsd/preferences.js";
+} from "../sf/paths.js";
+import { debugLog } from "../sf/debug-logger.js";
+import { loadEffectiveSFPreferences } from "../sf/preferences.js";
 
 import type { GitHubSyncConfig, SyncMapping } from "./types.js";
 import {
@@ -442,7 +442,7 @@ async function syncMilestoneComplete(
 // ─── Bootstrap ──────────────────────────────────────────────────────────────
 
 /**
- * Walk the `.gsd/milestones/` tree and create GitHub entities for any
+ * Walk the `.sf/milestones/` tree and create GitHub entities for any
  * that are missing from the sync mapping. Safe to run multiple times.
  */
 export async function bootstrapSync(basePath: string): Promise<{
@@ -462,7 +462,7 @@ export async function bootstrapSync(basePath: string): Promise<{
 
   const taskCountBefore = Object.keys(mapping.tasks).length;
   const counts = { milestones: 0, slices: 0, tasks: 0 };
-  const milestonesDir = join(basePath, ".gsd", "milestones");
+  const milestonesDir = join(basePath, ".sf", "milestones");
   if (!existsSync(milestonesDir)) return counts;
 
   const milestoneIds = readdirSync(milestonesDir, { withFileTypes: true })
@@ -505,7 +505,7 @@ let _cachedConfig: GitHubSyncConfig | null | undefined;
 function loadGitHubSyncConfig(_basePath: string): GitHubSyncConfig | null {
   if (_cachedConfig !== undefined) return _cachedConfig;
   try {
-    const prefs = loadEffectiveGSDPreferences();
+    const prefs = loadEffectiveSFPreferences();
     const github = (prefs?.preferences as Record<string, unknown>)?.github;
     if (!github || typeof github !== "object") {
       _cachedConfig = null;

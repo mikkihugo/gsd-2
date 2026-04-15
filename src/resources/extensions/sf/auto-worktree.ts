@@ -67,14 +67,14 @@ import {
   nativeMergeAbort,
 } from "./native-git-bridge.js";
 
-const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
 const PROJECT_PREFERENCES_FILE = "PREFERENCES.md";
 const LEGACY_PROJECT_PREFERENCES_FILE = "preferences.md";
 
 // ─── Shared Constants & Helpers ─────────────────────────────────────────────
 
 /**
- * Root-level .gsd/ state files synced between worktree and project root.
+ * Root-level .sf/ state files synced between worktree and project root.
  * Single source of truth — used by syncSfStateToWorktree, syncWorktreeStateBack,
  * and the dispatch-level sync functions.
  */
@@ -250,9 +250,9 @@ export const SAFE_AUTO_RESOLVE_PATTERNS: RegExp[] = [
 ];
 
 /** Returns true if the file path is safe to auto-resolve during merge.
- * Covers `.gsd/` state files and common build artifacts. */
+ * Covers `.sf/` state files and common build artifacts. */
 export const isSafeToAutoResolve = (filePath: string): boolean =>
-  filePath.startsWith(".gsd/") ||
+  filePath.startsWith(".sf/") ||
   SAFE_AUTO_RESOLVE_PATTERNS.some((re) => re.test(filePath));
 
 // ─── Dispatch-Level Sync (project root ↔ worktree) ──────────────────────────
@@ -272,10 +272,10 @@ export function syncProjectRootToWorktree(
   if (!worktreePath_ || !projectRoot || worktreePath_ === projectRoot) return;
   if (!milestoneId) return;
 
-  const prGsd = join(projectRoot, ".gsd");
-  const wtGsd = join(worktreePath_, ".gsd");
+  const prGsd = join(projectRoot, ".sf");
+  const wtGsd = join(worktreePath_, ".sf");
 
-  // When .gsd is a symlink to the same external directory in both locations,
+  // When .sf is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
   if (isSamePath(prGsd, wtGsd)) return;
@@ -351,7 +351,7 @@ export function syncProjectRootToWorktree(
 }
 
 /**
- * Sync dispatch-critical .gsd/ state files from worktree to project root.
+ * Sync dispatch-critical .sf/ state files from worktree to project root.
  * Only runs when inside an auto-worktree (worktreePath differs from projectRoot).
  * Copies: STATE.md + active milestone directory (roadmap, slice plans, task summaries).
  * Non-fatal — sync failure should never block dispatch.
@@ -364,10 +364,10 @@ export function syncStateToProjectRoot(
   if (!worktreePath_ || !projectRoot || worktreePath_ === projectRoot) return;
   if (!milestoneId) return;
 
-  const wtGsd = join(worktreePath_, ".gsd");
-  const prGsd = join(projectRoot, ".gsd");
+  const wtGsd = join(worktreePath_, ".sf");
+  const prGsd = join(projectRoot, ".sf");
 
-  // When .gsd is a symlink to the same external directory in both locations,
+  // When .sf is a symlink to the same external directory in both locations,
   // cpSync rejects the copy because source === destination (ERR_FS_CP_EINVAL).
   // Compare realpaths and skip when they resolve to the same physical path (#2184).
   if (isSamePath(wtGsd, prGsd)) return;
@@ -376,7 +376,7 @@ export function syncStateToProjectRoot(
   safeCopy(join(wtGsd, "STATE.md"), join(prGsd, "STATE.md"), { force: true });
 
   // 2. Milestone directory — ROADMAP, slice PLANs, task summaries
-  // Copy the entire milestone .gsd subtree so deriveState reads current checkboxes
+  // Copy the entire milestone .sf subtree so deriveState reads current checkboxes
   safeCopyRecursive(
     join(wtGsd, "milestones", milestoneId),
     join(prGsd, "milestones", milestoneId),
@@ -443,7 +443,7 @@ export function checkResourcesStale(
  * Detect and escape a stale worktree cwd (#608).
  *
  * After milestone completion + merge, the worktree directory is removed but
- * the process cwd may still point inside `.gsd/worktrees/<MID>/`.
+ * the process cwd may still point inside `.sf/worktrees/<MID>/`.
  * When a new session starts, `process.cwd()` is passed as `base` to startAuto
  * and all subsequent writes land in the wrong directory. This function detects
  * that scenario and chdir back to the project root.
@@ -451,27 +451,27 @@ export function checkResourcesStale(
  * Returns the corrected base path.
  */
 export function escapeStaleWorktree(base: string): string {
-  // Direct layout: /.gsd/worktrees/
-  const directMarker = `${pathSep}.gsd${pathSep}worktrees${pathSep}`;
+  // Direct layout: /.sf/worktrees/
+  const directMarker = `${pathSep}.sf${pathSep}worktrees${pathSep}`;
   let idx = base.indexOf(directMarker);
   if (idx === -1) {
-    // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/
+    // Symlink-resolved layout: /.sf/projects/<hash>/worktrees/
     const symlinkRe = new RegExp(
-      `\\${pathSep}\\.gsd\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees\\${pathSep}`,
+      `\\${pathSep}\\.sf\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees\\${pathSep}`,
     );
     const match = base.match(symlinkRe);
     if (!match || match.index === undefined) return base;
     idx = match.index;
   }
 
-  // base is inside .gsd/worktrees/<something> — extract the project root
+  // base is inside .sf/worktrees/<something> — extract the project root
   const projectRoot = base.slice(0, idx);
 
-  // Guard: If the candidate project root's .gsd IS the user-level ~/.gsd,
-  // the string-slice heuristic matched the wrong /.gsd/ boundary. This happens
-  // when .gsd is a symlink into ~/.gsd/projects/<hash> and process.cwd()
+  // Guard: If the candidate project root's .sf IS the user-level ~/.sf,
+  // the string-slice heuristic matched the wrong /.sf/ boundary. This happens
+  // when .sf is a symlink into ~/.sf/projects/<hash> and process.cwd()
   // resolved through the symlink. Returning ~ would be catastrophic (#1676).
-  const candidateGsd = join(projectRoot, ".gsd").replaceAll("\\", "/");
+  const candidateGsd = join(projectRoot, ".sf").replaceAll("\\", "/");
   const sfHomePath = sfHome.replaceAll("\\", "/");
   if (candidateGsd === sfHomePath || candidateGsd.startsWith(sfHomePath + "/")) {
     // Don't chdir to home — return base unchanged.
@@ -530,15 +530,15 @@ export function cleanStaleRuntimeUnits(
 // ─── Worktree ↔ Main Repo Sync (#1311) ──────────────────────────────────────
 
 /**
- * Sync .gsd/ state from the main repo into the worktree.
+ * Sync .sf/ state from the main repo into the worktree.
  *
- * When .gsd/ is a symlink to the external state directory, both the main
+ * When .sf/ is a symlink to the external state directory, both the main
  * repo and worktree share the same directory — no sync needed.
  *
- * When .gsd/ is a real directory (e.g., git-tracked or manage_gitignore:false),
+ * When .sf/ is a real directory (e.g., git-tracked or manage_gitignore:false),
  * the worktree has its own copy that may be stale. This function copies
  * missing milestones, CONTEXT, ROADMAP, DECISIONS, REQUIREMENTS, and
- * PROJECT files from the main repo's .gsd/ into the worktree's .gsd/.
+ * PROJECT files from the main repo's .sf/ into the worktree's .sf/.
  *
  * Only adds missing content — never overwrites existing files in the worktree
  * (the worktree's execution state is authoritative for in-progress work).
@@ -556,7 +556,7 @@ export function syncSfStateToWorktree(
 
   if (!existsSync(mainGsd) || !existsSync(wtGsd)) return { synced };
 
-  // Sync root-level .gsd/ files (DECISIONS, REQUIREMENTS, PROJECT, KNOWLEDGE, etc.)
+  // Sync root-level .sf/ files (DECISIONS, REQUIREMENTS, PROJECT, KNOWLEDGE, etc.)
   for (const f of ROOT_STATE_FILES) {
     const src = join(mainGsd, f);
     const dst = join(wtGsd, f);
@@ -697,7 +697,7 @@ export function syncSfStateToWorktree(
  * updated ROADMAP) are visible from the project root (#1412).
  *
  * Syncs:
- *   1. Root-level .gsd/ files (REQUIREMENTS, PROJECT, DECISIONS, KNOWLEDGE,
+ *   1. Root-level .sf/ files (REQUIREMENTS, PROJECT, DECISIONS, KNOWLEDGE,
  *      OVERRIDES) — the worktree's versions overwrite main's because the
  *      worktree is the authoritative execution context.
  *   2. ALL milestone directories found in the worktree — not just the
@@ -707,7 +707,7 @@ export function syncSfStateToWorktree(
  *
  * History: Originally only synced milestones/<milestoneId>/ and assumed
  * root-level files would be carried by the squash merge. In practice,
- * .gsd/ files are often untracked (gitignored or never committed), so the
+ * .sf/ files are often untracked (gitignored or never committed), so the
  * squash merge carries nothing. This caused next-milestone artifacts and
  * updated REQUIREMENTS/PROJECT to be silently lost on teardown.
  */
@@ -742,7 +742,7 @@ export function syncWorktreeStateBack(
     }
   }
 
-  // ── 1. Sync root-level .gsd/ files back ──────────────────────────────
+  // ── 1. Sync root-level .sf/ files back ──────────────────────────────
   // The worktree is authoritative — complete-milestone updates REQUIREMENTS,
   // PROJECT, etc. These must overwrite main's copies so they survive teardown.
   // Also includes QUEUE.md, completed-units.json, and metrics.json which are
@@ -960,8 +960,8 @@ function reconcilePlanCheckboxes(
   wtPath: string,
   milestoneId: string,
 ): void {
-  const srcMilestone = join(projectRoot, ".gsd", "milestones", milestoneId);
-  const dstMilestone = join(wtPath, ".gsd", "milestones", milestoneId);
+  const srcMilestone = join(projectRoot, ".sf", "milestones", milestoneId);
+  const dstMilestone = join(wtPath, ".sf", "milestones", milestoneId);
   if (!existsSync(srcMilestone) || !existsSync(dstMilestone)) return;
 
   // Walk all markdown files in the milestone directory (plans, summaries, etc.)
@@ -1074,10 +1074,10 @@ export function createAutoWorktree(
     });
   }
 
-  // Copy .gsd/ planning artifacts from the source repo into the new worktree.
+  // Copy .sf/ planning artifacts from the source repo into the new worktree.
   // Worktrees are fresh git checkouts — untracked files don't carry over.
   // Planning artifacts may be untracked if the project's .gitignore had a
-  // blanket .gsd/ rule (pre-v2.14.0). Without this copy, auto-mode loops
+  // blanket .sf/ rule (pre-v2.14.0). Without this copy, auto-mode loops
   // on plan-slice because the plan file doesn't exist in the worktree.
   //
   // IMPORTANT: Skip when re-attaching to an existing branch (#759).
@@ -1127,15 +1127,15 @@ export function createAutoWorktree(
 }
 
 /**
- * Copy .gsd/ planning artifacts from source repo to a new worktree.
+ * Copy .sf/ planning artifacts from source repo to a new worktree.
  * Copies milestones/, DECISIONS.md, REQUIREMENTS.md, PROJECT.md, QUEUE.md,
  * STATE.md, KNOWLEDGE.md, and OVERRIDES.md.
  * Skips runtime files (auto.lock, metrics.json, etc.) and the worktrees/ dir.
  * Best-effort — failures are non-fatal since auto-mode can recreate artifacts.
  */
 function copyPlanningArtifacts(srcBase: string, wtPath: string): void {
-  const srcGsd = join(srcBase, ".gsd");
-  const dstGsd = join(wtPath, ".gsd");
+  const srcGsd = join(srcBase, ".sf");
+  const dstGsd = join(wtPath, ".sf");
   if (!existsSync(srcGsd)) return;
   if (isSamePath(srcGsd, dstGsd)) return;
 
@@ -1223,7 +1223,7 @@ export function teardownAutoWorktree(
       { worktree: milestoneId },
     );
     // Attempt a direct filesystem removal as a fallback — but ONLY if the
-    // path is safely inside .gsd/worktrees/ to prevent #2365 data loss.
+    // path is safely inside .sf/worktrees/ to prevent #2365 data loss.
     if (isInsideWorktreesDir(originalBasePath, wtDir)) {
       try {
         rmSync(wtDir, { recursive: true, force: true });
@@ -1233,7 +1233,7 @@ export function teardownAutoWorktree(
       }
     } else {
       console.error(
-        `[SF] REFUSING fallback rmSync — path is outside .gsd/worktrees/: ${wtDir}`,
+        `[SF] REFUSING fallback rmSync — path is outside .sf/worktrees/: ${wtDir}`,
       );
     }
   }
@@ -1247,7 +1247,7 @@ export function isInAutoWorktree(basePath: string): boolean {
   if (!originalBase) return false;
   const cwd = process.cwd();
   const resolvedBase = existsSync(basePath) ? realpathSync(basePath) : basePath;
-  const wtDir = join(resolvedBase, ".gsd", "worktrees");
+  const wtDir = join(resolvedBase, ".sf", "worktrees");
   if (!cwd.startsWith(wtDir)) return false;
   const branch = nativeGetCurrentBranch(cwd);
   return branch.startsWith("milestone/");
@@ -1359,7 +1359,7 @@ export function getActiveAutoWorktreeContext(): {
   const resolvedBase = existsSync(originalBase)
     ? realpathSync(originalBase)
     : originalBase;
-  const wtDir = join(resolvedBase, ".gsd", "worktrees");
+  const wtDir = join(resolvedBase, ".sf", "worktrees");
   if (!cwd.startsWith(wtDir)) return null;
   const worktreeName = detectWorktreeName(cwd);
   if (!worktreeName) return null;
@@ -1453,8 +1453,8 @@ export function mergeMilestoneToMain(
   // database (#2823).
   if (isDbAvailable()) {
     try {
-      const worktreeDbPath = join(worktreeCwd, ".gsd", "sf.db");
-      const mainDbPath = join(originalBasePath_, ".gsd", "sf.db");
+      const worktreeDbPath = join(worktreeCwd, ".sf", "sf.db");
+      const mainDbPath = join(originalBasePath_, ".sf", "sf.db");
       if (!isSamePath(worktreeDbPath, mainDbPath)) {
         reconcileWorktreeDb(mainDbPath, worktreeDbPath);
       }
@@ -1592,7 +1592,7 @@ export function mergeMilestoneToMain(
 
   // 7. Stash any pre-existing dirty files so the squash merge is not
   //    blocked by unrelated local changes (#2151).  clearProjectRootStateFiles
-  //    only removes untracked .gsd/ files; tracked dirty files elsewhere (e.g.
+  //    only removes untracked .sf/ files; tracked dirty files elsewhere (e.g.
   //    .planning/work-state.json with stash conflict markers) are invisible to
   //    that cleanup but will cause `git merge --squash` to reject.
   let stashed = false;
@@ -1604,7 +1604,7 @@ export function mergeMilestoneToMain(
     }).trim();
     if (status) {
       // Use --include-untracked to stash untracked files that would block
-      // the squash merge, but EXCLUDE .gsd/milestones/ (#2505).
+      // the squash merge, but EXCLUDE .sf/milestones/ (#2505).
       // --include-untracked without exclusion sweeps queued milestone
       // CONTEXT files into the stash. If stash pop later fails, those files
       // are permanently trapped in the stash entry and lost on the next
@@ -1614,7 +1614,7 @@ export function mergeMilestoneToMain(
         [
           "stash", "push", "--include-untracked",
           "-m", `sf: pre-merge stash for ${milestoneId}`,
-          "--", ":(exclude).gsd/milestones",
+          "--", ":(exclude).sf/milestones",
         ],
         { cwd: originalBasePath_, stdio: ["ignore", "pipe", "pipe"], encoding: "utf-8" },
       );
@@ -1693,12 +1693,12 @@ export function mergeMilestoneToMain(
     logError("worktree", `merge state cleanup failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  // 8. Squash merge — auto-resolve .gsd/ state file conflicts (#530)
+  // 8. Squash merge — auto-resolve .sf/ state file conflicts (#530)
   const mergeResult = nativeMergeSquash(originalBasePath_, milestoneBranch);
 
   if (!mergeResult.success) {
     // Dirty working tree — the merge was rejected before it started (e.g.
-    // untracked .gsd/ files left by syncStateToProjectRoot).  Preserve the
+    // untracked .sf/ files left by syncStateToProjectRoot).  Preserve the
     // milestone branch so commits are not lost.
     if (mergeResult.conflicts.includes("__dirty_working_tree__")) {
       // Defensively clean merge state — the native path may leave MERGE_HEAD
@@ -1729,7 +1729,7 @@ export function mergeMilestoneToMain(
       // Restore cwd so the caller is not stranded on the integration branch
       process.chdir(previousCwd);
       // Surface the actual dirty filenames from git stderr instead of
-      // generically blaming .gsd/ (#2151).
+      // generically blaming .sf/ (#2151).
       const fileList = mergeResult.dirtyFiles?.length
         ? `Dirty files:\n${mergeResult.dirtyFiles.map((f) => `  ${f}`).join("\n")}`
         : `Check \`git status\` in the project root for details.`;
@@ -1852,14 +1852,14 @@ export function mergeMilestoneToMain(
       });
     } catch (e) {
       logWarning("worktree", `git stash pop failed, attempting conflict resolution: ${(e as Error).message}`);
-      // Stash pop after squash merge can conflict on .gsd/ state files that
+      // Stash pop after squash merge can conflict on .sf/ state files that
       // diverged between branches.  Left unresolved, these UU entries block
       // every subsequent merge.  Auto-resolve them the same way we handle
-      // .gsd/ conflicts during the merge itself: accept HEAD (the just-committed
+      // .sf/ conflicts during the merge itself: accept HEAD (the just-committed
       // version) and drop the now-applied stash.
       const uu = nativeConflictFiles(originalBasePath_);
-      const sfUU = uu.filter((f) => f.startsWith(".gsd/"));
-      const nonGsdUU = uu.filter((f) => !f.startsWith(".gsd/"));
+      const sfUU = uu.filter((f) => f.startsWith(".sf/"));
+      const nonGsdUU = uu.filter((f) => !f.startsWith(".sf/"));
 
       if (sfUU.length > 0) {
         for (const f of sfUU) {
@@ -1880,7 +1880,7 @@ export function mergeMilestoneToMain(
       }
 
       if (nonGsdUU.length === 0) {
-        // All conflicts were .gsd/ files — safe to drop the stash
+        // All conflicts were .sf/ files — safe to drop the stash
         try {
           execFileSync("git", ["stash", "drop"], {
             cwd: originalBasePath_,
@@ -1891,8 +1891,8 @@ export function mergeMilestoneToMain(
           logWarning("worktree", `git stash drop failed: ${err instanceof Error ? err.message : String(err)}`);
         }
       } else {
-        // Non-.gsd conflicts remain — leave stash for manual resolution
-        logWarning("reconcile", "Stash pop conflict on non-.gsd files after merge", {
+        // Non-.sf conflicts remain — leave stash for manual resolution
+        logWarning("reconcile", "Stash pop conflict on non-.sf files after merge", {
           files: nonGsdUU.join(", "),
         });
       }
@@ -1904,7 +1904,7 @@ export function mergeMilestoneToMain(
 
   // 9b. Safety check (#1792): if nothing was committed, verify the milestone
   // work is already on the integration branch before allowing teardown.
-  // Compare only non-.gsd/ paths — .gsd/ state files diverge normally and
+  // Compare only non-.sf/ paths — .sf/ state files diverge normally and
   // are auto-resolved during the squash merge.
   if (nothingToCommit) {
     const numstat = nativeDiffNumstat(
@@ -1913,7 +1913,7 @@ export function mergeMilestoneToMain(
       milestoneBranch,
     );
     const codeChanges = numstat.filter(
-      (entry) => !entry.path.startsWith(".gsd/"),
+      (entry) => !entry.path.startsWith(".sf/"),
     );
     if (codeChanges.length > 0) {
       // Milestone has unanchored code changes — abort teardown.
@@ -1927,8 +1927,8 @@ export function mergeMilestoneToMain(
     }
   }
 
-  // 9c. Detect whether any non-.gsd/ code files were actually merged (#1906).
-  // When a milestone only produced .gsd/ metadata (summaries, roadmaps) but no
+  // 9c. Detect whether any non-.sf/ code files were actually merged (#1906).
+  // When a milestone only produced .sf/ metadata (summaries, roadmaps) but no
   // real code, the user sees "milestone complete" but nothing changed in their
   // codebase. Surface this so the caller can warn the user.
   let codeFilesChanged = false;
@@ -1940,7 +1940,7 @@ export function mergeMilestoneToMain(
         "HEAD",
       );
       codeFilesChanged = mergedFiles.some(
-        (entry) => !entry.path.startsWith(".gsd/"),
+        (entry) => !entry.path.startsWith(".sf/"),
       );
     } catch (e) {
       // If HEAD~1 doesn't exist (first commit), assume code was changed

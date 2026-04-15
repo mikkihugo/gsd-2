@@ -153,7 +153,7 @@ describe("parseMcpToolName", () => {
 	test("splits mcp__<server>__<tool> into parts", () => {
 		assert.deepEqual(
 			parseMcpToolName("mcp__gsd-workflow__gsd_plan_milestone"),
-			{ server: "gsd-workflow", tool: "gsd_plan_milestone" },
+			{ server: "sf-workflow", tool: "gsd_plan_milestone" },
 		);
 	});
 
@@ -203,7 +203,7 @@ describe("PartialMessageBuilder — MCP tool name normalization", () => {
 		if (event!.type === "toolcall_start") {
 			const toolCall = (event.partial.content[event.contentIndex] as any);
 			assert.equal(toolCall.name, "gsd_plan_milestone");
-			assert.equal(toolCall.mcpServer, "gsd-workflow");
+			assert.equal(toolCall.mcpServer, "sf-workflow");
 		}
 	});
 
@@ -233,7 +233,7 @@ describe("PartialMessageBuilder — MCP tool name normalization", () => {
 		const mapped = mapContentBlock(block) as any;
 		assert.equal(mapped.type, "toolCall");
 		assert.equal(mapped.name, "gsd_task_complete");
-		assert.equal(mapped.mcpServer, "gsd-workflow");
+		assert.equal(mapped.mcpServer, "sf-workflow");
 		assert.deepEqual(mapped.arguments, { taskId: "T001" });
 	});
 });

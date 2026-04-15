@@ -44,22 +44,22 @@ test("getExtensionKey normalizes top-level .ts and .js entry names to the same k
     "ask-user-questions",
   );
   assert.equal(
-    getExtensionKey("/tmp/extensions/gsd/index.js", extensionsDir),
-    "gsd",
+    getExtensionKey("/tmp/extensions/sf/index.js", extensionsDir),
+    "sf",
   );
 });
 
 test("hasStaleCompiledExtensionSiblings only flags top-level .ts/.js sibling pairs", async (t) => {
   const { hasStaleCompiledExtensionSiblings } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-resource-loader-"));
   const extensionsDir = join(tmp, "extensions");
   const bundledDir = join(tmp, "bundled");
 
   t.after(() => { rmSync(tmp, { recursive: true, force: true }); });
 
   mkdirSync(bundledDir, { recursive: true });
-  mkdirSync(join(extensionsDir, "gsd"), { recursive: true });
-  writeFileSync(join(extensionsDir, "gsd", "index.ts"), "export {};\n");
+  mkdirSync(join(extensionsDir, "sf"), { recursive: true });
+  writeFileSync(join(extensionsDir, "sf", "index.ts"), "export {};\n");
   assert.equal(hasStaleCompiledExtensionSiblings(extensionsDir, bundledDir), false);
 
   writeFileSync(join(bundledDir, "ask-user-questions.js"), "export {};\n");
@@ -74,9 +74,9 @@ test("hasStaleCompiledExtensionSiblings only flags top-level .ts/.js sibling pai
 });
 
 test("buildResourceLoader excludes duplicate top-level pi extensions when bundled resources use .js", async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-home-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-resource-loader-home-"));
   const piExtensionsDir = join(tmp, ".pi", "agent", "extensions");
-  const fakeAgentDir = join(tmp, ".gsd", "agent");
+  const fakeAgentDir = join(tmp, ".sf", "agent");
   const restoreHomeEnv = overrideHomeEnv(tmp);
 
   t.after(() => {
@@ -106,7 +106,7 @@ test("buildResourceLoader excludes duplicate top-level pi extensions when bundle
 
 test("initResources manifest tracks all bundled extension subdirectories including remote-questions (#2367)", async () => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-manifest-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-resource-loader-manifest-"));
   const fakeAgentDir = join(tmp, "agent");
 
   try {
@@ -139,7 +139,7 @@ test("initResources manifest tracks all bundled extension subdirectories includi
 
 test("initResources prunes stale top-level extension siblings next to bundled compiled extensions", async (t) => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-sync-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-resource-loader-sync-"));
   const fakeAgentDir = join(tmp, "agent");
   const bundledTsPath = join(fakeAgentDir, "extensions", "ask-user-questions.ts");
   const bundledJsPath = join(fakeAgentDir, "extensions", "ask-user-questions.js");
@@ -183,7 +183,7 @@ test("initResources prunes stale top-level extension siblings next to bundled co
 
 test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in current bundle", async () => {
   const { initResources } = await import("../resource-loader.ts");
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-resource-loader-prune-dirs-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-resource-loader-prune-dirs-"));
   const fakeAgentDir = join(tmp, "agent");
 
   try {
@@ -192,7 +192,7 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
 
     // Simulate a stale subdirectory extension left from a previous SF version.
     // This mirrors the mcporter scenario: it was bundled before, synced to
-    // ~/.gsd/agent/extensions/, then removed from the bundle in a newer version.
+    // ~/.sf/agent/extensions/, then removed from the bundle in a newer version.
     const staleExtDir = join(fakeAgentDir, "extensions", "mcporter");
     mkdirSync(staleExtDir, { recursive: true });
     writeFileSync(join(staleExtDir, "index.ts"), 'export default { name: "mcporter" };\n');

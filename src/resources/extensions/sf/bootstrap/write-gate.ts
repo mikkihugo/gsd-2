@@ -6,10 +6,10 @@ const CONTEXT_MILESTONE_RE = /(?:^|[/\\])(M\d+(?:-[a-z0-9]{6})?)-CONTEXT\.md$/i;
 const DEPTH_VERIFICATION_MILESTONE_RE = /depth_verification[_-](M\d+(?:-[a-z0-9]{6})?)/i;
 
 /**
- * Path segment that identifies .gsd/ planning artifacts.
+ * Path segment that identifies .sf/ planning artifacts.
  * Writes to these paths are allowed during queue mode.
  */
-const SF_DIR_RE = /(^|[/\\])\.gsd([/\\]|$)/;
+const SF_DIR_RE = /(^|[/\\])\.sf([/\\]|$)/;
 
 /**
  * Read-only tool names that are always safe during queue mode.
@@ -29,7 +29,7 @@ const QUEUE_SAFE_TOOLS = new Set([
  * Bash commands that are read-only / investigative — safe during queue mode.
  * Matches the leading command in a bash invocation.
  */
-const BASH_READ_ONLY_RE = /^\s*(cat|head|tail|less|more|wc|file|stat|du|df|which|type|echo|printf|ls|find|grep|rg|awk|sed\b(?!.*-i)|sort|uniq|diff|comm|tr|cut|tee\s+-a\s+\/dev\/null|git\s+(log|show|diff|status|branch|tag|remote|rev-parse|ls-files|blame|shortlog|describe|stash\s+list|config\s+--get|cat-file)|gh\s+(issue|pr|api|repo|release)\s+(view|list|diff|status|checks)|mkdir\s+-p\s+\.gsd|rtk\s)/;
+const BASH_READ_ONLY_RE = /^\s*(cat|head|tail|less|more|wc|file|stat|du|df|which|type|echo|printf|ls|find|grep|rg|awk|sed\b(?!.*-i)|sort|uniq|diff|comm|tr|cut|tee\s+-a\s+\/dev\/null|git\s+(log|show|diff|status|branch|tag|remote|rev-parse|ls-files|blame|shortlog|describe|stash\s+list|config\s+--get|cat-file)|gh\s+(issue|pr|api|repo|release)\s+(view|list|diff|status|checks)|mkdir\s+-p\s+\.sf|rtk\s)/;
 
 const verifiedDepthMilestones = new Set<string>();
 let activeQueuePhase = false;
@@ -75,7 +75,7 @@ function shouldPersistWriteGateSnapshot(env: NodeJS.ProcessEnv = process.env): b
 }
 
 function writeGateSnapshotPath(basePath: string = process.cwd()): string {
-  return join(basePath, ".gsd", "runtime", "write-gate-state.json");
+  return join(basePath, ".sf", "runtime", "write-gate-state.json");
 }
 
 function currentWriteGateSnapshot(): WriteGateSnapshot {
@@ -89,7 +89,7 @@ function currentWriteGateSnapshot(): WriteGateSnapshot {
 function persistWriteGateSnapshot(basePath: string = process.cwd()): void {
   if (!shouldPersistWriteGateSnapshot()) return;
   const path = writeGateSnapshotPath(basePath);
-  mkdirSync(join(basePath, ".gsd", "runtime"), { recursive: true });
+  mkdirSync(join(basePath, ".sf", "runtime"), { recursive: true });
   const tempPath = `${path}.tmp`;
   writeFileSync(tempPath, JSON.stringify(currentWriteGateSnapshot(), null, 2), "utf-8");
   renameSync(tempPath, path);
@@ -409,7 +409,7 @@ export function shouldBlockContextArtifactSaveInSnapshot(
  * When the queue phase is active, the agent should only create planning
  * artifacts (milestones, CONTEXT.md, QUEUE.md, etc.) — never execute work.
  * This function blocks write/edit/bash tool calls that would modify source
- * code outside of .gsd/.
+ * code outside of .sf/.
  *
  * @param toolName  The tool being called (write, edit, bash, etc.)
  * @param input     For write/edit: the file path. For bash: the command string.
@@ -435,7 +435,7 @@ export function shouldBlockQueueExecutionInSnapshot(
   // Always-safe tools (read-only, discussion, planning)
   if (QUEUE_SAFE_TOOLS.has(toolName)) return { block: false };
 
-  // write/edit — allow if targeting .gsd/ planning artifacts
+  // write/edit — allow if targeting .sf/ planning artifacts
   if (toolName === "write" || toolName === "edit") {
     if (SF_DIR_RE.test(input)) return { block: false };
     return {

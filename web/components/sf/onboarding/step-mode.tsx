@@ -27,7 +27,7 @@ const MODE_OPTIONS: {
     icon: Code2,
     tagline: "Full control",
     description:
-      "Dashboard metrics, dual-pane power mode, and direct /gsd command access. Built for people who want visibility into every milestone and task.",
+      "Dashboard metrics, dual-pane power mode, and direct /sf command access. Built for people who want visibility into every milestone and task.",
   },
   {
     id: "vibe-coder",

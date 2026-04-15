@@ -10,7 +10,7 @@ import type { SettingsData } from "../../web/lib/settings-types.ts"
 const SETTINGS_MAX_BUFFER = 2 * 1024 * 1024
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**

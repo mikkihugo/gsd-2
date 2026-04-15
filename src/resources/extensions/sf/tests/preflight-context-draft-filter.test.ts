@@ -31,7 +31,7 @@ describe("pre-flight CONTEXT-DRAFT filter (#2473)", () => {
 
   beforeEach(() => {
     tmpBase = mkdtempSync(join(tmpdir(), "sf-preflight-draft-"));
-    sf = join(tmpBase, ".gsd");
+    sf = join(tmpBase, ".sf");
 
     // Create milestone directories with CONTEXT-DRAFT files
     for (const id of ["M001", "M002", "M003"]) {

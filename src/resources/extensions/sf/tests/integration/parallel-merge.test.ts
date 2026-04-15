@@ -57,11 +57,11 @@ function createTempRepo(): string {
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
-  // Mirror production: .gsd/worktrees/ is gitignored so autoCommitDirtyState
+  // Mirror production: .sf/worktrees/ is gitignored so autoCommitDirtyState
   // doesn't pick up the worktrees directory as dirty state (#1127 fix).
-  writeFileSync(join(dir, ".gitignore"), ".gsd/worktrees/\n");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "STATE.md"), "# State\n");
+  writeFileSync(join(dir, ".gitignore"), ".sf/worktrees/\n");
+  mkdirSync(join(dir, ".sf"), { recursive: true });
+  writeFileSync(join(dir, ".sf", "STATE.md"), "# State\n");
   run("git add .", dir);
   run("git commit -m init", dir);
   return dir;
@@ -85,9 +85,9 @@ function cleanup(dir: string): void {
   try { rmSync(dir, { recursive: true, force: true }); } catch { /* */ }
 }
 
-/** Set up a milestone roadmap file in .gsd/milestones/<MID>/ */
+/** Set up a milestone roadmap file in .sf/milestones/<MID>/ */
 function setupRoadmap(repo: string, mid: string, title: string, slices: string[]): void {
-  const dir = join(repo, ".gsd", "milestones", mid);
+  const dir = join(repo, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   const sliceLines = slices.map(s => `- [x] **${s}**`).join("\n");
   writeFileSync(
@@ -235,7 +235,7 @@ test("formatMergeResults — mixed results", () => {
 
 test("mergeCompletedMilestone — missing roadmap returns error result", async () => {
   const base = join(tmpdir(), `parallel-merge-noroadmap-${Date.now()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   try {
     const result = await mergeCompletedMilestone(base, "M999");
     assert.equal(result.success, false);
@@ -269,7 +269,7 @@ test("mergeCompletedMilestone — clean merge, session status cleaned up", async
       cost: 1.5,
       lastHeartbeat: Date.now(),
       startedAt: Date.now() - 60000,
-      worktreePath: join(repo, ".gsd", "worktrees", "M010"),
+      worktreePath: join(repo, ".sf", "worktrees", "M010"),
     });
 
     // Verify session status exists before merge
@@ -478,7 +478,7 @@ test("mergeAllCompleted — by-completion order respects startedAt", async () =>
 
 /** Set up a worktree DB with a milestone marked complete */
 function setupWorktreeDb(basePath: string, mid: string): void {
-  const wtGsdDir = join(basePath, ".gsd", "worktrees", mid, ".gsd");
+  const wtGsdDir = join(basePath, ".sf", "worktrees", mid, ".sf");
   mkdirSync(wtGsdDir, { recursive: true });
   const dbPath = join(wtGsdDir, "sf.db");
   openDatabase(dbPath);

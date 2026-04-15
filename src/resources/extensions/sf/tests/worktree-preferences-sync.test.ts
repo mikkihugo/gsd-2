@@ -64,19 +64,19 @@ test("#2684: syncSfStateToWorktree forward-syncs PREFERENCES.md when missing fro
   t.after(() => cleanup(mainBase, wtBase));
 
   // Project root has canonical PREFERENCES.md
-  writeFile(mainBase, ".gsd/PREFERENCES.md", PREFS_CONTENT);
+  writeFile(mainBase, ".sf/PREFERENCES.md", PREFS_CONTENT);
 
-  // Worktree has .gsd/ but no preferences file
-  mkdirSync(join(wtBase, ".gsd"), { recursive: true });
+  // Worktree has .sf/ but no preferences file
+  mkdirSync(join(wtBase, ".sf"), { recursive: true });
 
   const result = syncSfStateToWorktree(mainBase, wtBase);
 
   assert.ok(
-    existsSync(join(wtBase, ".gsd", "PREFERENCES.md")),
+    existsSync(join(wtBase, ".sf", "PREFERENCES.md")),
     "PREFERENCES.md should be copied to worktree",
   );
   assert.equal(
-    readFileSync(join(wtBase, ".gsd", "PREFERENCES.md"), "utf-8"),
+    readFileSync(join(wtBase, ".sf", "PREFERENCES.md"), "utf-8"),
     PREFS_CONTENT,
     "PREFERENCES.md content should match source",
   );
@@ -91,12 +91,12 @@ test("syncSfStateToWorktree still accepts legacy lowercase preferences.md", (t) 
   const wtBase = makeTempDir("wt");
   t.after(() => cleanup(mainBase, wtBase));
 
-  writeFile(mainBase, ".gsd/preferences.md", PREFS_CONTENT);
-  mkdirSync(join(wtBase, ".gsd"), { recursive: true });
+  writeFile(mainBase, ".sf/preferences.md", PREFS_CONTENT);
+  mkdirSync(join(wtBase, ".sf"), { recursive: true });
 
   const result = syncSfStateToWorktree(mainBase, wtBase);
 
-  const copiedEntries = readdirSync(join(wtBase, ".gsd"))
+  const copiedEntries = readdirSync(join(wtBase, ".sf"))
     .filter((name) => name === "PREFERENCES.md" || name === "preferences.md");
 
   assert.ok(
@@ -117,13 +117,13 @@ test("#2684: syncSfStateToWorktree does NOT overwrite existing worktree preferen
   const rootPrefs = "# Root preferences\nold: true";
   const wtPrefs = "# Worktree preferences\nmodified: true";
 
-  writeFile(mainBase, ".gsd/PREFERENCES.md", rootPrefs);
-  writeFile(wtBase, ".gsd/PREFERENCES.md", wtPrefs);
+  writeFile(mainBase, ".sf/PREFERENCES.md", rootPrefs);
+  writeFile(wtBase, ".sf/PREFERENCES.md", wtPrefs);
 
   syncSfStateToWorktree(mainBase, wtBase);
 
   assert.equal(
-    readFileSync(join(wtBase, ".gsd", "PREFERENCES.md"), "utf-8"),
+    readFileSync(join(wtBase, ".sf", "PREFERENCES.md"), "utf-8"),
     wtPrefs,
     "existing worktree PREFERENCES.md must not be overwritten",
   );
@@ -138,17 +138,17 @@ test("#2684: syncWorktreeStateBack does NOT overwrite project root PREFERENCES.m
   const rootPrefs = "# Root preferences\nauthoritative: true";
   const wtPrefs = "# Worktree preferences\nstale-copy: true";
 
-  writeFile(mainBase, ".gsd/PREFERENCES.md", rootPrefs);
-  writeFile(wtBase, ".gsd/PREFERENCES.md", wtPrefs);
+  writeFile(mainBase, ".sf/PREFERENCES.md", rootPrefs);
+  writeFile(wtBase, ".sf/PREFERENCES.md", wtPrefs);
 
   // Worktree needs at least a milestone dir for the function to proceed
-  mkdirSync(join(wtBase, ".gsd", "milestones", mid), { recursive: true });
-  mkdirSync(join(mainBase, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(wtBase, ".sf", "milestones", mid), { recursive: true });
+  mkdirSync(join(mainBase, ".sf", "milestones"), { recursive: true });
 
   syncWorktreeStateBack(mainBase, wtBase, mid);
 
   assert.equal(
-    readFileSync(join(mainBase, ".gsd", "PREFERENCES.md"), "utf-8"),
+    readFileSync(join(mainBase, ".sf", "PREFERENCES.md"), "utf-8"),
     rootPrefs,
     "project root PREFERENCES.md must NOT be overwritten by worktree copy",
   );

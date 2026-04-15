@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const MARKER = '# gsd-secret-scan';
+const MARKER = '# sf-secret-scan';
 
 function git(args) {
   return execFileSync('git', args, {
@@ -36,7 +36,7 @@ if (existsSync(hookFile)) {
 
 const hookBody = [
   '#!/usr/bin/env sh',
-  '# gsd-secret-scan',
+  '# sf-secret-scan',
   '# Pre-commit hook: scan staged files for hardcoded secrets',
   hookCommand,
   '',

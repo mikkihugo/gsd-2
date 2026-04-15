@@ -36,7 +36,7 @@ export interface SerializedVisualizerData {
 }
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**

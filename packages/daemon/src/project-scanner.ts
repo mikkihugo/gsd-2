@@ -14,7 +14,7 @@ import type { ProjectInfo, ProjectMarker } from './types.js';
 const MARKER_MAP: ReadonlyMap<string, ProjectMarker> = new Map([
   ['.git', 'git'],
   ['package.json', 'node'],
-  ['.gsd', 'gsd'],
+  ['.sf', 'sf'],
   ['Cargo.toml', 'rust'],
   ['pyproject.toml', 'python'],
   ['go.mod', 'go'],

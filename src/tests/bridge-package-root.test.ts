@@ -8,7 +8,7 @@ import { join } from 'node:path'
  * standalone build.
  *
  * The Next.js standalone build bakes import.meta.url into compiled chunks as
- * the CI runner's absolute Linux path (file:///home/runner/work/gsd-2/gsd-2/…).
+ * the CI runner's absolute Linux path (file:///home/runner/work/sf-2/sf-2/…).
  * On Windows, fileURLToPath() rejects this with "File URL path must be
  * absolute". The fix wraps the derivation in safePackageRootFromImportUrl()
  * so the module-level constant never throws, and resolveBridgeRuntimeConfig

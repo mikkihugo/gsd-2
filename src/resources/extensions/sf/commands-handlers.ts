@@ -51,7 +51,7 @@ async function fetchLatestVersionForCommand(): Promise<string | null> {
 }
 
 export function dispatchDoctorHeal(pi: ExtensionAPI, scope: string | undefined, reportText: string, structuredIssues: string): void {
-  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".sf", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
   const prompt = loadPrompt("doctor-heal", {
     doctorSummary: reportText,
@@ -187,7 +187,7 @@ export async function handleCapture(args: string, ctx: ExtensionCommandContext):
 
   const basePath = process.cwd();
 
-  // Ensure .gsd/ exists — capture should work even without a milestone
+  // Ensure .sf/ exists — capture should work even without a milestone
   const sfDir = sfRoot(basePath);
   if (!existsSync(sfDir)) {
     mkdirSync(sfDir, { recursive: true });
@@ -238,7 +238,7 @@ export async function handleTriage(ctx: ExtensionCommandContext, pi: ExtensionAP
     roadmapContext: roadmapContext || "(no active roadmap)",
   });
 
-  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".sf", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
 
   pi.sendMessage(
@@ -270,7 +270,7 @@ export async function handleSteer(change: string, ctx: ExtensionCommandContext, 
   const targetPath = wtPath ?? basePath;
   await appendOverride(targetPath, change, appliedAt);
 
-  const overrideLoc = wtPath ? "worktree `.gsd/OVERRIDES.md`" : "`.gsd/OVERRIDES.md`";
+  const overrideLoc = wtPath ? "worktree `.sf/OVERRIDES.md`" : "`.sf/OVERRIDES.md`";
 
   if (isAutoActive()) {
     pi.sendMessage({

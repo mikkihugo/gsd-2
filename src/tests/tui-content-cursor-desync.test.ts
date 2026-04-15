@@ -102,7 +102,7 @@ describe("TUI cursor tracking regression (#3764)", () => {
   });
 
   it("handles editor-to-selector swap without cursor corruption", () => {
-    // Simulates /gsd prefs: editor with CURSOR_MARKER is replaced by
+    // Simulates /sf prefs: editor with CURSOR_MARKER is replaced by
     // a selector component (no CURSOR_MARKER) that has different line count.
     const terminal = new MockTTYTerminal();
     const tui = new TUI(terminal, false);
@@ -227,7 +227,7 @@ describe("TUI cursor tracking regression (#3764)", () => {
   });
 
   it("handles input component swap (prefs wizard text input)", () => {
-    // Simulates /gsd prefs input step: selector replaced by text input with cursor
+    // Simulates /sf prefs input step: selector replaced by text input with cursor
     const terminal = new MockTTYTerminal();
     const tui = new TUI(terminal, false);
 

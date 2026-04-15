@@ -13,7 +13,7 @@ const tempDirs: string[] = [];
 
 function makeTempDir(prefix: string): string {
   const dir = mkdtempSync(join(tmpdir(), `sf-overrides-test-${prefix}-`));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".sf"), { recursive: true });
   tempDirs.push(dir);
   return dir;
 }
@@ -54,7 +54,7 @@ describe('overrides', () => {
   test('appendOverride: creates new file', async () => {
     const tmp = makeTempDir("append-new");
     await appendOverride(tmp, "Use Postgres", "M001/S01/T01");
-    const content = readFileSync(join(tmp, ".gsd", "OVERRIDES.md"), "utf-8");
+    const content = readFileSync(join(tmp, ".sf", "OVERRIDES.md"), "utf-8");
     assert.ok(content.includes("# SF Overrides"), "has header");
     assert.ok(content.includes("**Change:** Use Postgres"), "has change");
     assert.ok(content.includes("**Scope:** active"), "has active scope");
@@ -65,7 +65,7 @@ describe('overrides', () => {
     const tmp = makeTempDir("append-existing");
     await appendOverride(tmp, "First override", "M001/S01/T01");
     await appendOverride(tmp, "Second override", "M001/S02/T02");
-    const content = readFileSync(join(tmp, ".gsd", "OVERRIDES.md"), "utf-8");
+    const content = readFileSync(join(tmp, ".sf", "OVERRIDES.md"), "utf-8");
     assert.ok(content.includes("**Change:** First override"), "has first override");
     assert.ok(content.includes("**Change:** Second override"), "has second override");
     const parsed = parseOverrides(content);
@@ -81,7 +81,7 @@ describe('overrides', () => {
   test('loadActiveOverrides: filters to active only', async () => {
     const tmp = makeTempDir("load-filter");
     const content = `# SF Overrides\n\n---\n\n## Override: 2026-03-14T10:00:00.000Z\n\n**Change:** Resolved change\n**Scope:** resolved\n**Applied-at:** M001/S01/T01\n\n---\n\n## Override: 2026-03-14T11:00:00.000Z\n\n**Change:** Active change\n**Scope:** active\n**Applied-at:** M001/S02/T01\n\n---\n`;
-    writeFileSync(join(tmp, ".gsd", "OVERRIDES.md"), content, "utf-8");
+    writeFileSync(join(tmp, ".sf", "OVERRIDES.md"), content, "utf-8");
     const result = await loadActiveOverrides(tmp);
     assert.deepStrictEqual(result.length, 1, "only one active override");
     assert.deepStrictEqual(result[0].change, "Active change", "correct active change");
@@ -110,7 +110,7 @@ describe('overrides', () => {
     await resolveAllOverrides(tmp);
     active = await loadActiveOverrides(tmp);
     assert.deepStrictEqual(active.length, 0, "no active after resolve");
-    const content = readFileSync(join(tmp, ".gsd", "OVERRIDES.md"), "utf-8");
+    const content = readFileSync(join(tmp, ".sf", "OVERRIDES.md"), "utf-8");
     const allOverrides = parseOverrides(content);
     assert.deepStrictEqual(allOverrides.length, 2, "still two overrides total");
     assert.ok(allOverrides.every(o => o.scope === "resolved"), "all resolved");

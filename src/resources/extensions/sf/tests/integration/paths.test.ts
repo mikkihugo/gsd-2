@@ -22,44 +22,44 @@ function initGit(dir: string): void {
 }
 
 describe('paths', () => {
-  test('Case 1: .gsd exists at basePath — fast path', () => {
+  test('Case 1: .sf exists at basePath — fast path', () => {
     const root = tmp();
     try {
-      mkdirSync(join(root, ".gsd"));
+      mkdirSync(join(root, ".sf"));
       _clearGsdRootCache();
       const result = sfRoot(root);
-      assert.deepStrictEqual(result, join(root, ".gsd"), "fast path: returns basePath/.gsd");
+      assert.deepStrictEqual(result, join(root, ".sf"), "fast path: returns basePath/.sf");
     } finally { cleanup(root); }
   });
 
-  test('Case 2: .gsd exists at git root, cwd is a subdirectory', () => {
+  test('Case 2: .sf exists at git root, cwd is a subdirectory', () => {
     const root = tmp();
     try {
       initGit(root);
-      mkdirSync(join(root, ".gsd"));
+      mkdirSync(join(root, ".sf"));
       const sub = join(root, "src", "deep");
       mkdirSync(sub, { recursive: true });
       _clearGsdRootCache();
       const result = sfRoot(sub);
-      assert.deepStrictEqual(result, join(root, ".gsd"), "git-root probe: finds .gsd at git root from subdirectory");
+      assert.deepStrictEqual(result, join(root, ".sf"), "git-root probe: finds .sf at git root from subdirectory");
     } finally { cleanup(root); }
   });
 
-  test('Case 3: .gsd in an ancestor — walk-up finds it', () => {
+  test('Case 3: .sf in an ancestor — walk-up finds it', () => {
     const root = tmp();
     try {
       initGit(root);
       const project = join(root, "project");
-      mkdirSync(join(project, ".gsd"), { recursive: true });
+      mkdirSync(join(project, ".sf"), { recursive: true });
       const deep = join(project, "src", "deep");
       mkdirSync(deep, { recursive: true });
       _clearGsdRootCache();
       const result = sfRoot(deep);
-      assert.deepStrictEqual(result, join(project, ".gsd"), "walk-up: finds .gsd in ancestor when git root has none");
+      assert.deepStrictEqual(result, join(project, ".sf"), "walk-up: finds .sf in ancestor when git root has none");
     } finally { cleanup(root); }
   });
 
-  test('Case 4: .gsd nowhere — fallback returns original basePath/.gsd', () => {
+  test('Case 4: .sf nowhere — fallback returns original basePath/.sf', () => {
     const root = tmp();
     try {
       initGit(root);
@@ -67,14 +67,14 @@ describe('paths', () => {
       mkdirSync(sub, { recursive: true });
       _clearGsdRootCache();
       const result = sfRoot(sub);
-      assert.deepStrictEqual(result, join(sub, ".gsd"), "fallback: returns basePath/.gsd when .gsd not found anywhere");
+      assert.deepStrictEqual(result, join(sub, ".sf"), "fallback: returns basePath/.sf when .sf not found anywhere");
     } finally { cleanup(root); }
   });
 
   test('Case 5: cache — second call returns same value without re-probing', () => {
     const root = tmp();
     try {
-      mkdirSync(join(root, ".gsd"));
+      mkdirSync(join(root, ".sf"));
       _clearGsdRootCache();
       const first = sfRoot(root);
       const second = sfRoot(root);
@@ -83,16 +83,16 @@ describe('paths', () => {
     } finally { cleanup(root); }
   });
 
-  test('Case 6: .gsd at basePath takes precedence over ancestor .gsd', () => {
+  test('Case 6: .sf at basePath takes precedence over ancestor .sf', () => {
     const outer = tmp();
     try {
       initGit(outer);
-      mkdirSync(join(outer, ".gsd"));
+      mkdirSync(join(outer, ".sf"));
       const inner = join(outer, "nested");
-      mkdirSync(join(inner, ".gsd"), { recursive: true });
+      mkdirSync(join(inner, ".sf"), { recursive: true });
       _clearGsdRootCache();
       const result = sfRoot(inner);
-      assert.deepStrictEqual(result, join(inner, ".gsd"), "precedence: nearest .gsd wins over ancestor");
+      assert.deepStrictEqual(result, join(inner, ".sf"), "precedence: nearest .sf wins over ancestor");
     } finally { cleanup(outer); }
   });
 });

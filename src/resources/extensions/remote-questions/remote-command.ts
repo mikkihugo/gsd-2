@@ -1,5 +1,5 @@
 /**
- * Remote Questions — /gsd remote command
+ * Remote Questions — /sf remote command
  */
 
 import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -7,7 +7,7 @@ import { AuthStorage } from "@sf-run/pi-coding-agent";
 import { Editor, type EditorTheme, Key, matchesKey, truncateToWidth } from "@sf-run/pi-tui";
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { getGlobalGSDPreferencesPath, loadEffectiveGSDPreferences } from "../gsd/preferences.js";
+import { getGlobalSFPreferencesPath, loadEffectiveSFPreferences } from "../sf/preferences.js";
 import { getRemoteConfigStatus, isValidChannelId, resolveRemoteConfig } from "./config.js";
 import { maskEditorLine, sanitizeError } from "../shared/mod.js";
 import { getLatestPromptSummary } from "./status.js";
@@ -202,7 +202,7 @@ async function handleRemoteStatus(ctx: ExtensionCommandContext): Promise<void> {
 }
 
 async function handleDisconnect(ctx: ExtensionCommandContext): Promise<void> {
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveSFPreferences();
   const channel = prefs?.preferences.remote_questions?.channel;
   if (!channel) return void ctx.ui.notify("No remote channel configured — nothing to disconnect.", "info");
 
@@ -225,20 +225,20 @@ async function handleRemoteMenu(ctx: ExtensionCommandContext): Promise<void> {
         latestPrompt ? `  Last prompt: ${latestPrompt.id} (${latestPrompt.status})` : "  No remote prompts recorded yet",
         "",
         "Commands:",
-        "  /gsd remote status",
-        "  /gsd remote disconnect",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
+        "  /sf remote status",
+        "  /sf remote disconnect",
+        "  /sf remote slack",
+        "  /sf remote discord",
+        "  /sf remote telegram",
       ]
     : [
         "No remote question channel configured.",
         "",
         "Commands:",
-        "  /gsd remote slack",
-        "  /gsd remote discord",
-        "  /gsd remote telegram",
-        "  /gsd remote status",
+        "  /sf remote slack",
+        "  /sf remote discord",
+        "  /sf remote telegram",
+        "  /sf remote status",
       ];
 
   ctx.ui.notify(lines.join("\n"), "info");
@@ -300,7 +300,7 @@ async function promptSlackChannelId(ctx: ExtensionCommandContext): Promise<strin
 }
 
 function getAuthStorage(): AuthStorage {
-  const authPath = join(process.env.HOME ?? "", ".gsd", "agent", "auth.json");
+  const authPath = join(process.env.HOME ?? "", ".sf", "agent", "auth.json");
   mkdirSync(dirname(authPath), { recursive: true });
   return AuthStorage.create(authPath);
 }
@@ -316,7 +316,7 @@ function removeProviderToken(provider: string): void {
 }
 
 export function saveRemoteQuestionsConfig(channel: "slack" | "discord" | "telegram", channelId: string): void {
-  const prefsPath = getGlobalGSDPreferencesPath();
+  const prefsPath = getGlobalSFPreferencesPath();
   const block = [
     "remote_questions:",
     `  channel: ${channel}`,
@@ -343,7 +343,7 @@ export function saveRemoteQuestionsConfig(channel: "slack" | "discord" | "telegr
 }
 
 function removeRemoteQuestionsConfig(): void {
-  const prefsPath = getGlobalGSDPreferencesPath();
+  const prefsPath = getGlobalSFPreferencesPath();
   if (!existsSync(prefsPath)) return;
   const content = readFileSync(prefsPath, "utf-8");
   const fmMatch = content.match(/^---\n([\s\S]*?)\n---/);

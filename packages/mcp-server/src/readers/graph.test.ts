@@ -23,7 +23,7 @@ import type { KnowledgeGraph } from './graph.js';
 // ---------------------------------------------------------------------------
 
 function tmpProject(): string {
-  const dir = join(tmpdir(), `gsd-graph-test-${randomBytes(4).toString('hex')}`);
+  const dir = join(tmpdir(), `sf-graph-test-${randomBytes(4).toString('hex')}`);
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -35,7 +35,7 @@ function writeFixture(base: string, relPath: string, content: string): void {
 }
 
 function makeProjectWithArtifacts(projectDir: string): void {
-  writeFixture(projectDir, '.gsd/STATE.md', [
+  writeFixture(projectDir, '.sf/STATE.md', [
     '# SF State',
     '',
     '**Active Milestone:** M001: Auth System',
@@ -51,7 +51,7 @@ function makeProjectWithArtifacts(projectDir: string): void {
     'Execute T01 in S01.',
   ].join('\n'));
 
-  writeFixture(projectDir, '.gsd/KNOWLEDGE.md', [
+  writeFixture(projectDir, '.sf/KNOWLEDGE.md', [
     '# Project Knowledge',
     '',
     '## Rules',
@@ -74,7 +74,7 @@ function makeProjectWithArtifacts(projectDir: string): void {
     '| L001 | CI tests failed | Env diff | Added setup script | testing |',
   ].join('\n'));
 
-  writeFixture(projectDir, '.gsd/milestones/M001/M001-ROADMAP.md', [
+  writeFixture(projectDir, '.sf/milestones/M001/M001-ROADMAP.md', [
     '# M001: Auth System',
     '',
     '## Vision',
@@ -88,7 +88,7 @@ function makeProjectWithArtifacts(projectDir: string): void {
     '| S01 | Login flow | low | — | 🔄 | Users can log in |',
   ].join('\n'));
 
-  writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/S01-PLAN.md', [
+  writeFixture(projectDir, '.sf/milestones/M001/slices/S01/S01-PLAN.md', [
     '# S01: Login flow',
     '',
     '## Tasks',
@@ -103,7 +103,7 @@ function makeProjectWithArtifacts(projectDir: string): void {
 // ---------------------------------------------------------------------------
 
 function writeLearningsFixture(projectDir: string, milestoneId: string, content: string): void {
-  writeFixture(projectDir, `.gsd/milestones/${milestoneId}/${milestoneId}-LEARNINGS.md`, content);
+  writeFixture(projectDir, `.sf/milestones/${milestoneId}/${milestoneId}-LEARNINGS.md`, content);
 }
 
 const SAMPLE_LEARNINGS = `---
@@ -174,14 +174,14 @@ describe('buildGraph', () => {
   it('skips unparseable artifact and does not throw', async () => {
     const badProject = tmpProject();
     // Write a corrupt/minimal STATE.md that is technically valid but empty
-    writeFixture(badProject, '.gsd/STATE.md', 'not valid gsd state at all \0\0\0');
+    writeFixture(badProject, '.sf/STATE.md', 'not valid sf state at all \0\0\0');
     // Should not throw
     const graph = await buildGraph(badProject);
     assert.ok(graph.nodes.length >= 0);
     rmSync(badProject, { recursive: true, force: true });
   });
 
-  it('returns empty graph for project with no .gsd/ directory', async () => {
+  it('returns empty graph for project with no .sf/ directory', async () => {
     const emptyProject = tmpProject();
     const graph = await buildGraph(emptyProject);
     assert.ok(graph.nodes.length >= 0); // no throw
@@ -215,7 +215,7 @@ describe('buildGraph — LEARNINGS.md parsing', () => {
   beforeEach(() => {
     projectDir = tmpProject();
     // Create minimal milestone directory so parseMilestoneFiles finds it
-    mkdirSync(join(projectDir, '.gsd', 'milestones', 'M001'), { recursive: true });
+    mkdirSync(join(projectDir, '.sf', 'milestones', 'M001'), { recursive: true });
     writeLearningsFixture(projectDir, 'M001', SAMPLE_LEARNINGS);
   });
 
@@ -284,7 +284,7 @@ describe('buildGraph — LEARNINGS.md parsing', () => {
 
   it('skips LEARNINGS.md gracefully when file is malformed', async () => {
     const badProject = tmpProject();
-    mkdirSync(join(badProject, '.gsd', 'milestones', 'M002'), { recursive: true });
+    mkdirSync(join(badProject, '.sf', 'milestones', 'M002'), { recursive: true });
     writeLearningsFixture(badProject, 'M002', '\0\0\0 not valid yaml or markdown \0\0\0');
     // Must not throw
     const graph = await buildGraph(badProject);
@@ -295,7 +295,7 @@ describe('buildGraph — LEARNINGS.md parsing', () => {
 
   it('produces no learning nodes when all sections are empty', async () => {
     const emptyProject = tmpProject();
-    mkdirSync(join(emptyProject, '.gsd', 'milestones', 'M003'), { recursive: true });
+    mkdirSync(join(emptyProject, '.sf', 'milestones', 'M003'), { recursive: true });
     writeLearningsFixture(emptyProject, 'M003', `---
 phase: "M003"
 phase_name: "Empty"
@@ -332,7 +332,7 @@ missing_artifacts: []
 
   it('does not crash when LEARNINGS.md is missing entirely', async () => {
     const noLearningsProject = tmpProject();
-    mkdirSync(join(noLearningsProject, '.gsd', 'milestones', 'M004'), { recursive: true });
+    mkdirSync(join(noLearningsProject, '.sf', 'milestones', 'M004'), { recursive: true });
     // No LEARNINGS.md file written
     const graph = await buildGraph(noLearningsProject);
     assert.ok(graph.nodes.length >= 0);
@@ -356,22 +356,22 @@ describe('writeGraph', () => {
 
   after(() => rmSync(projectDir, { recursive: true, force: true }));
 
-  it('creates graph.json in .gsd/graphs/ after writeGraph()', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+  it('creates graph.json in .sf/graphs/ after writeGraph()', async () => {
+    const gsdRoot = join(projectDir, '.sf');
     await writeGraph(gsdRoot, graph);
     const graphPath = join(gsdRoot, 'graphs', 'graph.json');
     assert.ok(existsSync(graphPath), `Expected ${graphPath} to exist`);
   });
 
   it('write is atomic — no temp file remains after writeGraph()', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     await writeGraph(gsdRoot, graph);
     const tmpPath = join(gsdRoot, 'graphs', 'graph.tmp.json');
     assert.ok(!existsSync(tmpPath), 'Temp file should not exist after successful write');
   });
 
   it('written graph.json is valid JSON with nodes and edges', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     await writeGraph(gsdRoot, graph);
     const raw = readFileSync(join(gsdRoot, 'graphs', 'graph.json'), 'utf-8');
     const parsed = JSON.parse(raw) as KnowledgeGraph;
@@ -401,7 +401,7 @@ describe('graphStatus', () => {
 
   it('returns { exists: true, nodeCount, edgeCount, ageHours } when graph exists', async () => {
     makeProjectWithArtifacts(projectDir);
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     const graph = await buildGraph(projectDir);
     await writeGraph(gsdRoot, graph);
 
@@ -415,7 +415,7 @@ describe('graphStatus', () => {
 
   it('stale = false for a freshly built graph', async () => {
     makeProjectWithArtifacts(projectDir);
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     const graph = await buildGraph(projectDir);
     await writeGraph(gsdRoot, graph);
 
@@ -425,7 +425,7 @@ describe('graphStatus', () => {
 
   it('stale = true for a graph older than 24h (builtAt backdated)', async () => {
     makeProjectWithArtifacts(projectDir);
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     mkdirSync(join(gsdRoot, 'graphs'), { recursive: true });
 
     // Write a graph with a builtAt 25 hours ago
@@ -456,7 +456,7 @@ describe('graphQuery', () => {
   before(async () => {
     projectDir = tmpProject();
     makeProjectWithArtifacts(projectDir);
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     const graph = await buildGraph(projectDir);
     await writeGraph(gsdRoot, graph);
   });
@@ -486,7 +486,7 @@ describe('graphQuery', () => {
   });
 
   it('budget trims AMBIGUOUS edges first', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     // Write a graph with mixed confidence edges
     const mixedGraph: KnowledgeGraph = {
       builtAt: new Date().toISOString(),
@@ -523,7 +523,7 @@ describe('graphDiff', () => {
   beforeEach(async () => {
     projectDir = tmpProject();
     makeProjectWithArtifacts(projectDir);
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     const graph = await buildGraph(projectDir);
     await writeGraph(gsdRoot, graph);
   });
@@ -531,7 +531,7 @@ describe('graphDiff', () => {
   afterEach(() => rmSync(projectDir, { recursive: true, force: true }));
 
   it('returns empty diff when comparing graph to itself (snapshot = current)', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     await writeSnapshot(gsdRoot);
     const diff = await graphDiff(projectDir);
     assert.ok(Array.isArray(diff.nodes.added));
@@ -542,7 +542,7 @@ describe('graphDiff', () => {
   });
 
   it('returns added nodes when a new node appears after snapshot', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     // Take snapshot of the original graph
     await writeSnapshot(gsdRoot);
 
@@ -561,7 +561,7 @@ describe('graphDiff', () => {
   });
 
   it('returns removed nodes when a node disappears after snapshot', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     // Create snapshot with a node that won't exist in current graph
     const snapshotGraph: KnowledgeGraph = {
       builtAt: new Date().toISOString(),
@@ -592,7 +592,7 @@ describe('graphDiff', () => {
   });
 
   it('writeSnapshot creates .last-build-snapshot.json with snapshotAt', async () => {
-    const gsdRoot = join(projectDir, '.gsd');
+    const gsdRoot = join(projectDir, '.sf');
     await writeSnapshot(gsdRoot);
     const snapshotPath = join(gsdRoot, 'graphs', '.last-build-snapshot.json');
     assert.ok(existsSync(snapshotPath));

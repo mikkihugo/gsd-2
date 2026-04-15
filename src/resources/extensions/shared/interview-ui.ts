@@ -1,7 +1,7 @@
 /**
  * Shared interview round UI widget.
  *
- * Used by /interview-me and /gsd-new-project.
+ * Used by /interview-me and /sf-new-project.
  *
  * Renders a paged, keyboard-driven question UI with:
  * - Single-select (radio) questions

@@ -45,7 +45,7 @@ function createTempRepo(): string {
 }
 
 function createMilestoneArtifacts(dir: string, mid: string): void {
-  const msDir = join(dir, ".gsd", "milestones", mid);
+  const msDir = join(dir, ".sf", "milestones", mid);
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "CONTEXT.md"), `# ${mid} Context\n`);
   const roadmap = [
@@ -86,7 +86,7 @@ test("worktree swap on milestone transition: merge old, create new", () => {
     run("git commit -m \"feat(M001): add feature\"", wt1);
 
     // Phase 2: Simulate milestone transition — merge M001, exit worktree
-    const roadmapPath = join(tempDir, ".gsd", "milestones", "M001", "M001-ROADMAP.md");
+    const roadmapPath = join(tempDir, ".sf", "milestones", "M001", "M001-ROADMAP.md");
     const roadmapContent = readFileSync(roadmapPath, "utf-8");
     mergeMilestoneToMain(tempDir, "M001", roadmapContent);
 

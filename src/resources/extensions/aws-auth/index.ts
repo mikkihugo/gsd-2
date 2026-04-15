@@ -26,7 +26,7 @@
  *
  * ## Setup
  *
- * Add to ~/.gsd/agent/settings.json (or project-level .gsd/settings.json):
+ * Add to ~/.sf/agent/settings.json (or project-level .sf/settings.json):
  *
  *   { "awsAuthRefresh": "aws sso login --profile my-profile" }
  *
@@ -55,10 +55,10 @@ const AWS_AUTH_ERROR_RE =
 
 /**
  * Reads the `awsAuthRefresh` command from settings.json.
- * Checks project-level first, then global (~/.gsd/agent/settings.json).
+ * Checks project-level first, then global (~/.sf/agent/settings.json).
  */
 function getAwsAuthRefreshCommand(): string | undefined {
-	const configDir = process.env.PI_CONFIG_DIR || ".gsd";
+	const configDir = process.env.PI_CONFIG_DIR || ".sf";
 	const paths = [
 		join(process.cwd(), configDir, "settings.json"),
 		join(homedir(), configDir, "agent", "settings.json"),

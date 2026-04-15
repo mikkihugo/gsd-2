@@ -1,5 +1,5 @@
 /**
- * Headless Query — `gsd headless query`
+ * Headless Query — `sf headless query`
  *
  * Single read-only command that returns the full project snapshot as JSON
  * to stdout, without spawning an LLM session. Instant (~50ms).
@@ -18,20 +18,20 @@ import { createJiti } from '@mariozechner/jiti'
 import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { homedir } from 'node:os'
-import type { GSDState } from './resources/extensions/sf/types.js'
+import type { SFState } from './resources/extensions/sf/types.js'
 import { resolveBundledSourceResource } from './bundled-resource-path.js'
 
 const jiti = createJiti(fileURLToPath(import.meta.url), { interopDefault: true, debug: false })
 // Resolve extensions from the synced agent directory so headless-query
 // loads the same extension copy as interactive/auto modes (#3471).
 // Falls back to bundled source for source-tree dev workflows.
-const agentExtensionsDir = join(process.env.SF_AGENT_DIR || join(homedir(), '.gsd', 'agent'), 'extensions', 'gsd')
+const agentExtensionsDir = join(process.env.SF_AGENT_DIR || join(homedir(), '.sf', 'agent'), 'extensions', 'sf')
 const { existsSync } = await import('node:fs')
 const useAgentDir = existsSync(join(agentExtensionsDir, 'state.ts'))
 const gsdExtensionPath = (...segments: string[]) =>
   useAgentDir
     ? join(agentExtensionsDir, ...segments)
-    : resolveBundledSourceResource(import.meta.url, 'extensions', 'gsd', ...segments)
+    : resolveBundledSourceResource(import.meta.url, 'extensions', 'sf', ...segments)
 
 async function loadExtensionModules() {
   const stateModule = await jiti.import(gsdExtensionPath('state.ts'), {}) as any
@@ -41,7 +41,7 @@ async function loadExtensionModules() {
   const autoStartModule = await jiti.import(gsdExtensionPath('auto-start.ts'), {}) as any
   return {
     openProjectDbIfPresent: autoStartModule.openProjectDbIfPresent as (basePath: string) => Promise<void>,
-    deriveState: stateModule.deriveState as (basePath: string) => Promise<GSDState>,
+    deriveState: stateModule.deriveState as (basePath: string) => Promise<SFState>,
     resolveDispatch: dispatchModule.resolveDispatch as (opts: any) => Promise<any>,
     readAllSessionStatuses: sessionModule.readAllSessionStatuses as (basePath: string) => any[],
     loadEffectiveGSDPreferences: prefsModule.loadEffectiveGSDPreferences as () => any,
@@ -51,7 +51,7 @@ async function loadExtensionModules() {
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 export interface QuerySnapshot {
-  state: GSDState
+  state: SFState
   next: {
     action: 'dispatch' | 'stop' | 'skip'
     unitType?: string

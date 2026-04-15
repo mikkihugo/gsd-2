@@ -11,7 +11,7 @@ const CLEANUP_MAX_BUFFER = 2 * 1024 * 1024
 const CLEANUP_MODULE_ENV = "SF_CLEANUP_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -42,17 +42,17 @@ export async function collectCleanupData(projectCwdOverride?: string): Promise<C
     'const basePath = process.env.SF_CLEANUP_BASE;',
     // Get all SF branches
     'let branches = [];',
-    'try { branches = mod.nativeBranchList(basePath, "gsd/*"); } catch {}',
+    'try { branches = mod.nativeBranchList(basePath, "sf/*"); } catch {}',
     // Detect main branch and find which SF branches are merged
     'let mainBranch = "main";',
     'try { mainBranch = mod.nativeDetectMainBranch(basePath); } catch {}',
     'let merged = [];',
-    'try { merged = mod.nativeBranchListMerged(basePath, mainBranch, "gsd/*"); } catch {}',
+    'try { merged = mod.nativeBranchListMerged(basePath, mainBranch, "sf/*"); } catch {}',
     'const mergedSet = new Set(merged);',
     'const branchList = branches.map(b => ({ name: b, merged: mergedSet.has(b) }));',
     // Get snapshot refs
     'let refs = [];',
-    'try { refs = mod.nativeForEachRef(basePath, "refs/gsd/snapshots/"); } catch {}',
+    'try { refs = mod.nativeForEachRef(basePath, "refs/sf/snapshots/"); } catch {}',
     'const snapshotList = refs.map(r => {',
     '  const parts = r.split(" ");',
     '  return { ref: parts[0] || r, date: parts.length > 1 ? parts.slice(1).join(" ") : "" };',

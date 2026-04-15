@@ -1,7 +1,7 @@
 /**
  * SF Directory Validation — Safeguards against running in dangerous directories.
  *
- * Prevents SF from creating .gsd/ structures in system paths, home directories,
+ * Prevents SF from creating .sf/ structures in system paths, home directories,
  * or other locations where writing project scaffolding would be harmful.
  */
 
@@ -22,7 +22,7 @@ export interface DirectoryValidationResult {
 
 // ─── Blocked Paths ──────────────────────────────────────────────────────────────
 
-/** Paths where SF must never create .gsd/ — no override possible. */
+/** Paths where SF must never create .sf/ — no override possible. */
 const UNIX_BLOCKED_PATHS = new Set([
   "/",
   "/bin",

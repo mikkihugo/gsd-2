@@ -82,8 +82,8 @@ def ensure_deps():
             emit(
                 "ERROR",
                 "Python environment is externally managed (PEP 668). "
-                "Create a venv first: python3 -m venv ~/.gsd/voice-venv && "
-                "~/.gsd/voice-venv/bin/pip install sounddevice requests",
+                "Create a venv first: python3 -m venv ~/.sf/voice-venv && "
+                "~/.sf/voice-venv/bin/pip install sounddevice requests",
             )
         elif "pip not found" in detail:
             emit("ERROR", "pip is not available. Install: sudo apt install python3-pip")
@@ -166,7 +166,7 @@ def run_groq():
 
     api_key = os.environ.get("GROQ_API_KEY", "")
     if not api_key:
-        emit("ERROR", "GROQ_API_KEY not set. Run 'gsd config' to set up, or get a free key at https://console.groq.com")
+        emit("ERROR", "GROQ_API_KEY not set. Run 'sf config' to set up, or get a free key at https://console.groq.com")
         sys.exit(1)
 
     groq_model = os.environ.get("SF_GROQ_MODEL", "whisper-large-v3-turbo")
@@ -340,7 +340,7 @@ def run_local():
     model_size = os.environ.get("SF_WHISPER_MODEL", "small")
     cache_root = os.path.join(
         os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")),
-        "gsd", "whisper",
+        "sf", "whisper",
     )
     try:
         model = WhisperModel(

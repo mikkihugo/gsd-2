@@ -232,7 +232,7 @@ describe('summarizeToolArgs', () => {
     assert.equal(summarizeToolArgs('ls', { path: 'src/utils' }), 'src/utils')
   })
 
-  it('summarizes gsd tool with milestone/slice/task IDs', () => {
+  it('summarizes sf tool with milestone/slice/task IDs', () => {
     assert.equal(summarizeToolArgs('gsd_task_complete', {
       milestoneId: 'M001', sliceId: 'S01', taskId: 'T01', oneLiner: 'Built the thing',
     }), 'M001/S01/T01 Built the thing')

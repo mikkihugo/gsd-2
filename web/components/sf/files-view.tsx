@@ -26,7 +26,7 @@ import { authFetch } from "@/lib/auth"
 import { FileContentViewer } from "@/components/sf/file-content-viewer"
 import { ChatPane } from "@/components/sf/chat-mode"
 
-type RootMode = "gsd" | "project"
+type RootMode = "sf" | "project"
 
 // Global pending file request — survives across component mount/unmount cycles.
 // Set by the custom event, consumed by FilesView on mount or when already mounted.
@@ -51,7 +51,7 @@ interface FileNode {
 /* ── Persistence helpers ── */
 
 function storageKey(projectCwd: string, root: RootMode): string {
-  return `gsd-files-expanded:${root}:${projectCwd}`
+  return `sf-files-expanded:${root}:${projectCwd}`
 }
 
 function loadExpanded(projectCwd: string | undefined, root: RootMode): Set<string> {
@@ -460,7 +460,7 @@ function tabKey(root: RootMode, path: string): string {
 }
 
 function tabDisplayPath(tab: OpenTab): string {
-  return tab.root === "gsd" ? `.gsd/${tab.path}` : tab.path
+  return tab.root === "sf" ? `.sf/${tab.path}` : tab.path
 }
 
 function tabLabel(tab: OpenTab): string {
@@ -475,7 +475,7 @@ export function FilesView() {
   const workspace = useSFWorkspaceState()
   const projectCwd = workspace.boot?.project.cwd
 
-  const [activeRoot, setActiveRoot] = useState<RootMode>("gsd")
+  const [activeRoot, setActiveRoot] = useState<RootMode>("sf")
   const [leftPanel, setLeftPanel] = useState<LeftPanel>("tree")
   const [gsdTree, setGsdTree] = useState<FileNode[] | null>(null)
   const [projectTree, setProjectTree] = useState<FileNode[] | null>(null)
@@ -522,7 +522,7 @@ export function FilesView() {
   )
 
   // Expanded paths per root, restored from sessionStorage
-  const [gsdExpanded, setGsdExpanded] = useState<Set<string>>(() => loadExpanded(projectCwd, "gsd"))
+  const [gsdExpanded, setGsdExpanded] = useState<Set<string>>(() => loadExpanded(projectCwd, "sf"))
   const [projectExpanded, setProjectExpanded] = useState<Set<string>>(() => loadExpanded(projectCwd, "project"))
 
   // Re-hydrate from storage once projectCwd is available (boot may arrive after first render)
@@ -530,12 +530,12 @@ export function FilesView() {
   useEffect(() => {
     if (!projectCwd || hydratedRef.current) return
     hydratedRef.current = true
-    setGsdExpanded(loadExpanded(projectCwd, "gsd"))
+    setGsdExpanded(loadExpanded(projectCwd, "sf"))
     setProjectExpanded(loadExpanded(projectCwd, "project"))
   }, [projectCwd])
 
-  const expandedPaths = activeRoot === "gsd" ? gsdExpanded : projectExpanded
-  const setExpandedPaths = activeRoot === "gsd" ? setGsdExpanded : setProjectExpanded
+  const expandedPaths = activeRoot === "sf" ? gsdExpanded : projectExpanded
+  const setExpandedPaths = activeRoot === "sf" ? setGsdExpanded : setProjectExpanded
 
   // ── Multi-tab state ──
   const [openTabs, setOpenTabs] = useState<OpenTab[]>([])
@@ -553,8 +553,8 @@ export function FilesView() {
   // The selected path in the tree corresponds to the active tab
   const selectedPath = activeTab?.path ?? null
 
-  const tree = activeRoot === "gsd" ? gsdTree : projectTree
-  const treeLoaded = activeRoot === "gsd" ? gsdTree !== null : projectTree !== null
+  const tree = activeRoot === "sf" ? gsdTree : projectTree
+  const treeLoaded = activeRoot === "sf" ? gsdTree !== null : projectTree !== null
 
   const fetchTree = useCallback(async (root: RootMode) => {
     try {
@@ -567,7 +567,7 @@ export function FilesView() {
       }
       const data = await res.json()
       const nodes = data.tree ?? []
-      if (root === "gsd") {
+      if (root === "sf") {
         setGsdTree(nodes)
       } else {
         setProjectTree(nodes)
@@ -588,7 +588,7 @@ export function FilesView() {
 
   // Initial load
   useEffect(() => {
-    fetchTree("gsd")
+    fetchTree("sf")
   }, [fetchTree])
 
   // ── Open or focus a file tab and fetch its content ──
@@ -609,7 +609,7 @@ export function FilesView() {
 
     // Auto-expand parent dirs
     const parts = path.split("/")
-    const setExpanded = root === "gsd" ? setGsdExpanded : setProjectExpanded
+    const setExpanded = root === "sf" ? setGsdExpanded : setProjectExpanded
     setExpanded((prev) => {
       const next = new Set(prev)
       for (let i = 1; i < parts.length; i++) {
@@ -676,8 +676,8 @@ export function FilesView() {
   // Process a file open request (used both on mount and on event)
   const processFileOpen = useCallback(async (root: RootMode, path: string) => {
     // Ensure tree is loaded for this root
-    if (root === "gsd" && !gsdTree) {
-      fetchTree("gsd")
+    if (root === "sf" && !gsdTree) {
+      fetchTree("sf")
     } else if (root === "project" && !projectTree) {
       fetchTree("project")
     }
@@ -792,7 +792,7 @@ export function FilesView() {
   const handleNewFile = useCallback((parentDir: string) => {
     // Ensure parent directory is expanded
     if (parentDir) {
-      const setExpanded = activeRoot === "gsd" ? setGsdExpanded : setProjectExpanded
+      const setExpanded = activeRoot === "sf" ? setGsdExpanded : setProjectExpanded
       setExpanded((prev) => {
         const next = new Set(prev)
         const parts = parentDir.split("/")
@@ -808,7 +808,7 @@ export function FilesView() {
 
   const handleNewFolder = useCallback((parentDir: string) => {
     if (parentDir) {
-      const setExpanded = activeRoot === "gsd" ? setGsdExpanded : setProjectExpanded
+      const setExpanded = activeRoot === "sf" ? setGsdExpanded : setProjectExpanded
       setExpanded((prev) => {
         const next = new Set(prev)
         const parts = parentDir.split("/")
@@ -958,7 +958,7 @@ export function FilesView() {
   }, [])
 
   const handleCopyPath = useCallback((path: string) => {
-    const displayPath = activeRoot === "gsd" ? `.gsd/${path}` : path
+    const displayPath = activeRoot === "sf" ? `.sf/${path}` : path
     void navigator.clipboard.writeText(displayPath)
   }, [activeRoot])
 
@@ -1033,7 +1033,7 @@ export function FilesView() {
     const hasStateMd = gsdTree.some((n) => n.name === "STATE.md" && n.type === "file")
     if (hasStateMd) {
       autoSelectedRef.current = true
-      void openFileTab("gsd", "STATE.md")
+      void openFileTab("sf", "STATE.md")
     }
   }, [gsdTree, openTabs.length, openFileTab])
 
@@ -1054,7 +1054,7 @@ export function FilesView() {
       if (!filePath) continue
 
       // Determine root and relative path
-      const gsdPrefix = ".gsd/"
+      const gsdPrefix = ".sf/"
       let root: RootMode = "project"
       let relativePath = filePath
 
@@ -1065,7 +1065,7 @@ export function FilesView() {
       }
 
       if (relativePath.startsWith(gsdPrefix)) {
-        root = "gsd"
+        root = "sf"
         relativePath = relativePath.slice(gsdPrefix.length)
       }
 
@@ -1129,10 +1129,10 @@ export function FilesView() {
         {/* Tab bar */}
         <div className="flex border-b border-border flex-shrink-0">
           <button
-            onClick={() => { setLeftPanel("tree"); handleTreeRootChange("gsd") }}
+            onClick={() => { setLeftPanel("tree"); handleTreeRootChange("sf") }}
             className={cn(
               "flex-1 px-3 py-2 text-xs font-medium transition-colors",
-              leftPanel === "tree" && activeRoot === "gsd"
+              leftPanel === "tree" && activeRoot === "sf"
                 ? "border-b-2 border-foreground text-foreground"
                 : "text-muted-foreground hover:text-foreground",
             )}
@@ -1216,7 +1216,7 @@ export function FilesView() {
             </div>
           ) : tree && tree.length === 0 ? (
             <div className="flex items-center justify-center py-8 text-muted-foreground text-xs">
-              {activeRoot === "gsd" ? "No .gsd/ files found" : "No files found"}
+              {activeRoot === "sf" ? "No .sf/ files found" : "No files found"}
             </div>
           ) : tree ? (
             <>

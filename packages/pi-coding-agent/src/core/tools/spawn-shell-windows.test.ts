@@ -30,8 +30,8 @@ const coreDir = join(__dirname, "..");
  * it does not need the guard and should NOT appear here.
  */
 const SPAWN_FILES_NEEDING_SHELL_GUARD = [
-	// Extension's SF client — spawns the `gsd` binary which is a .cmd on Windows
-	join(coreDir, "..", "..", "..", "vscode-extension", "src", "gsd-client.ts"),
+	// Extension's SF client — spawns the `sf` binary which is a .cmd on Windows
+	join(coreDir, "..", "..", "..", "vscode-extension", "src", "sf-client.ts"),
 	// exec.ts — used by extensions to run arbitrary commands
 	join(coreDir, "exec.ts"),
 	// LSP index — spawns project-type commands (tsc, cargo, etc.)
@@ -86,7 +86,7 @@ test("all spawn sites that invoke user-facing binaries include shell: process.pl
 		[],
 		`The following spawn sites are missing 'shell: process.platform === "win32"':\n` +
 		failures.map(f => `  - ${f}`).join("\n") +
-		`\nOn Windows, .cmd wrapper scripts (npm, npx, tsc, gsd) require shell ` +
+		`\nOn Windows, .cmd wrapper scripts (npm, npx, tsc, sf) require shell ` +
 		`resolution. Without this guard, spawn fails with ENOENT or EINVAL.`,
 	);
 });

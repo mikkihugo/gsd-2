@@ -12,7 +12,7 @@ import {
 // ---------------------------------------------------------------------------
 
 test("isUnderNodeModules returns false for paths outside node_modules", () => {
-  assert.equal(isUnderNodeModules("/home/user/projects/gsd"), false)
+  assert.equal(isUnderNodeModules("/home/user/projects/sf"), false)
 })
 
 test("isUnderNodeModules returns true for Unix paths under node_modules/", () => {
@@ -31,7 +31,7 @@ test("isUnderNodeModules returns true for Windows paths under node_modules/", ()
 
 test("isUnderNodeModules returns false for substring match without trailing slash", () => {
   assert.equal(
-    isUnderNodeModules("/home/user/my_node_modules_backup/gsd"),
+    isUnderNodeModules("/home/user/my_node_modules_backup/sf"),
     false,
   )
 })
@@ -41,7 +41,7 @@ test("isUnderNodeModules returns false for substring match without trailing slas
 // ---------------------------------------------------------------------------
 
 test("resolveSubprocessModule returns source .ts path when NOT under node_modules", () => {
-  const packageRoot = "/home/user/projects/gsd"
+  const packageRoot = "/home/user/projects/sf"
   const result = resolveSubprocessModule(
     packageRoot,
     "resources/extensions/sf/workspace-index.ts",

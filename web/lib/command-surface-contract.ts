@@ -42,26 +42,26 @@ export type CommandSurfaceSection =
   | "integrations"
   | "experimental"
   // SF subcommand surfaces (S02)
-  | "gsd-status"
-  | "gsd-visualize"
-  | "gsd-forensics"
-  | "gsd-doctor"
-  | "gsd-skill-health"
-  | "gsd-knowledge"
-  | "gsd-capture"
-  | "gsd-triage"
-  | "gsd-quick"
-  | "gsd-history"
-  | "gsd-undo"
-  | "gsd-inspect"
-  | "gsd-prefs"
-  | "gsd-config"
-  | "gsd-hooks"
-  | "gsd-mode"
-  | "gsd-steer"
-  | "gsd-export"
-  | "gsd-cleanup"
-  | "gsd-queue"
+  | "sf-status"
+  | "sf-visualize"
+  | "sf-forensics"
+  | "sf-doctor"
+  | "sf-skill-health"
+  | "sf-knowledge"
+  | "sf-capture"
+  | "sf-triage"
+  | "sf-quick"
+  | "sf-history"
+  | "sf-undo"
+  | "sf-inspect"
+  | "sf-prefs"
+  | "sf-config"
+  | "sf-hooks"
+  | "sf-mode"
+  | "sf-steer"
+  | "sf-export"
+  | "sf-cleanup"
+  | "sf-queue"
 export type CommandSurfaceSource = "slash" | "sidebar" | "surface"
 export type CommandSurfacePendingAction =
   | "loading_models"
@@ -347,7 +347,7 @@ export type CommandSurfaceTarget =
   | { kind: "fork"; entryId?: string }
   | { kind: "session"; outputPath?: string }
   | { kind: "compact"; customInstructions: string }
-  | { kind: "gsd"; surface: string; subcommand: string; args: string }
+  | { kind: "sf"; surface: string; subcommand: string; args: string }
 
 // ─── Diagnostics panel state ──────────────────────────────────────────────────
 
@@ -672,26 +672,26 @@ export function commandSurfaceSectionForRequest(request: CommandSurfaceOpenReque
     case "compact":
       return "compact"
     // SF subcommand surfaces (S02)
-    case "gsd-status": return "gsd-status"
-    case "gsd-visualize": return "gsd-visualize"
-    case "gsd-forensics": return "gsd-forensics"
-    case "gsd-doctor": return "gsd-doctor"
-    case "gsd-skill-health": return "gsd-skill-health"
-    case "gsd-knowledge": return "gsd-knowledge"
-    case "gsd-capture": return "gsd-capture"
-    case "gsd-triage": return "gsd-triage"
-    case "gsd-quick": return "gsd-quick"
-    case "gsd-history": return "gsd-history"
-    case "gsd-undo": return "gsd-undo"
-    case "gsd-inspect": return "gsd-inspect"
-    case "gsd-prefs": return "gsd-prefs"
-    case "gsd-config": return "gsd-config"
-    case "gsd-hooks": return "gsd-hooks"
-    case "gsd-mode": return "gsd-mode"
-    case "gsd-steer": return "gsd-steer"
-    case "gsd-export": return "gsd-export"
-    case "gsd-cleanup": return "gsd-cleanup"
-    case "gsd-queue": return "gsd-queue"
+    case "sf-status": return "sf-status"
+    case "sf-visualize": return "sf-visualize"
+    case "sf-forensics": return "sf-forensics"
+    case "sf-doctor": return "sf-doctor"
+    case "sf-skill-health": return "sf-skill-health"
+    case "sf-knowledge": return "sf-knowledge"
+    case "sf-capture": return "sf-capture"
+    case "sf-triage": return "sf-triage"
+    case "sf-quick": return "sf-quick"
+    case "sf-history": return "sf-history"
+    case "sf-undo": return "sf-undo"
+    case "sf-inspect": return "sf-inspect"
+    case "sf-prefs": return "sf-prefs"
+    case "sf-config": return "sf-config"
+    case "sf-hooks": return "sf-hooks"
+    case "sf-mode": return "sf-mode"
+    case "sf-steer": return "sf-steer"
+    case "sf-export": return "sf-export"
+    case "sf-cleanup": return "sf-cleanup"
+    case "sf-queue": return "sf-queue"
     default:
       return null
   }
@@ -819,9 +819,9 @@ export function buildCommandSurfaceTarget(request: CommandSurfaceOpenRequest): C
   }
 
   // SF subcommand surfaces — generic target (S02)
-  if (request.surface?.startsWith("gsd-")) {
-    const subcommand = request.surface.slice(4) // "gsd-forensics" -> "forensics"
-    return { kind: "gsd", surface: request.surface, subcommand, args: request.args ?? "" }
+  if (request.surface?.startsWith("sf-")) {
+    const subcommand = request.surface.slice(4) // "sf-forensics" -> "forensics"
+    return { kind: "sf", surface: request.surface, subcommand, args: request.args ?? "" }
   }
 
   return buildSettingsTarget(section)

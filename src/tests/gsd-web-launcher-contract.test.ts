@@ -8,8 +8,8 @@ const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf-8")) as {
   scripts?: Record<string, string>;
 };
 
-test("gsd:web rebuilds bundled resources before launching the packaged web host", () => {
-  const script = packageJson.scripts?.["gsd:web"];
-  assert.ok(script, "package.json must define a gsd:web script");
-  assert.match(script, /npm run copy-resources/, "gsd:web must refresh dist/resources so packaged web hosts do not serve stale SF extensions");
+test("sf:web rebuilds bundled resources before launching the packaged web host", () => {
+  const script = packageJson.scripts?.["sf:web"];
+  assert.ok(script, "package.json must define a sf:web script");
+  assert.match(script, /npm run copy-resources/, "sf:web must refresh dist/resources so packaged web hosts do not serve stale SF extensions");
 });

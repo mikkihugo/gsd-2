@@ -72,10 +72,10 @@ function parseMetricsJson(content: string): MetricsUnit[] {
 // ---------------------------------------------------------------------------
 
 export function readHistory(projectDir: string, limit?: number): HistoryResult {
-  const gsd = resolveGsdRoot(projectDir);
+  const sf = resolveGsdRoot(projectDir);
 
   // metrics.json (primary)
-  const metricsPath = resolveRootFile(gsd, 'metrics.json');
+  const metricsPath = resolveRootFile(sf, 'metrics.json');
   let units: MetricsUnit[] = [];
 
   if (existsSync(metricsPath)) {

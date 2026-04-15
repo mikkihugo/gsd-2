@@ -182,8 +182,8 @@ function readVision(gsdRoot: string, mid: string): string {
 // ---------------------------------------------------------------------------
 
 export function readRoadmap(projectDir: string, filterMilestoneId?: string): RoadmapResult {
-  const gsd = resolveGsdRoot(projectDir);
-  let milestoneIds = findMilestoneIds(gsd);
+  const sf = resolveGsdRoot(projectDir);
+  let milestoneIds = findMilestoneIds(sf);
 
   if (filterMilestoneId) {
     milestoneIds = milestoneIds.filter((id) => id === filterMilestoneId);
@@ -192,19 +192,19 @@ export function readRoadmap(projectDir: string, filterMilestoneId?: string): Roa
   const milestones: MilestoneInfo[] = [];
 
   for (const mid of milestoneIds) {
-    const title = readMilestoneTitle(gsd, mid);
-    const vision = readVision(gsd, mid);
+    const title = readMilestoneTitle(sf, mid);
+    const vision = readVision(sf, mid);
 
-    const summaryPath = resolveMilestoneFile(gsd, mid, 'SUMMARY');
+    const summaryPath = resolveMilestoneFile(sf, mid, 'SUMMARY');
     const hasSummary = summaryPath !== null && existsSync(summaryPath);
 
-    const roadmapPath = resolveMilestoneFile(gsd, mid, 'ROADMAP');
+    const roadmapPath = resolveMilestoneFile(sf, mid, 'ROADMAP');
     let roadmapSlices: ReturnType<typeof parseRoadmapTable> = [];
     if (roadmapPath && existsSync(roadmapPath)) {
       roadmapSlices = parseRoadmapTable(readFileSync(roadmapPath, 'utf-8'));
     }
 
-    const fsSliceIds = findSliceIds(gsd, mid);
+    const fsSliceIds = findSliceIds(sf, mid);
     const sliceIdSet = new Set([
       ...roadmapSlices.map((s) => s.id),
       ...fsSliceIds,
@@ -213,9 +213,9 @@ export function readRoadmap(projectDir: string, filterMilestoneId?: string): Roa
     const slices: SliceInfo[] = [];
     for (const sid of Array.from(sliceIdSet).sort()) {
       const roadmapEntry = roadmapSlices.find((s) => s.id === sid);
-      const taskFiles = findTaskFiles(gsd, mid, sid);
+      const taskFiles = findTaskFiles(sf, mid, sid);
 
-      const planPath = resolveSliceFile(gsd, mid, sid, 'PLAN');
+      const planPath = resolveSliceFile(sf, mid, sid, 'PLAN');
       let planTasks: ReturnType<typeof parseSlicePlanTasks> = [];
       if (planPath && existsSync(planPath)) {
         planTasks = parseSlicePlanTasks(readFileSync(planPath, 'utf-8'));

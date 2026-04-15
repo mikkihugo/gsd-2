@@ -116,9 +116,9 @@ function runPlanningFlowGate(
 
 // ─── Commit Instruction Helpers ──────────────────────────────────────────────
 
-/** Build commit instruction for planning prompts. .gsd/ is managed externally and always gitignored. */
+/** Build commit instruction for planning prompts. .sf/ is managed externally and always gitignored. */
 function buildDocsCommitInstruction(_message: string): string {
-  return "Do not commit planning artifacts — .gsd/ is managed externally.";
+  return "Do not commit planning artifacts — .sf/ is managed externally.";
 }
 
 // ─── Auto-start after discuss ─────────────────────────────────────────────────
@@ -375,7 +375,7 @@ async function dispatchWorkflow(
     });
   }
 
-  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".gsd", "agent", "SF-WORKFLOW.md");
+  const workflowPath = process.env.SF_WORKFLOW_PATH ?? join(process.env.HOME ?? "~", ".sf", "agent", "SF-WORKFLOW.md");
   const workflow = readFileSync(workflowPath, "utf-8");
 
   pi.sendMessage(
@@ -453,7 +453,7 @@ function resolveAvailableModel<T extends { id: string; provider: string }>(
  * Used by all three "new milestone" paths (first ever, no active, all complete).
  */
 function buildDiscussPrompt(nextId: string, preamble: string, _basePath: string, pi: ExtensionAPI, ctx: ExtensionCommandContext, preparationContext?: string): string {
-  const milestoneRel = `.gsd/milestones/${nextId}`;
+  const milestoneRel = `.sf/milestones/${nextId}`;
   const structuredQuestionsAvailable = getStructuredQuestionsAvailability(pi, ctx);
   const inlinedTemplates = [
     inlineTemplate("project", "Project"),
@@ -480,7 +480,7 @@ function buildDiscussPrompt(nextId: string, preamble: string, _basePath: string,
  * Uses the discuss-headless prompt template with seed context injected.
  */
 function buildHeadlessDiscussPrompt(nextId: string, seedContext: string, _basePath: string): string {
-  const milestoneRel = `.gsd/milestones/${nextId}`;
+  const milestoneRel = `.sf/milestones/${nextId}`;
   const inlinedTemplates = [
     inlineTemplate("project", "Project"),
     inlineTemplate("requirements", "Requirements"),
@@ -553,8 +553,8 @@ async function prepareAndBuildDiscussPrompt(
 }
 
 /**
- * Bootstrap a .gsd/ project from scratch for headless use.
- * Ensures git repo, .gsd/ structure, gitignore, and preferences all exist.
+ * Bootstrap a .sf/ project from scratch for headless use.
+ * Ensures git repo, .sf/ structure, gitignore, and preferences all exist.
  */
 function bootstrapGsdProject(basePath: string): void {
   if (!nativeIsRepo(basePath) || isInheritedRepo(basePath)) {
@@ -585,7 +585,7 @@ export async function showHeadlessMilestoneCreation(
   // Clear stale reservations from previous cancelled sessions (#2488)
   clearReservedMilestoneIds();
 
-  // Ensure .gsd/ is bootstrapped
+  // Ensure .sf/ is bootstrapped
   bootstrapGsdProject(basePath);
 
   // Generate next milestone ID
@@ -683,7 +683,7 @@ async function buildDiscussSlicePrompt(
     ? `## Inlined Context (preloaded — do not re-read these files)\n\n${inlined.join("\n\n---\n\n")}`
     : `## Inlined Context\n\n_(no context files found yet — go in blind and ask broad questions)_`;
 
-  const sliceDirPath = `.gsd/milestones/${mid}/slices/${sid}`;
+  const sliceDirPath = `.sf/milestones/${mid}/slices/${sid}`;
   const sliceContextPath = `${sliceDirPath}/${sid}-CONTEXT.md`;
 
   // When re-discussing, inject a preamble so the agent treats this as an update interview
@@ -716,7 +716,7 @@ export async function showDiscuss(
   pi: ExtensionAPI,
   basePath: string,
 ): Promise<void> {
-  // Guard: no .gsd/ project
+  // Guard: no .sf/ project
   if (!existsSync(sfRoot(basePath))) {
     ctx.ui.notify("No SF project found. Run /sf to start one first.", "warning");
     return;
@@ -1255,8 +1255,8 @@ export async function showWorkflowEntry(
   }
 
   // ── Detection preamble — run before any bootstrap ────────────────────
-  // Check bootstrap completeness, not just .gsd/ directory existence.
-  // A zombie .gsd/ state (symlink exists but missing PREFERENCES.md and
+  // Check bootstrap completeness, not just .sf/ directory existence.
+  // A zombie .sf/ state (symlink exists but missing PREFERENCES.md and
   // milestones/) must trigger the init wizard, not skip it (#2942).
   const sfPath = sfRoot(basePath);
   const hasBootstrapArtifacts = existsSync(sfPath)
@@ -1278,17 +1278,17 @@ export async function showWorkflowEntry(
       // "fresh" — fall through to init wizard
     }
 
-    // No .gsd/ or zombie .gsd/ — run the project init wizard
+    // No .sf/ or zombie .sf/ — run the project init wizard
     const result = await showProjectInit(ctx, pi, basePath, detection);
     if (!result.completed) return; // User cancelled
 
-    // Init wizard bootstrapped .gsd/ — fall through to the normal flow below
+    // Init wizard bootstrapped .sf/ — fall through to the normal flow below
     // which will detect "no milestones" and start the discuss prompt
   }
 
   // ── Ensure git repo exists — SF needs it for worktree isolation ──────
   // Also handle inherited repos: if basePath is a subdirectory of another
-  // git repo that has no .gsd, create a fresh repo to prevent cross-project
+  // git repo that has no .sf, create a fresh repo to prevent cross-project
   // state leaks (#1639).
   if (!nativeIsRepo(basePath) || isInheritedRepo(basePath)) {
     const mainBranch = loadEffectiveSFPreferences()?.preferences?.git?.main_branch || "main";
@@ -1407,7 +1407,7 @@ export async function showWorkflowEntry(
       // First ever — skip wizard, just ask directly
       pendingAutoStartMap.set(basePath, { ctx, pi, basePath, milestoneId: nextId, step: stepMode, createdAt: Date.now() });
       await dispatchWorkflow(pi, await prepareAndBuildDiscussPrompt(ctx, pi, nextId,
-        `New project, milestone ${nextId}. Do NOT read or explore .gsd/ — it's empty scaffolding.`,
+        `New project, milestone ${nextId}. Do NOT read or explore .sf/ — it's empty scaffolding.`,
         basePath
       ), "sf-run", ctx, "discuss-milestone");
     } else {

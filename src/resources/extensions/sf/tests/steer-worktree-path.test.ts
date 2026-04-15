@@ -1,6 +1,6 @@
 // SF Extension - Steer Worktree Path Resolution Test
-// Regression test for #3476: /sf steer must write overrides to the worktree .gsd/,
-// not the project root .gsd/, when a worktree is active.
+// Regression test for #3476: /sf steer must write overrides to the worktree .sf/,
+// not the project root .sf/, when a worktree is active.
 
 import { describe, test, beforeEach, afterEach } from "node:test";
 import assert from "node:assert/strict";
@@ -16,33 +16,33 @@ describe("steer worktree path resolution (#3476)", () => {
 
   beforeEach(() => {
     projectRoot = mkdtempSync(join(tmpdir(), "sf-steer-wt-"));
-    mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+    mkdirSync(join(projectRoot, ".sf"), { recursive: true });
 
-    // Simulate a worktree with its own .gsd directory
-    worktreePath = join(projectRoot, ".gsd", "worktrees", "M001");
-    mkdirSync(join(worktreePath, ".gsd"), { recursive: true });
+    // Simulate a worktree with its own .sf directory
+    worktreePath = join(projectRoot, ".sf", "worktrees", "M001");
+    mkdirSync(join(worktreePath, ".sf"), { recursive: true });
   });
 
   afterEach(() => {
     rmSync(projectRoot, { recursive: true, force: true });
   });
 
-  test("appendOverride writes to worktree .gsd/ when worktree path is used", async () => {
+  test("appendOverride writes to worktree .sf/ when worktree path is used", async () => {
     await appendOverride(worktreePath, "Use Postgres instead of SQLite", "M001/S01/T01");
 
-    // Override should be in the worktree .gsd/
-    const wtOverrides = join(worktreePath, ".gsd", "OVERRIDES.md");
-    assert.ok(existsSync(wtOverrides), "override file exists in worktree .gsd/");
+    // Override should be in the worktree .sf/
+    const wtOverrides = join(worktreePath, ".sf", "OVERRIDES.md");
+    assert.ok(existsSync(wtOverrides), "override file exists in worktree .sf/");
 
     const content = readFileSync(wtOverrides, "utf-8");
     assert.ok(content.includes("Use Postgres instead of SQLite"), "override content is correct");
 
-    // Override should NOT be in the project root .gsd/
-    const rootOverrides = join(projectRoot, ".gsd", "OVERRIDES.md");
-    assert.ok(!existsSync(rootOverrides), "no override file in project root .gsd/");
+    // Override should NOT be in the project root .sf/
+    const rootOverrides = join(projectRoot, ".sf", "OVERRIDES.md");
+    assert.ok(!existsSync(rootOverrides), "no override file in project root .sf/");
   });
 
-  test("loadActiveOverrides reads from worktree .gsd/ when worktree path is used", async () => {
+  test("loadActiveOverrides reads from worktree .sf/ when worktree path is used", async () => {
     await appendOverride(worktreePath, "Switch to JWT auth", "M001/S02/T01");
 
     // Loading from worktree should find the override
@@ -58,8 +58,8 @@ describe("steer worktree path resolution (#3476)", () => {
   test("appendOverride falls back to project root when no worktree exists", async () => {
     await appendOverride(projectRoot, "Use Redis cache", "M001/S01/T01");
 
-    const rootOverrides = join(projectRoot, ".gsd", "OVERRIDES.md");
-    assert.ok(existsSync(rootOverrides), "override file exists in project root .gsd/");
+    const rootOverrides = join(projectRoot, ".sf", "OVERRIDES.md");
+    assert.ok(existsSync(rootOverrides), "override file exists in project root .sf/");
 
     const content = readFileSync(rootOverrides, "utf-8");
     assert.ok(content.includes("Use Redis cache"), "override content is correct");
@@ -83,8 +83,8 @@ describe("steer worktree path resolution (#3476)", () => {
 
     await appendOverride(targetPath, "Should go to project root", "M001/S01/T01");
 
-    const rootOverrides = join(projectRoot, ".gsd", "OVERRIDES.md");
-    const wtOverrides = join(worktreePath, ".gsd", "OVERRIDES.md");
+    const rootOverrides = join(projectRoot, ".sf", "OVERRIDES.md");
+    const wtOverrides = join(worktreePath, ".sf", "OVERRIDES.md");
 
     assert.ok(existsSync(rootOverrides), "override written to project root");
     assert.ok(!existsSync(wtOverrides), "override NOT written to inactive worktree");
@@ -102,7 +102,7 @@ describe("steer worktree path resolution (#3476)", () => {
     // Without a valid .git file, falls back to project root
     await appendOverride(targetPath, "Falls back without .git", "M001/S01/T01");
 
-    const rootOverrides = join(projectRoot, ".gsd", "OVERRIDES.md");
+    const rootOverrides = join(projectRoot, ".sf", "OVERRIDES.md");
     assert.ok(existsSync(rootOverrides), "override written to project root (no valid .git in worktree)");
   });
 });

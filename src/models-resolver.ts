@@ -1,10 +1,10 @@
 /**
  * Models.json resolution with fallback to ~/.pi/agent/models.json
  *
- * SF uses ~/.gsd/agent/models.json, but for a smooth migration/development
+ * SF uses ~/.sf/agent/models.json, but for a smooth migration/development
  * experience, this module provides resolution logic that:
  *
- * 1. Reads ~/.gsd/agent/models.json if it exists
+ * 1. Reads ~/.sf/agent/models.json if it exists
  * 2. Falls back to ~/.pi/agent/models.json if SF file doesn't exist
  * 3. Merges both files if both exist (SF takes precedence)
  */
@@ -21,7 +21,7 @@ const PI_MODELS_PATH = join(homedir(), '.pi', 'agent', 'models.json')
  * Resolve the path to models.json with fallback logic.
  *
  * Priority:
- * 1. ~/.gsd/agent/models.json (exists) → return this path
+ * 1. ~/.sf/agent/models.json (exists) → return this path
  * 2. ~/.pi/agent/models.json (exists) → return this path (fallback)
  * 3. Neither exists → return SF path (will be created)
  *

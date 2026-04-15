@@ -28,37 +28,37 @@ function loadPromptFromWorktree(name: string, vars: Record<string, string> = {})
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-replan-test-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content);
 }
 
 function writePlan(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid);
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid);
   mkdirSync(join(dir, 'tasks'), { recursive: true });
   writeFileSync(join(dir, "tasks", "T01-PLAN.md"), "# T01 Plan\n");
   writeFileSync(join(dir, `${sid}-PLAN.md`), content);
 }
 
 function writeTaskSummary(base: string, mid: string, sid: string, tid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid, 'tasks');
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid, 'tasks');
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${tid}-SUMMARY.md`), content);
 }
 
 function writeReplanFile(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid);
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-REPLAN.md`), content);
 }
 
 function writeReplanTrigger(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid);
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-REPLAN-TRIGGER.md`), content);
 }
@@ -372,15 +372,15 @@ console.log('\n=== prompt: replan-slice template loads and substitutes variables
     milestoneId: 'M001',
     sliceId: 'S01',
     sliceTitle: 'Test Slice',
-    slicePath: '.gsd/milestones/M001/slices/S01',
-    planPath: '.gsd/milestones/M001/slices/S01/S01-PLAN.md',
+    slicePath: '.sf/milestones/M001/slices/S01',
+    planPath: '.sf/milestones/M001/slices/S01/S01-PLAN.md',
     inlinedContext: '## Inlined Context\n\nTest context here.',
   });
 
   assert.ok(prompt.includes('M001'), 'prompt contains milestoneId');
   assert.ok(prompt.includes('S01'), 'prompt contains sliceId');
   assert.ok(prompt.includes('Test Slice'), 'prompt contains sliceTitle');
-  assert.ok(prompt.includes('.gsd/milestones/M001/slices/S01/S01-PLAN.md'), 'prompt contains planPath');
+  assert.ok(prompt.includes('.sf/milestones/M001/slices/S01/S01-PLAN.md'), 'prompt contains planPath');
   assert.ok(prompt.includes('Test context here'), 'prompt contains inlined context');
 }
 
@@ -391,10 +391,10 @@ console.log('\n=== prompt: replan-slice contains preserve-completed-tasks instru
     milestoneId: 'M001',
     sliceId: 'S01',
     sliceTitle: 'Test Slice',
-    slicePath: '.gsd/milestones/M001/slices/S01',
-    planPath: '.gsd/milestones/M001/slices/S01/S01-PLAN.md',
+    slicePath: '.sf/milestones/M001/slices/S01',
+    planPath: '.sf/milestones/M001/slices/S01/S01-PLAN.md',
     blockerTaskId: 'T01',
-    replanPath: '.gsd/milestones/M001/slices/S01/S01-REPLAN.md',
+    replanPath: '.sf/milestones/M001/slices/S01/S01-REPLAN.md',
     inlinedContext: '',
   });
 
@@ -438,8 +438,8 @@ console.log('\n=== display: replan-slice prompt template has correct unit header
     milestoneId: 'M001',
     sliceId: 'S01',
     sliceTitle: 'Test Slice',
-    slicePath: '.gsd/milestones/M001/slices/S01',
-    planPath: '.gsd/milestones/M001/slices/S01/S01-PLAN.md',
+    slicePath: '.sf/milestones/M001/slices/S01',
+    planPath: '.sf/milestones/M001/slices/S01/S01-PLAN.md',
     blockerTaskId: 'T01',
     inlinedContext: '',
   });

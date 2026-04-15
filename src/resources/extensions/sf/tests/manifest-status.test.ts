@@ -5,7 +5,7 @@
  * pending, collected, skipped, and existing arrays based on
  * manifest status and environment presence.
  *
- * Uses temp directories with real .gsd/milestones/M001/ structure.
+ * Uses temp directories with real .sf/milestones/M001/ structure.
  */
 
 import { describe, test, beforeEach, afterEach } from 'node:test';
@@ -21,9 +21,9 @@ function makeTempDir(prefix: string): string {
   return dir;
 }
 
-/** Create the .gsd/milestones/M001/ directory structure and write a secrets manifest. */
+/** Create the .sf/milestones/M001/ directory structure and write a secrets manifest. */
 function writeManifest(base: string, content: string): void {
-  const mDir = join(base, '.gsd', 'milestones', 'M001');
+  const mDir = join(base, '.sf', 'milestones', 'M001');
   mkdirSync(mDir, { recursive: true });
   writeFileSync(join(mDir, 'M001-SECRETS.md'), content);
 }
@@ -182,7 +182,7 @@ describe('getManifestStatus: simple temp dir tests', () => {
   // ─── Missing manifest ────────────────────────────────────────────────────────
 
   test('missing manifest — returns null', async () => {
-    // No .gsd directory at all
+    // No .sf directory at all
     const result = await getManifestStatus(tmp, 'M001');
     assert.strictEqual(result, null);
   });

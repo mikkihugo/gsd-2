@@ -5,7 +5,7 @@
  * Uses real temp git repos and real SQLite databases.
  *
  * Test cases:
- *   1. Copy: createAutoWorktree seeds .gsd/sf.db into the worktree when main has one
+ *   1. Copy: createAutoWorktree seeds .sf/sf.db into the worktree when main has one
  *   2. Copy-skip: createAutoWorktree silently skips when main has no sf.db
  *   3. Reconcile: reconcileWorktreeDb merges worktree rows into main DB
  *   4. Reconcile-skip: reconcileWorktreeDb is non-fatal when both paths are nonexistent
@@ -68,7 +68,7 @@ describe('worktree-db-integration', async () => {
       tempDirs.push(tempDir);
 
       // Seed a sf.db in the main repo
-      const sfDir = join(tempDir, ".gsd");
+      const sfDir = join(tempDir, ".sf");
       mkdirSync(sfDir, { recursive: true });
       const mainDbPath = join(sfDir, "sf.db");
       openDatabase(mainDbPath);
@@ -81,10 +81,10 @@ describe('worktree-db-integration', async () => {
       // createAutoWorktree should copy the DB into the worktree
       const wtPath = createAutoWorktree(tempDir, "M004");
 
-      const worktreeDbPath = join(worktreePath(tempDir, "M004"), ".gsd", "sf.db");
+      const worktreeDbPath = join(worktreePath(tempDir, "M004"), ".sf", "sf.db");
       assert.ok(
         existsSync(worktreeDbPath),
-        "sf.db exists in worktree .gsd after createAutoWorktree",
+        "sf.db exists in worktree .sf after createAutoWorktree",
       );
 
       // Restore cwd for next test
@@ -109,7 +109,7 @@ describe('worktree-db-integration', async () => {
 
       assert.ok(!threw, "createAutoWorktree does not throw when no source DB");
 
-      const worktreeDbPath = join(worktreePath(tempDir, "M004"), ".gsd", "sf.db");
+      const worktreeDbPath = join(worktreePath(tempDir, "M004"), ".sf", "sf.db");
       assert.ok(
         !existsSync(worktreeDbPath),
         "sf.db is absent in worktree when source had none",

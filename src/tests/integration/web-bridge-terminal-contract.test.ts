@@ -102,7 +102,7 @@ async function readSseEvents(response: Response, count: number): Promise<any[]> 
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-bridge-terminal-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-web-bridge-terminal-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
   mkdirSync(projectCwd, { recursive: true });

@@ -18,15 +18,15 @@
  *   --heal                Auto-respawn dead workers (opt-in, off by default)
  *   --heal-retries <n>    Max respawn attempts per worker (default: 3)
  *   --heal-cooldown <sec> Seconds between respawn attempts (default: 30)
- *   --dir <path>          Status file directory (default: .gsd/parallel)
+ *   --dir <path>          Status file directory (default: .sf/parallel)
  *   --root <path>         Project root (default: cwd)
  * 
  * Data sources:
- *   .gsd/parallel/M0xx.status.json  — heartbeat, cost, state (written by orchestrator)
- *   .gsd/worktrees/M0xx/.gsd/auto.lock — current unit type + ID (written by worker)
- *   .gsd/worktrees/M0xx/.gsd/gsd.db — task/slice completion (SQLite, queried via cli)
- *   .gsd/parallel/M0xx.stdout.log — NDJSON events (cost extraction, notify messages)
- *   .gsd/parallel/M0xx.stderr.log — error surfacing
+ *   .sf/parallel/M0xx.status.json  — heartbeat, cost, state (written by orchestrator)
+ *   .sf/worktrees/M0xx/.sf/auto.lock — current unit type + ID (written by worker)
+ *   .sf/worktrees/M0xx/.sf/sf.db — task/slice completion (SQLite, queried via cli)
+ *   .sf/parallel/M0xx.stdout.log — NDJSON events (cost extraction, notify messages)
+ *   .sf/parallel/M0xx.stderr.log — error surfacing
  * 
  * Health indicators:
  *   ● green  — PID alive, fresh heartbeat (<30s)
@@ -48,7 +48,7 @@ import { execSync, spawn, spawnSync } from 'node:child_process';
 
 const args = process.argv.slice(2);
 const INTERVAL_SEC = parseInt(getArg('--interval', '5'), 10);
-const PARALLEL_DIR = getArg('--dir', '.gsd/parallel');
+const PARALLEL_DIR = getArg('--dir', '.sf/parallel');
 const PROJECT_ROOT = getArg('--root', process.cwd());
 const ONE_SHOT = args.includes('--once');
 const HEAL_MODE = args.includes('--heal');
@@ -122,7 +122,7 @@ function isPidAlive(pid) {
 
 function discoverWorkers() {
   const dir = path.resolve(PROJECT_ROOT, PARALLEL_DIR);
-  const worktreeDir = path.resolve(PROJECT_ROOT, '.gsd/worktrees');
+  const worktreeDir = path.resolve(PROJECT_ROOT, '.sf/worktrees');
   const mids = new Set();
   
   // From status files
@@ -143,7 +143,7 @@ function discoverWorkers() {
   // From worktree directories that have auto.lock (actively running)
   if (fs.existsSync(worktreeDir)) {
     for (const d of fs.readdirSync(worktreeDir)) {
-      if (d.startsWith('M') && fs.existsSync(path.join(worktreeDir, d, '.gsd', 'auto.lock'))) {
+      if (d.startsWith('M') && fs.existsSync(path.join(worktreeDir, d, '.sf', 'auto.lock'))) {
         mids.add(d);
       }
     }
@@ -158,12 +158,12 @@ function readWorkerStatus(mid) {
 }
 
 function readAutoLock(mid) {
-  const lockPath = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}/.gsd/auto.lock`);
+  const lockPath = path.resolve(PROJECT_ROOT, `.sf/worktrees/${mid}/.sf/auto.lock`);
   return readJsonSafe(lockPath);
 }
 
 function querySliceProgress(mid) {
-  const dbPath = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}/.gsd/gsd.db`);
+  const dbPath = path.resolve(PROJECT_ROOT, `.sf/worktrees/${mid}/.sf/sf.db`);
   if (!fs.existsSync(dbPath)) return [];
   
   try {
@@ -276,7 +276,7 @@ function extractCostFromNdjson(mid) {
 
 // Auto-detect the SF loader path — works across npm global, homebrew, and local installs
 function findGsdLoader() {
-  // 1. Check if we're running from inside the gsd-2 repo itself
+  // 1. Check if we're running from inside the sf-2 repo itself
   const repoLoader = path.resolve(import.meta.dirname, '..', 'dist', 'loader.js');
   if (fs.existsSync(repoLoader)) return repoLoader;
   
@@ -285,17 +285,17 @@ function findGsdLoader() {
     const globalRoot = execSync('npm root -g', { encoding: 'utf-8', timeout: 3000 }).trim();
     const candidates = [
       path.join(globalRoot, 'sf-run', 'dist', 'loader.js'),
-      path.join(globalRoot, '@gsd', 'pi', 'dist', 'loader.js'),
+      path.join(globalRoot, '@sf', 'pi', 'dist', 'loader.js'),
     ];
     for (const c of candidates) {
       if (fs.existsSync(c)) return c;
     }
   } catch { /* skip */ }
   
-  // 3. Try `which gsd` and resolve symlink
+  // 3. Try `which sf` and resolve symlink
   try {
     const pathLookup = process.platform === 'win32' ? 'where.exe' : 'which';
-    const lookupArgs = ['gsd'];
+    const lookupArgs = ['sf'];
     const result = spawnSync(pathLookup, lookupArgs, { encoding: 'utf-8', timeout: 3000 });
     const bin = result.status === 0 ? result.stdout.trim().split(/\r?\n/)[0]?.trim() : '';
     if (bin) {
@@ -315,7 +315,7 @@ const SF_LOADER = findGsdLoader();
  * Uses a detached Node child with log file descriptors so the child is fully detached.
  */
 function respawnWorker(mid) {
-  const worktreeDir = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}`);
+  const worktreeDir = path.resolve(PROJECT_ROOT, `.sf/worktrees/${mid}`);
   if (!fs.existsSync(worktreeDir)) return null;
   if (!fs.existsSync(SF_LOADER)) return null;
   
@@ -517,7 +517,7 @@ function truncate(str, maxLen) {
  * Get recently completed tasks/slices from the worktree DB for the event feed.
  */
 function queryRecentCompletions(mid) {
-  const dbPath = path.resolve(PROJECT_ROOT, `.gsd/worktrees/${mid}/.gsd/gsd.db`);
+  const dbPath = path.resolve(PROJECT_ROOT, `.sf/worktrees/${mid}/.sf/sf.db`);
   if (!fs.existsSync(dbPath)) return [];
   
   try {
@@ -653,7 +653,7 @@ function render(workers) {
   if (workers.length === 0) {
     buf.push('');
     buf.push(`  ${FG.yellow}No workers found in ${PARALLEL_DIR}/${RESET}`);
-    buf.push(`  ${DIM}Waiting for .gsd/parallel/*.status.json files...${RESET}`);
+    buf.push(`  ${DIM}Waiting for .sf/parallel/*.status.json files...${RESET}`);
   } else {
     for (const wk of workers) {
       buf.push('');

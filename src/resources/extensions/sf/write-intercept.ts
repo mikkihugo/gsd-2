@@ -6,10 +6,10 @@ import { realpathSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Patterns matching authoritative .gsd/ state files that agents must NOT write directly.
+ * Patterns matching authoritative .sf/ state files that agents must NOT write directly.
  *
  * Only STATE.md is blocked — it is purely engine-rendered from DB state.
- * All other .gsd/ files are agent-authored content that agents create and
+ * All other .sf/ files are agent-authored content that agents create and
  * update during discuss, plan, and execute phases:
  * - REQUIREMENTS.md — agents create during discuss, read during planning
  * - PROJECT.md — agents create during discuss, update at milestone close
@@ -19,14 +19,14 @@ import { resolve } from "node:path";
 const BLOCKED_PATTERNS: RegExp[] = [
   // STATE.md is the only purely engine-rendered file.
   // Case-insensitive to prevent bypass on macOS (case-insensitive APFS).
-  // (^|[/\\]) matches both absolute paths (/project/.gsd/…) and bare relative
-  // paths (.gsd/STATE.md) so a path without a leading separator is also blocked.
-  /(^|[/\\])\.gsd[/\\]STATE\.md$/i,
-  // Also match resolved symlink paths under ~/.gsd/projects/ (Pitfall #6)
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
+  // (^|[/\\]) matches both absolute paths (/project/.sf/…) and bare relative
+  // paths (.sf/STATE.md) so a path without a leading separator is also blocked.
+  /(^|[/\\])\.sf[/\\]STATE\.md$/i,
+  // Also match resolved symlink paths under ~/.sf/projects/ (Pitfall #6)
+  /(^|[/\\])\.sf[/\\]projects[/\\][^/\\]+[/\\]STATE\.md$/i,
   // sf.db and WAL/SHM files — single-writer WAL connection managed by engine (#3625)
-  /(^|[/\\])\.gsd[/\\]sf\.db(-wal|-shm)?$/i,
-  /(^|[/\\])\.gsd[/\\]projects[/\\][^/\\]+[/\\]sf\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.sf[/\\]sf\.db(-wal|-shm)?$/i,
+  /(^|[/\\])\.sf[/\\]projects[/\\][^/\\]+[/\\]sf\.db(-wal|-shm)?$/i,
 ];
 
 /**
@@ -53,7 +53,7 @@ const BASH_STATE_PATTERNS: RegExp[] = [
 ];
 
 /**
- * Tests whether the given file path matches a blocked authoritative .gsd/ state file.
+ * Tests whether the given file path matches a blocked authoritative .sf/ state file.
  * Resolves `..` segments via path.resolve() and attempts realpathSync for symlinks.
  */
 export function isBlockedStateFile(filePath: string): boolean {
@@ -87,10 +87,10 @@ function matchesBlockedPattern(path: string): boolean {
 }
 
 /**
- * Error message returned when an agent attempts to directly write an authoritative .gsd/ state file.
+ * Error message returned when an agent attempts to directly write an authoritative .sf/ state file.
  * Directs the agent to use engine tool calls instead.
  */
-export const BLOCKED_WRITE_ERROR = `Direct writes to .gsd/STATE.md and .gsd/sf.db are blocked. Use engine tool calls instead:
+export const BLOCKED_WRITE_ERROR = `Direct writes to .sf/STATE.md and .sf/sf.db are blocked. Use engine tool calls instead:
 - To complete a task: call sf_complete_task(milestone_id, slice_id, task_id, summary)
 - To complete a slice: call sf_complete_slice(milestone_id, slice_id, summary, uat_result)
 - To save a decision: call sf_save_decision(scope, decision, choice, rationale)

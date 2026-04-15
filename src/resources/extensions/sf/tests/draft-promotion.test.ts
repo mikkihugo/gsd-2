@@ -23,7 +23,7 @@ function assert(condition: boolean, message: string): void {
 console.log("=== Draft promotion: full state transition ===");
 
 const tmpBase = mkdtempSync(join(tmpdir(), "sf-draft-promotion-test-"));
-const sf = join(tmpBase, ".gsd");
+const sf = join(tmpBase, ".sf");
 
 mkdirSync(join(sf, "milestones", "M001"), { recursive: true });
 
@@ -79,7 +79,7 @@ assert(
 console.log("=== No-draft cleanup: no-op ===");
 
 const tmpBase2 = mkdtempSync(join(tmpdir(), "sf-draft-promotion-noop-"));
-const sf2 = join(tmpBase2, ".gsd");
+const sf2 = join(tmpBase2, ".sf");
 
 mkdirSync(join(sf2, "milestones", "M001"), { recursive: true });
 writeFileSync(
@@ -106,7 +106,7 @@ assert(
 console.log("=== Both files: CONTEXT wins, draft cleanable ===");
 
 const tmpBase3 = mkdtempSync(join(tmpdir(), "sf-draft-promotion-both-"));
-const sf3 = join(tmpBase3, ".gsd");
+const sf3 = join(tmpBase3, ".sf");
 
 mkdirSync(join(sf3, "milestones", "M001"), { recursive: true });
 writeFileSync(

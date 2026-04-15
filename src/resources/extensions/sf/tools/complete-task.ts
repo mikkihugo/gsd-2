@@ -227,7 +227,7 @@ export async function handleCompleteTask(
     summaryPath = join(tasksDir, `${params.taskId}-SUMMARY.md`);
   } else {
     // Tasks dir doesn't exist on disk yet — build path manually and ensure dirs
-    const sfDir = join(basePath, ".gsd");
+    const sfDir = join(basePath, ".sf");
     const manualTasksDir = join(sfDir, "milestones", params.milestoneId, "slices", params.sliceId, "tasks");
     mkdirSync(manualTasksDir, { recursive: true });
     summaryPath = join(manualTasksDir, `${params.taskId}-SUMMARY.md`);

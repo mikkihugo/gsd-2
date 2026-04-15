@@ -9,7 +9,7 @@ import { encodeCwd } from "../resources/extensions/subagent/isolation.ts";
 function makeTempDir(prefix: string): string {
 	const dir = path.join(
 		os.tmpdir(),
-		`gsd-windows-portability-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+		`sf-windows-portability-${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
 	);
 	mkdirSync(dir, { recursive: true });
 	return dir;
@@ -55,7 +55,7 @@ test("encodeCwd produces a filesystem-safe token for Windows paths", () => {
 
 test("Windows launch points use shell-safe shims", () => {
 	const gsdClient = readFileSync(
-		path.join(process.cwd(), "vscode-extension", "src", "gsd-client.ts"),
+		path.join(process.cwd(), "vscode-extension", "src", "sf-client.ts"),
 		"utf8",
 	);
 	const updateService = readFileSync(
@@ -63,7 +63,7 @@ test("Windows launch points use shell-safe shims", () => {
 		"utf8",
 	);
 	const preExecution = readFileSync(
-		path.join(process.cwd(), "src", "resources", "extensions", "gsd", "pre-execution-checks.ts"),
+		path.join(process.cwd(), "src", "resources", "extensions", "sf", "pre-execution-checks.ts"),
 		"utf8",
 	);
 	const validatePack = readFileSync(

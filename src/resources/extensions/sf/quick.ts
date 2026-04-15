@@ -5,7 +5,7 @@
  * Lightweight task execution with SF guarantees (atomic commits, state
  * tracking) but without the full milestone/slice ceremony.
  *
- * Quick tasks live in `.gsd/quick/` and are tracked in STATE.md's
+ * Quick tasks live in `.sf/quick/` and are tracked in STATE.md's
  * "Quick Tasks Completed" table.
  */
 
@@ -165,10 +165,10 @@ export async function handleQuick(
   const basePath = process.cwd();
   const root = sfRoot(basePath);
 
-  // Validate: .gsd/ must exist
+  // Validate: .sf/ must exist
   if (!existsSync(root)) {
     ctx.ui.notify(
-      "No .gsd/ directory found. Run /sf to initialize a project first.",
+      "No .sf/ directory found. Run /sf to initialize a project first.",
       "error",
     );
     return;
@@ -189,7 +189,7 @@ export async function handleQuick(
   const taskNum = getNextTaskNum(quickDir);
   const slug = slugify(description);
   const taskDir = ensureQuickDir(basePath, taskNum, slug);
-  const taskDirRel = `.gsd/quick/${taskNum}-${slug}`;
+  const taskDirRel = `.sf/quick/${taskNum}-${slug}`;
   const date = new Date().toISOString().split("T")[0];
 
   // Create git branch for the quick task (unless isolation:none — #3337)

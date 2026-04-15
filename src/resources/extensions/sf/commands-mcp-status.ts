@@ -68,7 +68,7 @@ function readMcpConfigs(): McpServerRawConfig[] {
   const seen = new Set<string>();
   const configPaths = [
     join(process.cwd(), ".mcp.json"),
-    join(process.cwd(), ".gsd", "mcp.json"),
+    join(process.cwd(), ".sf", "mcp.json"),
   ];
 
   for (const configPath of configPaths) {
@@ -118,7 +118,7 @@ export function formatMcpStatusReport(servers: McpServerStatus[]): string {
     return [
       "No MCP servers configured.",
       "",
-      "Add servers to .mcp.json or .gsd/mcp.json to enable MCP integrations.",
+      "Add servers to .mcp.json or .sf/mcp.json to enable MCP integrations.",
       "Tip: run /sf mcp init . to write the local SF workflow MCP config.",
       "See: https://modelcontextprotocol.io/quickstart",
     ].join("\n");

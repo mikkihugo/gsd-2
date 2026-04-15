@@ -12,12 +12,12 @@ test("derivePendingWorkflowCommandLabel prefers the latest input line while a co
     commandInFlight: "prompt",
     terminalLines: [
       { id: "1", timestamp: "12:00", type: "system", content: "Bridge ready" },
-      { id: "2", timestamp: "12:01", type: "input", content: "/gsd" },
+      { id: "2", timestamp: "12:01", type: "input", content: "/sf" },
       { id: "3", timestamp: "12:02", type: "system", content: "Working…" },
     ],
   })
 
-  assert.equal(label, "/gsd")
+  assert.equal(label, "/sf")
 })
 
 test("derivePendingWorkflowCommandLabel falls back to the command type when no input line exists", () => {
@@ -34,7 +34,7 @@ test("navigateToGSDView dispatches the shared browser navigation event", (t) => 
   const fakeWindow = new EventTarget()
   const seen: string[] = []
 
-  fakeWindow.addEventListener("gsd:navigate-view", (event: Event) => {
+  fakeWindow.addEventListener("sf:navigate-view", (event: Event) => {
     seen.push((event as CustomEvent<{ view: string }>).detail.view)
   })
 
@@ -54,7 +54,7 @@ test("executeWorkflowActionInPowerMode calls dispatch and navigates to the appro
   const seenViews: string[] = []
   let dispatchCalled = false
 
-  fakeWindow.addEventListener("gsd:navigate-view", (event: Event) => {
+  fakeWindow.addEventListener("sf:navigate-view", (event: Event) => {
     seenViews.push((event as CustomEvent<{ view: string }>).detail.view)
   })
 

@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-// ─── Constants mirrored from gsd-workspace-store.tsx ─────────────────
+// ─── Constants mirrored from sf-workspace-store.tsx ─────────────────
 // These MUST match the exported values in the store. The final test
 // case verifies the store's actual exported values if the runtime
 // supports .tsx imports; otherwise we trust these mirrors.

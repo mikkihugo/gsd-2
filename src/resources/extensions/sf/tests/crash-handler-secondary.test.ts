@@ -1,7 +1,7 @@
 /**
  * Regression tests for #3348 secondary issues — crash handler gaps surfaced after #3696
  *
- * 1. register-extension.ts: writeCrashLog writes to ~/.gsd/crash/ directory
+ * 1. register-extension.ts: writeCrashLog writes to ~/.sf/crash/ directory
  * 2. register-extension.ts: _sfRejectionGuard registered for unhandledRejection
  * 3. register-extension.ts: _sfEpipeGuard exits with code 1 for unrecoverable errors (no log-and-continue)
  * 4. crash-recovery.ts: emitCrashRecoveredUnitEnd closes open unit-start journal entries
@@ -21,7 +21,7 @@ const __dirname = dirname(__filename);
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-test-${randomUUID()}`);
-  mkdirSync(join(base, '.gsd'), { recursive: true });
+  mkdirSync(join(base, '.sf'), { recursive: true });
   return base;
 }
 
@@ -34,7 +34,7 @@ const registerExtSrc = readFileSync(
 
 describe('register-extension crash handler secondary fixes (#3348)', () => {
   test('writeCrashLog is exported and writes a file to the crash directory', async () => {
-    // Dynamic import so SF_HOME can be pointed at a temp dir without polluting ~/.gsd
+    // Dynamic import so SF_HOME can be pointed at a temp dir without polluting ~/.sf
     const tmpHome = join(tmpdir(), `sf-crash-test-${randomUUID()}`);
     const origHome = process.env.SF_HOME;
     process.env.SF_HOME = tmpHome;

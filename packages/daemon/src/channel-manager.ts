@@ -21,7 +21,7 @@ import type { Logger } from './logger.js';
 
 const DEFAULT_CATEGORY_NAME = 'SF Projects';
 const ARCHIVE_CATEGORY_NAME = 'SF Archive';
-const CHANNEL_PREFIX = 'gsd-';
+const CHANNEL_PREFIX = 'sf-';
 const MAX_CHANNEL_NAME_LENGTH = 100; // Discord's limit
 
 // ---------------------------------------------------------------------------
@@ -36,10 +36,10 @@ const MAX_CHANNEL_NAME_LENGTH = 100; // Discord's limit
  * - Replaces non-alphanumeric (except hyphens) with hyphens
  * - Collapses consecutive hyphens
  * - Trims leading/trailing hyphens
- * - Prefixes with 'gsd-'
+ * - Prefixes with 'sf-'
  * - Caps total length at 100 chars (Discord limit)
  *
- * Returns 'gsd-unnamed' for empty/whitespace-only inputs.
+ * Returns 'sf-unnamed' for empty/whitespace-only inputs.
  */
 export function sanitizeChannelName(projectDir: string): string {
   // Extract basename — handle both forward and back slashes
@@ -51,7 +51,7 @@ export function sanitizeChannelName(projectDir: string): string {
 
   // Fallback for empty basename
   if (!basename) {
-    return 'gsd-unnamed';
+    return 'sf-unnamed';
   }
 
   // Lowercase
@@ -68,7 +68,7 @@ export function sanitizeChannelName(projectDir: string): string {
 
   // Fallback if nothing remains after sanitization
   if (!name) {
-    return 'gsd-unnamed';
+    return 'sf-unnamed';
   }
 
   // Prefix

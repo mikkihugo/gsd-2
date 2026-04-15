@@ -3,7 +3,7 @@
  * Rebuild the Next.js web host only when web source files are newer than the
  * staged standalone build. Skips the build when nothing has changed.
  *
- * Also self-heals a missing/incomplete web dependency install so `npm run gsd:web`
+ * Also self-heals a missing/incomplete web dependency install so `npm run sf:web`
  * doesn't fail with bare `next` command-not-found errors.
  *
  * Exit codes:

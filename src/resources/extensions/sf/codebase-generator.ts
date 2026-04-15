@@ -1,7 +1,7 @@
 /**
  * SF Codebase Map Generator
  *
- * Produces .gsd/CODEBASE.md — a structural table of contents for the project.
+ * Produces .sf/CODEBASE.md — a structural table of contents for the project.
  * Gives fresh agent contexts instant orientation without filesystem exploration.
  *
  * Generation: walk `git ls-files`, group by directory, output with descriptions.
@@ -73,7 +73,7 @@ interface EnumeratedFiles {
 const DEFAULT_EXCLUDES = [
   // ── AI / tooling meta ──
   ".agents/",
-  ".gsd/",
+  ".sf/",
   ".planning/",
   ".plans/",
   ".claude/",
@@ -567,7 +567,7 @@ export function ensureCodebaseMapFresh(
 }
 
 /**
- * Write CODEBASE.md to .gsd/ directory.
+ * Write CODEBASE.md to .sf/ directory.
  */
 export function writeCodebaseMap(basePath: string, content: string): string {
   const root = sfRoot(basePath);

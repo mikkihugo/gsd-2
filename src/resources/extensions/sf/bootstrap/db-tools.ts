@@ -85,7 +85,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Use sf_decision_save when recording an architectural, pattern, library, or observability decision.",
       "Decision IDs are auto-assigned (D001, D002, ...) — never guess or provide an ID.",
       "All fields except revisable, when_context, and made_by are required.",
-      "The tool writes to the DB and regenerates .gsd/DECISIONS.md automatically.",
+      "The tool writes to the DB and regenerates .sf/DECISIONS.md automatically.",
       "Set made_by to 'human' when the user explicitly directed the decision, 'agent' when the LLM chose autonomously (default), or 'collaborative' when it was discussed and agreed together.",
     ],
     parameters: Type.Object({
@@ -252,7 +252,7 @@ export function registerDbTools(pi: ExtensionAPI): void {
       "Use sf_requirement_save when recording a new functional, non-functional, or operational requirement.",
       "Requirement IDs are auto-assigned (R001, R002, ...) — never guess or provide an ID.",
       "class, description, why, and source are required. All other fields are optional.",
-      "The tool writes to the DB and regenerates .gsd/REQUIREMENTS.md automatically.",
+      "The tool writes to the DB and regenerates .sf/REQUIREMENTS.md automatically.",
     ],
     parameters: Type.Object({
       class: Type.String({ description: "Requirement class (e.g. 'functional', 'non-functional', 'operational')" }),

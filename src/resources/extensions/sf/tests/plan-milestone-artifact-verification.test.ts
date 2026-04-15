@@ -8,12 +8,12 @@ import { verifyExpectedArtifact } from "../auto-recovery.ts";
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "sf-plan-milestone-artifact-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones"), { recursive: true });
   return base;
 }
 
 function writeRoadmap(base: string, milestoneId: string, content: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", milestoneId);
+  const milestoneDir = join(base, ".sf", "milestones", milestoneId);
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(join(milestoneDir, `${milestoneId}-ROADMAP.md`), content, "utf-8");
 }

@@ -36,7 +36,7 @@ const {
   dispatchBrowserSlashCommand,
 } = await import("../../../web/lib/browser-slash-command-dispatch.ts")
 
-const { GSDWorkspaceStore } = await import("../../../web/lib/gsd-workspace-store.tsx")
+const { GSDWorkspaceStore } = await import("../../../web/lib/sf-workspace-store.tsx")
 
 // ─── Block 1: Type exports (R103, R104, R105) ───────────────────────────────
 
@@ -253,35 +253,35 @@ describe("diagnostics contract state", () => {
 // ─── Block 3: Dispatch→surface pipeline (R103, R104, R105) ──────────────────
 
 describe("diagnostics dispatch→surface pipeline", () => {
-  it("/gsd forensics dispatches to gsd-forensics surface", () => {
-    const outcome = dispatchBrowserSlashCommand("/gsd forensics", {})
+  it("/sf forensics dispatches to sf-forensics surface", () => {
+    const outcome = dispatchBrowserSlashCommand("/sf forensics", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-forensics")
+      assert.equal(outcome.surface, "sf-forensics")
     }
   })
 
-  it("/gsd doctor dispatches to gsd-doctor surface", () => {
-    const outcome = dispatchBrowserSlashCommand("/gsd doctor", {})
+  it("/sf doctor dispatches to sf-doctor surface", () => {
+    const outcome = dispatchBrowserSlashCommand("/sf doctor", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-doctor")
+      assert.equal(outcome.surface, "sf-doctor")
     }
   })
 
-  it("/gsd skill-health dispatches to gsd-skill-health surface", () => {
-    const outcome = dispatchBrowserSlashCommand("/gsd skill-health", {})
+  it("/sf skill-health dispatches to sf-skill-health surface", () => {
+    const outcome = dispatchBrowserSlashCommand("/sf skill-health", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-skill-health")
+      assert.equal(outcome.surface, "sf-skill-health")
     }
   })
 
-  it("/gsd doctor fix dispatches to gsd-doctor surface with args", () => {
-    const outcome = dispatchBrowserSlashCommand("/gsd doctor fix", {})
+  it("/sf doctor fix dispatches to sf-doctor surface with args", () => {
+    const outcome = dispatchBrowserSlashCommand("/sf doctor fix", {})
     assert.equal(outcome.kind, "surface")
     if (outcome.kind === "surface") {
-      assert.equal(outcome.surface, "gsd-doctor")
+      assert.equal(outcome.surface, "sf-doctor")
     }
   })
 })
@@ -289,19 +289,19 @@ describe("diagnostics dispatch→surface pipeline", () => {
 // ─── Block 4: Surface→section mapping (R103, R104, R105) ────────────────────
 
 describe("diagnostics surface→section mapping", () => {
-  it("gsd-forensics surface maps to gsd-forensics section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-forensics" as any } as any)
-    assert.equal(section, "gsd-forensics")
+  it("sf-forensics surface maps to sf-forensics section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "sf-forensics" as any } as any)
+    assert.equal(section, "sf-forensics")
   })
 
-  it("gsd-doctor surface maps to gsd-doctor section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-doctor" as any } as any)
-    assert.equal(section, "gsd-doctor")
+  it("sf-doctor surface maps to sf-doctor section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "sf-doctor" as any } as any)
+    assert.equal(section, "sf-doctor")
   })
 
-  it("gsd-skill-health surface maps to gsd-skill-health section", () => {
-    const section = commandSurfaceSectionForRequest({ surface: "gsd-skill-health" as any } as any)
-    assert.equal(section, "gsd-skill-health")
+  it("sf-skill-health surface maps to sf-skill-health section", () => {
+    const section = commandSurfaceSectionForRequest({ surface: "sf-skill-health" as any } as any)
+    assert.equal(section, "sf-skill-health")
   })
 })
 

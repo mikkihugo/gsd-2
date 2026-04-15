@@ -46,7 +46,7 @@ function cleanupDb(dbPath: string): void {
 
 function createTempProject(): { basePath: string } {
   const basePath = mkdtempSync(join(tmpdir(), "sf-2945-project-"));
-  mkdirSync(join(basePath, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(basePath, ".sf", "milestones", "M001"), { recursive: true });
   return { basePath };
 }
 

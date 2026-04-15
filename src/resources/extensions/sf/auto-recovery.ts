@@ -57,11 +57,11 @@ export { resolveExpectedArtifactPath, diagnoseExpectedArtifact };
 // ─── Artifact Resolution & Verification ───────────────────────────────────────
 
 /**
- * Check whether a milestone produced implementation artifacts (non-`.gsd/` files)
+ * Check whether a milestone produced implementation artifacts (non-`.sf/` files)
  * in the git history. Uses `git log --name-only` to inspect all commits on the
- * current branch that touch files outside `.gsd/`.
+ * current branch that touch files outside `.sf/`.
  *
- * Returns "present" if implementation files found, "absent" if only .gsd/ files,
+ * Returns "present" if implementation files found, "absent" if only .sf/ files,
  * "unknown" if git is unavailable or check failed (callers decide how to handle).
  */
 export function hasImplementationArtifacts(basePath: string): "present" | "absent" | "unknown" {
@@ -89,10 +89,10 @@ export function hasImplementationArtifacts(basePath: string): "present" | "absen
     // commit repo, or other edge case where git diff returns nothing).
     if (changedFiles.length === 0) return "unknown";
 
-    // Filter out .gsd/ files — only implementation files count.
-    // If every changed file is under .gsd/, the milestone produced no
+    // Filter out .sf/ files — only implementation files count.
+    // If every changed file is under .sf/, the milestone produced no
     // implementation code (#1703).
-    const implFiles = changedFiles.filter(f => !f.startsWith(".gsd/") && !f.startsWith(".gsd\\"));
+    const implFiles = changedFiles.filter(f => !f.startsWith(".sf/") && !f.startsWith(".sf\\"));
     return implFiles.length > 0 ? "present" : "absent";
   } catch (e) {
     // Non-fatal — if git operations fail, return unknown so callers can decide
@@ -400,7 +400,7 @@ export function verifyExpectedArtifact(
   }
 
   // complete-milestone must have produced implementation artifacts (#1703).
-  // A milestone with only .gsd/ plan files and zero implementation code is
+  // A milestone with only .sf/ plan files and zero implementation code is
   // not genuinely complete — the LLM wrote plan files but skipped actual work.
   if (unitType === "complete-milestone") {
     if (hasImplementationArtifacts(base) === "absent") return false;
@@ -494,7 +494,7 @@ export type MergeReconcileResult = "clean" | "reconciled" | "blocked";
 /**
  * Detect leftover merge state from a prior session and reconcile it.
  * If MERGE_HEAD or SQUASH_MSG exists, check whether conflicts are resolved.
- * If resolved: finalize the commit. If only .gsd conflicts remain: auto-resolve.
+ * If resolved: finalize the commit. If only .sf conflicts remain: auto-resolve.
  * If code conflicts remain: fail safe without modifying the worktree.
  */
 export function reconcileMergeState(
@@ -524,32 +524,32 @@ export function reconcileMergeState(
       return "blocked";
     }
   } else {
-    // Still conflicted — try auto-resolving .gsd/ state file conflicts (#530)
-    const sfConflicts = conflictedFiles.filter((f) => f.startsWith(".gsd/"));
-    const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".gsd/"));
+    // Still conflicted — try auto-resolving .sf/ state file conflicts (#530)
+    const sfConflicts = conflictedFiles.filter((f) => f.startsWith(".sf/"));
+    const codeConflicts = conflictedFiles.filter((f) => !f.startsWith(".sf/"));
 
     if (sfConflicts.length > 0 && codeConflicts.length === 0) {
-      // All conflicts are in .gsd/ state files — auto-resolve by accepting theirs
+      // All conflicts are in .sf/ state files — auto-resolve by accepting theirs
       let resolved = true;
       try {
         nativeCheckoutTheirs(basePath, sfConflicts);
         nativeAddPaths(basePath, sfConflicts);
       } catch (e) {
-        logError("recovery", `auto-resolve .gsd/ conflicts failed: ${(e as Error).message}`);
+        logError("recovery", `auto-resolve .sf/ conflicts failed: ${(e as Error).message}`);
         resolved = false;
       }
       if (resolved) {
         try {
           nativeCommit(
             basePath,
-            "chore: auto-resolve .gsd/ state file conflicts",
+            "chore: auto-resolve .sf/ state file conflicts",
           );
           ctx.ui.notify(
-            `Auto-resolved ${sfConflicts.length} .gsd/ state file conflict(s) from prior merge.`,
+            `Auto-resolved ${sfConflicts.length} .sf/ state file conflict(s) from prior merge.`,
             "info",
           );
         } catch (e) {
-          logError("recovery", `auto-commit .gsd/ conflict resolution failed: ${(e as Error).message}`);
+          logError("recovery", `auto-commit .sf/ conflict resolution failed: ${(e as Error).message}`);
           resolved = false;
         }
       }

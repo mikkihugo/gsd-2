@@ -39,7 +39,7 @@ import { getAuthToken } from "@/lib/auth"
 const KNOWN_VIEWS = new Set(["dashboard", "power", "chat", "roadmap", "files", "activity", "visualize"])
 
 function viewStorageKey(projectCwd: string): string {
-  return `gsd-active-view:${projectCwd}`
+  return `sf-active-view:${projectCwd}`
 }
 
 function WorkspaceChrome() {
@@ -111,7 +111,7 @@ function WorkspaceChrome() {
   useEffect(() => {
     const restoreTimer = window.setTimeout(() => {
       try {
-        const stored = localStorage.getItem("gsd-sidebar-collapsed")
+        const stored = localStorage.getItem("sf-sidebar-collapsed")
         if (stored === "true") setSidebarCollapsed(true)
       } catch {
         // localStorage may be unavailable
@@ -123,7 +123,7 @@ function WorkspaceChrome() {
   // Persist sidebar collapsed state
   useEffect(() => {
     try {
-      localStorage.setItem("gsd-sidebar-collapsed", String(sidebarCollapsed))
+      localStorage.setItem("sf-sidebar-collapsed", String(sidebarCollapsed))
     } catch {
       // localStorage may be unavailable
     }
@@ -150,7 +150,7 @@ function WorkspaceChrome() {
     return () => window.removeEventListener("sf:open-file", handler)
   }, [])
 
-  // Listen for cross-component view navigation events (e.g. /gsd visualize dispatch)
+  // Listen for cross-component view navigation events (e.g. /sf visualize dispatch)
   useEffect(() => {
     const handler = (e: CustomEvent<{ view: string }>) => {
       if (KNOWN_VIEWS.has(e.detail.view)) {
@@ -164,8 +164,8 @@ function WorkspaceChrome() {
   // Listen for projects panel toggle (sidebar icon, or programmatic)
   useEffect(() => {
     const handler = () => setProjectsPanelOpen(true)
-    window.addEventListener("gsd:open-projects", handler)
-    return () => window.removeEventListener("gsd:open-projects", handler)
+    window.addEventListener("sf:open-projects", handler)
+    return () => window.removeEventListener("sf:open-projects", handler)
   }, [])
 
   // Terminal + sidebar panel drag-to-resize
@@ -273,7 +273,7 @@ function WorkspaceChrome() {
             (including the{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">#token=…</code>{" "}
             part) or restart with{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gsd --web</code>.
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">sf --web</code>.
           </p>
         </div>
       </div>

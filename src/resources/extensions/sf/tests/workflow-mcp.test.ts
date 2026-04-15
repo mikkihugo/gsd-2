@@ -179,7 +179,7 @@ test("detectWorkflowMcpLaunchConfig resolves the bundled server relative to the 
 
 test("workflow MCP launch config reaches mutation tools over stdio", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "sf-workflow-transport-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".sf"), { recursive: true });
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");
@@ -333,12 +333,12 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
       /Planned slice S01/,
     );
     assert.ok(
-      existsSync(join(projectRoot, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
+      existsSync(join(projectRoot, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
       "expected slice plan artifact to be written through stdio MCP",
     );
     assert.ok(
       existsSync(
-        join(projectRoot, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
+        join(projectRoot, ".sf", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md"),
       ),
       "expected task plan artifact to be written through stdio MCP",
     );
@@ -350,7 +350,7 @@ test("workflow MCP launch config reaches mutation tools over stdio", async () =>
 
 test("workflow MCP ask_user_questions uses stdio elicitation round-trip", async () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "sf-workflow-elicit-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".sf"), { recursive: true });
 
   const launch = detectWorkflowMcpLaunchConfig(projectRoot, {});
   assert.ok(launch, "expected a workflow MCP launch config");

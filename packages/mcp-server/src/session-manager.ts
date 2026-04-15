@@ -60,7 +60,7 @@ export class SessionManager {
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
-   * wires event tracking, and sends '/gsd auto' to begin execution.
+   * wires event tracking, and sends '/sf auto' to begin execution.
    */
   async startSession(projectDir: string, options: ExecuteOptions = {}): Promise<string> {
     if (!projectDir || projectDir.trim() === '') {
@@ -125,7 +125,7 @@ export class SessionManager {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/sf auto';
       await client.prompt(command);
 
       return session.sessionId;
@@ -240,18 +240,18 @@ export class SessionManager {
    * Resolve the SF CLI path.
    *
    * 1. SF_CLI_PATH env var (highest priority)
-   * 2. `which gsd` → resolve to the actual dist/cli.js
+   * 2. `which sf` → resolve to the actual dist/cli.js
    */
   static resolveCLIPath(): string {
     // Check env var first
     const envPath = process.env['SF_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
-    // Fallback: locate `gsd` via which
+    // Fallback: locate `sf` via which
     try {
-      const gsdBin = execSync('which gsd', { encoding: 'utf-8' }).trim();
+      const gsdBin = execSync('which sf', { encoding: 'utf-8' }).trim();
       if (gsdBin) {
-        // gsd bin is typically a symlink to dist/loader.js — return the resolved path
+        // sf bin is typically a symlink to dist/loader.js — return the resolved path
         return resolve(gsdBin);
       }
     } catch {
@@ -259,7 +259,7 @@ export class SessionManager {
     }
 
     throw new Error(
-      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `sf` is in PATH.'
     );
   }
 

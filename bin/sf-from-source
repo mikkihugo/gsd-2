@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# sf-from-source — run SF directly from this source checkout via bun.
+#
+# Purpose: every local commit in this repo (e.g. the #4251 fix) is live
+# immediately without reinstalling the bun-packaged sf-run. Subagents can
+# spawn sf by pointing SF_BIN_PATH at this script instead of dist/loader.js.
+#
+# Contract:
+#   - Executable shim spawn() / exec() can launch directly.
+#   - Exports SF_BIN_PATH before handing off to loader.ts so loader.ts's
+#     `SF_BIN_PATH ||= process.argv[1]` branch preserves the shim path
+#     instead of clobbering it with the .ts loader path (which is not
+#     directly executable by child_process.spawn).
+#
+# Requirements: bun on PATH, node_modules populated (`bun install` once).
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "$(readlink -f "${BASH_SOURCE[0]}")")" &>/dev/null && pwd)
+SF_SOURCE_ROOT=$(cd -- "$SCRIPT_DIR/.." &>/dev/null && pwd)
+
+export SF_BIN_PATH="$SCRIPT_DIR/sf-from-source"
+
+exec bun run "$SF_SOURCE_ROOT/src/loader.ts" "$@"

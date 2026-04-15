@@ -1,15 +1,15 @@
 /**
  * sfroot-worktree-detection.test.ts — Regression test for #2594.
  *
- * sfRoot() must return the worktree's own .gsd directory when the basePath
- * is inside a .gsd/worktrees/<name>/ structure, not walk up to the project
- * root's .gsd via the git-root probe.
+ * sfRoot() must return the worktree's own .sf directory when the basePath
+ * is inside a .sf/worktrees/<name>/ structure, not walk up to the project
+ * root's .sf via the git-root probe.
  *
- * The bug: when a git worktree lives at /project/.gsd/worktrees/M008/,
+ * The bug: when a git worktree lives at /project/.sf/worktrees/M008/,
  * probeGsdRoot() runs `git rev-parse --show-toplevel` which can return the
  * main project root (not the worktree root) depending on git version and
- * worktree setup. The walk-up then finds /project/.gsd and returns that
- * instead of the worktree's own .gsd path.
+ * worktree setup. The walk-up then finds /project/.sf and returns that
+ * instead of the worktree's own .sf path.
  */
 
 import { describe, test, beforeEach, afterEach } from "node:test";
@@ -31,7 +31,7 @@ describe("sfRoot() worktree detection (#2594)", () => {
     // Create a temporary project with a git repo to simulate real conditions.
     // realpathSync handles macOS /tmp -> /private/tmp.
     projectRoot = realpathSync(mkdtempSync(join(tmpdir(), "sfroot-wt-")));
-    projectGsd = join(projectRoot, ".gsd");
+    projectGsd = join(projectRoot, ".sf");
     mkdirSync(projectGsd, { recursive: true });
 
     // Initialize a git repo in the project root so git rev-parse works
@@ -61,52 +61,52 @@ describe("sfRoot() worktree detection (#2594)", () => {
     rmSync(projectRoot, { recursive: true, force: true });
   });
 
-  test("returns worktree .gsd when basePath is a worktree with its own .gsd (fast path)", () => {
+  test("returns worktree .sf when basePath is a worktree with its own .sf (fast path)", () => {
     // Simulates a worktree that already had copyPlanningArtifacts() run,
-    // so it has its own .gsd/ directory.
+    // so it has its own .sf/ directory.
     const worktreeBase = join(projectGsd, "worktrees", "M008");
-    const worktreeGsd = join(worktreeBase, ".gsd");
+    const worktreeGsd = join(worktreeBase, ".sf");
     mkdirSync(worktreeGsd, { recursive: true });
 
     const result = sfRoot(worktreeBase);
     assert.equal(
       result,
       worktreeGsd,
-      `Expected worktree .gsd (${worktreeGsd}), got ${result}. ` +
-        "sfRoot() should use the fast path for an existing worktree .gsd.",
+      `Expected worktree .sf (${worktreeGsd}), got ${result}. ` +
+        "sfRoot() should use the fast path for an existing worktree .sf.",
     );
   });
 
-  test("returns worktree .gsd path (not project root .gsd) when worktree .gsd does not exist yet", () => {
-    // This is the core #2594 bug: the worktree directory exists but its .gsd
+  test("returns worktree .sf path (not project root .sf) when worktree .sf does not exist yet", () => {
+    // This is the core #2594 bug: the worktree directory exists but its .sf
     // subdirectory hasn't been created yet. Without the fix, probeGsdRoot()
-    // walks up from the worktree path, finds /project/.gsd, and returns it.
-    // With the fix, it detects the .gsd/worktrees/<name>/ pattern and returns
-    // the worktree-local .gsd path as the creation fallback.
+    // walks up from the worktree path, finds /project/.sf, and returns it.
+    // With the fix, it detects the .sf/worktrees/<name>/ pattern and returns
+    // the worktree-local .sf path as the creation fallback.
     const worktreeBase = join(projectGsd, "worktrees", "M008");
     mkdirSync(worktreeBase, { recursive: true });
-    // NOTE: no .gsd/ inside worktreeBase
+    // NOTE: no .sf/ inside worktreeBase
 
     const result = sfRoot(worktreeBase);
-    const expected = join(worktreeBase, ".gsd");
+    const expected = join(worktreeBase, ".sf");
 
-    // Without the fix, this returns projectGsd (/project/.gsd) because the
+    // Without the fix, this returns projectGsd (/project/.sf) because the
     // walk-up from worktreeBase finds it. With the fix, it returns the
     // worktree-local path.
     assert.notEqual(
       result,
       projectGsd,
-      "sfRoot() must NOT return the project root .gsd when basePath is inside .gsd/worktrees/",
+      "sfRoot() must NOT return the project root .sf when basePath is inside .sf/worktrees/",
     );
     assert.equal(
       result,
       expected,
-      `Expected worktree-local .gsd (${expected}), got ${result}.`,
+      `Expected worktree-local .sf (${expected}), got ${result}.`,
     );
   });
 
-  test("returns worktree .gsd when basePath is a real git worktree inside .gsd/worktrees/", () => {
-    // Create a real git worktree at .gsd/worktrees/M010
+  test("returns worktree .sf when basePath is a real git worktree inside .sf/worktrees/", () => {
+    // Create a real git worktree at .sf/worktrees/M010
     const worktreeName = "M010";
     const worktreeBase = join(projectGsd, "worktrees", worktreeName);
 
@@ -123,19 +123,19 @@ describe("sfRoot() worktree detection (#2594)", () => {
       return;
     }
 
-    // The real git worktree exists at worktreeBase but has NO .gsd/ subdir yet
+    // The real git worktree exists at worktreeBase but has NO .sf/ subdir yet
     const sfResult = sfRoot(worktreeBase);
-    const expected = join(worktreeBase, ".gsd");
+    const expected = join(worktreeBase, ".sf");
 
     assert.notEqual(
       sfResult,
       projectGsd,
-      "sfRoot() must NOT escape to project root .gsd from inside a git worktree",
+      "sfRoot() must NOT escape to project root .sf from inside a git worktree",
     );
     assert.equal(
       sfResult,
       expected,
-      `Expected worktree-local .gsd (${expected}), got ${sfResult}`,
+      `Expected worktree-local .sf (${expected}), got ${sfResult}`,
     );
 
     // Cleanup worktree
@@ -145,12 +145,12 @@ describe("sfRoot() worktree detection (#2594)", () => {
     });
   });
 
-  test("still returns project .gsd for normal (non-worktree) basePath", () => {
+  test("still returns project .sf for normal (non-worktree) basePath", () => {
     const result = sfRoot(projectRoot);
     assert.equal(result, projectGsd);
   });
 
-  test("still returns project .gsd for a subdirectory of the project", () => {
+  test("still returns project .sf for a subdirectory of the project", () => {
     const subdir = join(projectRoot, "src", "lib");
     mkdirSync(subdir, { recursive: true });
 
@@ -158,7 +158,7 @@ describe("sfRoot() worktree detection (#2594)", () => {
     assert.equal(
       result,
       projectGsd,
-      "Non-worktree subdirectories should still resolve to project .gsd",
+      "Non-worktree subdirectories should still resolve to project .sf",
     );
   });
 });

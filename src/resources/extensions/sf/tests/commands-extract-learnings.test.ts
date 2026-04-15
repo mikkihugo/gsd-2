@@ -42,13 +42,13 @@ describe("parseExtractLearningsArgs", () => {
 
 describe("buildLearningsOutputPath", () => {
   it("builds the correct output path", () => {
-    const result = buildLearningsOutputPath("/base/.gsd/milestones/M001", "M001");
-    assert.equal(result, "/base/.gsd/milestones/M001/M001-LEARNINGS.md");
+    const result = buildLearningsOutputPath("/base/.sf/milestones/M001", "M001");
+    assert.equal(result, "/base/.sf/milestones/M001/M001-LEARNINGS.md");
   });
 
   it("builds path for different milestone ID", () => {
-    const result = buildLearningsOutputPath("/project/.gsd/milestones/M005", "M005");
-    assert.equal(result, "/project/.gsd/milestones/M005/M005-LEARNINGS.md");
+    const result = buildLearningsOutputPath("/project/.sf/milestones/M005", "M005");
+    assert.equal(result, "/project/.sf/milestones/M005/M005-LEARNINGS.md");
   });
 });
 
@@ -142,8 +142,8 @@ describe("buildExtractLearningsPrompt", () => {
     const result = buildExtractLearningsPrompt({
       milestoneId: "M001",
       milestoneName: "Test Milestone",
-      outputPath: "/project/.gsd/milestones/M001/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      outputPath: "/project/.sf/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".sf/milestones/M001/M001-LEARNINGS.md",
       planContent: "# Plan content",
       summaryContent: "# Summary content",
       verificationContent: null,
@@ -153,7 +153,7 @@ describe("buildExtractLearningsPrompt", () => {
     });
 
     assert.ok(result.includes("M001"));
-    assert.ok(result.includes("/project/.gsd/milestones/M001/M001-LEARNINGS.md"));
+    assert.ok(result.includes("/project/.sf/milestones/M001/M001-LEARNINGS.md"));
   });
 
   it("includes all 4 learning categories", () => {
@@ -161,7 +161,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".sf/milestones/M001/M001-LEARNINGS.md",
       planContent: "# Plan",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -181,7 +181,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".sf/milestones/M001/M001-LEARNINGS.md",
       planContent: "PLAN_CONTENT_UNIQUE_123",
       summaryContent: "SUMMARY_CONTENT_UNIQUE_456",
       verificationContent: null,
@@ -199,7 +199,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".sf/milestones/M001/M001-LEARNINGS.md",
       planContent: "# Plan",
       summaryContent: "# Summary",
       verificationContent: "VERIFICATION_UNIQUE_789",
@@ -217,7 +217,7 @@ describe("buildExtractLearningsPrompt", () => {
       milestoneId: "M001",
       milestoneName: "Test Milestone",
       outputPath: "/out/M001-LEARNINGS.md",
-      relativeOutputPath: ".gsd/milestones/M001/M001-LEARNINGS.md",
+      relativeOutputPath: ".sf/milestones/M001/M001-LEARNINGS.md",
       planContent: "# Plan",
       summaryContent: "# Summary",
       verificationContent: null,
@@ -303,7 +303,7 @@ describe("extractProjectName", () => {
 
   beforeEach(() => {
     tmpBase = join(tmpdir(), `sf-projname-test-${randomUUID()}`);
-    mkdirSync(join(tmpBase, ".gsd"), { recursive: true });
+    mkdirSync(join(tmpBase, ".sf"), { recursive: true });
   });
 
   afterEach(() => {
@@ -312,7 +312,7 @@ describe("extractProjectName", () => {
 
   it("reads name from PROJECT.md frontmatter", () => {
     writeFileSync(
-      join(tmpBase, ".gsd", "PROJECT.md"),
+      join(tmpBase, ".sf", "PROJECT.md"),
       "---\nname: My Cool Project\nversion: 1\n---\n# Project\n",
       "utf-8",
     );
@@ -329,7 +329,7 @@ describe("extractProjectName", () => {
 
   it("falls back to directory name when PROJECT.md has no name field", () => {
     writeFileSync(
-      join(tmpBase, ".gsd", "PROJECT.md"),
+      join(tmpBase, ".sf", "PROJECT.md"),
       "---\nversion: 1\n---\n# Project\n",
       "utf-8",
     );

@@ -63,10 +63,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-onboarding-integration-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-web-onboarding-integration-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".sf", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S02");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -138,20 +138,20 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".sf/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S02",
             title: "First-run setup wizard",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S02/S02-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S02/tasks",
+            planPath: ".sf/milestones/M001/slices/S02/S02-PLAN.md",
+            tasksDir: ".sf/milestones/M001/slices/S02/tasks",
             tasks: [
               {
                 id: "T02",
                 title: "Enforce the gate and refresh bridge auth after successful setup",
                 done: false,
-                planPath: ".gsd/milestones/M001/slices/S02/tasks/T02-PLAN.md",
+                planPath: ".sf/milestones/M001/slices/S02/tasks/T02-PLAN.md",
               },
             ],
           },
@@ -425,13 +425,13 @@ test("refresh failures keep the workspace locked and expose the failed bridge-re
   assert.match(failedBootPayload.onboarding.bridgeAuthRefresh.error, /could not attach/i);
 });
 
-test("fresh gsd --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
+test("fresh sf --web browser onboarding stays locked on failed validation and unlocks after a successful retry", async (t) => {
   if (process.platform === "win32") {
     t.skip("runtime launch test uses POSIX browser-open stubs")
     return
   }
 
-  const tempRoot = mkdtempSync(join(tmpdir(), "gsd-web-onboarding-runtime-"))
+  const tempRoot = mkdtempSync(join(tmpdir(), "sf-web-onboarding-runtime-"))
   const tempHome = join(tempRoot, "home")
   const browserLogPath = join(tempRoot, "browser-open.log")
   let port: number | null = null

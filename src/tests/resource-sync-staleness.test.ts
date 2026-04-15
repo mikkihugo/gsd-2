@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
  *
  * Validates that initResources() re-syncs when bundled resources change
  * within the same version (the bug that caused stale subagent extensions
- * with a broken import to persist at ~/.gsd/agent/extensions/).
+ * with a broken import to persist at ~/.sf/agent/extensions/).
  */
 
 test("resource manifest includes contentHash", async (t) => {
@@ -22,7 +22,7 @@ test("resource manifest includes contentHash", async (t) => {
     contentHash: "abc123def456",
   };
 
-  const tmpDir = mkdtempSync(join(tmpdir(), "gsd-resource-test-"));
+  const tmpDir = mkdtempSync(join(tmpdir(), "sf-resource-test-"));
   const manifestPath = join(tmpDir, "managed-resources.json");
 
   t.after(() => { rmSync(tmpDir, { recursive: true, force: true }); });

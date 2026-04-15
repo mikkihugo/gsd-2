@@ -59,7 +59,7 @@ export function encodeCwd(cwd: string): string {
 	return Buffer.from(cwd, "utf8").toString("base64url");
 }
 
-const gsdHome = process.env.SF_HOME || path.join(os.homedir(), ".gsd");
+const gsdHome = process.env.SF_HOME || path.join(os.homedir(), ".sf");
 
 function getIsolationBaseDir(cwd: string, taskId: string): string {
 	return path.join(gsdHome, "wt", encodeCwd(cwd), taskId);
@@ -162,7 +162,7 @@ async function applyBaseline(
 ): Promise<void> {
 	// Apply staged diff
 	if (baseline.stagedDiff.trim()) {
-		const patchPath = path.join(worktreeDir, ".gsd-staged.patch");
+		const patchPath = path.join(worktreeDir, ".sf-staged.patch");
 		fs.writeFileSync(patchPath, baseline.stagedDiff);
 		try {
 			await git(["apply", "--binary", patchPath], worktreeDir);
@@ -176,7 +176,7 @@ async function applyBaseline(
 
 	// Apply unstaged diff on top
 	if (baseline.unstagedDiff.trim()) {
-		const patchPath = path.join(worktreeDir, ".gsd-unstaged.patch");
+		const patchPath = path.join(worktreeDir, ".sf-unstaged.patch");
 		fs.writeFileSync(patchPath, baseline.unstagedDiff);
 		try {
 			await git(["apply", "--binary", patchPath], worktreeDir);
@@ -199,7 +199,7 @@ async function applyBaseline(
 	// without accidentally including the parent's dirty state in the delta.
 	await gitSilent(["add", "-A"], worktreeDir);
 	await gitSilent(
-		["commit", "--allow-empty", "-m", "gsd: baseline snapshot"],
+		["commit", "--allow-empty", "-m", "sf: baseline snapshot"],
 		worktreeDir,
 	);
 }
@@ -445,7 +445,7 @@ export async function mergeDeltaPatches(
 	const combined = patches.map((p) => p.content).join("\n");
 	const patchFile = path.join(
 		os.tmpdir(),
-		`gsd-merge-${Date.now()}.patch`,
+		`sf-merge-${Date.now()}.patch`,
 	);
 
 	const appliedPatches: string[] = [];

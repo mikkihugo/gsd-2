@@ -1,5 +1,5 @@
 /**
- * Orchestrator — LLM-powered agent for the #gsd-control Discord channel.
+ * Orchestrator — LLM-powered agent for the #sf-control Discord channel.
  *
  * Receives Discord messages, maintains conversation history, calls the
  * Anthropic messages API with 5 tool definitions (list_projects, start_session,
@@ -35,7 +35,7 @@ function resolveAnthropicApiKey(): string {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error(
-      'ANTHROPIC_API_KEY is required. Set it in your environment or run `gsd config`.',
+      'ANTHROPIC_API_KEY is required. Set it in your environment or run `sf config`.',
     );
   }
   return apiKey;
@@ -84,7 +84,7 @@ Response guidelines:
 const TOOLS: Tool[] = [
   {
     name: 'list_projects',
-    description: 'List all detected projects across configured scan roots. Returns project names, paths, and detected markers (git, node, gsd, etc.).',
+    description: 'List all detected projects across configured scan roots. Returns project names, paths, and detected markers (git, node, sf, etc.).',
     input_schema: {
       type: 'object' as const,
       properties: {},
@@ -93,12 +93,12 @@ const TOOLS: Tool[] = [
   },
   {
     name: 'start_session',
-    description: 'Start a new SF auto-mode session for a project. Provide the absolute project path. Optionally provide a command to run instead of the default "/gsd auto".',
+    description: 'Start a new SF auto-mode session for a project. Provide the absolute project path. Optionally provide a command to run instead of the default "/sf auto".',
     input_schema: {
       type: 'object' as const,
       properties: {
         projectPath: { type: 'string', description: 'Absolute path to the project directory' },
-        command: { type: 'string', description: 'Optional command to send instead of "/gsd auto"' },
+        command: { type: 'string', description: 'Optional command to send instead of "/sf auto"' },
       },
       required: ['projectPath'],
     },

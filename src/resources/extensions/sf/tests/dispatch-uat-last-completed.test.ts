@@ -15,7 +15,7 @@ function createFixture(): string {
   const base = mkdtempSync(join(tmpdir(), "sf-dispatch-uat-"));
 
   // Milestone M001 with two slices: S01 done, S02 incomplete
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
 
   writeFileSync(
@@ -114,7 +114,7 @@ test("dispatch uat warns when no completed slices exist", async (t) => {
   const base = mkdtempSync(join(tmpdir(), "sf-dispatch-uat-none-"));
   invalidateStateCache();
 
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
 
   writeFileSync(

@@ -19,7 +19,7 @@ import { clearParseCache } from "../files.js";
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-ct-rollback-${randomUUID()}`);
   // Create the full tasks directory so the success path works
-  mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   return base;
 }
 
@@ -55,13 +55,13 @@ describe("complete-task rollback cleans up verification_evidence (#2724)", () =>
 
   it("inserts verification_evidence rows on success", async () => {
     base = makeTmpBase();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
 
     // Write a minimal slice plan so renderPlanCheckboxes doesn't error
     writeFileSync(
-      join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+      join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
       "# S01 Plan\n\n## Tasks\n\n- [ ] **T01: Test task**\n",
     );
 
@@ -77,12 +77,12 @@ describe("complete-task rollback cleans up verification_evidence (#2724)", () =>
 
   it("deletes verification_evidence rows on disk-render rollback", async () => {
     base = makeTmpBase();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
 
     // Replace the tasks directory with a file so disk write fails (cross-platform)
-    const tasksDir = join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
+    const tasksDir = join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks");
     rmSync(tasksDir, { recursive: true, force: true });
     writeFileSync(tasksDir, "not-a-directory");
 

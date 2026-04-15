@@ -461,19 +461,19 @@ describe("stream-adapter — session persistence (#2859)", () => {
 		};
 		try {
 			process.env.SF_WORKFLOW_MCP_COMMAND = "node";
-			process.env.SF_WORKFLOW_MCP_NAME = "gsd-workflow";
+			process.env.SF_WORKFLOW_MCP_NAME = "sf-workflow";
 			process.env.SF_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
-			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/gsd" });
+			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/sf" });
 			process.env.SF_WORKFLOW_MCP_CWD = "/tmp/project";
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
-			assert.ok(mcpServers?.["gsd-workflow"], "expected gsd-workflow server config");
-			const srv = mcpServers["gsd-workflow"];
+			assert.ok(mcpServers?.["sf-workflow"], "expected sf-workflow server config");
+			const srv = mcpServers["sf-workflow"];
 			assert.equal(srv.command, "node");
 			assert.deepEqual(srv.args, ["packages/mcp-server/dist/cli.js"]);
 			assert.equal(srv.cwd, "/tmp/project");
-			assert.equal(srv.env.SF_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.SF_CLI_PATH, "/tmp/sf");
 			assert.equal(srv.env.SF_PERSIST_WRITE_GATE_STATE, "1");
 			assert.equal(srv.env.SF_WORKFLOW_PROJECT_ROOT, "/tmp/project");
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
@@ -508,7 +508,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			process.env.SF_WORKFLOW_MCP_COMMAND = "node";
 			process.env.SF_WORKFLOW_MCP_NAME = "custom-workflow";
 			process.env.SF_WORKFLOW_MCP_ARGS = JSON.stringify(["packages/mcp-server/dist/cli.js"]);
-			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/gsd" });
+			process.env.SF_WORKFLOW_MCP_ENV = JSON.stringify({ SF_CLI_PATH: "/tmp/sf" });
 			process.env.SF_WORKFLOW_MCP_CWD = "/tmp/project";
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
@@ -559,7 +559,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			// Either outcome is valid — the key invariant is no crash.
 			const mcpServers = (options as any).mcpServers;
 			if (mcpServers) {
-				assert.ok(mcpServers["gsd-workflow"], "if present, must be gsd-workflow");
+				assert.ok(mcpServers["sf-workflow"], "if present, must be sf-workflow");
 				assert.deepEqual((options as any).disallowedTools, ["AskUserQuestion"]);
 			} else {
 				assert.deepEqual((options as any).disallowedTools, ["AskUserQuestion"]);
@@ -591,7 +591,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 			delete process.env.SF_WORKFLOW_MCP_ARGS;
 			delete process.env.SF_WORKFLOW_MCP_ENV;
 			delete process.env.SF_WORKFLOW_MCP_CWD;
-			process.env.SF_CLI_PATH = "/tmp/gsd";
+			process.env.SF_CLI_PATH = "/tmp/sf";
 
 			const distDir = join(repoDir, "packages", "mcp-server", "dist");
 			mkdirSync(distDir, { recursive: true });
@@ -601,12 +601,12 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 			const options = buildSdkOptions("claude-sonnet-4-20250514", "test");
 			const mcpServers = options.mcpServers as Record<string, any>;
-			assert.ok(mcpServers?.["gsd-workflow"], "expected gsd-workflow server config");
-			const srv = mcpServers["gsd-workflow"];
+			assert.ok(mcpServers?.["sf-workflow"], "expected sf-workflow server config");
+			const srv = mcpServers["sf-workflow"];
 			assert.equal(srv.command, process.execPath);
 			assert.deepEqual(srv.args, [realpathSync(resolve(repoDir, "packages", "mcp-server", "dist", "cli.js"))]);
 			assert.equal(srv.cwd, resolvedRepoDir);
-			assert.equal(srv.env.SF_CLI_PATH, "/tmp/gsd");
+			assert.equal(srv.env.SF_CLI_PATH, "/tmp/sf");
 			assert.equal(srv.env.SF_PERSIST_WRITE_GATE_STATE, "1");
 			assert.equal(srv.env.SF_WORKFLOW_PROJECT_ROOT, resolvedRepoDir);
 			assert.deepEqual(options.disallowedTools, ["AskUserQuestion"]);
@@ -651,7 +651,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 
 describe("stream-adapter — MCP elicitation bridge", () => {
 	const askUserQuestionsRequest = {
-		serverName: "gsd-workflow",
+		serverName: "sf-workflow",
 		message: "Please answer the following question(s).",
 		mode: "form" as const,
 		requestedSchema: {
@@ -793,7 +793,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("parseTextInputElicitation recognizes secure free-text MCP forms", () => {
 		const request = {
-			serverName: "gsd-workflow",
+			serverName: "sf-workflow",
 			message: "Enter values for environment variables.",
 			mode: "form" as const,
 			requestedSchema: {
@@ -834,7 +834,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("parseTextInputElicitation accepts legacy keys schema and skips unsupported fields", () => {
 		const request = {
-			serverName: "gsd-workflow",
+			serverName: "sf-workflow",
 			message: "Enter secure values",
 			mode: "form" as const,
 			requestedSchema: {
@@ -867,7 +867,7 @@ describe("stream-adapter — MCP elicitation bridge", () => {
 
 	test("createClaudeCodeElicitationHandler collects secure_env_collect fields through input dialogs", async () => {
 		const secureRequest = {
-			serverName: "gsd-workflow",
+			serverName: "sf-workflow",
 			message: "Enter values for environment variables.",
 			mode: "form" as const,
 			requestedSchema: {

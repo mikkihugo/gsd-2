@@ -14,26 +14,26 @@ export type BrowserSlashCommandSurface =
   | "session"
   | "export"
   // SF subcommand surfaces (S02)
-  | "gsd-status"
-  | "gsd-visualize"
-  | "gsd-forensics"
-  | "gsd-doctor"
-  | "gsd-skill-health"
-  | "gsd-knowledge"
-  | "gsd-capture"
-  | "gsd-triage"
-  | "gsd-quick"
-  | "gsd-history"
-  | "gsd-undo"
-  | "gsd-inspect"
-  | "gsd-prefs"
-  | "gsd-config"
-  | "gsd-hooks"
-  | "gsd-mode"
-  | "gsd-steer"
-  | "gsd-export"
-  | "gsd-cleanup"
-  | "gsd-queue"
+  | "sf-status"
+  | "sf-visualize"
+  | "sf-forensics"
+  | "sf-doctor"
+  | "sf-skill-health"
+  | "sf-knowledge"
+  | "sf-capture"
+  | "sf-triage"
+  | "sf-quick"
+  | "sf-history"
+  | "sf-undo"
+  | "sf-inspect"
+  | "sf-prefs"
+  | "sf-config"
+  | "sf-hooks"
+  | "sf-mode"
+  | "sf-steer"
+  | "sf-export"
+  | "sf-cleanup"
+  | "sf-queue"
 
 export type BrowserSlashCommandLocalAction = "clear_terminal" | "refresh_workspace" | "gsd_help"
 
@@ -114,27 +114,27 @@ const SURFACE_COMMANDS = new Map<string, BrowserSlashCommandSurface>([
 // --- SF subcommand dispatch (S02) ---
 
 const SF_SURFACE_SUBCOMMANDS = new Map<string, BrowserSlashCommandSurface>([
-  ["status", "gsd-status"],
-  ["visualize", "gsd-visualize"],
-  ["forensics", "gsd-forensics"],
-  ["doctor", "gsd-doctor"],
-  ["skill-health", "gsd-skill-health"],
-  ["knowledge", "gsd-knowledge"],
-  ["capture", "gsd-capture"],
-  ["triage", "gsd-triage"],
-  ["quick", "gsd-quick"],
-  ["history", "gsd-history"],
-  ["undo", "gsd-undo"],
-  ["inspect", "gsd-inspect"],
+  ["status", "sf-status"],
+  ["visualize", "sf-visualize"],
+  ["forensics", "sf-forensics"],
+  ["doctor", "sf-doctor"],
+  ["skill-health", "sf-skill-health"],
+  ["knowledge", "sf-knowledge"],
+  ["capture", "sf-capture"],
+  ["triage", "sf-triage"],
+  ["quick", "sf-quick"],
+  ["history", "sf-history"],
+  ["undo", "sf-undo"],
+  ["inspect", "sf-inspect"],
   ["model", "model"],
-  ["prefs", "gsd-prefs"],
-  ["config", "gsd-config"],
-  ["hooks", "gsd-hooks"],
-  ["mode", "gsd-mode"],
-  ["steer", "gsd-steer"],
-  ["export", "gsd-export"],
-  ["cleanup", "gsd-cleanup"],
-  ["queue", "gsd-queue"],
+  ["prefs", "sf-prefs"],
+  ["config", "sf-config"],
+  ["hooks", "sf-hooks"],
+  ["mode", "sf-mode"],
+  ["steer", "sf-steer"],
+  ["export", "sf-export"],
+  ["cleanup", "sf-cleanup"],
+  ["queue", "sf-queue"],
 ])
 
 const SF_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
@@ -149,7 +149,7 @@ const SF_PASSTHROUGH_SUBCOMMANDS = new Set<string>([
   "remote",
 ])
 
-export const SF_HELP_TEXT = `Available /gsd subcommands:
+export const SF_HELP_TEXT = `Available /sf subcommands:
 
 Workflow:    next · auto · stop · pause · skip · queue · quick · capture · triage
 Diagnostics: status · visualize · forensics · doctor · skill-health · inspect
@@ -157,7 +157,7 @@ Context:     knowledge · history · undo · discuss
 Settings:    model · prefs · config · hooks · mode · steer
 Advanced:    export · cleanup · run-hook · migrate · remote
 
-Type /gsd <subcommand> to run. Use /gsd help for this message.`
+Type /sf <subcommand> to run. Use /sf help for this message.`
 
 function dispatchGSDSubcommand(
   input: string,
@@ -169,12 +169,12 @@ function dispatchGSDSubcommand(
   const subcommand = spaceIndex === -1 ? trimmedArgs : trimmedArgs.slice(0, spaceIndex)
   const subArgs = spaceIndex === -1 ? "" : trimmedArgs.slice(spaceIndex + 1).trim()
 
-  // Bare `/gsd` — equivalent to `/gsd next`, pass through to bridge
+  // Bare `/sf` — equivalent to `/sf next`, pass through to bridge
   if (!subcommand) {
     return {
       kind: "prompt",
       input,
-      slashCommandName: "gsd",
+      slashCommandName: "sf",
       command: {
         type: getPromptCommandType(options),
         message: input,
@@ -182,22 +182,22 @@ function dispatchGSDSubcommand(
     }
   }
 
-  // `/gsd help` — render inline help locally
+  // `/sf help` — render inline help locally
   if (subcommand === "help") {
     return {
       kind: "local",
       input,
-      commandName: "gsd",
+      commandName: "sf",
       action: "gsd_help",
     }
   }
 
-  // `/gsd visualize` — navigate to the visualizer view directly
+  // `/sf visualize` — navigate to the visualizer view directly
   if (subcommand === "visualize") {
     return {
       kind: "view-navigate",
       input,
-      commandName: "gsd",
+      commandName: "sf",
       view: "visualize",
     }
   }
@@ -208,7 +208,7 @@ function dispatchGSDSubcommand(
     return {
       kind: "surface",
       input,
-      commandName: "gsd",
+      commandName: "sf",
       surface,
       args: subArgs,
     }
@@ -219,7 +219,7 @@ function dispatchGSDSubcommand(
     return {
       kind: "prompt",
       input,
-      slashCommandName: "gsd",
+      slashCommandName: "sf",
       command: {
         type: getPromptCommandType(options),
         message: input,
@@ -231,7 +231,7 @@ function dispatchGSDSubcommand(
   return {
     kind: "prompt",
     input,
-    slashCommandName: "gsd",
+    slashCommandName: "sf",
     command: {
       type: getPromptCommandType(options),
       message: input,
@@ -343,8 +343,8 @@ export function dispatchBrowserSlashCommand(
   }
 
   // SF subcommand dispatch — must precede SURFACE_COMMANDS to avoid
-  // `/gsd export` colliding with the built-in `/export` surface.
-  if (parsed.name === "gsd") {
+  // `/sf export` colliding with the built-in `/export` surface.
+  if (parsed.name === "sf") {
     return dispatchGSDSubcommand(trimmed, parsed.args, options)
   }
 

@@ -173,11 +173,11 @@ async function main(): Promise<void> {
 
     // Classic format matches
     assertTrue(CONTEXT_RE.test('M001-CONTEXT.md'), 'context matches M001-CONTEXT.md');
-    assertTrue(CONTEXT_RE.test('.gsd/milestones/M001/M001-CONTEXT.md'), 'context matches full path classic format');
+    assertTrue(CONTEXT_RE.test('.sf/milestones/M001/M001-CONTEXT.md'), 'context matches full path classic format');
 
     // Unique format matches
     assertTrue(CONTEXT_RE.test('M001-abc123-CONTEXT.md'), 'context matches M001-abc123-CONTEXT.md');
-    assertTrue(CONTEXT_RE.test('.gsd/milestones/M001-abc123/M001-abc123-CONTEXT.md'), 'context matches full path unique format');
+    assertTrue(CONTEXT_RE.test('.sf/milestones/M001-abc123/M001-abc123-CONTEXT.md'), 'context matches full path unique format');
 
     // Rejects
     assertTrue(!CONTEXT_RE.test('M001-ROADMAP.md'), 'context rejects M001-ROADMAP.md');

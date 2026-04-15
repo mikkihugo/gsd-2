@@ -3,13 +3,13 @@
  *
  * When queue phase is active, the agent should only create milestones —
  * not execute work. This guard blocks write/edit/bash tool calls that
- * target source code (non-.gsd/ paths) during queue mode.
+ * target source code (non-.sf/ paths) during queue mode.
  *
  * Exercises shouldBlockQueueExecution() — a pure function that checks:
  *   (a) queuePhaseActive false → pass (not in queue mode)
  *   (b) toolName is read-only (read, grep, find, ls) → pass
  *   (c) toolName is ask_user_questions → pass (discussion tool)
- *   (d) write/edit to .gsd/ path → pass (planning artifacts)
+ *   (d) write/edit to .sf/ path → pass (planning artifacts)
  *   (e) write/edit to source path → block
  *   (f) bash command → block (could execute work)
  *   (g) registered SF tools (sf_milestone_generate_id, sf_summary_save) → pass
@@ -55,23 +55,23 @@ test('queue-guard: allows discussion and planning tools during queue mode', () =
   assert.strictEqual(r3.block, false, 'sf_summary_save should pass');
 });
 
-// ─── Scenario 4: Write to .gsd/ paths passes (planning artifacts) ──
+// ─── Scenario 4: Write to .sf/ paths passes (planning artifacts) ──
 
-test('queue-guard: allows writes to .gsd/ paths during queue mode', () => {
-  const r1 = shouldBlockQueueExecution('write', '.gsd/milestones/M001/M001-CONTEXT.md', true);
-  assert.strictEqual(r1.block, false, 'write to .gsd/ should pass');
+test('queue-guard: allows writes to .sf/ paths during queue mode', () => {
+  const r1 = shouldBlockQueueExecution('write', '.sf/milestones/M001/M001-CONTEXT.md', true);
+  assert.strictEqual(r1.block, false, 'write to .sf/ should pass');
 
-  const r2 = shouldBlockQueueExecution('write', '/project/.gsd/PROJECT.md', true);
-  assert.strictEqual(r2.block, false, 'write to .gsd/PROJECT.md should pass');
+  const r2 = shouldBlockQueueExecution('write', '/project/.sf/PROJECT.md', true);
+  assert.strictEqual(r2.block, false, 'write to .sf/PROJECT.md should pass');
 
-  const r3 = shouldBlockQueueExecution('edit', '.gsd/QUEUE.md', true);
-  assert.strictEqual(r3.block, false, 'edit to .gsd/QUEUE.md should pass');
+  const r3 = shouldBlockQueueExecution('edit', '.sf/QUEUE.md', true);
+  assert.strictEqual(r3.block, false, 'edit to .sf/QUEUE.md should pass');
 
-  const r4 = shouldBlockQueueExecution('write', '.gsd/REQUIREMENTS.md', true);
-  assert.strictEqual(r4.block, false, 'write to .gsd/REQUIREMENTS.md should pass');
+  const r4 = shouldBlockQueueExecution('write', '.sf/REQUIREMENTS.md', true);
+  assert.strictEqual(r4.block, false, 'write to .sf/REQUIREMENTS.md should pass');
 
-  const r5 = shouldBlockQueueExecution('write', '.gsd/DECISIONS.md', true);
-  assert.strictEqual(r5.block, false, 'write to .gsd/DECISIONS.md should pass');
+  const r5 = shouldBlockQueueExecution('write', '.sf/DECISIONS.md', true);
+  assert.strictEqual(r5.block, false, 'write to .sf/DECISIONS.md should pass');
 });
 
 // ─── Scenario 5: Write/edit to source code paths blocked ──
@@ -134,11 +134,11 @@ test('queue-guard: allows read-only bash commands during queue mode', () => {
   assert.strictEqual(r9.block, false, 'gh issue view should pass');
 });
 
-// ─── Scenario 8: mkdir for .gsd/ milestone directories passes ──
+// ─── Scenario 8: mkdir for .sf/ milestone directories passes ──
 
-test('queue-guard: allows mkdir for .gsd/ milestone directories', () => {
-  const r1 = shouldBlockQueueExecution('bash', 'mkdir -p .gsd/milestones/M010/slices', true);
-  assert.strictEqual(r1.block, false, 'mkdir -p .gsd/ should pass');
+test('queue-guard: allows mkdir for .sf/ milestone directories', () => {
+  const r1 = shouldBlockQueueExecution('bash', 'mkdir -p .sf/milestones/M010/slices', true);
+  assert.strictEqual(r1.block, false, 'mkdir -p .sf/ should pass');
 });
 
 // ─── Scenario 9: Web search and library tools pass ──

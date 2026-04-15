@@ -19,7 +19,7 @@ import { closeDatabase, insertMilestone, insertSlice, openDatabase } from "../sf
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-val-test-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones"), { recursive: true });
   return base;
 }
 
@@ -31,42 +31,42 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  const dbPath = join(base, ".gsd", "sf.db");
+  const dbPath = join(base, ".sf", "sf.db");
   assert.equal(openDatabase(dbPath), true, "test DB should open");
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content);
 }
 
 function writeMilestoneSummary(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-SUMMARY.md`), content);
 }
 
 function writeValidation(base: string, mid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid);
+  const dir = join(base, ".sf", "milestones", mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-VALIDATION.md`), content);
 }
 
 function writeSlicePlan(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid, "slices", sid);
+  const dir = join(base, ".sf", "milestones", mid, "slices", sid);
   mkdirSync(join(dir, "tasks"), { recursive: true });
   writeFileSync(join(dir, `${sid}-PLAN.md`), content);
 }
 
 function writeSliceSummary(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid, "slices", sid);
+  const dir = join(base, ".sf", "milestones", mid, "slices", sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-SUMMARY.md`), content);
 }
 
 function writeSliceAssessment(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, ".gsd", "milestones", mid, "slices", sid);
+  const dir = join(base, ".sf", "milestones", mid, "slices", sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-ASSESSMENT.md`), content);
 }
@@ -151,7 +151,7 @@ test("deriveState returns validating-milestone when all slices done and no VALID
   try {
     writeRoadmap(base, "M001", ALL_DONE_ROADMAP);
     // Write CONTEXT so milestone has a title
-    const dir = join(base, ".gsd", "milestones", "M001");
+    const dir = join(base, ".sf", "milestones", "M001");
     writeFileSync(join(dir, "M001-CONTEXT.md"), CONTEXT_FILE);
 
     const state = await deriveState(base);
@@ -210,7 +210,7 @@ test("buildValidateMilestonePrompt inlines ASSESSMENT evidence instead of UAT sp
   const base = makeTmpBase();
   try {
     writeRoadmap(base, "M001", ALL_DONE_ROADMAP);
-    const dir = join(base, ".gsd", "milestones", "M001");
+    const dir = join(base, ".sf", "milestones", "M001");
     writeFileSync(join(dir, "M001-CONTEXT.md"), CONTEXT_FILE);
     writeSliceSummary(base, "M001", "S01", "# S01 Summary\nDelivered.");
     writeFileSync(join(dir, "slices", "S01", "S01-UAT.md"), "# UAT Spec\nDo the thing.\n");
@@ -372,7 +372,7 @@ test("dispatch rule skips when skip_milestone_validation preference is set", asy
     assert.equal(result.action, "skip");
 
     // Verify the VALIDATION file was written
-    const validationPath = join(base, ".gsd", "milestones", "M001", "M001-VALIDATION.md");
+    const validationPath = join(base, ".sf", "milestones", "M001", "M001-VALIDATION.md");
     assert.ok(existsSync(validationPath), "VALIDATION file should be written on skip");
   } finally {
     cleanup(base);
@@ -384,7 +384,7 @@ test("dispatch rule skips when skip_milestone_validation preference is set", asy
 test("resolveExpectedArtifactPath returns VALIDATION path for validate-milestone", () => {
   const base = makeTmpBase();
   try {
-    mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+    mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
     const result = resolveExpectedArtifactPath("validate-milestone", "M001", base);
     assert.ok(result);
     assert.ok(result!.includes("VALIDATION"));
@@ -409,7 +409,7 @@ test("verifyExpectedArtifact passes when VALIDATION.md exists", () => {
 test("verifyExpectedArtifact fails when VALIDATION.md is missing", () => {
   const base = makeTmpBase();
   try {
-    mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+    mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
     clearPathCache();
     clearParseCache();
     const result = verifyExpectedArtifact("validate-milestone", "M001", base);

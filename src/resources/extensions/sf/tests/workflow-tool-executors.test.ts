@@ -27,7 +27,7 @@ import {
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-workflow-executors-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 
@@ -36,7 +36,7 @@ function cleanup(base: string): void {
 }
 
 function openTestDb(base: string): void {
-  openDatabase(join(base, ".gsd", "sf.db"));
+  openDatabase(join(base, ".sf", "sf.db"));
 }
 
 async function inProjectDir<T>(dir: string, fn: () => Promise<T>): Promise<T> {
@@ -66,7 +66,7 @@ function seedSlice(milestoneId: string, sliceId: string, status: string): void {
 }
 
 function writeRoadmap(base: string, milestoneId: string, sliceIds: string[]): void {
-  const milestoneDir = join(base, ".gsd", "milestones", milestoneId);
+  const milestoneDir = join(base, ".sf", "milestones", milestoneId);
   mkdirSync(milestoneDir, { recursive: true });
   const lines = [
     `# ${milestoneId}: Workflow MCP planning`,
@@ -93,7 +93,7 @@ test("executeSummarySave persists artifact and returns computed path", async () 
     assert.equal(result.details.operation, "save_summary");
     assert.equal(result.details.path, "milestones/M001/slices/S01/S01-SUMMARY.md");
 
-    const filePath = join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
+    const filePath = join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md");
     assert.ok(existsSync(filePath), "summary artifact should be written to disk");
     assert.match(readFileSync(filePath, "utf-8"), /# Summary/);
   } finally {
@@ -106,7 +106,7 @@ test("executeTaskComplete coerces string verificationEvidence entries", async ()
   const base = makeTmpBase();
   try {
     openTestDb(base);
-    const planDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+    const planDir = join(base, ".sf", "milestones", "M001", "slices", "S01");
     mkdirSync(planDir, { recursive: true });
     writeFileSync(join(planDir, "S01-PLAN.md"), "# S01\n\n- [ ] **T01: Demo** `est:5m`\n");
 

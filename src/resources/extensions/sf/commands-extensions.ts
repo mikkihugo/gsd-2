@@ -3,7 +3,7 @@
  *
  * Manage the extension registry: list, enable, disable, info.
  * Self-contained — no imports outside the extensions tree (extensions are loaded
- * via jiti at runtime from ~/.gsd/agent/, not compiled by tsc).
+ * via jiti at runtime from ~/.sf/agent/, not compiled by tsc).
  */
 
 import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
@@ -11,7 +11,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFile
 import { dirname, join } from "node:path";
 import { homedir } from "node:os";
 
-const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
 
 // ─── Types (mirrored from extension-registry.ts) ────────────────────────────
 

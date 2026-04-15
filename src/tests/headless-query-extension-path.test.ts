@@ -13,14 +13,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 test("headless-query resolves from agent extensions dir (#3471)", () => {
   const src = readFileSync(join(__dirname, "..", "headless-query.ts"), "utf-8");
   assert.ok(
-    src.includes("agentExtensionsDir") || src.includes(".gsd/agent"),
+    src.includes("agentExtensionsDir") || src.includes(".sf/agent"),
     "headless-query must resolve from synced agent directory",
   );
 });
 
 test("cli.ts calls initResources before headless (#3471)", () => {
   const src = readFileSync(join(__dirname, "..", "cli.ts"), "utf-8");
-  const headlessBlock = src.slice(src.indexOf("gsd headless"));
+  const headlessBlock = src.slice(src.indexOf("sf headless"));
   const initIdx = headlessBlock.indexOf("initResources");
   const runIdx = headlessBlock.indexOf("runHeadless");
   assert.ok(initIdx !== -1, "initResources must be called before headless");

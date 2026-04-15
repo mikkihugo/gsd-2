@@ -65,7 +65,7 @@ export async function startMcpServer(options: {
   }
 
   const server = new Server(
-    { name: 'gsd', version },
+    { name: 'sf', version },
     { capabilities: { tools: {} } },
   )
 

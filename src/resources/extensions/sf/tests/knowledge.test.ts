@@ -30,7 +30,7 @@ test('knowledge: KNOWLEDGE key exists in SF_ROOT_FILES', () => {
 
 test('knowledge: resolveSfRootFile returns canonical path when KNOWLEDGE.md exists', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-knowledge-')));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
   writeFileSync(join(sfDir, 'KNOWLEDGE.md'), '# Project Knowledge\n');
 
@@ -42,7 +42,7 @@ test('knowledge: resolveSfRootFile returns canonical path when KNOWLEDGE.md exis
 
 test('knowledge: resolveSfRootFile resolves when legacy knowledge.md exists', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-knowledge-')));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
   writeFileSync(join(sfDir, 'knowledge.md'), '# Project Knowledge\n');
 
@@ -61,7 +61,7 @@ test('knowledge: resolveSfRootFile resolves when legacy knowledge.md exists', ()
 
 test('knowledge: resolveSfRootFile returns canonical path when file does not exist', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-knowledge-')));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   const resolved = resolveSfRootFile(tmp, 'KNOWLEDGE');
@@ -74,7 +74,7 @@ test('knowledge: resolveSfRootFile returns canonical path when file does not exi
 
 test('knowledge: inlineGsdRootFile returns content when KNOWLEDGE.md exists', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
   writeFileSync(join(sfDir, 'KNOWLEDGE.md'), '# Project Knowledge\n\n## Rules\n\nK001: Use real DB');
 
@@ -88,7 +88,7 @@ test('knowledge: inlineGsdRootFile returns content when KNOWLEDGE.md exists', as
 
 test('knowledge: inlineGsdRootFile returns null when KNOWLEDGE.md does not exist', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   const result = await inlineGsdRootFile(tmp, 'knowledge.md', 'Project Knowledge');
@@ -101,7 +101,7 @@ test('knowledge: inlineGsdRootFile returns null when KNOWLEDGE.md does not exist
 
 test('knowledge: appendKnowledge creates KNOWLEDGE.md with rule when file does not exist', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   await appendKnowledge(tmp, 'rule', 'Use real DB for integration tests', 'M001/S01');
@@ -117,7 +117,7 @@ test('knowledge: appendKnowledge creates KNOWLEDGE.md with rule when file does n
 
 test('knowledge: appendKnowledge appends to existing KNOWLEDGE.md with auto-incrementing ID', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   // Create initial file with one rule
@@ -136,7 +136,7 @@ test('knowledge: appendKnowledge appends to existing KNOWLEDGE.md with auto-incr
 
 test('knowledge: appendKnowledge handles pattern type', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   await appendKnowledge(tmp, 'pattern', 'Middleware chain for auth', 'M001');
@@ -150,7 +150,7 @@ test('knowledge: appendKnowledge handles pattern type', async () => {
 
 test('knowledge: appendKnowledge handles lesson type', async () => {
   const tmp = mkdtempSync(join(tmpdir(), 'sf-knowledge-'));
-  const sfDir = join(tmp, '.gsd');
+  const sfDir = join(tmp, '.sf');
   mkdirSync(sfDir, { recursive: true });
 
   await appendKnowledge(tmp, 'lesson', 'API timeout on large payloads', 'M002');
@@ -168,7 +168,7 @@ test('loadKnowledgeBlock: returns empty block when neither file exists', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-kb-')));
   const sfHome = join(tmp, 'home');
   const cwd = join(tmp, 'project');
-  mkdirSync(join(cwd, '.gsd'), { recursive: true });
+  mkdirSync(join(cwd, '.sf'), { recursive: true });
   mkdirSync(join(sfHome, 'agent'), { recursive: true });
 
   const result = loadKnowledgeBlock(sfHome, cwd);
@@ -182,9 +182,9 @@ test('loadKnowledgeBlock: uses project knowledge alone when no global file', () 
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-kb-')));
   const sfHome = join(tmp, 'home');
   const cwd = join(tmp, 'project');
-  mkdirSync(join(cwd, '.gsd'), { recursive: true });
+  mkdirSync(join(cwd, '.sf'), { recursive: true });
   mkdirSync(join(sfHome, 'agent'), { recursive: true });
-  writeFileSync(join(cwd, '.gsd', 'KNOWLEDGE.md'), 'K001: Use real DB');
+  writeFileSync(join(cwd, '.sf', 'KNOWLEDGE.md'), 'K001: Use real DB');
 
   const result = loadKnowledgeBlock(sfHome, cwd);
   assert.ok(result.block.includes('[KNOWLEDGE — Rules, patterns, and lessons learned]'));
@@ -200,7 +200,7 @@ test('loadKnowledgeBlock: uses global knowledge alone when no project file', () 
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-kb-')));
   const sfHome = join(tmp, 'home');
   const cwd = join(tmp, 'project');
-  mkdirSync(join(cwd, '.gsd'), { recursive: true });
+  mkdirSync(join(cwd, '.sf'), { recursive: true });
   mkdirSync(join(sfHome, 'agent'), { recursive: true });
   writeFileSync(join(sfHome, 'agent', 'KNOWLEDGE.md'), 'G001: Respond in English');
 
@@ -218,10 +218,10 @@ test('loadKnowledgeBlock: merges global before project when both exist', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-kb-')));
   const sfHome = join(tmp, 'home');
   const cwd = join(tmp, 'project');
-  mkdirSync(join(cwd, '.gsd'), { recursive: true });
+  mkdirSync(join(cwd, '.sf'), { recursive: true });
   mkdirSync(join(sfHome, 'agent'), { recursive: true });
   writeFileSync(join(sfHome, 'agent', 'KNOWLEDGE.md'), 'G001: Global rule');
-  writeFileSync(join(cwd, '.gsd', 'KNOWLEDGE.md'), 'K001: Project rule');
+  writeFileSync(join(cwd, '.sf', 'KNOWLEDGE.md'), 'K001: Project rule');
 
   const result = loadKnowledgeBlock(sfHome, cwd);
   assert.ok(result.block.includes('## Global Knowledge'));
@@ -238,7 +238,7 @@ test('loadKnowledgeBlock: reports globalSizeKb above 4KB threshold', () => {
   const tmp = realpathSync(mkdtempSync(join(tmpdir(), 'sf-kb-')));
   const sfHome = join(tmp, 'home');
   const cwd = join(tmp, 'project');
-  mkdirSync(join(cwd, '.gsd'), { recursive: true });
+  mkdirSync(join(cwd, '.sf'), { recursive: true });
   mkdirSync(join(sfHome, 'agent'), { recursive: true });
   // Write > 4KB of content
   writeFileSync(join(sfHome, 'agent', 'KNOWLEDGE.md'), 'x'.repeat(5000));

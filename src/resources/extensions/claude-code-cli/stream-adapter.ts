@@ -21,7 +21,7 @@ import type { ExtensionUIContext } from "@sf-run/pi-coding-agent";
 import { EventStream, mapThinkingLevelToEffort, supportsAdaptiveThinking } from "@sf-run/pi-ai";
 import { execSync } from "node:child_process";
 import { PartialMessageBuilder, ZERO_USAGE, mapUsage } from "./partial-builder.js";
-import { buildWorkflowMcpServers } from "../gsd/workflow-mcp.js";
+import { buildWorkflowMcpServers } from "../sf/workflow-mcp.js";
 import { showInterviewRound, type Question, type RoundResult } from "../shared/tui.js";
 import type {
 	SDKAssistantMessage,

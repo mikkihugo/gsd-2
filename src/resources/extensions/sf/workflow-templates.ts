@@ -13,11 +13,11 @@ import { homedir } from "node:os";
 const __extensionDir = resolveGsdExtensionDir();
 const registryPath = join(__extensionDir, "workflow-templates", "registry.json");
 
-/** Resolve the SF extension dir with fallback to ~/.gsd/agent/extensions/sf/. */
+/** Resolve the SF extension dir with fallback to ~/.sf/agent/extensions/sf/. */
 function resolveGsdExtensionDir(): string {
   const moduleDir = dirname(fileURLToPath(import.meta.url));
   if (existsSync(join(moduleDir, "workflow-templates"))) return moduleDir;
-  const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+  const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
   const agentGsdDir = join(sfHome, "agent", "extensions", "sf");
   if (existsSync(join(agentGsdDir, "workflow-templates"))) return agentGsdDir;
   return moduleDir;
@@ -224,7 +224,7 @@ export function getTemplateInfo(name: string): string | null {
     "",
     `Description: ${t.description}`,
     `Complexity:  ${t.estimated_complexity}`,
-    `Requires .gsd/: ${t.requires_project ? "yes" : "no"}`,
+    `Requires .sf/: ${t.requires_project ? "yes" : "no"}`,
     "",
     "Phases:",
     ...t.phases.map((p, i) => `  ${i + 1}. ${p}`),

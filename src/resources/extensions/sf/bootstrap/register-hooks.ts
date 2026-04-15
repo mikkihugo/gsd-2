@@ -228,7 +228,7 @@ export function registerHooks(pi: ExtensionAPI): void {
 
     // ── Queue-mode execution guard (#2545): block source-code mutations ──
     // When /sf queue is active, the agent should only create milestones,
-    // not execute work. Block write/edit to non-.gsd/ paths and bash commands
+    // not execute work. Block write/edit to non-.sf/ paths and bash commands
     // that would modify files.
     if (isQueuePhaseActive()) {
       let queueInput = "";

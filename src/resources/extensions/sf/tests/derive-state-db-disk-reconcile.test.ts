@@ -2,7 +2,7 @@
  * derive-state-db-disk-reconcile.test.ts — #2416
  *
  * After migration to DB-backed state, milestones that exist on disk
- * (in .gsd/milestones/) but were never imported into the DB become
+ * (in .sf/milestones/) but were never imported into the DB become
  * invisible to deriveStateFromDb(). This test verifies that
  * deriveStateFromDb reconciles disk milestones with DB milestones.
  */
@@ -25,12 +25,12 @@ const { assertEq, assertTrue, report } = createTestContext();
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), "sf-disk-reconcile-"));
-  mkdirSync(join(base, ".gsd", "milestones"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones"), { recursive: true });
   return base;
 }
 
 function writeFile(base: string, relativePath: string, content: string): void {
-  const full = join(base, ".gsd", relativePath);
+  const full = join(base, ".sf", relativePath);
   mkdirSync(join(full, ".."), { recursive: true });
   writeFileSync(full, content);
 }
@@ -62,7 +62,7 @@ async function main(): Promise<void> {
 
   // Set up: M001 in DB, M002 on disk only
   const base = createFixtureBase();
-  const dbPath = join(base, ".gsd", "sf.db");
+  const dbPath = join(base, ".sf", "sf.db");
 
   try {
     openDatabase(dbPath);

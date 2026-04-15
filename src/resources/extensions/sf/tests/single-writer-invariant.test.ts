@@ -1,4 +1,4 @@
-// Structural invariant: sf-db.ts is the single writer for .gsd/sf.db.
+// Structural invariant: sf-db.ts is the single writer for .sf/sf.db.
 //
 // No file under src/resources/extensions/sf/ may issue raw write SQL
 // (INSERT/UPDATE/DELETE/REPLACE) or raw transaction control (BEGIN/COMMIT/
@@ -7,7 +7,7 @@
 //
 // Allowlist:
 // - sf-db.ts itself — the single writer
-// - unit-ownership.ts — manages a separate .gsd/unit-claims.db for
+// - unit-ownership.ts — manages a separate .sf/unit-claims.db for
 //   cross-worktree claim races; intentionally outside this invariant
 // - tests/** — fixtures and direct DB inspection are fair game
 //

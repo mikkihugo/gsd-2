@@ -12,7 +12,7 @@ const UNDO_MODULE_ENV = "SF_UNDO_MODULE"
 const PATHS_MODULE_ENV = "SF_PATHS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**
@@ -24,7 +24,7 @@ export async function collectUndoInfo(projectCwdOverride?: string): Promise<Undo
   const config = resolveBridgeRuntimeConfig(undefined, projectCwdOverride)
   const { projectCwd } = config
 
-  const gsdDir = join(projectCwd, ".gsd")
+  const gsdDir = join(projectCwd, ".sf")
   const completedPath = join(gsdDir, "completed-units.json")
 
   const empty: UndoInfo = {

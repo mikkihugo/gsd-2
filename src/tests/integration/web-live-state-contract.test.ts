@@ -54,10 +54,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-live-state-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-web-live-state-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".sf", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -140,20 +140,20 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".sf/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S01",
             title: "Demo Slice",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S01/tasks",
+            planPath: ".sf/milestones/M001/slices/S01/S01-PLAN.md",
+            tasksDir: ".sf/milestones/M001/slices/S01/tasks",
             tasks: [
               {
                 id: "T01",
                 title: "Wire boot",
                 done: false,
-                planPath: ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+                planPath: ".sf/milestones/M001/slices/S01/tasks/T01-PLAN.md",
               },
             ],
           },
@@ -198,7 +198,7 @@ function fakeBootPayload(sessionPath: string) {
   return {
     project: {
       cwd: "/tmp/demo-project",
-      sessionsDir: "/tmp/demo-project/.gsd/sessions",
+      sessionsDir: "/tmp/demo-project/.sf/sessions",
       packageRoot: repoRoot,
     },
     workspace: fakeWorkspaceIndex(),
@@ -245,7 +245,7 @@ function fakeBootPayload(sessionPath: string) {
     bridge: {
       phase: "ready",
       projectCwd: "/tmp/demo-project",
-      projectSessionsDir: "/tmp/demo-project/.gsd/sessions",
+      projectSessionsDir: "/tmp/demo-project/.sf/sessions",
       packageRoot: repoRoot,
       startedAt: "2026-03-15T03:30:00.000Z",
       updatedAt: "2026-03-15T03:30:01.000Z",

@@ -124,7 +124,7 @@ function normalizePath(filePath) {
  * Check if a changed file matches a map entry pattern.
  * Supports:
  *   - Exact suffix match:  src/cli.ts  matches  src/cli.ts
- *   - Glob prefix match:   gsd/auto/*  matches  gsd/auto/anything.ts
+ *   - Glob prefix match:   sf/auto/*  matches  sf/auto/anything.ts
  *   - Wildcard extension:  *.tsx       matches  any .tsx
  */
 function fileMatchesPattern(filePath, pattern) {

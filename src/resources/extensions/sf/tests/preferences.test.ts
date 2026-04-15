@@ -559,7 +559,7 @@ test("loadEffectiveSFPreferences preserves experimental prefs across global+proj
   const tempGsdHome = mkdtempSync(join(tmpdir(), "sf-prefs-home-"));
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".sf"), { recursive: true });
 
     writeFileSync(
       join(tempGsdHome, "preferences.md"),
@@ -574,7 +574,7 @@ test("loadEffectiveSFPreferences preserves experimental prefs across global+proj
     );
 
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".sf", "PREFERENCES.md"),
       [
         "---",
         "version: 1",

@@ -50,14 +50,14 @@ function cleanupDir(dirPath: string): void {
 }
 
 /**
- * Create a temp project directory with .gsd structure for handler tests.
+ * Create a temp project directory with .sf structure for handler tests.
  */
 function createTempProject(): { basePath: string; planPath: string } {
   const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-handler-'));
-  const tasksDir = path.join(basePath, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'tasks');
+  const tasksDir = path.join(basePath, '.sf', 'milestones', 'M001', 'slices', 'S01', 'tasks');
   fs.mkdirSync(tasksDir, { recursive: true });
 
-  const planPath = path.join(basePath, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'S01-PLAN.md');
+  const planPath = path.join(basePath, '.sf', 'milestones', 'M001', 'slices', 'S01', 'S01-PLAN.md');
   fs.writeFileSync(planPath, `# S01: Test Slice
 
 ## Tasks
@@ -429,7 +429,7 @@ console.log('\n=== complete-task: handler with missing plan file ===');
 
   // Create a temp dir WITHOUT a plan file
   const basePath = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-no-plan-'));
-  const tasksDir = path.join(basePath, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'tasks');
+  const tasksDir = path.join(basePath, '.sf', 'milestones', 'M001', 'slices', 'S01', 'tasks');
   fs.mkdirSync(tasksDir, { recursive: true });
 
   // Seed milestone + slice so state machine guards pass

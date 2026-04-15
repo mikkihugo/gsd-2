@@ -213,7 +213,7 @@ export async function handleExport(args: string, ctx: ExtensionCommandContext, b
           phase: data.phase,
         });
         ctx.ui.notify(
-          `HTML report saved: .gsd/reports/${bn(outPath)}\nOpening in browser...`,
+          `HTML report saved: .sf/reports/${bn(outPath)}\nOpening in browser...`,
           "success",
         );
         openInBrowser(outPath);

@@ -13,7 +13,7 @@ export async function checkEngineHealth(
   issues: DoctorIssue[],
   fixesApplied: string[],
 ): Promise<void> {
-  const dbPath = join(basePath, ".gsd", "sf.db");
+  const dbPath = join(basePath, ".sf", "sf.db");
 
   if (!isDbAvailable() && existsSync(dbPath)) {
     issues.push({
@@ -22,7 +22,7 @@ export async function checkEngineHealth(
       scope: "project",
       unitId: "project",
       message: "Database unavailable — using filesystem state derivation (degraded mode). State queries may be slower and less reliable.",
-      file: ".gsd/sf.db",
+      file: ".sf/sf.db",
       fixable: false,
     });
   }
@@ -161,7 +161,7 @@ export async function checkEngineHealth(
   // relative to the event log and re-render them.
   try {
     if (isDbAvailable()) {
-      const eventLogPath = join(basePath, ".gsd", "event-log.jsonl");
+      const eventLogPath = join(basePath, ".sf", "event-log.jsonl");
       const events = readEvents(eventLogPath);
       if (events.length > 0) {
         const lastEventTs = new Date(events[events.length - 1]!.ts).getTime();

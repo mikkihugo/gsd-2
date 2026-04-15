@@ -60,9 +60,6 @@ export interface LoopDeps {
   loadEffectiveSFPreferences: () =>
     | { preferences?: SFPreferences }
     | undefined;
-  loadEffectiveSFPreferences?: () =>
-    | { preferences?: SFPreferences }
-    | undefined;
 
   // Pre-dispatch health gate
   preDispatchHealthGate: (

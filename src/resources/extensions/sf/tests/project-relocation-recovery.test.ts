@@ -6,7 +6,7 @@
  * should be based solely on the remote — making moves transparent.
  *
  * For local-only repos (no remote), ensureGsdSymlink should detect
- * orphaned state directories with a matching .gsd-id marker and
+ * orphaned state directories with a matching .sf-id marker and
  * recover them automatically.
  */
 
@@ -186,25 +186,25 @@ describe("project-relocation-recovery (#2750)", () => {
     rmSync(repoB, { recursive: true, force: true });
   });
 
-  // ── Local-only repos: .gsd-id marker provides recovery ────────────────
+  // ── Local-only repos: .sf-id marker provides recovery ────────────────
 
-  test("ensureGsdSymlink writes a .gsd-id marker in the project root", () => {
+  test("ensureGsdSymlink writes a .sf-id marker in the project root", () => {
     const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-reloc-marker-")));
     initRepo(repo);
 
     ensureGsdSymlink(repo);
 
-    const markerPath = join(repo, ".gsd-id");
-    assert.ok(existsSync(markerPath), ".gsd-id marker must be written by ensureGsdSymlink");
+    const markerPath = join(repo, ".sf-id");
+    assert.ok(existsSync(markerPath), ".sf-id marker must be written by ensureGsdSymlink");
 
     const markerId = readFileSync(markerPath, "utf-8").trim();
     const computedId = repoIdentity(repo);
-    assert.strictEqual(markerId, computedId, ".gsd-id must contain the repo identity hash");
+    assert.strictEqual(markerId, computedId, ".sf-id must contain the repo identity hash");
 
     rmSync(repo, { recursive: true, force: true });
   });
 
-  test("local-only repo recovers state via .gsd-id marker after move", () => {
+  test("local-only repo recovers state via .sf-id marker after move", () => {
     const repoA = realpathSync(mkdtempSync(join(tmpdir(), "sf-reloc-local-a-")));
     initRepo(repoA);
     // No remote — identity includes gitRoot
@@ -235,11 +235,11 @@ describe("project-relocation-recovery (#2750)", () => {
       "local-only repo identity changes with move (expected)",
     );
 
-    // But ensureGsdSymlink should detect .gsd-id marker and recover
+    // But ensureGsdSymlink should detect .sf-id marker and recover
     const externalB = ensureGsdSymlink(repoB);
     assert.ok(
       existsSync(join(externalB, "milestones", "M001.md")),
-      "local-only repo must recover state via .gsd-id marker after move",
+      "local-only repo must recover state via .sf-id marker after move",
     );
 
     rmSync(repoB, { recursive: true, force: true });

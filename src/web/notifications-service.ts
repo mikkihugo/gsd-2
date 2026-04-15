@@ -26,7 +26,7 @@ const NOTIFICATIONS_MAX_BUFFER = 2 * 1024 * 1024
 const NOTIFICATIONS_MODULE_ENV = "SF_NOTIFICATIONS_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 export async function collectNotificationsData(projectCwdOverride?: string): Promise<NotificationsData> {

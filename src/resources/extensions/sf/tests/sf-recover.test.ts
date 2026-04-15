@@ -28,12 +28,12 @@ import { deriveStateFromDb, invalidateStateCache } from '../state.ts';
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-recover-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
 function writeFile(base: string, relativePath: string, content: string): void {
-  const full = join(base, '.gsd', relativePath);
+  const full = join(base, '.sf', relativePath);
   mkdirSync(join(full, '..'), { recursive: true });
   writeFileSync(full, content);
 }

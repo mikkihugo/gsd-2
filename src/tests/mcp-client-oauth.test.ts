@@ -38,7 +38,7 @@ test("HTTP transport with authProvider creates transport that can authenticate",
 		get clientMetadata() {
 			return {
 				redirect_uris: ["http://localhost:3000/callback"],
-				client_name: "gsd-test",
+				client_name: "sf-test",
 			};
 		},
 		clientInformation: () => undefined,

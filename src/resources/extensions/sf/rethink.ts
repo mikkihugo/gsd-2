@@ -55,8 +55,8 @@ export async function handleRethink(
   const existingMilestonesContext = await buildExistingMilestonesContext(basePath, milestoneIds, state);
 
   const commitInstruction = isGsdGitignored(basePath)
-    ? "Do not commit planning artifacts — .gsd/ is gitignored in this project."
-    : 'After changes, run `git add .gsd/ && git commit -m "docs(sf): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
+    ? "Do not commit planning artifacts — .sf/ is gitignored in this project."
+    : 'After changes, run `git add .sf/ && git commit -m "docs(sf): rethink milestone plan"` to persist (rethink runs interactively outside auto-mode, so no system auto-commit)';
 
   const content = loadPrompt("rethink", {
     rethinkData,

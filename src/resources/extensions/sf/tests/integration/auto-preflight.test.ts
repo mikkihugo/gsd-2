@@ -8,7 +8,7 @@ import { runSFDoctor, selectDoctorScope, filterDoctorIssues } from "../../doctor
 
 test("auto-preflight scopes to active milestone, ignoring historical", async (t) => {
   const tmpBase = mkdtempSync(join(tmpdir(), "sf-auto-preflight-test-"));
-  const sf = join(tmpBase, ".gsd");
+  const sf = join(tmpBase, ".sf");
 
   mkdirSync(join(sf, "milestones", "M001", "slices", "S01", "tasks"), { recursive: true });
   mkdirSync(join(sf, "milestones", "M009", "slices", "S01", "tasks"), { recursive: true });

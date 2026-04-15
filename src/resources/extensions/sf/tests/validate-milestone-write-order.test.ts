@@ -12,7 +12,7 @@ import { clearParseCache } from "../files.js";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-val-handler-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
   return base;
 }
 
@@ -42,7 +42,7 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
 
   it("writes DB row and disk file on success", async () => {
     base = makeTmpBase();
-    const dbPath = join(base, ".gsd", "sf.db");
+    const dbPath = join(base, ".sf", "sf.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
@@ -59,7 +59,7 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
     assert.equal(row!.status, "pass");
 
     // Disk file exists
-    const filePath = join(base, ".gsd", "milestones", "M001", "M001-VALIDATION.md");
+    const filePath = join(base, ".sf", "milestones", "M001", "M001-VALIDATION.md");
     assert.ok(existsSync(filePath), "VALIDATION.md should exist on disk");
     const validationMd = readFileSync(filePath, "utf-8");
     assert.match(validationMd, /## Verification Class Compliance/);
@@ -69,7 +69,7 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
 
   it("omits verification class section when no verification classes are supplied", async () => {
     base = makeTmpBase();
-    const dbPath = join(base, ".gsd", "sf.db");
+    const dbPath = join(base, ".sf", "sf.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
@@ -80,14 +80,14 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
     );
     assert.ok(!("error" in result), `unexpected error: ${"error" in result ? result.error : ""}`);
 
-    const filePath = join(base, ".gsd", "milestones", "M001", "M001-VALIDATION.md");
+    const filePath = join(base, ".sf", "milestones", "M001", "M001-VALIDATION.md");
     const validationMd = readFileSync(filePath, "utf-8");
     assert.doesNotMatch(validationMd, /## Verification Class Compliance/);
   });
 
   it("rolls back DB row when disk write fails", async () => {
     base = makeTmpBase();
-    const dbPath = join(base, ".gsd", "sf.db");
+    const dbPath = join(base, ".sf", "sf.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });
@@ -95,7 +95,7 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
     // Force disk write failure by replacing the milestone directory with a
     // regular file. saveFile() will fail because it cannot write inside a
     // non-directory. This works cross-platform (chmod is ignored on Windows).
-    const milestoneDir = join(base, ".gsd", "milestones", "M001");
+    const milestoneDir = join(base, ".sf", "milestones", "M001");
     rmSync(milestoneDir, { recursive: true, force: true });
     writeFileSync(milestoneDir, "not-a-directory");
 
@@ -115,7 +115,7 @@ describe("handleValidateMilestone write ordering (#2725)", () => {
 
   it("persists milestone validation gate_runs rows when UOK gates are enabled", async () => {
     base = makeTmpBase();
-    const dbPath = join(base, ".gsd", "sf.db");
+    const dbPath = join(base, ".sf", "sf.db");
     openDatabase(dbPath);
     insertMilestone({ id: "M001" });
     insertSlice({ id: "S01", milestoneId: "M001" });

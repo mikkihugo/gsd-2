@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-backlog-test-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 
@@ -18,7 +18,7 @@ function cleanup(base: string): void {
 }
 
 function backlogPath(base: string): string {
-  return join(base, ".gsd", "BACKLOG.md");
+  return join(base, ".sf", "BACKLOG.md");
 }
 
 function writeBacklog(base: string, content: string): void {

@@ -1,4 +1,4 @@
-# recover-gsd-1668.ps1 — Recovery script for issue #1668 (Windows)
+# recover-sf-1668.ps1 — Recovery script for issue #1668 (Windows)
 #
 # SF v2.39.x deleted the milestone branch and worktree directory when a
 # merge failed due to the repo using `master` as its default branch (not
@@ -13,7 +13,7 @@
 #   5. Reports what was found and how to complete the merge manually
 #
 # Usage:
-#   powershell -ExecutionPolicy Bypass -File scripts\recover-gsd-1668.ps1 [-MilestoneId <ID>] [-DryRun] [-Auto]
+#   powershell -ExecutionPolicy Bypass -File scripts\recover-sf-1668.ps1 [-MilestoneId <ID>] [-DryRun] [-Auto]
 #
 # Options:
 #   -MilestoneId <ID>   SF milestone ID (e.g. M001-g2nalq).
@@ -295,9 +295,9 @@ if (-not $DryRun) {
 
 if (-not $DryRun) {
     Section "── Step 6: Verify recovery branch ──────────────────────────────────────"
-    $fileList = & git ls-tree -r --name-only $recoveryBranch 2>/dev/null | Where-Object { $_ -notmatch '^\.gsd/' }
+    $fileList = & git ls-tree -r --name-only $recoveryBranch 2>/dev/null | Where-Object { $_ -notmatch '^\.sf/' }
     $fileCount = @($fileList).Count
-    Info "Files recoverable (excluding .gsd/ state files): $fileCount"
+    Info "Files recoverable (excluding .sf/ state files): $fileCount"
     $fileList | Select-Object -First 30 | ForEach-Object { Write-Host "  $_" }
     if ($fileCount -gt 30) { Dim "  ... and $($fileCount - 30) more" }
 }

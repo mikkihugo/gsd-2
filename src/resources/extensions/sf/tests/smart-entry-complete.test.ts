@@ -10,7 +10,7 @@ test("deriveState reports the last completed milestone when all milestone slices
   const base = mkdtempSync(join(tmpdir(), "sf-smart-entry-complete-"));
 
   try {
-    const milestoneDir = join(base, ".gsd", "milestones", "M001");
+    const milestoneDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(milestoneDir, { recursive: true });
 
     writeFileSync(

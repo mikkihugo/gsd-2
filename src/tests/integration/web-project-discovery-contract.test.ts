@@ -12,7 +12,7 @@ import { detectMonorepo } from "../../web/bridge-service.ts";
 // Fixture setup — standard multi-project root
 // ---------------------------------------------------------------------------
 
-const tempRoot = mkdtempSync(join(tmpdir(), "gsd-project-discovery-"));
+const tempRoot = mkdtempSync(join(tmpdir(), "sf-project-discovery-"));
 
 // project-a: brownfield (package.json + .git)
 const projectA = join(tempRoot, "project-a");
@@ -20,10 +20,10 @@ mkdirSync(projectA);
 mkdirSync(join(projectA, ".git"));
 writeFileSync(join(projectA, "package.json"), "{}");
 
-// project-b: empty-gsd (.gsd folder, no milestones)
+// project-b: empty-sf (.sf folder, no milestones)
 const projectB = join(tempRoot, "project-b");
 mkdirSync(projectB);
-mkdirSync(join(projectB, ".gsd"));
+mkdirSync(join(projectB, ".sf"));
 
 // project-c: brownfield (Cargo.toml)
 const projectC = join(tempRoot, "project-c");
@@ -45,7 +45,7 @@ mkdirSync(join(tempRoot, "node_modules"));
 // ---------------------------------------------------------------------------
 
 // monorepo-pnpm: detected via pnpm-workspace.yaml
-const monorepoPnpm = mkdtempSync(join(tmpdir(), "gsd-mono-pnpm-"));
+const monorepoPnpm = mkdtempSync(join(tmpdir(), "sf-mono-pnpm-"));
 mkdirSync(join(monorepoPnpm, ".git"));
 writeFileSync(join(monorepoPnpm, "package.json"), '{"name":"my-monorepo"}');
 writeFileSync(join(monorepoPnpm, "pnpm-workspace.yaml"), 'packages:\n  - "packages/*"');
@@ -54,7 +54,7 @@ mkdirSync(join(monorepoPnpm, "packages", "pkg-a"));
 mkdirSync(join(monorepoPnpm, "packages", "pkg-b"));
 
 // monorepo-lerna: detected via lerna.json
-const monorepoLerna = mkdtempSync(join(tmpdir(), "gsd-mono-lerna-"));
+const monorepoLerna = mkdtempSync(join(tmpdir(), "sf-mono-lerna-"));
 mkdirSync(join(monorepoLerna, ".git"));
 writeFileSync(join(monorepoLerna, "package.json"), '{"name":"lerna-mono"}');
 writeFileSync(join(monorepoLerna, "lerna.json"), '{"version":"1.0.0"}');
@@ -62,7 +62,7 @@ mkdirSync(join(monorepoLerna, "backend"));
 mkdirSync(join(monorepoLerna, "frontend"));
 
 // monorepo-workspaces: detected via package.json workspaces field
-const monorepoWorkspaces = mkdtempSync(join(tmpdir(), "gsd-mono-ws-"));
+const monorepoWorkspaces = mkdtempSync(join(tmpdir(), "sf-mono-ws-"));
 mkdirSync(join(monorepoWorkspaces, ".git"));
 writeFileSync(join(monorepoWorkspaces, "package.json"), '{"name":"ws-mono","workspaces":["packages/*"]}');
 mkdirSync(join(monorepoWorkspaces, "packages"));
@@ -70,7 +70,7 @@ mkdirSync(join(monorepoWorkspaces, "packages", "core"));
 mkdirSync(join(monorepoWorkspaces, "packages", "ui"));
 
 // monorepo-turbo: detected via turbo.json
-const monorepoTurbo = mkdtempSync(join(tmpdir(), "gsd-mono-turbo-"));
+const monorepoTurbo = mkdtempSync(join(tmpdir(), "sf-mono-turbo-"));
 mkdirSync(join(monorepoTurbo, ".git"));
 writeFileSync(join(monorepoTurbo, "package.json"), '{"name":"turbo-mono"}');
 writeFileSync(join(monorepoTurbo, "turbo.json"), '{"pipeline":{}}');
@@ -78,7 +78,7 @@ mkdirSync(join(monorepoTurbo, "apps"));
 mkdirSync(join(monorepoTurbo, "packages"));
 
 // monorepo-nx: detected via nx.json
-const monorepoNx = mkdtempSync(join(tmpdir(), "gsd-mono-nx-"));
+const monorepoNx = mkdtempSync(join(tmpdir(), "sf-mono-nx-"));
 mkdirSync(join(monorepoNx, ".git"));
 writeFileSync(join(monorepoNx, "package.json"), '{"name":"nx-mono"}');
 writeFileSync(join(monorepoNx, "nx.json"), '{}');
@@ -86,7 +86,7 @@ mkdirSync(join(monorepoNx, "libs"));
 mkdirSync(join(monorepoNx, "apps"));
 
 // non-monorepo: plain project with package.json (no workspaces, no marker files)
-const plainProject = mkdtempSync(join(tmpdir(), "gsd-plain-project-"));
+const plainProject = mkdtempSync(join(tmpdir(), "sf-plain-project-"));
 mkdirSync(join(plainProject, ".git"));
 writeFileSync(join(plainProject, "package.json"), '{"name":"plain","dependencies":{}}');
 mkdirSync(join(plainProject, "src"));
@@ -130,11 +130,11 @@ describe("project-discovery", () => {
     assert.equal(a.signals.hasGitRepo, true);
   });
 
-  test("project-b is detected as empty-gsd", () => {
+  test("project-b is detected as empty-sf", () => {
     const results = discoverProjects(tempRoot);
     const b = results.find(r => r.name === "project-b");
     assert.ok(b, "project-b not found");
-    assert.equal(b.kind, "empty-gsd");
+    assert.equal(b.kind, "empty-sf");
     assert.equal(b.signals.hasGsdFolder, true);
   });
 
@@ -263,7 +263,7 @@ describe("project-discovery with monorepo root as devRoot", () => {
     assert.ok(results.some(r => r.name === "src"), "should find src directory");
   });
 
-  test("monorepo entry has correct kind (brownfield when no .gsd)", () => {
+  test("monorepo entry has correct kind (brownfield when no .sf)", () => {
     const results = discoverProjects(monorepoPnpm);
     assert.equal(results[0].kind, "brownfield");
   });

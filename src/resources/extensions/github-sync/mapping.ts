@@ -1,20 +1,20 @@
 /**
  * Persistence layer for the GitHub sync mapping.
  *
- * The mapping lives at `.gsd/github-sync.json` and tracks which SF
+ * The mapping lives at `.sf/github-sync.json` and tracks which SF
  * entities have been synced to which GitHub entities (issues, PRs,
  * milestones) along with their numbers and sync timestamps.
  */
 
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { atomicWriteSync } from "../gsd/atomic-write.js";
+import { atomicWriteSync } from "../sf/atomic-write.js";
 import type { SyncMapping, MilestoneSyncRecord, SliceSyncRecord, SyncEntityRecord } from "./types.js";
 
 const MAPPING_FILENAME = "github-sync.json";
 
 function mappingPath(basePath: string): string {
-  return join(basePath, ".gsd", MAPPING_FILENAME);
+  return join(basePath, ".sf", MAPPING_FILENAME);
 }
 
 // ─── Load / Save ────────────────────────────────────────────────────────────

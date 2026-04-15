@@ -83,7 +83,7 @@ function shouldScan(file) {
     lower.startsWith('node_modules/') ||
     lower.startsWith('dist/') ||
     lower.startsWith('coverage/') ||
-    lower.startsWith('.gsd/')
+    lower.startsWith('.sf/')
   ) {
     return false;
   }

@@ -64,7 +64,7 @@ export function Roadmap() {
 
         {workspace.bootStatus === "ready" && milestones.length === 0 && (
           <div className="py-8 text-center text-sm text-muted-foreground">
-            No milestones found. Create a milestone with <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">/gsd</code> to get started.
+            No milestones found. Create a milestone with <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs">/sf</code> to get started.
           </div>
         )}
 

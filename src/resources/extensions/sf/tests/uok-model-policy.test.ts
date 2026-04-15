@@ -32,7 +32,7 @@ test("uok model policy builds requirement vectors from unit metadata", () => {
 test("uok model policy enforces provider/api/tool constraints and emits decision audit events", () => {
   const basePath = mkdtempSync(join(tmpdir(), "sf-uok-model-policy-"));
   try {
-    mkdirSync(join(basePath, ".gsd"), { recursive: true });
+    mkdirSync(join(basePath, ".sf"), { recursive: true });
     registerToolCompatibility("screenshot", { producesImages: true });
 
     const result = applyModelPolicyFilter(
@@ -69,7 +69,7 @@ test("uok model policy enforces provider/api/tool constraints and emits decision
     assert.equal(result.decisions[3]?.allowed, false);
     assert.match(result.decisions[3]?.reason ?? "", /provider denied by policy/);
 
-    const auditLogPath = join(basePath, ".gsd", "audit", "events.jsonl");
+    const auditLogPath = join(basePath, ".sf", "audit", "events.jsonl");
     const auditLines = readFileSync(auditLogPath, "utf-8")
       .trim()
       .split("\n")

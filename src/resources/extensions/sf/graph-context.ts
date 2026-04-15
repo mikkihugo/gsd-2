@@ -56,7 +56,7 @@ export interface GraphSubgraphOptions {
 
 function readGraphFile(projectDir: string): GraphFileShape | null {
   try {
-    const graphPath = join(projectDir, ".gsd", "graphs", "graph.json");
+    const graphPath = join(projectDir, ".sf", "graphs", "graph.json");
     const raw = readFileSync(graphPath, "utf-8");
     const parsed = JSON.parse(raw) as Partial<GraphFileShape>;
     const nodes = Array.isArray(parsed.nodes) ? parsed.nodes : [];
@@ -193,7 +193,7 @@ export async function inlineGraphSubgraph(
 
     const sections: string[] = [
       `### Knowledge Graph Context (term: "${term}")`,
-      `Source: \`.gsd/graphs/graph.json\``,
+      `Source: \`.sf/graphs/graph.json\``,
       staleAnnotation,
       "",
       `**Nodes (${result.nodes.length}):**`,

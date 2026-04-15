@@ -77,11 +77,11 @@ function makeDeps(
     },
     createAutoWorktree: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "createAutoWorktree", args: [basePath, milestoneId] });
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.sf/worktrees/${milestoneId}`;
     },
     enterAutoWorktree: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "enterAutoWorktree", args: [basePath, milestoneId] });
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.sf/worktrees/${milestoneId}`;
     },
     getAutoWorktreePath: (basePath: string, milestoneId: string) => {
       calls.push({ fn: "getAutoWorktreePath", args: [basePath, milestoneId] });
@@ -114,7 +114,7 @@ function makeDeps(
         fn: "resolveMilestoneFile",
         args: [basePath, milestoneId, fileType],
       });
-      return `/project/.gsd/milestones/${milestoneId}/${milestoneId}-ROADMAP.md`;
+      return `/project/.sf/milestones/${milestoneId}/${milestoneId}-ROADMAP.md`;
     },
     readFileSync: (path: string, _encoding: string) => {
       calls.push({ fn: "readFileSync", args: [path] });
@@ -179,14 +179,14 @@ function findCalls(calls: CallLog[], fn: string): CallLog[] {
 // ─── Getter Tests ────────────────────────────────────────────────────────────
 
 test("workPath returns s.basePath", () => {
-  const s = makeSession({ basePath: "/project/.gsd/worktrees/M001" });
+  const s = makeSession({ basePath: "/project/.sf/worktrees/M001" });
   const resolver = new WorktreeResolver(s, makeDeps());
-  assert.equal(resolver.workPath, "/project/.gsd/worktrees/M001");
+  assert.equal(resolver.workPath, "/project/.sf/worktrees/M001");
 });
 
 test("projectRoot returns originalBasePath when set", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const resolver = new WorktreeResolver(s, makeDeps());
@@ -201,7 +201,7 @@ test("projectRoot falls back to basePath when originalBasePath is empty", () => 
 
 test("lockPath returns originalBasePath when set (same as lockBase)", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const resolver = new WorktreeResolver(s, makeDeps());
@@ -226,7 +226,7 @@ test("enterMilestone creates new worktree when none exists", () => {
 
   resolver.enterMilestone("M001", ctx);
 
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+  assert.equal(s.basePath, "/project/.sf/worktrees/M001");
   assert.equal(findCalls(deps.calls, "createAutoWorktree").length, 1);
   assert.equal(findCalls(deps.calls, "enterAutoWorktree").length, 0);
   assert.equal(findCalls(deps.calls, "GitServiceImpl").length, 1);
@@ -240,14 +240,14 @@ test("enterMilestone creates new worktree when none exists", () => {
 test("enterMilestone enters existing worktree instead of creating", () => {
   const s = makeSession();
   const deps = makeDeps({
-    getAutoWorktreePath: () => "/project/.gsd/worktrees/M001",
+    getAutoWorktreePath: () => "/project/.sf/worktrees/M001",
   });
   const ctx = makeNotifyCtx();
   const resolver = new WorktreeResolver(s, deps);
 
   resolver.enterMilestone("M001", ctx);
 
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M001");
+  assert.equal(s.basePath, "/project/.sf/worktrees/M001");
   assert.equal(findCalls(deps.calls, "enterAutoWorktree").length, 1);
   assert.equal(findCalls(deps.calls, "createAutoWorktree").length, 0);
 });
@@ -290,7 +290,7 @@ test("enterMilestone does NOT update basePath on creation failure", () => {
 
 test("enterMilestone uses originalBasePath as base for worktree ops", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   let createdFrom = "";
@@ -298,7 +298,7 @@ test("enterMilestone uses originalBasePath as base for worktree ops", () => {
     getAutoWorktreePath: () => null,
     createAutoWorktree: (basePath: string, _mid: string) => {
       createdFrom = basePath;
-      return "/project/.gsd/worktrees/M002";
+      return "/project/.sf/worktrees/M002";
     },
   });
   const ctx = makeNotifyCtx();
@@ -313,7 +313,7 @@ test("enterMilestone uses originalBasePath as base for worktree ops", () => {
 
 test("exitMilestone commits, tears down, and resets basePath", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -348,7 +348,7 @@ test("exitMilestone is no-op when not in worktree", () => {
 
 test("exitMilestone passes preserveBranch option", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   let preserveOpts: unknown = null;
@@ -372,7 +372,7 @@ test("exitMilestone passes preserveBranch option", () => {
 
 test("exitMilestone still resets basePath even if auto-commit fails", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -395,7 +395,7 @@ test("exitMilestone still resets basePath even if auto-commit fails", () => {
 
 test("mergeAndExit in worktree mode reads roadmap and merges", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -417,7 +417,7 @@ test("mergeAndExit in worktree mode reads roadmap and merges", () => {
 
 test("mergeAndExit in worktree mode shows pushed status", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -435,7 +435,7 @@ test("mergeAndExit in worktree mode shows pushed status", () => {
 
 test("mergeAndExit falls back to teardown with preserveBranch when roadmap is missing (#1573)", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -459,7 +459,7 @@ test("mergeAndExit falls back to teardown with preserveBranch when roadmap is mi
 
 test("mergeAndExit resolves roadmap from worktree when missing at project root (#1573)", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   // resolveMilestoneFile returns null for project root, returns path for worktree
@@ -468,8 +468,8 @@ test("mergeAndExit resolves roadmap from worktree when missing at project root (
     getIsolationMode: () => "worktree",
     resolveMilestoneFile: (basePath: string) => {
       if (basePath === "/project") return null; // missing at project root
-      if (basePath === "/project/.gsd/worktrees/M001") {
-        return "/project/.gsd/worktrees/M001/.gsd/milestones/M001/M001-ROADMAP.md";
+      if (basePath === "/project/.sf/worktrees/M001") {
+        return "/project/.sf/worktrees/M001/.sf/milestones/M001/M001-ROADMAP.md";
       }
       return null;
     },
@@ -489,7 +489,7 @@ test("mergeAndExit resolves roadmap from worktree when missing at project root (
 
 test("mergeAndExit in worktree mode restores to project root on merge failure", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -519,7 +519,7 @@ test("mergeAndExit failure message tells user worktree and branch are preserved 
   // left confused about whether their code had been deleted. The new message
   // explicitly states that the worktree and branch are preserved and what to do.
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -555,7 +555,7 @@ test("mergeAndExit failure message references /sf dispatch complete-milestone, n
   // "retry /complete-milestone" — a command that does not exist. The correct
   // recovery command is "/sf dispatch complete-milestone".
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -697,7 +697,7 @@ test("mergeAndExit in none mode is a no-op", () => {
 
 test("mergeAndExit warns when merge contains no code changes (#1906)", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -712,7 +712,7 @@ test("mergeAndExit warns when merge contains no code changes (#1906)", () => {
 
   assert.ok(
     ctx.messages.some((m) => m.msg.includes("NO code changes") && m.level === "warning"),
-    "must emit warning when only .gsd/ metadata was merged",
+    "must emit warning when only .sf/ metadata was merged",
   );
   assert.ok(
     !ctx.messages.some((m) => m.msg.includes("merged to main") && m.level === "info"),
@@ -722,7 +722,7 @@ test("mergeAndExit warns when merge contains no code changes (#1906)", () => {
 
 test("mergeAndExit emits info when merge contains code changes (#1906)", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -764,7 +764,7 @@ test("mergeAndExit branch mode warns when merge contains no code changes (#1906)
 
   assert.ok(
     ctx.messages.some((m) => m.msg.includes("NO code changes") && m.level === "warning"),
-    "branch mode must emit warning when only .gsd/ metadata was merged",
+    "branch mode must emit warning when only .sf/ metadata was merged",
   );
 });
 
@@ -772,7 +772,7 @@ test("mergeAndExit branch mode warns when merge contains no code changes (#1906)
 
 test("mergeAndEnterNext calls mergeAndExit then enterMilestone", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const callOrder: string[] = [];
@@ -791,7 +791,7 @@ test("mergeAndEnterNext calls mergeAndExit then enterMilestone", () => {
     getAutoWorktreePath: () => null,
     createAutoWorktree: (basePath: string, milestoneId: string) => {
       callOrder.push(`create:${milestoneId}`);
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.sf/worktrees/${milestoneId}`;
     },
   });
   const ctx = makeNotifyCtx();
@@ -800,12 +800,12 @@ test("mergeAndEnterNext calls mergeAndExit then enterMilestone", () => {
   resolver.mergeAndEnterNext("M001", "M002", ctx);
 
   assert.deepEqual(callOrder, ["merge:M001", "create:M002"]);
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M002");
+  assert.equal(s.basePath, "/project/.sf/worktrees/M002");
 });
 
 test("mergeAndEnterNext enters next milestone even if merge fails", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({
@@ -817,7 +817,7 @@ test("mergeAndEnterNext enters next milestone even if merge fails", () => {
     },
     getAutoWorktreePath: () => null,
     createAutoWorktree: (_basePath: string, milestoneId: string) => {
-      return `/project/.gsd/worktrees/${milestoneId}`;
+      return `/project/.sf/worktrees/${milestoneId}`;
     },
   });
   const ctx = makeNotifyCtx();
@@ -826,7 +826,7 @@ test("mergeAndEnterNext enters next milestone even if merge fails", () => {
   resolver.mergeAndEnterNext("M001", "M002", ctx);
 
   // Merge failed but enter should still happen
-  assert.equal(s.basePath, "/project/.gsd/worktrees/M002");
+  assert.equal(s.basePath, "/project/.sf/worktrees/M002");
   assert.ok(
     ctx.messages.some(
       (m) => m.level === "warning" && m.msg.includes("merge failed"),
@@ -857,12 +857,12 @@ test("GitService is rebuilt with the NEW basePath after enterMilestone", () => {
 
   resolver.enterMilestone("M001", ctx);
 
-  assert.equal(gitServiceBasePath, "/project/.gsd/worktrees/M001"); // new path, not old
+  assert.equal(gitServiceBasePath, "/project/.sf/worktrees/M001"); // new path, not old
 });
 
 test("GitService is rebuilt with originalBasePath after exitMilestone", () => {
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   let gitServiceBasePath = "";
@@ -956,7 +956,7 @@ test("mergeAndExit still merges when mode is 'none' but session is in a worktree
   // where default is "none". They have an active worktree with committed work.
   // mergeAndExit must detect the active worktree and merge regardless of config.
   const s = makeSession({
-    basePath: "/project/.gsd/worktrees/M001",
+    basePath: "/project/.sf/worktrees/M001",
     originalBasePath: "/project",
   });
   const deps = makeDeps({

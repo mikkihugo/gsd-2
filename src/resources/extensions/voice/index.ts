@@ -35,7 +35,7 @@ function ensureLinuxReady(ctx: ExtensionContext): boolean {
 
 	// Check GROQ_API_KEY is available
 	if (!process.env.GROQ_API_KEY) {
-		ctx.ui.notify("Voice: GROQ_API_KEY not set — run 'gsd config' to configure", "error");
+		ctx.ui.notify("Voice: GROQ_API_KEY not set — run 'sf config' to configure", "error");
 		return false;
 	}
 

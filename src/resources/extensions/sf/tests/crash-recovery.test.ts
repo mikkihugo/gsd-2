@@ -24,7 +24,7 @@ import type { SFState } from "../types.ts";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-test-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 
@@ -53,7 +53,7 @@ function writeTestLock(
 }
 
 function writeRoadmap(base: string, checked = false): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(join(milestoneDir, "slices", "S01", "tasks"), { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),
@@ -84,14 +84,14 @@ function writeRoadmap(base: string, checked = false): void {
 }
 
 function writeCompleteSliceArtifacts(base: string): void {
-  const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+  const sliceDir = join(base, ".sf", "milestones", "M001", "slices", "S01");
   mkdirSync(sliceDir, { recursive: true });
   writeFileSync(join(sliceDir, "S01-SUMMARY.md"), "# Summary\nDone.\n", "utf-8");
   writeFileSync(join(sliceDir, "S01-UAT.md"), "# UAT\nPassed.\n", "utf-8");
 }
 
 function writeCompleteMilestoneSummary(base: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(join(milestoneDir, "M001-SUMMARY.md"), "# Milestone Summary\nDone.\n", "utf-8");
 }
@@ -104,7 +104,7 @@ function writePausedSession(
   unitType?: string,
   unitId?: string,
 ): void {
-  const runtimeDir = join(base, ".gsd", "runtime");
+  const runtimeDir = join(base, ".sf", "runtime");
   mkdirSync(runtimeDir, { recursive: true });
   writeFileSync(
     join(runtimeDir, "paused-session.json"),
@@ -114,7 +114,7 @@ function writePausedSession(
 }
 
 function writeActivityLog(base: string, entries: Record<string, unknown>[]): void {
-  const activityDir = join(base, ".gsd", "activity");
+  const activityDir = join(base, ".sf", "activity");
   mkdirSync(activityDir, { recursive: true });
   writeFileSync(
     join(activityDir, "001-execute-task-M001-S01-T01.jsonl"),
@@ -183,7 +183,7 @@ test("readPausedSessionMetadata handles legacy metadata without unitType/unitId"
   const base = makeTmpBase();
   try {
     // Write metadata without unitType/unitId (simulates older version)
-    const runtimeDir = join(base, ".gsd", "runtime");
+    const runtimeDir = join(base, ".sf", "runtime");
     mkdirSync(runtimeDir, { recursive: true });
     writeFileSync(
       join(runtimeDir, "paused-session.json"),

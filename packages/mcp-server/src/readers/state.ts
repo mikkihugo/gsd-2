@@ -158,8 +158,8 @@ function countSlicesAndTasks(gsdRoot: string, milestoneIds: string[]): {
 // ---------------------------------------------------------------------------
 
 export function readProgress(projectDir: string): ProgressResult {
-  const gsd = resolveGsdRoot(projectDir);
-  const statePath = resolveRootFile(gsd, 'STATE.md');
+  const sf = resolveGsdRoot(projectDir);
+  const statePath = resolveRootFile(sf, 'STATE.md');
 
   // Defaults
   const result: ProgressResult = {
@@ -177,10 +177,10 @@ export function readProgress(projectDir: string): ProgressResult {
 
   if (!existsSync(statePath)) {
     // No STATE.md — derive from filesystem only
-    const milestoneIds = findMilestoneIds(gsd);
+    const milestoneIds = findMilestoneIds(sf);
     result.milestones.total = milestoneIds.length;
     result.milestones.pending = milestoneIds.length;
-    const counts = countSlicesAndTasks(gsd, milestoneIds);
+    const counts = countSlicesAndTasks(sf, milestoneIds);
     result.slices = counts.slices;
     result.tasks = counts.tasks;
     return result;
@@ -208,14 +208,14 @@ export function readProgress(projectDir: string): ProgressResult {
       result.milestones.done - result.milestones.active - result.milestones.parked;
   } else {
     // Fallback: count directories
-    const milestoneIds = findMilestoneIds(gsd);
+    const milestoneIds = findMilestoneIds(sf);
     result.milestones.total = milestoneIds.length;
     result.milestones.pending = milestoneIds.length;
   }
 
   // Slice/task counts from filesystem
-  const milestoneIds = findMilestoneIds(gsd);
-  const counts = countSlicesAndTasks(gsd, milestoneIds);
+  const milestoneIds = findMilestoneIds(sf);
+  const counts = countSlicesAndTasks(sf, milestoneIds);
   result.slices = counts.slices;
   result.tasks = counts.tasks;
 

@@ -19,36 +19,36 @@ import { invalidateStateCache } from '../state.ts'
 
 function createFixture(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-query-test-'))
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true })
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true })
   return base
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid)
+  const dir = join(base, '.sf', 'milestones', mid)
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content)
 }
 
 function writeContext(base: string, mid: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid)
+  const dir = join(base, '.sf', 'milestones', mid)
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, `${mid}-CONTEXT.md`), `---\ntitle: Test Milestone\n---\n\n# Context\nTest.`)
 }
 
 function writeSlicePlan(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid)
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid)
   mkdirSync(join(dir, 'tasks'), { recursive: true })
   writeFileSync(join(dir, `${sid}-PLAN.md`), content)
 }
 
 function writeTaskPlan(base: string, mid: string, sid: string, tid: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid, 'tasks')
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid, 'tasks')
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, `${tid}-PLAN.md`), `---\nestimated_steps: 3\nestimated_files: 2\n---\n\n# ${tid}: Test Task\nDo something.`)
 }
 
 function writeParallelStatus(base: string, mid: string, cost: number): void {
-  const dir = join(base, '.gsd', 'parallel')
+  const dir = join(base, '.sf', 'parallel')
   mkdirSync(dir, { recursive: true })
   writeFileSync(join(dir, `${mid}.status.json`), JSON.stringify({
     milestoneId: mid,
@@ -169,7 +169,7 @@ describe('headless query', () => {
   > Done.
 `)
     writeFileSync(
-      join(base, '.gsd', 'milestones', 'M001', 'M001-SUMMARY.md'),
+      join(base, '.sf', 'milestones', 'M001', 'M001-SUMMARY.md'),
       '# M001 Summary\n\nComplete.',
     )
 

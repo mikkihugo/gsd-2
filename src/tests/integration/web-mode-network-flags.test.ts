@@ -66,7 +66,7 @@ test('parseCliArgs does not set network flags when not provided', () => {
 // ─── launchWebMode env forwarding ────────────────────────────────────
 
 test('launchWebMode forwards custom host, port, and allowed origins to subprocess env', async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-web-net-'))
+  const tmp = mkdtempSync(join(tmpdir(), 'sf-web-net-'))
   const standaloneRoot = join(tmp, 'dist', 'web', 'standalone')
   const serverPath = join(standaloneRoot, 'server.js')
   mkdirSync(standaloneRoot, { recursive: true })
@@ -79,8 +79,8 @@ test('launchWebMode forwards custom host, port, and allowed origins to subproces
   const status = await webMode.launchWebMode(
     {
       cwd: '/tmp/project',
-      projectSessionsDir: '/tmp/.gsd/sessions',
-      agentDir: '/tmp/.gsd/agent',
+      projectSessionsDir: '/tmp/.sf/sessions',
+      agentDir: '/tmp/.sf/agent',
       packageRoot: tmp,
       host: '0.0.0.0',
       port: 8080,
@@ -113,7 +113,7 @@ test('launchWebMode forwards custom host, port, and allowed origins to subproces
 })
 
 test('launchWebMode omits SF_WEB_ALLOWED_ORIGINS when none provided', async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-web-no-origins-'))
+  const tmp = mkdtempSync(join(tmpdir(), 'sf-web-no-origins-'))
   const standaloneRoot = join(tmp, 'dist', 'web', 'standalone')
   const serverPath = join(standaloneRoot, 'server.js')
   mkdirSync(standaloneRoot, { recursive: true })
@@ -126,8 +126,8 @@ test('launchWebMode omits SF_WEB_ALLOWED_ORIGINS when none provided', async (t) 
   await webMode.launchWebMode(
     {
       cwd: '/tmp/project',
-      projectSessionsDir: '/tmp/.gsd/sessions',
-      agentDir: '/tmp/.gsd/agent',
+      projectSessionsDir: '/tmp/.sf/sessions',
+      agentDir: '/tmp/.sf/agent',
       packageRoot: tmp,
     },
     {
@@ -151,7 +151,7 @@ test('launchWebMode omits SF_WEB_ALLOWED_ORIGINS when none provided', async (t) 
 // ─── runWebCliBranch end-to-end forwarding ───────────────────────────
 
 test('runWebCliBranch forwards --host, --port, --allowed-origins to launchWebMode', async (t) => {
-  const tmp = mkdtempSync(join(tmpdir(), 'gsd-web-branch-flags-'))
+  const tmp = mkdtempSync(join(tmpdir(), 'sf-web-branch-flags-'))
   const projectDir = join(tmp, 'project')
   mkdirSync(projectDir, { recursive: true })
 

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict'
 import { parseCliArgs } from '../cli-web-branch.ts'
 
 function parse(...args: string[]) {
-  return parseCliArgs(['node', 'gsd', ...args])
+  return parseCliArgs(['node', 'sf', ...args])
 }
 
 describe('parseCliArgs — modes', () => {

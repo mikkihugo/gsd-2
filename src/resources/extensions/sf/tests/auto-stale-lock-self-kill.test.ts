@@ -9,7 +9,7 @@ import { checkRemoteAutoSession, stopAutoRemote } from "../auto.ts";
 
 function makeTmpProject(): string {
   const dir = mkdtempSync(join(tmpdir(), "sf-stale-lock-test-"));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".sf"), { recursive: true });
   return dir;
 }
 
@@ -44,7 +44,7 @@ test("#2730: checkRemoteAutoSession still detects a genuine remote session (diff
     unitId: "M001/S01/T02",
     unitStartedAt: new Date().toISOString(),
   };
-  writeFileSync(join(dir, ".gsd", "auto.lock"), JSON.stringify(lockData, null, 2));
+  writeFileSync(join(dir, ".sf", "auto.lock"), JSON.stringify(lockData, null, 2));
 
   const result = checkRemoteAutoSession(dir);
   assert.equal(result.running, true, "different live PID should be detected as running");
@@ -64,7 +64,7 @@ test("#2730: stopAutoRemote does not send SIGTERM when lock PID matches current 
   assert.equal(result.found, false, "own PID must not be signalled");
 
   // The lock should be cleared as part of the self-detection cleanup
-  assert.ok(!existsSync(join(dir, ".gsd", "auto.lock")), "stale self-lock should be cleared");
+  assert.ok(!existsSync(join(dir, ".sf", "auto.lock")), "stale self-lock should be cleared");
 });
 
 test("#2730: stopAutoRemote clears stale lock from dead remote process without error", (t) => {
@@ -79,9 +79,9 @@ test("#2730: stopAutoRemote clears stale lock from dead remote process without e
     unitId: "M001/S02",
     unitStartedAt: "2026-03-01T00:05:00Z",
   };
-  writeFileSync(join(dir, ".gsd", "auto.lock"), JSON.stringify(lockData, null, 2));
+  writeFileSync(join(dir, ".sf", "auto.lock"), JSON.stringify(lockData, null, 2));
 
   const result = stopAutoRemote(dir);
   assert.equal(result.found, false, "dead remote PID should not be reported as found");
-  assert.ok(!existsSync(join(dir, ".gsd", "auto.lock")), "stale lock should be cleaned up");
+  assert.ok(!existsSync(join(dir, ".sf", "auto.lock")), "stale lock should be cleaned up");
 });

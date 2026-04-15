@@ -130,8 +130,8 @@ test("validateDirectory: SF worktree path nested under home is NOT blocked (#131
   const fakeHome = makeTempDir("fake-home");
   process.env.HOME = fakeHome;
   process.env.USERPROFILE = fakeHome;
-  const worktreePath = join(homedir(), ".gsd", "worktrees", "M001");
-  const worktreeRoot = join(fakeHome, ".gsd", "worktrees", "M001");
+  const worktreePath = join(homedir(), ".sf", "worktrees", "M001");
+  const worktreeRoot = join(fakeHome, ".sf", "worktrees", "M001");
   mkdirSync(worktreePath, { recursive: true });
   try {
     // The worktree CWD itself is a valid location — it must pass.

@@ -96,7 +96,7 @@ describe("WorkflowEvent v field", () => {
         actor: "system",
       });
 
-      const logPath = join(tmp, ".gsd", "event-log.jsonl");
+      const logPath = join(tmp, ".sf", "event-log.jsonl");
       const line = readFileSync(logPath, "utf-8").trim();
       const event = JSON.parse(line);
       assert.strictEqual(event.v, 2, "New events should have v:2");

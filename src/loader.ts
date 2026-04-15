@@ -77,7 +77,7 @@ import { discoverExtensionEntryPaths } from './extension-discovery.js'
 import { loadRegistry, readManifestFromEntryPath, isExtensionEnabled } from './extension-registry.js'
 import { renderLogo } from './logo.js'
 
-// pkg/ is a shim directory: contains gsd's piConfig (package.json) and pi's
+// pkg/ is a shim directory: contains sf's piConfig (package.json) and pi's
 // theme assets (dist/modes/interactive/theme/) without a src/ directory.
 // This allows config.js to:
 //   1. Read piConfig.name → "sf" (branding)
@@ -90,7 +90,7 @@ process.env.PI_PACKAGE_DIR = pkgDir
 process.env.PI_SKIP_VERSION_CHECK = '1'  // SF runs its own update check in cli.ts — suppress pi's
 process.title = 'sf'
 
-// Print branded banner on first launch (before ~/.gsd/ exists).
+// Print branded banner on first launch (before ~/.sf/ exists).
 // Set SF_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
 if (!existsSync(appRoot)) {
   const cyan  = '\x1b[36m'
@@ -107,22 +107,22 @@ if (!existsSync(appRoot)) {
   process.env.SF_FIRST_RUN_BANNER = '1'
 }
 
-// SF_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.gsd/agent/ instead of ~/.gsd/agent/
+// SF_CODING_AGENT_DIR — tells pi's getAgentDir() to return ~/.sf/agent/ instead of ~/.sf/agent/
 process.env.SF_CODING_AGENT_DIR = agentDir
 
 // SF_PKG_ROOT — absolute path to sf-run package root. Used by deployed extensions
 // (e.g. auto.ts resume path) to import modules like resource-loader.js that live
-// in the package tree, not in the deployed ~/.gsd/agent/ tree.
+// in the package tree, not in the deployed ~/.sf/agent/ tree.
 process.env.SF_PKG_ROOT = gsdRoot
 
-// RTK environment — make ~/.gsd/agent/bin visible to all child-process paths,
+// RTK environment — make ~/.sf/agent/bin visible to all child-process paths,
 // not just the bash tool, and force-disable RTK telemetry for SF-managed use.
 applyRtkProcessEnv(process.env)
 
-// NODE_PATH — make gsd's own node_modules available to extensions loaded via jiti.
+// NODE_PATH — make sf's own node_modules available to extensions loaded via jiti.
 // Without this, extensions (e.g. browser-tools) can't resolve dependencies like
-// `playwright` because jiti resolves modules from pi-coding-agent's location, not gsd's.
-// Prepending gsd's node_modules to NODE_PATH fixes this for all extensions.
+// `playwright` because jiti resolves modules from pi-coding-agent's location, not sf's.
+// Prepending sf's node_modules to NODE_PATH fixes this for all extensions.
 const gsdNodeModules = join(gsdRoot, 'node_modules')
 process.env.NODE_PATH = [gsdNodeModules, process.env.NODE_PATH]
   .filter(Boolean)
@@ -137,12 +137,12 @@ const { Module } = await import('module');
 process.env.SF_VERSION = gsdVersion
 
 // SF_BIN_PATH — absolute path to this loader (dist/loader.js), used by patched subagent
-// to spawn gsd instead of pi when dispatching workflow tasks.
-// Respect a pre-set value so a source-mode wrapper (e.g. bin/gsd-from-source) can
+// to spawn sf instead of pi when dispatching workflow tasks.
+// Respect a pre-set value so a source-mode wrapper (e.g. bin/sf-from-source) can
 // advertise the executable shim instead of the .ts loader path (which spawn() can't exec).
 process.env.SF_BIN_PATH = process.env.SF_BIN_PATH || process.argv[1]
 
-// SF_WORKFLOW_PATH — absolute path to bundled SF-WORKFLOW.md, used by patched gsd extension
+// SF_WORKFLOW_PATH — absolute path to bundled SF-WORKFLOW.md, used by patched sf extension
 // when dispatching workflow prompts. Prefers dist/resources/ (stable, set at build time)
 // over src/resources/ (live working tree) — see resource-loader.ts for rationale.
 const distRes = join(gsdRoot, 'dist', 'resources')
@@ -152,7 +152,7 @@ process.env.SF_WORKFLOW_PATH = join(resourcesDir, 'SF-WORKFLOW.md')
 
 // SF_BUNDLED_EXTENSION_PATHS — dynamically discovered bundled extension entry points.
 // Uses the shared discoverExtensionEntryPaths() to scan the bundled resources
-// directory, then remaps discovered paths to agentDir (~/.gsd/agent/extensions/)
+// directory, then remaps discovered paths to agentDir (~/.sf/agent/extensions/)
 // where initResources() will sync them.
 const bundledExtDir = join(resourcesDir, 'extensions')
 const agentExtDir = join(agentDir, 'extensions')

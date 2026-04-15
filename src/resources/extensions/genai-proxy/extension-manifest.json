@@ -1,0 +1,13 @@
+{
+  "id": "genai-proxy",
+  "name": "GenAI Proxy",
+  "version": "1.0.0",
+  "description": "Exposes SF's AI engine as a standard Google GenAI / OpenAI compatible endpoint.",
+  "tier": "community",
+  "requires": {
+    "platform": "all"
+  },
+  "provides": {
+    "commands": ["/genai-proxy"]
+  }
+}

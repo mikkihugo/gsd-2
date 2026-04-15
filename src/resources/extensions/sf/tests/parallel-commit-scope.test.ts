@@ -2,11 +2,11 @@
  * parallel-commit-scope.test.ts — Regression test for #1991.
  *
  * Parallel workers must only commit files belonging to their locked milestone.
- * When SF_MILESTONE_LOCK is set, smartStage() must exclude .gsd/milestones/<M>/
+ * When SF_MILESTONE_LOCK is set, smartStage() must exclude .sf/milestones/<M>/
  * directories for milestones other than the locked one.
  *
  * Without the fix, a worker for M033 can stage and commit fabricated artifacts
- * under .gsd/milestones/M032/, causing cross-milestone pollution.
+ * under .sf/milestones/M032/, causing cross-milestone pollution.
  */
 
 import { describe, test, beforeEach, afterEach } from "node:test";
@@ -77,10 +77,10 @@ describe("parallel commit scope (#1991)", () => {
     process.env.SF_PARALLEL_WORKER = "1";
 
     // Create dirty files in BOTH milestones (simulates cross-milestone pollution)
-    createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "# M032 Summary\nFabricated by M033 worker");
-    createFile(repo, ".gsd/milestones/M032/M032-VALIDATION.md", "# M032 Validation\nFabricated");
-    createFile(repo, ".gsd/milestones/M032/slices/S01/S01-SUMMARY.md", "Fabricated S01 summary");
-    createFile(repo, ".gsd/milestones/M033/slices/S01/tasks/T01-SUMMARY.md", "Legit T01 summary");
+    createFile(repo, ".sf/milestones/M032/M032-SUMMARY.md", "# M032 Summary\nFabricated by M033 worker");
+    createFile(repo, ".sf/milestones/M032/M032-VALIDATION.md", "# M032 Validation\nFabricated");
+    createFile(repo, ".sf/milestones/M032/slices/S01/S01-SUMMARY.md", "Fabricated S01 summary");
+    createFile(repo, ".sf/milestones/M033/slices/S01/tasks/T01-SUMMARY.md", "Legit T01 summary");
     createFile(repo, "src/feature.ts", "export const x = 1;");
 
     const svc = new GitServiceImpl(repo);
@@ -91,10 +91,10 @@ describe("parallel commit scope (#1991)", () => {
 
     // Source files and own milestone files SHOULD be committed
     assert.ok(committed.includes("src/feature.ts"), "source files are committed");
-    assert.ok(committed.includes(".gsd/milestones/M033/"), "own milestone files are committed");
+    assert.ok(committed.includes(".sf/milestones/M033/"), "own milestone files are committed");
 
     // Other milestone files MUST NOT be committed
-    assert.ok(!committed.includes(".gsd/milestones/M032/"),
+    assert.ok(!committed.includes(".sf/milestones/M032/"),
       "M032 files must NOT be committed by M033 worker — cross-milestone pollution (#1991)");
 
     // Verify M032 files are still dirty (unstaged) in the working tree
@@ -111,8 +111,8 @@ describe("parallel commit scope (#1991)", () => {
     delete process.env.SF_MILESTONE_LOCK;
     delete process.env.SF_PARALLEL_WORKER;
 
-    createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "# M032 Summary");
-    createFile(repo, ".gsd/milestones/M033/slices/S01/tasks/T01-SUMMARY.md", "T01 summary");
+    createFile(repo, ".sf/milestones/M032/M032-SUMMARY.md", "# M032 Summary");
+    createFile(repo, ".sf/milestones/M033/slices/S01/tasks/T01-SUMMARY.md", "T01 summary");
     createFile(repo, "src/feature.ts", "export const x = 1;");
 
     const svc = new GitServiceImpl(repo);
@@ -122,8 +122,8 @@ describe("parallel commit scope (#1991)", () => {
     const committed = gitRun(["show", "--name-only", "HEAD"], repo);
 
     // In solo mode, ALL milestone files should be committed
-    assert.ok(committed.includes(".gsd/milestones/M032/"), "M032 files committed in solo mode");
-    assert.ok(committed.includes(".gsd/milestones/M033/"), "M033 files committed in solo mode");
+    assert.ok(committed.includes(".sf/milestones/M032/"), "M032 files committed in solo mode");
+    assert.ok(committed.includes(".sf/milestones/M033/"), "M033 files committed in solo mode");
     assert.ok(committed.includes("src/feature.ts"), "source files committed in solo mode");
 
     rmSync(repo, { recursive: true, force: true });
@@ -136,10 +136,10 @@ describe("parallel commit scope (#1991)", () => {
     process.env.SF_PARALLEL_WORKER = "1";
 
     // Create files across many milestones
-    createFile(repo, ".gsd/milestones/M032/M032-SUMMARY.md", "foreign");
-    createFile(repo, ".gsd/milestones/M033/M033-SUMMARY.md", "foreign");
-    createFile(repo, ".gsd/milestones/M034/M034-SUMMARY.md", "foreign");
-    createFile(repo, ".gsd/milestones/M035/slices/S01/tasks/T01-SUMMARY.md", "own work");
+    createFile(repo, ".sf/milestones/M032/M032-SUMMARY.md", "foreign");
+    createFile(repo, ".sf/milestones/M033/M033-SUMMARY.md", "foreign");
+    createFile(repo, ".sf/milestones/M034/M034-SUMMARY.md", "foreign");
+    createFile(repo, ".sf/milestones/M035/slices/S01/tasks/T01-SUMMARY.md", "own work");
     createFile(repo, "src/app.ts", "export const app = {};");
 
     const svc = new GitServiceImpl(repo);
@@ -148,11 +148,11 @@ describe("parallel commit scope (#1991)", () => {
 
     const committed = gitRun(["show", "--name-only", "HEAD"], repo);
 
-    assert.ok(committed.includes(".gsd/milestones/M035/"), "own milestone committed");
+    assert.ok(committed.includes(".sf/milestones/M035/"), "own milestone committed");
     assert.ok(committed.includes("src/app.ts"), "source files committed");
-    assert.ok(!committed.includes(".gsd/milestones/M032/"), "M032 excluded");
-    assert.ok(!committed.includes(".gsd/milestones/M033/"), "M033 excluded");
-    assert.ok(!committed.includes(".gsd/milestones/M034/"), "M034 excluded");
+    assert.ok(!committed.includes(".sf/milestones/M032/"), "M032 excluded");
+    assert.ok(!committed.includes(".sf/milestones/M033/"), "M033 excluded");
+    assert.ok(!committed.includes(".sf/milestones/M034/"), "M034 excluded");
 
     rmSync(repo, { recursive: true, force: true });
   });

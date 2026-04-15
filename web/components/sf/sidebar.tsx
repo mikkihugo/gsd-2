@@ -122,7 +122,7 @@ export function NavRail({ activeView, onViewChange, isConnecting = false }: NavR
       ))}
       <div className="mt-auto flex flex-col gap-1">
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent("gsd:open-projects"))}
+          onClick={() => window.dispatchEvent(new CustomEvent("sf:open-projects"))}
           disabled={isConnecting}
           className={cn(
             "flex h-10 w-10 items-center justify-center rounded-md transition-colors",
@@ -242,7 +242,7 @@ function ExitDialog({
             <DialogTitle>Stop the SF web server?</DialogTitle>
             <DialogDescription>
               This will shut down the server process and close this tab. Run{" "}
-              <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">gsd --web</code> again to restart.
+              <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">sf --web</code> again to restart.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -331,10 +331,10 @@ export function MilestoneExplorer({ isConnecting = false, width, onCollapse }: {
 
   const openTaskFile = (absolutePath: string | undefined) => {
     if (!absolutePath || !projectCwd) return
-    const gsdPrefix = `${projectCwd}/.gsd/`
+    const gsdPrefix = `${projectCwd}/.sf/`
     if (!absolutePath.startsWith(gsdPrefix)) return
     const relativePath = absolutePath.slice(gsdPrefix.length)
-    window.dispatchEvent(new CustomEvent("sf:open-file", { detail: { root: "gsd", path: relativePath } }))
+    window.dispatchEvent(new CustomEvent("sf:open-file", { detail: { root: "sf", path: relativePath } }))
   }
 
   const workflowAction = deriveWorkflowAction({
@@ -761,7 +761,7 @@ function MobileNavPanel({ activeView, onViewChange, isConnecting = false }: NavR
       </div>
       <div className="border-t border-border px-2 py-2 space-y-1">
         <button
-          onClick={() => window.dispatchEvent(new CustomEvent("gsd:open-projects"))}
+          onClick={() => window.dispatchEvent(new CustomEvent("sf:open-projects"))}
           disabled={isConnecting}
           className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors min-h-[44px]"
         >

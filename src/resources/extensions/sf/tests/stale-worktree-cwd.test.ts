@@ -1,7 +1,7 @@
 /**
  * stale-worktree-cwd.test.ts — Tests for #608 fix.
  *
- * Verifies that when process.cwd() is inside a stale .gsd/worktrees/ path,
+ * Verifies that when process.cwd() is inside a stale .sf/worktrees/ path,
  * startAuto escapes back to the project root before proceeding.
  */
 
@@ -39,11 +39,11 @@ function createTempRepo(): string {
 // ─── escapeStaleWorktree is called by startAuto, test the detection logic ────
 
 test("detects stale worktree path and extracts project root", () => {
-  // Simulate the path pattern: /project/.gsd/worktrees/M004/...
+  // Simulate the path pattern: /project/.sf/worktrees/M004/...
   const projectRoot = "/Users/test/myproject";
-  const stalePath = `${projectRoot}${sep}.gsd${sep}worktrees${sep}M004`;
+  const stalePath = `${projectRoot}${sep}.sf${sep}worktrees${sep}M004`;
 
-  const marker = `${sep}.gsd${sep}worktrees${sep}`;
+  const marker = `${sep}.sf${sep}worktrees${sep}`;
   const idx = stalePath.indexOf(marker);
 
   assert.ok(idx !== -1, "marker found in stale path");
@@ -52,7 +52,7 @@ test("detects stale worktree path and extracts project root", () => {
 
 test("does not trigger on normal project path", () => {
   const normalPath = "/Users/test/myproject";
-  const marker = `${sep}.gsd${sep}worktrees${sep}`;
+  const marker = `${sep}.sf${sep}worktrees${sep}`;
   const idx = normalPath.indexOf(marker);
 
   assert.equal(idx, -1, "marker not found in normal path");
@@ -75,7 +75,7 @@ test("mergeMilestoneToMain restores cwd to project root", () => {
     tempDir = createTempRepo();
 
     // Create milestone planning artifacts
-    const msDir = join(tempDir, ".gsd", "milestones", "M050");
+    const msDir = join(tempDir, ".sf", "milestones", "M050");
     mkdirSync(msDir, { recursive: true });
     writeFileSync(join(msDir, "CONTEXT.md"), "# M050 Context\n");
     const roadmap = [
@@ -125,17 +125,17 @@ test("process.cwd() inside removed worktree is recoverable", () => {
   try {
     tempDir = createTempRepo();
 
-    // Create a .gsd/worktrees/M099 directory to simulate stale state
-    const staleWtDir = join(tempDir, ".gsd", "worktrees", "M099");
+    // Create a .sf/worktrees/M099 directory to simulate stale state
+    const staleWtDir = join(tempDir, ".sf", "worktrees", "M099");
     mkdirSync(staleWtDir, { recursive: true });
 
     // Enter the stale directory
     process.chdir(staleWtDir);
     const cwdBefore = process.cwd();
-    assert.ok(cwdBefore.includes(`${sep}.gsd${sep}worktrees${sep}`), "cwd is inside worktree dir");
+    assert.ok(cwdBefore.includes(`${sep}.sf${sep}worktrees${sep}`), "cwd is inside worktree dir");
 
     // Simulate escapeStaleWorktree logic
-    const marker = `${sep}.gsd${sep}worktrees${sep}`;
+    const marker = `${sep}.sf${sep}worktrees${sep}`;
     const idx = cwdBefore.indexOf(marker);
     assert.ok(idx !== -1, "marker found");
 

@@ -1,8 +1,8 @@
 /**
  * SF External State Migration
  *
- * Migrates legacy in-project `.gsd/` directories to the external
- * `~/.gsd/projects/<hash>/` state directory. After migration, a
+ * Migrates legacy in-project `.sf/` directories to the external
+ * `~/.sf/projects/<hash>/` state directory. After migration, a
  * symlink replaces the original directory so all paths remain valid.
  */
 
@@ -20,29 +20,29 @@ export interface MigrationResult {
 }
 
 /**
- * Migrate a legacy in-project `.gsd/` directory to external storage.
+ * Migrate a legacy in-project `.sf/` directory to external storage.
  *
  * Algorithm:
- * 1. If `<project>/.gsd` is a symlink or doesn't exist -> skip
- * 2. If `<project>/.gsd` is a real directory:
+ * 1. If `<project>/.sf` is a symlink or doesn't exist -> skip
+ * 2. If `<project>/.sf` is a real directory:
  *    a. Compute external path from repoIdentity
  *    b. mkdir -p external dir
- *    c. Rename `.gsd` -> `.gsd.migrating` (atomic on same FS, acts as lock)
+ *    c. Rename `.sf` -> `.sf.migrating` (atomic on same FS, acts as lock)
  *    d. Copy contents to external dir (skip `worktrees/` subdirectory)
- *    e. Create symlink `.gsd -> external path`
- *    f. Remove `.gsd.migrating`
- * 3. On failure: rename `.gsd.migrating` back to `.gsd` (rollback)
+ *    e. Create symlink `.sf -> external path`
+ *    f. Remove `.sf.migrating`
+ * 3. On failure: rename `.sf.migrating` back to `.sf` (rollback)
  */
 export function migrateToExternalState(basePath: string): MigrationResult {
-  // Worktrees get their .gsd via syncSfStateToWorktree(), not migration.
+  // Worktrees get their .sf via syncSfStateToWorktree(), not migration.
   // Migration inside a worktree would compute the same external hash as the
   // main repo (externalGsdRoot hashes remoteUrl + gitRoot), creating a broken
-  // junction and orphaning .gsd.migrating (#2970).
+  // junction and orphaning .sf.migrating (#2970).
   if (isInsideWorktree(basePath)) {
     return { migrated: false };
   }
 
-  const localSf = join(basePath, ".gsd");
+  const localSf = join(basePath, ".sf");
 
   // Skip if doesn't exist
   if (!existsSync(localSf)) {
@@ -56,19 +56,19 @@ export function migrateToExternalState(basePath: string): MigrationResult {
       return { migrated: false };
     }
     if (!stat.isDirectory()) {
-      return { migrated: false, error: ".gsd exists but is not a directory or symlink" };
+      return { migrated: false, error: ".sf exists but is not a directory or symlink" };
     }
   } catch (err) {
-    return { migrated: false, error: `Cannot stat .gsd: ${getErrorMessage(err)}` };
+    return { migrated: false, error: `Cannot stat .sf: ${getErrorMessage(err)}` };
   }
 
-  // Skip if .gsd/ contains git-tracked files — the project intentionally
-  // keeps .gsd/ in version control and migration would destroy that.
+  // Skip if .sf/ contains git-tracked files — the project intentionally
+  // keeps .sf/ in version control and migration would destroy that.
   if (hasGitTrackedGsdFiles(basePath)) {
     return { migrated: false };
   }
 
-  // Skip if .gsd/worktrees/ has active worktree directories (#1337).
+  // Skip if .sf/worktrees/ has active worktree directories (#1337).
   // On Windows, active git worktrees hold OS-level directory handles that
   // prevent rename/delete. Attempting migration causes EBUSY and data loss.
   const worktreesDir = join(localSf, "worktrees");
@@ -85,13 +85,13 @@ export function migrateToExternalState(basePath: string): MigrationResult {
   }
 
   const externalPath = externalGsdRoot(basePath);
-  const migratingPath = join(basePath, ".gsd.migrating");
+  const migratingPath = join(basePath, ".sf.migrating");
 
   try {
     // mkdir -p the external dir
     mkdirSync(externalPath, { recursive: true });
 
-    // Rename .gsd -> .gsd.migrating (atomic lock).
+    // Rename .sf -> .sf.migrating (atomic lock).
     // On Windows, NTFS may reject rename with EPERM if file descriptors are
     // open (VS Code watchers, antivirus on-access scan). Fall back to
     // copy+delete (#1292).
@@ -129,7 +129,7 @@ export function migrateToExternalState(basePath: string): MigrationResult {
       }
     }
 
-    // Create symlink .gsd -> external path
+    // Create symlink .sf -> external path
     symlinkSync(externalPath, localSf, "junction");
 
     // Verify the symlink resolves correctly before removing the backup (#1377).
@@ -154,12 +154,12 @@ export function migrateToExternalState(basePath: string): MigrationResult {
       return { migrated: false, error: `Migration verification failed: ${getErrorMessage(verifyErr)}` };
     }
 
-    // Clean the git index — any .gsd/* files tracked before migration now
+    // Clean the git index — any .sf/* files tracked before migration now
     // sit behind the symlink and git can't follow it, causing them to show
     // as deleted. Remove them from the index so the working tree stays clean.
-    // --ignore-unmatch makes this a no-op on fresh projects with no tracked .gsd/.
+    // --ignore-unmatch makes this a no-op on fresh projects with no tracked .sf/.
     try {
-      execFileSync("git", ["rm", "-r", "--cached", "--ignore-unmatch", ".gsd"], {
+      execFileSync("git", ["rm", "-r", "--cached", "--ignore-unmatch", ".sf"], {
         cwd: basePath,
         stdio: ["ignore", "pipe", "ignore"],
         env: GIT_NO_PROMPT_ENV,
@@ -169,18 +169,18 @@ export function migrateToExternalState(basePath: string): MigrationResult {
       // Non-fatal — git may be unavailable or nothing was tracked
     }
 
-    // Remove .gsd.migrating only after symlink is verified and index is clean
+    // Remove .sf.migrating only after symlink is verified and index is clean
     rmSync(migratingPath, { recursive: true, force: true });
 
     return { migrated: true };
   } catch (err) {
-    // Rollback: rename .gsd.migrating back to .gsd
+    // Rollback: rename .sf.migrating back to .sf
     try {
       if (existsSync(migratingPath) && !existsSync(localSf)) {
         renameSync(migratingPath, localSf);
       }
     } catch {
-      // Rollback failed -- leave .gsd.migrating for doctor to detect
+      // Rollback failed -- leave .sf.migrating for doctor to detect
     }
 
     return {
@@ -191,12 +191,12 @@ export function migrateToExternalState(basePath: string): MigrationResult {
 }
 
 /**
- * Recover from a failed migration (`.gsd.migrating` exists).
- * Moves `.gsd.migrating` back to `.gsd` if `.gsd` doesn't exist.
+ * Recover from a failed migration (`.sf.migrating` exists).
+ * Moves `.sf.migrating` back to `.sf` if `.sf` doesn't exist.
  */
 export function recoverFailedMigration(basePath: string): boolean {
-  const localSf = join(basePath, ".gsd");
-  const migratingPath = join(basePath, ".gsd.migrating");
+  const localSf = join(basePath, ".sf");
+  const migratingPath = join(basePath, ".sf.migrating");
 
   if (!existsSync(migratingPath)) return false;
   if (existsSync(localSf)) return false; // both exist -- ambiguous, don't touch

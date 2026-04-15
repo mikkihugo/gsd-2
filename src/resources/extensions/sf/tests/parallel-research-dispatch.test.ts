@@ -25,7 +25,7 @@ const tmpDirs: string[] = [];
 function makeTmpProject(): string {
   const base = mkdtempSync(join(tmpdir(), "parallel-research-"));
   tmpDirs.push(base);
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),

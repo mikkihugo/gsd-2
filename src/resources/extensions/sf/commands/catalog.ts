@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { loadRegistry } from "../workflow-templates.js";
 import { resolveProjectRoot } from "../worktree.js";
 
-const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
 
 export interface GsdCommandDefinition {
   cmd: string;
@@ -53,9 +53,9 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "doctor", desc: "Runtime health checks with auto-fix" },
   { cmd: "logs", desc: "Browse activity logs, debug logs, and metrics" },
   { cmd: "forensics", desc: "Examine execution logs" },
-  { cmd: "init", desc: "Project init wizard — detect, configure, bootstrap .gsd/" },
+  { cmd: "init", desc: "Project init wizard — detect, configure, bootstrap .sf/" },
   { cmd: "setup", desc: "Global setup status and configuration" },
-  { cmd: "migrate", desc: "Migrate a v1 .planning directory to .gsd format" },
+  { cmd: "migrate", desc: "Migrate a v1 .planning directory to .sf format" },
   { cmd: "remote", desc: "Control remote auto-mode" },
   { cmd: "steer", desc: "Hard-steer plan documents during execution" },
   { cmd: "inspect", desc: "Show SQLite DB diagnostics" },
@@ -73,12 +73,12 @@ export const TOP_LEVEL_SUBCOMMANDS: readonly GsdCommandDefinition[] = [
   { cmd: "mcp", desc: "MCP server status, connectivity, and local config bootstrap (status, check, init)" },
   { cmd: "rethink", desc: "Conversational project reorganization — reorder, park, discard, add milestones" },
   { cmd: "workflow", desc: "Custom workflow lifecycle (new, run, list, validate, pause, resume)" },
-  { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.gsd/CODEBASE.md)" },
+  { cmd: "codebase", desc: "Generate, refresh, and inspect the codebase map cache (.sf/CODEBASE.md)" },
   { cmd: "ship", desc: "Create PR from milestone artifacts and open for review" },
   { cmd: "do", desc: "Route freeform text to the right SF command" },
   { cmd: "session-report", desc: "Session cost, tokens, and work summary" },
   { cmd: "backlog", desc: "Manage backlog items (add, promote, remove, list)" },
-  { cmd: "pr-branch", desc: "Create clean PR branch filtering .gsd/ commits" },
+  { cmd: "pr-branch", desc: "Create clean PR branch filtering .sf/ commits" },
   { cmd: "add-tests", desc: "Generate tests for completed slices" },
 ];
 
@@ -168,7 +168,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
     { cmd: "branches", desc: "Remove merged milestone and legacy branches" },
     { cmd: "snapshots", desc: "Remove old execution snapshots" },
     { cmd: "worktrees", desc: "Remove merged/safe-to-delete worktrees" },
-    { cmd: "projects", desc: "Audit orphaned ~/.gsd/projects/ state directories" },
+    { cmd: "projects", desc: "Audit orphaned ~/.sf/projects/ state directories" },
     { cmd: "projects --fix", desc: "Delete orphaned project state directories (cannot be undone)" },
   ],
   knowledge: [
@@ -258,7 +258,7 @@ const NESTED_COMPLETIONS: CompletionMap = {
   ],
   "session-report": [
     { cmd: "--json", desc: "Machine-readable JSON output" },
-    { cmd: "--save", desc: "Save report to .gsd/reports/" },
+    { cmd: "--save", desc: "Save report to .sf/reports/" },
   ],
   backlog: [
     { cmd: "add", desc: "Add item to backlog" },
@@ -375,7 +375,7 @@ export function getGsdArgumentCompletions(prefix: string) {
   // Workflow definition-name completion for `workflow run <name>` and `workflow validate <name>`
   if (command === "workflow" && (subcommand === "run" || subcommand === "validate") && parts.length <= 3) {
     try {
-      const defsDir = join(resolveProjectRoot(process.cwd()), ".gsd", "workflow-defs");
+      const defsDir = join(resolveProjectRoot(process.cwd()), ".sf", "workflow-defs");
       if (existsSync(defsDir)) {
         return readdirSync(defsDir)
           .filter((f) => f.endsWith(".yaml") && f.startsWith(third))

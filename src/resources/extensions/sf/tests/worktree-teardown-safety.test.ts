@@ -2,14 +2,14 @@
  * worktree-teardown-safety.test.ts — Regression test for #2365.
  *
  * Ensures that removeWorktree() and teardownAutoWorktree() never delete
- * directories outside .gsd/worktrees/.  The bug: removeWorktree overrides
+ * directories outside .sf/worktrees/.  The bug: removeWorktree overrides
  * the computed worktree path with whatever `git worktree list` reports.
- * When .gsd/ was (or is) a symlink, git resolves the symlink at creation
+ * When .sf/ was (or is) a symlink, git resolves the symlink at creation
  * time, so its registered path can point to an external directory.  If that
  * external path happens to be a project data directory, teardown destroys it.
  *
  * The fix adds path validation so rmSync / nativeWorktreeRemove only operate
- * on paths that are actually under .gsd/worktrees/.
+ * on paths that are actually under .sf/worktrees/.
  */
 
 import {
@@ -63,7 +63,7 @@ describe("worktree-teardown-safety", () => {
     const tempDir = createTempRepo();
     dirs.push(tempDir);
 
-    // Create a project data directory that lives alongside .gsd/
+    // Create a project data directory that lives alongside .sf/
     const dataDir = join(tempDir, "project-data");
     mkdirSync(dataDir, { recursive: true });
     writeFileSync(join(dataDir, "important.db"), "precious data");
@@ -86,7 +86,7 @@ describe("worktree-teardown-safety", () => {
     );
   });
 
-  it("path validation rejects paths outside .gsd/worktrees/", () => {
+  it("path validation rejects paths outside .sf/worktrees/", () => {
     const tempDir = createTempRepo();
     dirs.push(tempDir);
 
@@ -110,14 +110,14 @@ describe("worktree-teardown-safety", () => {
     );
   });
 
-  it("worktreePath always returns paths under .gsd/worktrees/", () => {
+  it("worktreePath always returns paths under .sf/worktrees/", () => {
     const tempDir = createTempRepo();
     dirs.push(tempDir);
 
     const wtPathResult = worktreePath(tempDir, "anything");
     assertTrue(
-      wtPathResult.startsWith(join(tempDir, ".gsd", "worktrees")),
-      "worktreePath returns path under .gsd/worktrees/",
+      wtPathResult.startsWith(join(tempDir, ".sf", "worktrees")),
+      "worktreePath returns path under .sf/worktrees/",
     );
   });
 
@@ -126,17 +126,17 @@ describe("worktree-teardown-safety", () => {
     dirs.push(tempDir);
 
     assertTrue(
-      isInsideWorktreesDir(tempDir, join(tempDir, ".gsd", "worktrees", "my-wt")),
-      "path inside .gsd/worktrees/ is accepted",
+      isInsideWorktreesDir(tempDir, join(tempDir, ".sf", "worktrees", "my-wt")),
+      "path inside .sf/worktrees/ is accepted",
     );
 
     assertTrue(
       !isInsideWorktreesDir(tempDir, join(tempDir, "project-data")),
-      "path outside .gsd/worktrees/ is rejected",
+      "path outside .sf/worktrees/ is rejected",
     );
 
     assertTrue(
-      !isInsideWorktreesDir(tempDir, join(tempDir, ".gsd", "worktrees", "..", "..", "project-data")),
+      !isInsideWorktreesDir(tempDir, join(tempDir, ".sf", "worktrees", "..", "..", "project-data")),
       "path traversal via .. is rejected",
     );
 

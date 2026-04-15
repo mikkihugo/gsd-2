@@ -7,9 +7,9 @@ import { tmpdir } from "node:os";
 import { SettingsManager } from "../../packages/pi-coding-agent/src/core/settings-manager.ts";
 
 test("SettingsManager reads defaultProvider/defaultModel from the explicit agentDir used by CLI (#3860)", () => {
-  const root = mkdtempSync(join(tmpdir(), "gsd-cli-settings-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-cli-settings-"));
   const cwd = join(root, "project");
-  const agentDir = join(root, ".gsd", "agent");
+  const agentDir = join(root, ".sf", "agent");
 
   try {
     mkdirSync(cwd, { recursive: true });

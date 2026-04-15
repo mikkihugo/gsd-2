@@ -530,7 +530,7 @@ interface FileContentViewerProps {
   filepath: string
   className?: string
   /** Required for editing — the root context for the file */
-  root?: "gsd" | "project"
+  root?: "sf" | "project"
   /** Required for editing — the relative path within the root */
   path?: string
   /** Required for editing — called with new content when the user saves */

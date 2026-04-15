@@ -90,8 +90,8 @@ function parseKnowledgeMarkdown(content: string): KnowledgeEntry[] {
 // ---------------------------------------------------------------------------
 
 export function readKnowledge(projectDir: string): KnowledgeResult {
-  const gsd = resolveGsdRoot(projectDir);
-  const knowledgePath = resolveRootFile(gsd, 'KNOWLEDGE.md');
+  const sf = resolveGsdRoot(projectDir);
+  const knowledgePath = resolveRootFile(sf, 'KNOWLEDGE.md');
 
   if (!existsSync(knowledgePath)) {
     return { entries: [], counts: { rules: 0, patterns: 0, lessons: 0 } };

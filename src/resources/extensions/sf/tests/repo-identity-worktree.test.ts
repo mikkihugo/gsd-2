@@ -40,7 +40,7 @@ describe('repo-identity-worktree', () => {
     run("git add README.md", base);
     run('git commit -m "chore: init"', base);
 
-    worktreePath = join(base, ".gsd", "worktrees", "M001");
+    worktreePath = join(base, ".sf", "worktrees", "M001");
     run(`git worktree add -b milestone/M001 ${worktreePath}`, base);
 
     expectedExternalState = externalGsdRoot(base);
@@ -55,32 +55,32 @@ describe('repo-identity-worktree', () => {
 
 test('ensureGsdSymlink points worktree at main repo external state dir', () => {
     const mainState = ensureGsdSymlink(base);
-    assert.deepStrictEqual(mainState, realpathSync(join(base, ".gsd")), "ensureGsdSymlink(base) returns the current main repo .gsd target");
+    assert.deepStrictEqual(mainState, realpathSync(join(base, ".sf")), "ensureGsdSymlink(base) returns the current main repo .sf target");
     const worktreeState = ensureGsdSymlink(worktreePath);
     assert.deepStrictEqual(worktreeState, expectedExternalState, "worktree symlink target matches main repo external state dir");
-    assert.ok(existsSync(join(worktreePath, ".gsd")), "worktree .gsd exists");
-    assert.ok(lstatSync(join(worktreePath, ".gsd")).isSymbolicLink(), "worktree .gsd is a symlink");
-    assert.deepStrictEqual(realpathSync(join(worktreePath, ".gsd")), realpathSync(expectedExternalState), "worktree .gsd symlink resolves to main repo external state dir");
+    assert.ok(existsSync(join(worktreePath, ".sf")), "worktree .sf exists");
+    assert.ok(lstatSync(join(worktreePath, ".sf")).isSymbolicLink(), "worktree .sf is a symlink");
+    assert.deepStrictEqual(realpathSync(join(worktreePath, ".sf")), realpathSync(expectedExternalState), "worktree .sf symlink resolves to main repo external state dir");
 });
 
 test('ensureGsdSymlink heals stale worktree symlinks', () => {
     const staleState = join(stateDir, "projects", "stale-worktree-state");
     mkdirSync(staleState, { recursive: true });
-    rmSync(join(worktreePath, ".gsd"), { recursive: true, force: true });
-    symlinkSync(staleState, join(worktreePath, ".gsd"), "junction");
+    rmSync(join(worktreePath, ".sf"), { recursive: true, force: true });
+    symlinkSync(staleState, join(worktreePath, ".sf"), "junction");
     const healedState = ensureGsdSymlink(worktreePath);
     assert.deepStrictEqual(healedState, expectedExternalState, "stale worktree symlink is repaired to canonical external state dir");
-    assert.deepStrictEqual(realpathSync(join(worktreePath, ".gsd")), realpathSync(expectedExternalState), "healed worktree symlink resolves to canonical external state dir");
+    assert.deepStrictEqual(realpathSync(join(worktreePath, ".sf")), realpathSync(expectedExternalState), "healed worktree symlink resolves to canonical external state dir");
 });
 
-test('ensureGsdSymlink preserves worktree .gsd directories', () => {
-    rmSync(join(worktreePath, ".gsd"), { recursive: true, force: true });
-    mkdirSync(join(worktreePath, ".gsd", "milestones"), { recursive: true });
-    writeFileSync(join(worktreePath, ".gsd", "milestones", "stale.txt"), "stale\n", "utf-8");
+test('ensureGsdSymlink preserves worktree .sf directories', () => {
+    rmSync(join(worktreePath, ".sf"), { recursive: true, force: true });
+    mkdirSync(join(worktreePath, ".sf", "milestones"), { recursive: true });
+    writeFileSync(join(worktreePath, ".sf", "milestones", "stale.txt"), "stale\n", "utf-8");
     const preservedDirState = ensureGsdSymlink(worktreePath);
-    assert.deepStrictEqual(preservedDirState, join(worktreePath, ".gsd"), "worktree .gsd directory is left in place for sync-based refresh");
-    assert.ok(lstatSync(join(worktreePath, ".gsd")).isDirectory(), "worktree .gsd directory remains a directory");
-    assert.ok(existsSync(join(worktreePath, ".gsd", "milestones", "stale.txt")), "existing worktree .gsd directory contents remain available for sync logic");
+    assert.deepStrictEqual(preservedDirState, join(worktreePath, ".sf"), "worktree .sf directory is left in place for sync-based refresh");
+    assert.ok(lstatSync(join(worktreePath, ".sf")).isDirectory(), "worktree .sf directory remains a directory");
+    assert.ok(existsSync(join(worktreePath, ".sf", "milestones", "stale.txt")), "existing worktree .sf directory contents remain available for sync logic");
 });
 
 test('SF_PROJECT_ID overrides computed repo hash', () => {
@@ -132,7 +132,7 @@ test('ensureGsdSymlink refreshes repo-meta gitRoot after repo move with fixed pr
       delete process.env.SF_PROJECT_ID;
 });
 
-test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)', () => {
+test('isInheritedRepo detects subdirectory of parent repo without .sf (#1639)', () => {
       const parentRepo = realpathSync(mkdtempSync(join(tmpdir(), "sf-inherited-parent-")));
       run("git init -b main", parentRepo);
       run('git config user.name "Pi Test"', parentRepo);
@@ -143,10 +143,10 @@ test('isInheritedRepo detects subdirectory of parent repo without .gsd (#1639)',
 
       const subdir = join(parentRepo, "newproject");
       mkdirSync(subdir, { recursive: true });
-      assert.ok(isInheritedRepo(subdir), "subdirectory of parent repo without .gsd is inherited");
+      assert.ok(isInheritedRepo(subdir), "subdirectory of parent repo without .sf is inherited");
 
-      mkdirSync(join(parentRepo, ".gsd"), { recursive: true });
-      assert.ok(!isInheritedRepo(subdir), "subdirectory of parent repo WITH .gsd is NOT inherited");
+      mkdirSync(join(parentRepo, ".sf"), { recursive: true });
+      assert.ok(!isInheritedRepo(subdir), "subdirectory of parent repo WITH .sf is NOT inherited");
 
       assert.ok(!isInheritedRepo(parentRepo), "git root is not inherited");
 
@@ -184,7 +184,7 @@ test('subdirectory of parent repo gets unique identity after git init (#1639)', 
       rmSync(parentRepo, { recursive: true, force: true });
 });
 
-test('ensureGsdSymlink from subdirectory does not create .gsd in subdir when git-root .gsd exists (#2380)', () => {
+test('ensureGsdSymlink from subdirectory does not create .sf in subdir when git-root .sf exists (#2380)', () => {
     const repo = realpathSync(mkdtempSync(join(tmpdir(), "sf-subdir-symlink-")));
     run("git init -b main", repo);
     run('git config user.name "Pi Test"', repo);
@@ -194,24 +194,24 @@ test('ensureGsdSymlink from subdirectory does not create .gsd in subdir when git
     run("git add README.md", repo);
     run('git commit -m "init"', repo);
 
-    // Set up .gsd symlink at the git root (normal project initialisation)
+    // Set up .sf symlink at the git root (normal project initialisation)
     ensureGsdSymlink(repo);
-    assert.ok(existsSync(join(repo, ".gsd")), "root .gsd exists after ensureGsdSymlink");
-    assert.ok(lstatSync(join(repo, ".gsd")).isSymbolicLink(), "root .gsd is a symlink");
+    assert.ok(existsSync(join(repo, ".sf")), "root .sf exists after ensureGsdSymlink");
+    assert.ok(lstatSync(join(repo, ".sf")).isSymbolicLink(), "root .sf is a symlink");
 
     // Create a subdirectory and call ensureGsdSymlink from there
     const subdir = join(repo, "src", "lib");
     mkdirSync(subdir, { recursive: true });
     ensureGsdSymlink(subdir);
 
-    // ensureGsdSymlink should NOT create a .gsd in the subdirectory
-    // because the git root already has a valid .gsd symlink.
-    assert.ok(!existsSync(join(subdir, ".gsd")), "no .gsd created in subdirectory when git-root .gsd exists (#2380)");
-    assert.ok(!existsSync(join(repo, "src", ".gsd")), "no .gsd created in intermediate directory");
+    // ensureGsdSymlink should NOT create a .sf in the subdirectory
+    // because the git root already has a valid .sf symlink.
+    assert.ok(!existsSync(join(subdir, ".sf")), "no .sf created in subdirectory when git-root .sf exists (#2380)");
+    assert.ok(!existsSync(join(repo, "src", ".sf")), "no .sf created in intermediate directory");
 
-    // The root .gsd should still be intact
-    assert.ok(existsSync(join(repo, ".gsd")), "root .gsd still exists");
-    assert.ok(lstatSync(join(repo, ".gsd")).isSymbolicLink(), "root .gsd is still a symlink");
+    // The root .sf should still be intact
+    assert.ok(existsSync(join(repo, ".sf")), "root .sf still exists");
+    assert.ok(lstatSync(join(repo, ".sf")).isSymbolicLink(), "root .sf is still a symlink");
 
     rmSync(repo, { recursive: true, force: true });
 });

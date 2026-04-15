@@ -26,7 +26,7 @@ export type { SFSkillRule, SkillDiscoveryMode, SkillResolution, SkillResolutionR
  * Searches both the skills.sh ecosystem directory (~/.agents/skills/) and
  * Claude Code's official directory (~/.claude/skills/). Project-level
  * directories for both conventions are included as well.
- * Legacy ~/.gsd/agent/skills/ is included as a fallback for pre-migration installs.
+ * Legacy ~/.sf/agent/skills/ is included as a fallback for pre-migration installs.
  */
 export function getSkillSearchDirs(cwd: string): Array<{ dir: string; method: SkillResolution["method"] }> {
   const dirs: Array<{ dir: string; method: SkillResolution["method"] }> = [
@@ -37,7 +37,7 @@ export function getSkillSearchDirs(cwd: string): Array<{ dir: string; method: Sk
     { dir: join(cwd, ".claude", "skills"), method: "project-skill" },
   ];
   // Legacy fallback — read skills from old SF directory only if migration hasn't completed
-  const legacyDir = join(homedir(), ".gsd", "agent", "skills");
+  const legacyDir = join(homedir(), ".sf", "agent", "skills");
   if (existsSync(legacyDir) && !existsSync(join(legacyDir, ".migrated-to-agents"))) {
     dirs.push({ dir: legacyDir, method: "user-skill" });
   }

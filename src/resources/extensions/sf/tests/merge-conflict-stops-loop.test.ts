@@ -1,7 +1,7 @@
 /**
  * merge-conflict-stops-loop.test.ts — #2330
  *
- * When a squash merge has real code conflicts (not just .gsd/ files),
+ * When a squash merge has real code conflicts (not just .sf/ files),
  * the merge retries forever because MergeConflictError is caught
  * silently in mergeAndExit. This test verifies that:
  * 1. worktree-resolver re-throws MergeConflictError for code conflicts

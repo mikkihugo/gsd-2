@@ -80,20 +80,20 @@ export function captureIntegrationBranch(basePath: string, milestoneId: string):
 
 /**
  * Find the worktrees segment in a path, supporting both direct
- * (`/.gsd/worktrees/`) and symlink-resolved (`/.gsd/projects/<hash>/worktrees/`)
- * layouts.  When `.gsd` is a symlink to `~/.gsd/projects/<hash>`, resolved
+ * (`/.sf/worktrees/`) and symlink-resolved (`/.sf/projects/<hash>/worktrees/`)
+ * layouts.  When `.sf` is a symlink to `~/.sf/projects/<hash>`, resolved
  * paths contain the intermediate `projects/<hash>/` segment that the old
  * single-marker check missed.
  */
 function findWorktreeSegment(normalizedPath: string): { sfIdx: number; afterWorktrees: number } | null {
-  // Direct layout: /.gsd/worktrees/<name>
-  const directMarker = "/.gsd/worktrees/";
+  // Direct layout: /.sf/worktrees/<name>
+  const directMarker = "/.sf/worktrees/";
   const idx = normalizedPath.indexOf(directMarker);
   if (idx !== -1) {
     return { sfIdx: idx, afterWorktrees: idx + directMarker.length };
   }
-  // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/<name>
-  const symlinkRe = /\/\.gsd\/projects\/[a-f0-9]+\/worktrees\//;
+  // Symlink-resolved layout: /.sf/projects/<hash>/worktrees/<name>
+  const symlinkRe = /\/\.sf\/projects\/[a-f0-9]+\/worktrees\//;
   const match = normalizedPath.match(symlinkRe);
   if (match && match.index !== undefined) {
     return { sfIdx: match.index, afterWorktrees: match.index + match[0].length };
@@ -103,7 +103,7 @@ function findWorktreeSegment(normalizedPath: string): { sfIdx: number; afterWork
 
 /**
  * Detect the active worktree name from the current working directory.
- * Returns null if not inside a SF worktree (.gsd/worktrees/<name>/).
+ * Returns null if not inside a SF worktree (.sf/worktrees/<name>/).
  */
 export function detectWorktreeName(basePath: string): string | null {
   const normalizedPath = basePath.replaceAll("\\", "/");
@@ -117,13 +117,13 @@ export function detectWorktreeName(basePath: string): string | null {
 /**
  * Resolve the project root from a path that may be inside a worktree.
  * If the path contains a worktrees segment, returns the portion before
- * `/.gsd/`. Otherwise returns the input unchanged.
+ * `/.sf/`. Otherwise returns the input unchanged.
  *
  * When the worker was spawned with SF_PROJECT_ROOT set, use that directly —
  * the coordinator already knows the real project root unambiguously.
  *
- * When `/.gsd/` in the resolved path is actually the user-level `~/.gsd/`
- * (common when `.gsd` is a symlink into `~/.gsd/projects/<hash>`), the
+ * When `/.sf/` in the resolved path is actually the user-level `~/.sf/`
+ * (common when `.sf` is a symlink into `~/.sf/projects/<hash>`), the
  * string-slice heuristic would return `~` — which is catastrophically wrong.
  * In that case, fall back to reading the worktree's `.git` file, which
  * contains a `gitdir:` pointer to the real project's `.git/worktrees/<name>`,
@@ -144,20 +144,20 @@ export function resolveProjectRoot(basePath: string): string {
 
   // Candidate root via the string-slice heuristic
   const sepChar = basePath.includes("\\") ? "\\" : "/";
-  const sfMarker = `${sepChar}.gsd${sepChar}`;
+  const sfMarker = `${sepChar}.sf${sepChar}`;
   const sfIdx = basePath.indexOf(sfMarker);
   const candidate = sfIdx !== -1
     ? basePath.slice(0, sfIdx)
     : basePath.slice(0, seg.sfIdx);
 
   // Layer 2: Guard against resolving to the user's home directory.
-  // When .gsd is a symlink into ~/.gsd/projects/<hash>, the resolved path
-  // contains /.gsd/ at the user-level boundary. Slicing there yields ~ — wrong.
-  const sfHome = normalizePathForCompare(process.env.SF_HOME || join(homedir(), ".gsd"));
-  const candidateSfPath = normalizePathForCompare(join(candidate, ".gsd"));
+  // When .sf is a symlink into ~/.sf/projects/<hash>, the resolved path
+  // contains /.sf/ at the user-level boundary. Slicing there yields ~ — wrong.
+  const sfHome = normalizePathForCompare(process.env.SF_HOME || join(homedir(), ".sf"));
+  const candidateSfPath = normalizePathForCompare(join(candidate, ".sf"));
 
   if (candidateSfPath === sfHome || candidateSfPath.startsWith(sfHome + "/")) {
-    // The candidate is the home directory (or within it in a way that .gsd
+    // The candidate is the home directory (or within it in a way that .sf
     // maps to the user-level SF dir). Try to recover the real project root
     // from the worktree's .git file.
     const realRoot = resolveProjectRootFromGitFile(basePath);

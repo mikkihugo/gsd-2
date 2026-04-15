@@ -1,7 +1,7 @@
 /**
  * SF Command — /sf codebase
  *
- * Generate and manage the codebase map (.gsd/CODEBASE.md).
+ * Generate and manage the codebase map (.sf/CODEBASE.md).
  * Subcommands: generate, update, stats, help
  */
 

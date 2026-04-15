@@ -149,7 +149,7 @@ function formatDuration(ms: number): string {
 
 export function QuickPanel() {
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-quick">
+    <div className="space-y-4" data-testid="sf-surface-sf-quick">
       <PanelHeader
         title="Quick Task"
         icon={<Zap className="h-3.5 w-3.5" />}
@@ -164,7 +164,7 @@ export function QuickPanel() {
         <div className="space-y-2">
           <h4 className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Usage</h4>
           <div className="rounded-md border border-border/50 bg-background/50 px-3 py-2 font-mono text-[11px] text-foreground/80">
-            /gsd quick &lt;description&gt;
+            /sf quick &lt;description&gt;
           </div>
         </div>
 
@@ -179,7 +179,7 @@ export function QuickPanel() {
             ].map((example) => (
               <div key={example} className="flex items-center gap-2 text-[11px]">
                 <span className="text-muted-foreground">$</span>
-                <code className="font-mono text-muted-foreground">/gsd quick {example}</code>
+                <code className="font-mono text-muted-foreground">/sf quick {example}</code>
               </div>
             ))}
           </div>
@@ -209,7 +209,7 @@ export function HistoryPanel() {
   const [activeTab, setActiveTab] = useState<HistoryTab>("phase")
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-history">
+    <div className="space-y-4" data-testid="sf-surface-sf-history">
       <PanelHeader
         title="History & Metrics"
         icon={<Clock className="h-3.5 w-3.5" />}
@@ -395,7 +395,7 @@ export function UndoPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-undo">
+    <div className="space-y-4" data-testid="sf-surface-sf-undo">
       <PanelHeader
         title="Undo Last Unit"
         icon={<Undo2 className="h-3.5 w-3.5" />}
@@ -544,7 +544,7 @@ export function SteerPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-steer">
+    <div className="space-y-4" data-testid="sf-surface-sf-steer">
       <PanelHeader
         title="Steer"
         icon={<Navigation className="h-3.5 w-3.5" />}
@@ -614,7 +614,7 @@ export function HooksPanel() {
   const busy = state.phase === "loading"
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-hooks">
+    <div className="space-y-4" data-testid="sf-surface-sf-hooks">
       <PanelHeader
         title="Hooks"
         icon={<Layers className="h-3.5 w-3.5" />}
@@ -706,7 +706,7 @@ export function InspectPanel() {
   const busy = state.phase === "loading"
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-inspect">
+    <div className="space-y-4" data-testid="sf-surface-sf-inspect">
       <PanelHeader
         title="Inspect Database"
         icon={<Database className="h-3.5 w-3.5" />}
@@ -833,7 +833,7 @@ export function ExportPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-export">
+    <div className="space-y-4" data-testid="sf-surface-sf-export">
       <PanelHeader
         title="Export"
         icon={<Download className="h-3.5 w-3.5" />}
@@ -934,7 +934,7 @@ export function CleanupPanel() {
   }
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-cleanup">
+    <div className="space-y-4" data-testid="sf-surface-sf-cleanup">
       <PanelHeader
         title="Cleanup"
         icon={<Trash2 className="h-3.5 w-3.5" />}
@@ -1078,7 +1078,7 @@ export function QueuePanel() {
   const active = workspaceIndex?.active
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-queue">
+    <div className="space-y-4" data-testid="sf-surface-sf-queue">
       <PanelHeader
         title="Queue"
         icon={<ListChecks className="h-3.5 w-3.5" />}
@@ -1187,7 +1187,7 @@ export function StatusPanel() {
   const doneSlices = milestones.reduce((sum: number, m: WorkspaceMilestoneTarget) => sum + m.slices.filter((s) => s.done).length, 0)
 
   return (
-    <div className="space-y-4" data-testid="gsd-surface-gsd-status">
+    <div className="space-y-4" data-testid="sf-surface-sf-status">
       <PanelHeader
         title="Status"
         icon={<Terminal className="h-3.5 w-3.5" />}
@@ -1257,7 +1257,7 @@ export function StatusPanel() {
       )}
 
       {milestones.length === 0 && (
-        <PanelEmpty message="No plan loaded — run /gsd to initialize" />
+        <PanelEmpty message="No plan loaded — run /sf to initialize" />
       )}
     </div>
   )

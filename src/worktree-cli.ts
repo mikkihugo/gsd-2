@@ -2,12 +2,12 @@
  * SF Worktree CLI — standalone subcommand and -w flag handling.
  *
  * Manages the full worktree lifecycle from the command line:
- *   gsd -w                    Create auto-named worktree, start interactive session
- *   gsd -w my-feature         Create/resume named worktree
- *   gsd worktree list         List worktrees with status
- *   gsd worktree merge [name] Squash-merge a worktree into main
- *   gsd worktree clean        Remove all merged/empty worktrees
- *   gsd worktree remove <n>   Remove a specific worktree
+ *   sf -w                    Create auto-named worktree, start interactive session
+ *   sf -w my-feature         Create/resume named worktree
+ *   sf worktree list         List worktrees with status
+ *   sf worktree merge [name] Squash-merge a worktree into main
+ *   sf worktree clean        Remove all merged/empty worktrees
+ *   sf worktree remove <n>   Remove a specific worktree
  *
  * On session exit (via session_shutdown event), auto-commits dirty work
  * so nothing is lost. The SF extension reads SF_CLI_WORKTREE to know
@@ -151,7 +151,7 @@ async function handleList(basePath: string): Promise<void> {
   const worktrees = ext.listWorktrees(basePath)
 
   if (worktrees.length === 0) {
-    process.stderr.write(chalk.dim('No worktrees. Create one with: gsd -w <name>\n'))
+    process.stderr.write(chalk.dim('No worktrees. Create one with: sf -w <name>\n'))
     return
   }
 
@@ -174,8 +174,8 @@ async function handleMerge(basePath: string, args: string[]): Promise<void> {
       await doMerge(ext, basePath, worktrees[0].name)
       return
     }
-    process.stderr.write(chalk.red('Usage: gsd worktree merge <name>\n'))
-    process.stderr.write(chalk.dim('Run gsd worktree list to see worktrees.\n'))
+    process.stderr.write(chalk.red('Usage: sf worktree merge <name>\n'))
+    process.stderr.write(chalk.dim('Run sf worktree list to see worktrees.\n'))
     process.exit(1)
   }
   await doMerge(ext, basePath, name)
@@ -220,7 +220,7 @@ async function doMerge(ext: ExtensionModules, basePath: string, name: string): P
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
     process.stderr.write(chalk.red(`✗ Merge failed: ${msg}\n`))
-    process.stderr.write(chalk.dim('  Resolve conflicts manually, then run gsd worktree merge again.\n'))
+    process.stderr.write(chalk.dim('  Resolve conflicts manually, then run sf worktree merge again.\n'))
     process.exit(1)
   }
 }
@@ -260,7 +260,7 @@ async function handleRemove(basePath: string, args: string[]): Promise<void> {
   const ext = await loadExtensionModules()
   const name = args[0]
   if (!name) {
-    process.stderr.write(chalk.red('Usage: gsd worktree remove <name>\n'))
+    process.stderr.write(chalk.red('Usage: sf worktree remove <name>\n'))
     process.exit(1)
   }
 
@@ -274,7 +274,7 @@ async function handleRemove(basePath: string, args: string[]): Promise<void> {
   const status = getWorktreeStatus(ext, basePath, name, wt.path)
   if (status.filesChanged > 0 || status.uncommitted) {
     process.stderr.write(chalk.yellow(`⚠ Worktree "${name}" has unmerged changes (${status.filesChanged} files).\n`))
-    process.stderr.write(chalk.yellow('  Use --force to remove anyway, or merge first: gsd worktree merge ' + name + '\n'))
+    process.stderr.write(chalk.yellow('  Use --force to remove anyway, or merge first: sf worktree merge ' + name + '\n'))
     if (!process.argv.includes('--force')) {
       process.exit(1)
     }
@@ -306,7 +306,7 @@ async function handleStatusBanner(basePath: string): Promise<void> {
     chalk.yellow(`${withChanges.length} worktree${withChanges.length === 1 ? '' : 's'} with unmerged changes: `) +
     names + '\n' +
     chalk.dim('[forge] ') +
-    chalk.dim('Resume: gsd -w <name>  |  Merge: gsd worktree merge <name>  |  List: gsd worktree list\n\n'),
+    chalk.dim('Resume: sf -w <name>  |  Merge: sf worktree merge <name>  |  List: sf worktree list\n\n'),
   )
 }
 
@@ -316,7 +316,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
   const ext = await loadExtensionModules()
   const basePath = process.cwd()
 
-  // gsd -w (no name) — resume most recent worktree with changes, or create new
+  // sf -w (no name) — resume most recent worktree with changes, or create new
   if (worktreeFlag === true) {
     const existing = ext.listWorktrees(basePath)
     const withChanges = existing.filter(wt => {
@@ -345,7 +345,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
         const status = getWorktreeStatus(ext, basePath, wt.name, wt.path)
         process.stderr.write(formatStatus(status) + '\n\n')
       }
-      process.stderr.write(chalk.dim('Specify which one: gsd -w <name>\n'))
+      process.stderr.write(chalk.dim('Specify which one: sf -w <name>\n'))
       process.exit(0)
     }
 
@@ -355,7 +355,7 @@ async function handleWorktreeFlag(worktreeFlag: boolean | string): Promise<void>
     return
   }
 
-  // gsd -w <name> — create or resume named worktree
+  // sf -w <name> — create or resume named worktree
   const name = worktreeFlag as string
   const existing = ext.listWorktrees(basePath)
   const found = existing.find(wt => wt.name === name)

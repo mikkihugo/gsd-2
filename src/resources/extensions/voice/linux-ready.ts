@@ -14,7 +14,7 @@ import * as path from "node:path";
 
 export const VOICE_VENV_DIR = path.join(
 	process.env.HOME || process.env.USERPROFILE || os.homedir(),
-	".gsd",
+	".sf",
 	"voice-venv",
 );
 export const VOICE_VENV_PYTHON = path.join(VOICE_VENV_DIR, "bin", "python3");
@@ -81,7 +81,7 @@ export function ensureVoiceVenv(cb: ReadinessCallbacks): boolean {
 		);
 		return true;
 	} catch {
-		cb.notify("Voice: failed to create Python venv — run: python3 -m venv ~/.gsd/voice-venv", "error");
+		cb.notify("Voice: failed to create Python venv — run: python3 -m venv ~/.sf/voice-venv", "error");
 		return false;
 	}
 }

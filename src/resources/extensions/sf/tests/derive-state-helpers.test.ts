@@ -28,12 +28,12 @@ import {
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-helpers-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
 function writeFile(base: string, relativePath: string, content: string): void {
-  const full = join(base, '.gsd', relativePath);
+  const full = join(base, '.sf', relativePath);
   mkdirSync(join(full, '..'), { recursive: true });
   writeFileSync(full, content);
 }
@@ -423,7 +423,7 @@ describe('derive-state-helpers', () => {
     try {
       // M003 should come first per queue order, M001 second
       const queueOrder = JSON.stringify({ order: ['M003', 'M001', 'M002'], updatedAt: new Date().toISOString() });
-      writeFileSync(join(base, '.gsd', 'QUEUE-ORDER.json'), queueOrder);
+      writeFileSync(join(base, '.sf', 'QUEUE-ORDER.json'), queueOrder);
       writeFile(base, 'milestones/M001/M001-CONTEXT.md', '# M001\n\nContext.');
       writeFile(base, 'milestones/M002/M002-CONTEXT.md', '# M002\n\nContext.');
       writeFile(base, 'milestones/M003/M003-CONTEXT.md', '# M003\n\nContext.');
@@ -475,7 +475,7 @@ describe('derive-state-helpers', () => {
     const base = createFixtureBase();
     try {
       // M001: queued shell — no content, no slices
-      mkdirSync(join(base, '.gsd', 'milestones', 'M001'), { recursive: true });
+      mkdirSync(join(base, '.sf', 'milestones', 'M001'), { recursive: true });
       // M002: real milestone with context
       writeFile(base, 'milestones/M002/M002-CONTEXT.md', '# M002: Real\n\nActive milestone.');
 

@@ -71,7 +71,7 @@ export class SessionManager extends EventEmitter {
    *
    * Rejects if a session already exists for this projectDir.
    * Creates an RpcClient, starts the process, performs the v2 init handshake,
-   * wires event tracking, and sends '/gsd auto' to begin execution.
+   * wires event tracking, and sends '/sf auto' to begin execution.
    */
   async startSession(options: StartSessionOptions): Promise<string> {
     const { projectDir } = options;
@@ -140,7 +140,7 @@ export class SessionManager extends EventEmitter {
       });
 
       // Kick off auto-mode
-      const command = options.command ?? '/gsd auto';
+      const command = options.command ?? '/sf auto';
       await client.prompt(command);
 
       this.logger.info('session started', { sessionId: session.sessionId, projectDir: resolvedDir });
@@ -278,21 +278,21 @@ export class SessionManager extends EventEmitter {
    * Resolve the SF CLI path.
    *
    * 1. SF_CLI_PATH env var (highest priority)
-   * 2. `which gsd` → resolve to the actual dist/cli.js
+   * 2. `which sf` → resolve to the actual dist/cli.js
    */
   static resolveCLIPath(): string {
     const envPath = process.env['SF_CLI_PATH'];
     if (envPath) return resolve(envPath);
 
     try {
-      const gsdBin = execSync('which gsd', { encoding: 'utf-8' }).trim();
+      const gsdBin = execSync('which sf', { encoding: 'utf-8' }).trim();
       if (gsdBin) return resolve(gsdBin);
     } catch {
       // which failed
     }
 
     throw new Error(
-      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `gsd` is in PATH.'
+      'Cannot find SF CLI. Set SF_CLI_PATH environment variable or ensure `sf` is in PATH.'
     );
   }
 

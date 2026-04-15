@@ -1106,7 +1106,7 @@ export function ExperimentalPanel() {
   const [saveError, setSaveError] = useState<string | null>(null)
 
   // Trigger a settings load if data hasn't been fetched yet (e.g. navigating
-  // directly to the Experimental tab without going through gsd-prefs first).
+  // directly to the Experimental tab without going through sf-prefs first).
   useEffect(() => {
     if (!data && !busy && state.phase === "idle") {
       refresh()
@@ -1223,7 +1223,7 @@ export function ExperimentalPanel() {
       {data && (
         <p className="text-[11px] text-muted-foreground">
           Changes are written to{" "}
-          <span className="font-mono">{prefs?.path ?? "~/.gsd/PREFERENCES.md"}</span>
+          <span className="font-mono">{prefs?.path ?? "~/.sf/PREFERENCES.md"}</span>
           {" "}and take effect on the next session.
         </p>
       )}
@@ -1235,6 +1235,6 @@ export function ExperimentalPanel() {
 // LEGACY EXPORTS
 // ═══════════════════════════════════════════════════════════════════════
 
-// Legacy exports for backward compatibility with gsd-prefs mega-scroll
+// Legacy exports for backward compatibility with sf-prefs mega-scroll
 export const TerminalSizePanel = GeneralPanel
 export const EditorSizePanel = () => null

@@ -166,7 +166,7 @@ async function handleCustomWorkflow(
       return true;
     }
     const base = projectRoot();
-    const defPath = join(base, ".gsd", "workflow-defs", `${defName}.yaml`);
+    const defPath = join(base, ".sf", "workflow-defs", `${defName}.yaml`);
     if (!existsSync(defPath)) {
       ctx.ui.notify(`Definition not found: ${defPath}`, "error");
       return true;

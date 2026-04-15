@@ -24,19 +24,19 @@ const tempDirs = new Set<string>();
 
 function createBasePath(): string {
   const basePath = mkdtempSync(join(tmpdir(), "sf-uok-planv2-"));
-  mkdirSync(join(basePath, ".gsd", "milestones", MILESTONE_ID), { recursive: true });
+  mkdirSync(join(basePath, ".sf", "milestones", MILESTONE_ID), { recursive: true });
   tempDirs.add(basePath);
   return basePath;
 }
 
 function writeMilestoneFile(basePath: string, suffix: string, content: string): void {
-  const milestoneDir = join(basePath, ".gsd", "milestones", MILESTONE_ID);
+  const milestoneDir = join(basePath, ".sf", "milestones", MILESTONE_ID);
   mkdirSync(milestoneDir, { recursive: true });
   writeFileSync(join(milestoneDir, `${MILESTONE_ID}-${suffix}.md`), `${content}\n`, "utf-8");
 }
 
 function writeSliceFile(basePath: string, suffix: string, content: string): void {
-  const sliceDir = join(basePath, ".gsd", "milestones", MILESTONE_ID, "slices", SLICE_ID);
+  const sliceDir = join(basePath, ".sf", "milestones", MILESTONE_ID, "slices", SLICE_ID);
   mkdirSync(sliceDir, { recursive: true });
   writeFileSync(join(sliceDir, `${SLICE_ID}-${suffix}.md`), `${content}\n`, "utf-8");
 }

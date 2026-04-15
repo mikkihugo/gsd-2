@@ -1,7 +1,7 @@
 /**
  * sf-learning: fallback-chain writer
  *
- * Writes per-unit-type runtime fallback chains into `~/.gsd/agent/settings.json`
+ * Writes per-unit-type runtime fallback chains into `~/.sf/agent/settings.json`
  * under `fallback.chains.*`, so pi-ai's `FallbackResolver` has ONE entry per
  * active unit type to walk when a dispatch hits a 429 or other retryable
  * failure. Without this, the resolver reads an empty `chains` object and
@@ -10,10 +10,10 @@
  *
  * ## Why this lives in the plugin, not in preferences.md
  *
- * `~/.gsd/preferences.md` tells sf which model to START a unit with — it
+ * `~/.sf/preferences.md` tells sf which model to START a unit with — it
  * feeds `before_model_select`, which this plugin already intercepts. But
  * once dispatch begins and the LLM call 429s, pi-ai's retry path reads
- * `~/.gsd/agent/settings.json` → `fallback.chains` directly via
+ * `~/.sf/agent/settings.json` → `fallback.chains` directly via
  * `SettingsManager.getFallbackSettings()`. Those two configs are separate
  * pipelines. preferences.md never reaches the retry walker.
  *
@@ -76,7 +76,7 @@ const NEUTRAL_PRIOR_SCORE = 50;
 const PRIORITY_STEP = 10;
 const DEFAULT_CHAIN_NAME = "default";
 const MAIN_CHAIN_NAME = "main";
-const PROJECT_SETTINGS_SUBPATH = ".gsd/agent/settings.json";
+const PROJECT_SETTINGS_SUBPATH = ".sf/agent/settings.json";
 
 /**
  * Compute blended ranking for a single unit type across every model we
@@ -254,7 +254,7 @@ function rankedToEntries(ranked, bareIdIndex) {
 /**
  * Read settings.json, merge in new fallback chains, and atomically replace.
  *
- * @param {string} settingsPath - absolute path to ~/.gsd/agent/settings.json
+ * @param {string} settingsPath - absolute path to ~/.sf/agent/settings.json
  * @param {Record<string, Array>} chainsByName - map of chain name → entries
  */
 function writeSettingsWithChains(settingsPath, chainsByName) {
@@ -342,12 +342,12 @@ function resolveCanonicalPath(pathValue) {
 }
 
 /**
- * Check for a project-level `.gsd/agent/settings.json` in `cwd`.
+ * Check for a project-level `.sf/agent/settings.json` in `cwd`.
  * pi-ai's settings manager deep-merges project settings over global,
  * so a project-level `fallback` block silently neutralizes the chains
  * this plugin writes globally (combatant finding #4).
  *
- * Bails out early when `cwd/.gsd/agent/settings.json` resolves to the same
+ * Bails out early when `cwd/.sf/agent/settings.json` resolves to the same
  * canonical path as the global settings file — i.e. when sf is invoked
  * from `$HOME` and the "project-level" probe aliases the global file.
  * Without this guard, the plugin warns about its own writes shadowing
@@ -391,7 +391,7 @@ function detectProjectSettingsShadow(cwd, globalSettingsPath, log) {
  * unit types (used when the current model isn't in any unit-specific
  * chain — e.g. the user overrode the model via `/sf model`).
  *
- * Also checks for a project-level `.gsd/agent/settings.json` that might
+ * Also checks for a project-level `.sf/agent/settings.json` that might
  * silently shadow the global chains via pi-ai's deep-merge, and warns
  * via `deps.opts.log` when one is found.
  *

@@ -28,7 +28,7 @@ const DECISIONS_MD = `# Decisions Register
 | # | When | Scope | Decision | Choice | Rationale | Revisable? |
 |---|------|-------|----------|--------|-----------|------------|
 | D001 | M001 | library | SQLite library | better-sqlite3 | Sync API | No |
-| D002 | M001 | arch | DB location | .gsd/sf.db | Derived state | No |
+| D002 | M001 | arch | DB location | .sf/sf.db | Derived state | No |
 | D010 | M001/S01 | library | Provider strategy (amends D001) | node:sqlite fallback | Zero deps | No |
 | D020 | M001/S02 | library | Importer approach (amends D010) | Direct parse | Simple | Yes |
 `;
@@ -97,7 +97,7 @@ const REQUIREMENTS_MD = `# Requirements
 // ═══════════════════════════════════════════════════════════════════════════
 
 function createFixtureTree(baseDir: string): void {
-  const sf = path.join(baseDir, '.gsd');
+  const sf = path.join(baseDir, '.sf');
   fs.mkdirSync(sf, { recursive: true });
   fs.writeFileSync(path.join(sf, 'DECISIONS.md'), DECISIONS_MD);
   fs.writeFileSync(path.join(sf, 'REQUIREMENTS.md'), REQUIREMENTS_MD);
@@ -194,7 +194,7 @@ test('md-importer: made_by column parsing (new 8-column format)', () => {
 | # | When | Scope | Decision | Choice | Rationale | Revisable? | Made By |
 |---|------|-------|----------|--------|-----------|------------|---------|
 | D001 | M001 | library | SQLite library | better-sqlite3 | Sync API | No | human |
-| D002 | M001 | arch | DB location | .gsd/sf.db | Derived state | No | agent |
+| D002 | M001 | arch | DB location | .sf/sf.db | Derived state | No | agent |
 | D003 | M002 | impl | Config format | JSON | Simple | Yes | collaborative |
 | D004 | M002 | impl | Cache strategy | LRU | Predictable | No | bogus |
 `;
@@ -337,8 +337,8 @@ test('md-importer: idempotent re-import', () => {
 
 test('md-importer: missing file handling', () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'sf-empty-test-'));
-  // Create empty .gsd/ with no files
-  fs.mkdirSync(path.join(tmpDir, '.gsd'), { recursive: true });
+  // Create empty .sf/ with no files
+  fs.mkdirSync(path.join(tmpDir, '.sf'), { recursive: true });
 
   try {
     openDatabase(':memory:');
@@ -389,7 +389,7 @@ test('md-importer: round-trip fidelity', () => {
     assert.deepStrictEqual(d002?.when_context, 'M001', 'D002 when_context round-trip');
     assert.deepStrictEqual(d002?.scope, 'arch', 'D002 scope round-trip');
     assert.deepStrictEqual(d002?.decision, 'DB location', 'D002 decision round-trip');
-    assert.deepStrictEqual(d002?.choice, '.gsd/sf.db', 'D002 choice round-trip');
+    assert.deepStrictEqual(d002?.choice, '.sf/sf.db', 'D002 choice round-trip');
     assert.deepStrictEqual(d002?.rationale, 'Derived state', 'D002 rationale round-trip');
 
     const r002 = getRequirementById('R002');

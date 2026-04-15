@@ -9,7 +9,7 @@ import { assessInterruptedSession } from "../interrupted-session.ts";
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-auto-interrupted-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 
@@ -18,7 +18,7 @@ function cleanup(base: string): void {
 }
 
 function writeRoadmap(base: string, checked = false): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   mkdirSync(join(milestoneDir, "slices", "S01", "tasks"), { recursive: true });
   writeFileSync(
     join(milestoneDir, "M001-ROADMAP.md"),
@@ -49,7 +49,7 @@ function writeRoadmap(base: string, checked = false): void {
 }
 
 function writeCompleteArtifacts(base: string): void {
-  const milestoneDir = join(base, ".gsd", "milestones", "M001");
+  const milestoneDir = join(base, ".sf", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   mkdirSync(sliceDir, { recursive: true });
   writeFileSync(join(sliceDir, "S01-SUMMARY.md"), "# Summary\nDone.\n", "utf-8");
@@ -59,7 +59,7 @@ function writeCompleteArtifacts(base: string): void {
 
 function writeLock(base: string, unitType: string, unitId: string): void {
   writeFileSync(
-    join(base, ".gsd", "auto.lock"),
+    join(base, ".sf", "auto.lock"),
     JSON.stringify({
       pid: 999999999,
       startedAt: new Date().toISOString(),
@@ -72,7 +72,7 @@ function writeLock(base: string, unitType: string, unitId: string): void {
 }
 
 function writePausedSession(base: string, milestoneId = "M001", stepMode = false): void {
-  const runtimeDir = join(base, ".gsd", "runtime");
+  const runtimeDir = join(base, ".sf", "runtime");
   mkdirSync(runtimeDir, { recursive: true });
   writeFileSync(
     join(runtimeDir, "paused-session.json"),

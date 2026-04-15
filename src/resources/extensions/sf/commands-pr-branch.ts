@@ -2,7 +2,7 @@
  * SF Command — /sf pr-branch
  *
  * Creates a clean PR branch by cherry-picking commits while stripping
- * any changes to .gsd/, .planning/, and PLAN.md paths. Useful for
+ * any changes to .sf/, .planning/, and PLAN.md paths. Useful for
  * upstream PRs where planning artifacts should not be included.
  */
 
@@ -16,7 +16,7 @@ import {
   nativeBranchExists,
 } from "./native-git-bridge.js";
 
-const EXCLUDED_PATHS = [".gsd", ".planning", "PLAN.md"] as const;
+const EXCLUDED_PATHS = [".sf", ".planning", "PLAN.md"] as const;
 
 function git(basePath: string, args: readonly string[]): string {
   return execFileSync("git", args, { cwd: basePath, encoding: "utf-8" }).trim();
@@ -63,7 +63,7 @@ function getCodeOnlyCommits(basePath: string, base: string, head: string): strin
         .split("\n")
         .filter(Boolean);
       const hasCodeChanges = files.some(
-        (f) => !f.startsWith(".gsd/") && !f.startsWith(".planning/") && f !== "PLAN.md",
+        (f) => !f.startsWith(".sf/") && !f.startsWith(".planning/") && f !== "PLAN.md",
       );
       if (hasCodeChanges) {
         codeCommits.push(sha);
@@ -111,7 +111,7 @@ function assertNoExcludedPaths(basePath: string, base: string): void {
     .split("\n")
     .filter(Boolean);
   const leaked = files.filter(
-    (f) => f.startsWith(".gsd/") || f.startsWith(".planning/") || f === "PLAN.md",
+    (f) => f.startsWith(".sf/") || f.startsWith(".planning/") || f === "PLAN.md",
   );
   if (leaked.length > 0) {
     throw new Error(
@@ -146,12 +146,12 @@ export async function handlePrBranch(
   const commits = getCodeOnlyCommits(basePath, baseRef, "HEAD");
 
   if (commits.length === 0) {
-    ctx.ui.notify("No code-only commits found (all commits only touch .gsd/ files).", "info");
+    ctx.ui.notify("No code-only commits found (all commits only touch .sf/ files).", "info");
     return;
   }
 
   if (dryRun) {
-    const lines = [`Would create PR branch with ${commits.length} commits (filtering .gsd/ paths):\n`];
+    const lines = [`Would create PR branch with ${commits.length} commits (filtering .sf/ paths):\n`];
     for (const sha of commits) {
       const msg = git(basePath, ["log", "--format=%s", "-1", sha]);
       lines.push(`  ${sha.slice(0, 8)} ${msg}`);
@@ -220,7 +220,7 @@ export async function handlePrBranch(
 
     const skippedMsg = skipped > 0 ? ` (${skipped} skipped — contained only planning artifacts)` : "";
     ctx.ui.notify(
-      `Created ${prBranch} with ${picked} commits${skippedMsg} (no .gsd/ artifacts).\nSwitch back: git checkout ${currentBranch}`,
+      `Created ${prBranch} with ${picked} commits${skippedMsg} (no .sf/ artifacts).\nSwitch back: git checkout ${currentBranch}`,
       "success",
     );
   } catch (err) {

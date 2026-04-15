@@ -90,7 +90,7 @@ export function resolveGsdCliEntry(options: ResolveGsdCliEntryOptions): GsdCliEn
   const messageArgs = options.mode === "interactive" ? options.messages ?? [] : [];
 
   const sourceEntry = join(options.packageRoot, "src", "loader.ts");
-  const resolveTsLoader = join(options.packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs");
+  const resolveTsLoader = join(options.packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs");
   const builtEntry = join(options.packageRoot, "dist", "loader.js");
 
   const sourceCliEntry =

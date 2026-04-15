@@ -46,7 +46,7 @@ export interface GitPreferences {
   push_branches?: boolean;
   remote?: string;
   snapshots?: boolean;
-  /** Deprecated. .gsd/ is managed externally; retained for compatibility. */
+  /** Deprecated. .sf/ is managed externally; retained for compatibility. */
   commit_docs?: boolean;
   pre_merge_check?: boolean | string;
   commit_type?: string;
@@ -163,7 +163,7 @@ export function buildTaskCommitMessage(ctx: TaskCommitContext): string {
 }
 
 /**
- * Thrown when a slice merge hits code conflicts in non-.gsd files.
+ * Thrown when a slice merge hits code conflicts in non-.sf files.
  * The working tree is left in a conflicted state (no reset) so the
  * caller can dispatch a fix-merge session to resolve it.
  */
@@ -182,7 +182,7 @@ export class MergeConflictError extends SFError {
     super(
       SF_MERGE_CONFLICT,
       `${strategy === "merge" ? "Merge" : "Squash-merge"} of "${branch}" into "${mainBranch}" ` +
-      `failed with conflicts in ${conflictedFiles.length} non-.gsd file(s): ${conflictedFiles.join(", ")}`,
+      `failed with conflicts in ${conflictedFiles.length} non-.sf file(s): ${conflictedFiles.join(", ")}`,
     );
     this.name = "MergeConflictError";
     this.conflictedFiles = conflictedFiles;
@@ -209,28 +209,28 @@ export interface PreMergeCheckResult {
  * This array must stay synchronized with it.
  */
 export const RUNTIME_EXCLUSION_PATHS: readonly string[] = [
-  ".gsd/activity/",
-  ".gsd/forensics/",
-  ".gsd/runtime/",
-  ".gsd/worktrees/",
-  ".gsd/parallel/",
-  ".gsd/auto.lock",
-  ".gsd/metrics.json",
-  ".gsd/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
-  ".gsd/state-manifest.json",
-  ".gsd/STATE.md",
-  ".gsd/sf.db*",
-  ".gsd/journal/",
-  ".gsd/doctor-history.jsonl",
-  ".gsd/event-log.jsonl",
-  ".gsd/DISCUSSION-MANIFEST.json",
+  ".sf/activity/",
+  ".sf/forensics/",
+  ".sf/runtime/",
+  ".sf/worktrees/",
+  ".sf/parallel/",
+  ".sf/auto.lock",
+  ".sf/metrics.json",
+  ".sf/completed-units*.json", // covers completed-units.json and archived completed-units-{MID}.json
+  ".sf/state-manifest.json",
+  ".sf/STATE.md",
+  ".sf/sf.db*",
+  ".sf/journal/",
+  ".sf/doctor-history.jsonl",
+  ".sf/event-log.jsonl",
+  ".sf/DISCUSSION-MANIFEST.json",
 ];
 
 // ─── Integration Branch Metadata ───────────────────────────────────────────
 
 /**
  * Path to the milestone metadata file that stores the integration branch.
- * Format: .gsd/milestones/<MID>/<MID>-META.json
+ * Format: .sf/milestones/<MID>/<MID>-META.json
  */
 function milestoneMetaPath(basePath: string, milestoneId: string): string {
   return join(sfRoot(basePath), "milestones", milestoneId, `${milestoneId}-META.json`);
@@ -304,7 +304,7 @@ export function writeIntegrationBranch(
 
   existing.integrationBranch = branch;
   writeFileSync(metaFile, JSON.stringify(existing, null, 2) + "\n", "utf-8");
-  // .gsd/ is managed externally (symlinked) — metadata is not committed to git.
+  // .sf/ is managed externally (symlinked) — metadata is not committed to git.
 }
 
 export type IntegrationBranchResolutionStatus = "recorded" | "fallback" | "missing";
@@ -479,10 +479,10 @@ export class GitServiceImpl {
     // the git reset HEAD step below would otherwise undo the rm --cached.
     //
     // SAFETY: Only untrack the specific RUNTIME paths (activity/, runtime/,
-    // auto.lock, etc.) — NOT all of .gsd/. If .gsd/milestones/ files were
+    // auto.lock, etc.) — NOT all of .sf/. If .sf/milestones/ files were
     // previously tracked, they stay tracked until the milestone completes
     // and the worktree is torn down. This prevents a mid-execution behavioral
-    // discontinuity where the first half of a milestone has .gsd/ artifacts
+    // discontinuity where the first half of a milestone has .sf/ artifacts
     // committed but the second half doesn't (#1326).
     if (!this._runtimeFilesCleanedUp) {
       let cleaned = false;
@@ -491,7 +491,7 @@ export class GitServiceImpl {
         if (removed.length > 0) cleaned = true;
       }
       if (cleaned) {
-        nativeCommit(this.basePath, "chore: untrack .gsd/ runtime files from git index", { allowEmpty: false });
+        nativeCommit(this.basePath, "chore: untrack .sf/ runtime files from git index", { allowEmpty: false });
       }
       this._runtimeFilesCleanedUp = true;
     }
@@ -500,14 +500,14 @@ export class GitServiceImpl {
     // hashed by git. The old approach of `git add -A` followed by unstaging
     // hangs indefinitely on repos with large untracked artifact trees (#1605).
     //
-    // Exclude only RUNTIME paths from staging — not the entire .gsd/ directory.
-    // When .gsd/milestones/ files are already tracked in the index (projects
-    // where .gsd/ is not gitignored, or Windows junctions that git sees as
+    // Exclude only RUNTIME paths from staging — not the entire .sf/ directory.
+    // When .sf/milestones/ files are already tracked in the index (projects
+    // where .sf/ is not gitignored, or Windows junctions that git sees as
     // real directories), they should continue to be committed. Excluding the
-    // entire .gsd/ directory mid-milestone causes silent commit failure where
+    // entire .sf/ directory mid-milestone causes silent commit failure where
     // the second half of a milestone's artifacts are never committed (#1326).
     //
-    // If .gsd/ IS in .gitignore (the default for external state projects),
+    // If .sf/ IS in .gitignore (the default for external state projects),
     // git add -A already skips it and the exclusions are harmless no-ops.
     const allExclusions = [...RUNTIME_EXCLUSION_PATHS, ...extraExclusions];
 
@@ -524,7 +524,7 @@ export class GitServiceImpl {
           const entries = readdirSync(msDir, { withFileTypes: true });
           for (const entry of entries) {
             if (entry.isDirectory() && entry.name !== milestoneLock) {
-              allExclusions.push(`.gsd/milestones/${entry.name}/`);
+              allExclusions.push(`.sf/milestones/${entry.name}/`);
             }
           }
         } catch {
@@ -563,7 +563,7 @@ export class GitServiceImpl {
    * (e.g. pre-switch commits, stop commits, state rebuild commits).
    *
    * Returns the commit message on success, or null if nothing to commit.
-   * @param extraExclusions Additional paths to exclude from staging (e.g. [".gsd/"] for pre-switch commits).
+   * @param extraExclusions Additional paths to exclude from staging (e.g. [".sf/"] for pre-switch commits).
    */
   autoCommit(
     unitType: string,
@@ -658,8 +658,8 @@ export class GitServiceImpl {
 
       // Re-run smartStage so the same RUNTIME_EXCLUSION_PATHS apply.
       // Snapshot commits used nativeAddTracked (git add -u) which stages
-      // ALL tracked modifications including .gsd/ state files. Without
-      // re-staging, those .gsd/ changes leak into the absorbed commit.
+      // ALL tracked modifications including .sf/ state files. Without
+      // re-staging, those .sf/ changes leak into the absorbed commit.
       this.smartStage();
 
       try {

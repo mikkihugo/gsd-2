@@ -9,8 +9,8 @@ import { _getAdapter, closeDatabase } from "../../../src/resources/extensions/sf
 import { registerWorkflowTools, WORKFLOW_TOOL_NAMES } from "./workflow-tools.ts";
 
 function makeTmpBase(): string {
-  const base = join(tmpdir(), `gsd-mcp-workflow-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  const base = join(tmpdir(), `sf-mcp-workflow-${randomUUID()}`);
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 
@@ -31,9 +31,9 @@ function writeWriteGateSnapshot(
   base: string,
   snapshot: { verifiedDepthMilestones?: string[]; activeQueuePhase?: boolean; pendingGateId?: string | null },
 ): void {
-  mkdirSync(join(base, ".gsd", "runtime"), { recursive: true });
+  mkdirSync(join(base, ".sf", "runtime"), { recursive: true });
   writeFileSync(
-    join(base, ".gsd", "runtime", "write-gate-state.json"),
+    join(base, ".sf", "runtime", "write-gate-state.json"),
     JSON.stringify(
       {
         verifiedDepthMilestones: snapshot.verifiedDepthMilestones ?? [],
@@ -97,7 +97,7 @@ describe("workflow MCP tools", () => {
       assert.match(text, /Saved SUMMARY artifact/);
       assert.equal(process.cwd(), originalCwd, "workflow MCP tools should not mutate process.cwd");
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md")),
+        existsSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md")),
         "summary file should exist on disk",
       );
     } finally {
@@ -178,9 +178,9 @@ describe("workflow MCP tools", () => {
   it("blocks workflow mutation tools while a discussion gate is pending", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
       writeWriteGateSnapshot(base, { pendingGateId: "depth_verification_M001_confirm" });
@@ -211,9 +211,9 @@ describe("workflow MCP tools", () => {
   it("blocks workflow mutation tools during queue mode", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
       writeWriteGateSnapshot(base, { activeQueuePhase: true });
@@ -244,9 +244,9 @@ describe("workflow MCP tools", () => {
   it("gsd_task_complete and gsd_milestone_status work end-to-end", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+        join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
         "# S01\n\n- [ ] **T01: Demo** `est:5m`\n",
       );
 
@@ -269,7 +269,7 @@ describe("workflow MCP tools", () => {
 
       assert.match((taskResult as any).content[0].text as string, /Completed task T01/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md")),
+        existsSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md")),
         "task summary should be written to disk",
       );
 
@@ -289,9 +289,9 @@ describe("workflow MCP tools", () => {
   it("gsd_complete_task alias delegates to gsd_task_complete behavior", async () => {
     const base = makeTmpBase();
     try {
-      mkdirSync(join(base, ".gsd", "milestones", "M002", "slices", "S02"), { recursive: true });
+      mkdirSync(join(base, ".sf", "milestones", "M002", "slices", "S02"), { recursive: true });
       writeFileSync(
-        join(base, ".gsd", "milestones", "M002", "slices", "S02", "S02-PLAN.md"),
+        join(base, ".sf", "milestones", "M002", "slices", "S02", "S02-PLAN.md"),
         "# S02\n\n- [ ] **T02: Demo** `est:5m`\n",
       );
 
@@ -312,7 +312,7 @@ describe("workflow MCP tools", () => {
 
       assert.match((result as any).content[0].text as string, /Completed task T02/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M002", "slices", "S02", "tasks", "T02-SUMMARY.md")),
+        existsSync(join(base, ".sf", "milestones", "M002", "slices", "S02", "tasks", "T02-SUMMARY.md")),
         "alias should write task summary to disk",
       );
     } finally {
@@ -372,11 +372,11 @@ describe("workflow MCP tools", () => {
       });
       assert.match((sliceResult as any).content[0].text as string, /Planned slice S01/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
+        existsSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md")),
         "slice plan should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md")),
+        existsSync(join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md")),
         "task plan should exist on disk",
       );
     } finally {
@@ -406,7 +406,7 @@ describe("workflow MCP tools", () => {
       });
 
       assert.match((result as any).content[0].text as string, /Saved requirement R\d+/);
-      assert.ok(existsSync(join(base, ".gsd", "REQUIREMENTS.md")), "REQUIREMENTS.md should be written to disk");
+      assert.ok(existsSync(join(base, ".sf", "REQUIREMENTS.md")), "REQUIREMENTS.md should be written to disk");
       const row = _getAdapter()!
         .prepare("SELECT id, class, description FROM requirements WHERE description = ?")
         .get("Inline MCP requirement save regression") as Record<string, unknown> | undefined;
@@ -486,7 +486,7 @@ describe("workflow MCP tools", () => {
 
       assert.match((result as any).content[0].text as string, /Planned task T11/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M010", "slices", "S10", "tasks", "T11-PLAN.md")),
+        existsSync(join(base, ".sf", "milestones", "M010", "slices", "S10", "tasks", "T11-PLAN.md")),
         "T11 plan should be written after reopening the DB",
       );
     } finally {
@@ -624,11 +624,11 @@ describe("workflow MCP tools", () => {
       });
       assert.match((aliasResult as any).content[0].text as string, /Replanned slice S09/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-REPLAN.md")),
+        existsSync(join(base, ".sf", "milestones", "M099", "slices", "S09", "S09-REPLAN.md")),
         "replan artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M099", "slices", "S09", "S09-PLAN.md")),
+        existsSync(join(base, ".sf", "milestones", "M099", "slices", "S09", "S09-PLAN.md")),
         "updated plan should exist on disk",
       );
       const removedTask = _getAdapter()!.prepare(
@@ -776,11 +776,11 @@ describe("workflow MCP tools", () => {
       });
       assert.match((aliasResult as any).content[0].text as string, /Completed slice S04/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M004", "slices", "S04", "S04-SUMMARY.md")),
+        existsSync(join(base, ".sf", "milestones", "M004", "slices", "S04", "S04-SUMMARY.md")),
         "alias should write slice summary to disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M004", "slices", "S04", "S04-UAT.md")),
+        existsSync(join(base, ".sf", "milestones", "M004", "slices", "S04", "S04-UAT.md")),
         "alias should write slice UAT to disk",
       );
     } finally {
@@ -887,11 +887,11 @@ describe("workflow MCP tools", () => {
       });
       assert.match((completionResult as any).content[0].text as string, /Completed milestone M005/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M005", "M005-VALIDATION.md")),
+        existsSync(join(base, ".sf", "milestones", "M005", "M005-VALIDATION.md")),
         "validation artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M005", "M005-SUMMARY.md")),
+        existsSync(join(base, ".sf", "milestones", "M005", "M005-SUMMARY.md")),
         "milestone summary should exist on disk",
       );
     } finally {
@@ -1051,11 +1051,11 @@ describe("workflow MCP tools", () => {
       });
       assert.match((reassessAliasResult as any).content[0].text as string, /Reassessed roadmap for milestone M006 after S06/);
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M006", "slices", "S06", "S06-ASSESSMENT.md")),
+        existsSync(join(base, ".sf", "milestones", "M006", "slices", "S06", "S06-ASSESSMENT.md")),
         "assessment artifact should exist on disk",
       );
       assert.ok(
-        existsSync(join(base, ".gsd", "milestones", "M006", "M006-ROADMAP.md")),
+        existsSync(join(base, ".sf", "milestones", "M006", "M006-ROADMAP.md")),
         "roadmap artifact should exist on disk",
       );
     } finally {

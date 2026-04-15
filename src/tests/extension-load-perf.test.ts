@@ -32,7 +32,7 @@ test("loadExtensions shares module cache across extensions (perf regression #210
   const { loadExtensions } = await import(loaderPath);
 
   // Create a temp directory with two extensions that import a shared helper
-  const tmp = mkdtempSync(join(tmpdir(), "gsd-perf-test-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-perf-test-"));
 
   try {
     // Shared helper module

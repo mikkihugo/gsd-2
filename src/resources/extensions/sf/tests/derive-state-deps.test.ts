@@ -9,24 +9,24 @@ import { deriveState } from '../state.ts';
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-deps-test-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
 function writeRoadmap(base: string, mid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-ROADMAP.md`), content);
 }
 
 function writeMilestoneSummary(base: string, mid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-SUMMARY.md`), content);
 }
 
 function writeMilestoneValidation(base: string, mid: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-VALIDATION.md`), `---\nverdict: pass\nremediation_round: 0\n---\n\n# Validation\nPassed.`);
 }
@@ -36,19 +36,19 @@ function writeMilestoneValidation(base: string, mid: string): void {
  * frontmatter is the raw YAML lines between the --- delimiters.
  */
 function writeContext(base: string, mid: string, frontmatter: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-CONTEXT.md`), `---\n${frontmatter}\n---\n`);
 }
 
 function writeContextDraft(base: string, mid: string, frontmatter: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid);
+  const dir = join(base, '.sf', 'milestones', mid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${mid}-CONTEXT-DRAFT.md`), `---\n${frontmatter}\n---\n\n# Draft Context\nThis is a draft.`);
 }
 
 function writeSlicePlan(base: string, mid: string, sid: string, content: string): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid);
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid);
   mkdirSync(join(dir, 'tasks'), { recursive: true });
   writeFileSync(join(dir, "tasks", "T01-PLAN.md"), "# T01 Plan\n");
   writeFileSync(join(dir, `${sid}-PLAN.md`), content);
@@ -443,7 +443,7 @@ describe('derive-state-deps', async () => {
     const base = createFixtureBase();
     try {
       // M001: exists as directory only (no roadmap, no summary)
-      const m001Dir = join(base, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
 
       // M002: only CONTEXT-DRAFT.md, depends on M001

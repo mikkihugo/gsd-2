@@ -20,7 +20,7 @@ import { runDoctorLite } from './doctor-lite.js';
 // ---------------------------------------------------------------------------
 
 function tmpProject(): string {
-  const dir = join(tmpdir(), `gsd-mcp-test-${randomBytes(4).toString('hex')}`);
+  const dir = join(tmpdir(), `sf-mcp-test-${randomBytes(4).toString('hex')}`);
   mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -41,7 +41,7 @@ describe('readProgress', () => {
   before(() => {
     projectDir = tmpProject();
 
-    writeFixture(projectDir, '.gsd/STATE.md', `# SF State
+    writeFixture(projectDir, '.sf/STATE.md', `# SF State
 
 **Active Milestone:** M002: Auth System
 **Active Slice:** S01: Login flow
@@ -64,16 +64,16 @@ Execute T02 in S01 — implement token refresh.
 `);
 
     // Create filesystem structure
-    const m1 = '.gsd/milestones/M001/slices/S01/tasks';
+    const m1 = '.sf/milestones/M001/slices/S01/tasks';
     writeFixture(projectDir, `${m1}/T01-PLAN.md`, '# T01');
     writeFixture(projectDir, `${m1}/T01-SUMMARY.md`, '# T01 done');
 
-    const m2 = '.gsd/milestones/M002/slices/S01/tasks';
+    const m2 = '.sf/milestones/M002/slices/S01/tasks';
     writeFixture(projectDir, `${m2}/T01-PLAN.md`, '# T01');
     writeFixture(projectDir, `${m2}/T01-SUMMARY.md`, '# T01 done');
     writeFixture(projectDir, `${m2}/T02-PLAN.md`, '# T02');
 
-    mkdirSync(join(projectDir, '.gsd/milestones/M003'), { recursive: true });
+    mkdirSync(join(projectDir, '.sf/milestones/M003'), { recursive: true });
   });
 
   after(() => rmSync(projectDir, { recursive: true, force: true }));
@@ -126,7 +126,7 @@ Execute T02 in S01 — implement token refresh.
     assert.ok(result.nextAction.includes('T02'));
   });
 
-  it('returns defaults for missing .gsd/', () => {
+  it('returns defaults for missing .sf/', () => {
     const empty = tmpProject();
     const result = readProgress(empty);
     assert.equal(result.phase, 'unknown');
@@ -145,8 +145,8 @@ describe('readRoadmap', () => {
   before(() => {
     projectDir = tmpProject();
 
-    writeFixture(projectDir, '.gsd/milestones/M001/M001-CONTEXT.md', '# M001: Core Setup\n');
-    writeFixture(projectDir, '.gsd/milestones/M001/M001-ROADMAP.md', `# M001: Core Setup
+    writeFixture(projectDir, '.sf/milestones/M001/M001-CONTEXT.md', '# M001: Core Setup\n');
+    writeFixture(projectDir, '.sf/milestones/M001/M001-ROADMAP.md', `# M001: Core Setup
 
 ## Vision
 
@@ -160,27 +160,27 @@ Build the foundation for the project.
 | S02 | API endpoints | medium | S01 | 🟫 | REST API live |
 `);
 
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/S01-PLAN.md', `# S01: Database schema
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/S01-PLAN.md', `# S01: Database schema
 
 ## Tasks
 
 - [x] **T01: Create migrations** — Set up schema
 - [x] **T02: Seed data** — Initial seed
 `);
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T02-PLAN.md', '# T02');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T02-SUMMARY.md', '# T02 done');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T02-PLAN.md', '# T02');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T02-SUMMARY.md', '# T02 done');
 
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S02/S02-PLAN.md', `# S02: API endpoints
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S02/S02-PLAN.md', `# S02: API endpoints
 
 ## Tasks
 
 - [ ] **T01: Auth routes** — Implement auth
 - [ ] **T02: User routes** — CRUD users
 `);
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S02/tasks/T01-PLAN.md', '# T01');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S02/tasks/T02-PLAN.md', '# T02');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S02/tasks/T01-PLAN.md', '# T01');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S02/tasks/T02-PLAN.md', '# T02');
   });
 
   after(() => rmSync(projectDir, { recursive: true, force: true }));
@@ -235,7 +235,7 @@ describe('readHistory', () => {
 
   before(() => {
     projectDir = tmpProject();
-    writeFixture(projectDir, '.gsd/metrics.json', JSON.stringify({
+    writeFixture(projectDir, '.sf/metrics.json', JSON.stringify({
       version: 1,
       projectStartedAt: 1700000000000,
       units: [
@@ -288,7 +288,7 @@ describe('readHistory', () => {
 
   it('returns empty for missing metrics', () => {
     const empty = tmpProject();
-    mkdirSync(join(empty, '.gsd'), { recursive: true });
+    mkdirSync(join(empty, '.sf'), { recursive: true });
     const result = readHistory(empty);
     assert.equal(result.entries.length, 0);
     assert.equal(result.totals.units, 0);
@@ -305,7 +305,7 @@ describe('readCaptures', () => {
 
   before(() => {
     projectDir = tmpProject();
-    writeFixture(projectDir, '.gsd/CAPTURES.md', `# Captures
+    writeFixture(projectDir, '.sf/CAPTURES.md', `# Captures
 
 ### CAP-aaa11111
 
@@ -365,7 +365,7 @@ describe('readCaptures', () => {
 
   it('returns empty for missing CAPTURES.md', () => {
     const empty = tmpProject();
-    mkdirSync(join(empty, '.gsd'), { recursive: true });
+    mkdirSync(join(empty, '.sf'), { recursive: true });
     const result = readCaptures(empty);
     assert.equal(result.captures.length, 0);
     rmSync(empty, { recursive: true, force: true });
@@ -381,7 +381,7 @@ describe('readKnowledge', () => {
 
   before(() => {
     projectDir = tmpProject();
-    writeFixture(projectDir, '.gsd/KNOWLEDGE.md', `# Project Knowledge
+    writeFixture(projectDir, '.sf/KNOWLEDGE.md', `# Project Knowledge
 
 ## Rules
 
@@ -429,7 +429,7 @@ describe('readKnowledge', () => {
 
   it('returns empty for missing KNOWLEDGE.md', () => {
     const empty = tmpProject();
-    mkdirSync(join(empty, '.gsd'), { recursive: true });
+    mkdirSync(join(empty, '.sf'), { recursive: true });
     const result = readKnowledge(empty);
     assert.equal(result.entries.length, 0);
     rmSync(empty, { recursive: true, force: true });
@@ -447,24 +447,24 @@ describe('runDoctorLite', () => {
     projectDir = tmpProject();
 
     // M001: complete milestone (has summary)
-    writeFixture(projectDir, '.gsd/PROJECT.md', '# Test Project');
-    writeFixture(projectDir, '.gsd/STATE.md', '# SF State');
-    writeFixture(projectDir, '.gsd/milestones/M001/M001-CONTEXT.md', '# M001');
-    writeFixture(projectDir, '.gsd/milestones/M001/M001-ROADMAP.md', '# Roadmap');
-    writeFixture(projectDir, '.gsd/milestones/M001/M001-SUMMARY.md', '# Done');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/S01-PLAN.md', '# Plan');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
-    writeFixture(projectDir, '.gsd/milestones/M001/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
+    writeFixture(projectDir, '.sf/PROJECT.md', '# Test Project');
+    writeFixture(projectDir, '.sf/STATE.md', '# SF State');
+    writeFixture(projectDir, '.sf/milestones/M001/M001-CONTEXT.md', '# M001');
+    writeFixture(projectDir, '.sf/milestones/M001/M001-ROADMAP.md', '# Roadmap');
+    writeFixture(projectDir, '.sf/milestones/M001/M001-SUMMARY.md', '# Done');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/S01-PLAN.md', '# Plan');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T01-PLAN.md', '# T01');
+    writeFixture(projectDir, '.sf/milestones/M001/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
 
     // M002: incomplete — has all tasks done but no SUMMARY
-    writeFixture(projectDir, '.gsd/milestones/M002/M002-CONTEXT.md', '# M002');
-    writeFixture(projectDir, '.gsd/milestones/M002/M002-ROADMAP.md', '# Roadmap');
-    writeFixture(projectDir, '.gsd/milestones/M002/slices/S01/S01-PLAN.md', '# Plan');
-    writeFixture(projectDir, '.gsd/milestones/M002/slices/S01/tasks/T01-PLAN.md', '# T01');
-    writeFixture(projectDir, '.gsd/milestones/M002/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
+    writeFixture(projectDir, '.sf/milestones/M002/M002-CONTEXT.md', '# M002');
+    writeFixture(projectDir, '.sf/milestones/M002/M002-ROADMAP.md', '# Roadmap');
+    writeFixture(projectDir, '.sf/milestones/M002/slices/S01/S01-PLAN.md', '# Plan');
+    writeFixture(projectDir, '.sf/milestones/M002/slices/S01/tasks/T01-PLAN.md', '# T01');
+    writeFixture(projectDir, '.sf/milestones/M002/slices/S01/tasks/T01-SUMMARY.md', '# T01 done');
 
     // M003: empty — no context, no slices
-    mkdirSync(join(projectDir, '.gsd/milestones/M003'), { recursive: true });
+    mkdirSync(join(projectDir, '.sf/milestones/M003'), { recursive: true });
   });
 
   after(() => rmSync(projectDir, { recursive: true, force: true }));
@@ -492,14 +492,14 @@ describe('runDoctorLite', () => {
 
   it('returns ok:true for healthy project', () => {
     const healthy = tmpProject();
-    writeFixture(healthy, '.gsd/PROJECT.md', '# Project');
-    writeFixture(healthy, '.gsd/STATE.md', '# State');
+    writeFixture(healthy, '.sf/PROJECT.md', '# Project');
+    writeFixture(healthy, '.sf/STATE.md', '# State');
     const result = runDoctorLite(healthy);
     assert.equal(result.ok, true);
     rmSync(healthy, { recursive: true, force: true });
   });
 
-  it('handles missing .gsd/ gracefully', () => {
+  it('handles missing .sf/ gracefully', () => {
     const empty = tmpProject();
     const result = runDoctorLite(empty);
     assert.equal(result.ok, true);

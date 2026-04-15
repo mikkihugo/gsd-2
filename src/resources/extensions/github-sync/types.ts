@@ -2,7 +2,7 @@
  * Type definitions for the GitHub Sync extension.
  *
  * Config shape (stored in SF preferences under `github` key) and
- * sync mapping records (stored in `.gsd/github-sync.json`).
+ * sync mapping records (stored in `.sf/github-sync.json`).
  */
 
 // ─── Configuration ──────────────────────────────────────────────────────────

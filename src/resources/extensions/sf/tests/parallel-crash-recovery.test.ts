@@ -30,12 +30,12 @@ import { writeSessionStatus, readAllSessionStatuses, removeSessionStatus } from 
 
 function makeTempDir(): string {
   const dir = mkdtempSync(join(tmpdir(), "sf-crash-recovery-"));
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  mkdirSync(join(dir, ".sf"), { recursive: true });
   return dir;
 }
 
 function stateFilePath(basePath: string): string {
-  return join(basePath, ".gsd", "orchestrator.json");
+  return join(basePath, ".sf", "orchestrator.json");
 }
 
 function writeStateFile(basePath: string, state: PersistedState): void {
@@ -205,7 +205,7 @@ test('Test 6: orphan detection finds stale sessions', () => {
   const basePath = makeTempDir();
   try {
     // Write a session status with a dead PID
-    mkdirSync(join(basePath, ".gsd", "parallel"), { recursive: true });
+    mkdirSync(join(basePath, ".sf", "parallel"), { recursive: true });
     writeSessionStatus(basePath, {
       milestoneId: "M001",
       pid: 99999999,

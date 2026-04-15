@@ -22,7 +22,7 @@ import { toPosixPath } from "../../shared/mod.js";
 import { markCmuxPromptShown, shouldPromptToEnableCmux } from "../../cmux/index.js";
 import { autoEnableCmuxPreferences } from "../commands-cmux.js";
 
-const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
 
 /**
  * Bundled skill triggers — resolved dynamically at runtime instead of
@@ -52,7 +52,7 @@ function buildBundledSkillsTable(): string {
 function warnDeprecatedAgentInstructions(): void {
   const paths = [
     join(sfHome, "agent-instructions.md"),
-    join(process.cwd(), ".gsd", "agent-instructions.md"),
+    join(process.cwd(), ".sf", "agent-instructions.md"),
   ];
   for (const path of paths) {
     if (existsSync(path)) {
@@ -69,7 +69,7 @@ export async function buildBeforeAgentStartResult(
   event: { prompt: string; systemPrompt: string },
   ctx: ExtensionContext,
 ): Promise<{ systemPrompt: string; message?: { customType: string; content: string; display: false } } | undefined> {
-  if (!existsSync(join(process.cwd(), ".gsd"))) return undefined;
+  if (!existsSync(join(process.cwd(), ".sf"))) return undefined;
 
   const stopContextTimer = debugTime("context-inject");
   const systemContent = loadPrompt("system", {
@@ -106,7 +106,7 @@ export async function buildBeforeAgentStartResult(
   const { block: knowledgeBlock, globalSizeKb } = loadKnowledgeBlock(sfHome, process.cwd());
   if (globalSizeKb > 4) {
     ctx.ui.notify(
-      `SF: ~/.gsd/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
+      `SF: ~/.sf/agent/KNOWLEDGE.md is ${globalSizeKb.toFixed(1)}KB — consider trimming to keep system prompt lean.`,
       "warning",
     );
   }
@@ -154,12 +154,12 @@ export async function buildBeforeAgentStartResult(
       const rawContent = rawCodebase.trim();
       if (rawContent) {
         // Cap injection size to ~2 000 tokens to avoid bloating every request.
-        // Full map is always available at .gsd/CODEBASE.md.
+        // Full map is always available at .sf/CODEBASE.md.
         const MAX_CODEBASE_CHARS = 8_000;
         const generatedMatch = rawContent.match(/Generated: (\S+)/);
         const generatedAt = generatedMatch?.[1] ?? "unknown";
         const content = rawContent.length > MAX_CODEBASE_CHARS
-          ? rawContent.slice(0, MAX_CODEBASE_CHARS) + "\n\n*(truncated — see .gsd/CODEBASE.md for full map)*"
+          ? rawContent.slice(0, MAX_CODEBASE_CHARS) + "\n\n*(truncated — see .sf/CODEBASE.md for full map)*"
           : rawContent;
         codebaseBlock = `\n\n[PROJECT CODEBASE — File structure and descriptions (generated ${generatedAt}, auto-refreshed when SF detects tracked file changes; use /sf codebase stats for status)]\n\n${content}`;
       }
@@ -205,7 +205,7 @@ export async function buildBeforeAgentStartResult(
 }
 
 export function loadKnowledgeBlock(sfHomeDir: string, cwd: string): { block: string; globalSizeKb: number } {
-  // 1. Global knowledge (~/.gsd/agent/KNOWLEDGE.md) — cross-project, user-maintained
+  // 1. Global knowledge (~/.sf/agent/KNOWLEDGE.md) — cross-project, user-maintained
   let globalKnowledge = "";
   let globalSizeKb = 0;
   const globalKnowledgePath = join(sfHomeDir, "agent", "KNOWLEDGE.md");
@@ -221,7 +221,7 @@ export function loadKnowledgeBlock(sfHomeDir: string, cwd: string): { block: str
     }
   }
 
-  // 2. Project knowledge (.gsd/KNOWLEDGE.md) — project-specific
+  // 2. Project knowledge (.sf/KNOWLEDGE.md) — project-specific
   let projectKnowledge = "";
   const knowledgePath = resolveSfRootFile(cwd, "KNOWLEDGE");
   if (existsSync(knowledgePath)) {
@@ -285,7 +285,7 @@ function buildWorktreeContextBlock(): string {
       `- Branch: ${autoWorktree.branch}`,
       "",
       "All file operations, bash commands, and SF state resolve against the worktree path above.",
-      "Write every .gsd artifact in the worktree path above, never in the main project tree.",
+      "Write every .sf artifact in the worktree path above, never in the main project tree.",
     ].join("\n");
   }
 
@@ -524,7 +524,7 @@ export function buildForensicsContextInjection(basePath: string, prompt: string)
  * is complete or the session expires.
  */
 export function clearForensicsMarker(basePath: string): void {
-  const markerPath = join(basePath, ".gsd", "runtime", "active-forensics.json");
+  const markerPath = join(basePath, ".sf", "runtime", "active-forensics.json");
   if (existsSync(markerPath)) {
     try {
       unlinkSync(markerPath);

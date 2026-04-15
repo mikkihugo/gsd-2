@@ -56,7 +56,7 @@ interface UnitTrace {
   mtime: number;
 }
 
-/** Summary of .gsd/activity/ directory metadata. */
+/** Summary of .sf/activity/ directory metadata. */
 interface ActivityLogMeta {
   fileCount: number;
   totalSizeBytes: number;
@@ -65,7 +65,7 @@ interface ActivityLogMeta {
 }
 
 /**
- * Summary of .gsd/journal/ data for forensic investigation.
+ * Summary of .sf/journal/ data for forensic investigation.
  *
  * To avoid loading huge journal histories into memory, only the most recent
  * daily files are fully parsed. Older files are line-counted for totals.
@@ -165,7 +165,7 @@ async function writeForensicsDedupPref(ctx: ExtensionCommandContext, enabled: bo
 
   const frontmatter = serializePreferencesToFrontmatter(prefs);
   const raw = existsSync(prefsPath) ? readFileSync(prefsPath, "utf-8") : "";
-  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.sf/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
   const start = raw.startsWith("---\n") ? 4 : raw.startsWith("---\r\n") ? 5 : -1;
   if (start !== -1) {
     const closingIdx = raw.indexOf("\n---", start);
@@ -237,11 +237,11 @@ export async function handleForensics(
   const report = await buildForensicReport(basePath);
   const savedPath = saveForensicReport(basePath, report, problemDescription);
 
-  // Derive SF source dir for prompt — fall back to ~/.gsd/agent/extensions/sf/
+  // Derive SF source dir for prompt — fall back to ~/.sf/agent/extensions/sf/
   // when import.meta.url resolves to the npm-global install path (Windows).
   let sfSourceDir = dirname(fileURLToPath(import.meta.url));
   if (!existsSync(join(sfSourceDir, "prompts"))) {
-    const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+    const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
     const fallback = join(sfHome, "agent", "extensions", "sf");
     if (existsSync(join(fallback, "prompts"))) sfSourceDir = fallback;
   }
@@ -319,7 +319,7 @@ export async function buildForensicReport(basePath: string): Promise<ForensicRep
   }
 
   // 8. SF version — use SF_VERSION env var set by the loader at startup.
-  // Extensions run from ~/.gsd/agent/extensions/sf/ at runtime, so path-traversal
+  // Extensions run from ~/.sf/agent/extensions/sf/ at runtime, so path-traversal
   // from import.meta.url would resolve to ~/package.json (wrong on every system).
   const sfVersion = process.env.SF_VERSION || "unknown";
 

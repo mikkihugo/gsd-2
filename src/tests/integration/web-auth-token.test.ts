@@ -47,7 +47,7 @@ test('auth.ts wraps localStorage calls in try/catch for private browsing', () =>
 
 // ─── sendBeacon auth token tests ────────────────────────────────────────────
 
-const appShellSource = readFileSync(join(projectRoot, 'web', 'components', 'gsd', 'app-shell.tsx'), 'utf-8')
+const appShellSource = readFileSync(join(projectRoot, 'web', 'components', 'sf', 'app-shell.tsx'), 'utf-8')
 
 test('app-shell.tsx sendBeacon includes auth token as query parameter', () => {
   // sendBeacon cannot set custom headers, so the token must be passed

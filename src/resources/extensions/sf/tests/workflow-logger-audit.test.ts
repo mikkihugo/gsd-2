@@ -18,12 +18,12 @@ import {
 
 function createTempProject(): string {
   const tmp = mkdtempSync(join(tmpdir(), "sf-wflog-test-"));
-  mkdirSync(join(tmp, ".gsd"), { recursive: true });
+  mkdirSync(join(tmp, ".sf"), { recursive: true });
   return tmp;
 }
 
 function readAuditLines(basePath: string): Record<string, unknown>[] {
-  const auditPath = join(basePath, ".gsd", "audit-log.jsonl");
+  const auditPath = join(basePath, ".sf", "audit-log.jsonl");
   if (!existsSync(auditPath)) return [];
   const content = readFileSync(auditPath, "utf-8").trim();
   if (!content) return [];

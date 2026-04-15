@@ -21,9 +21,9 @@ import {
 
 function createBase(): string {
   const base = mkdtempSync(join(tmpdir(), "sf-park-db-"));
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+    join(base, ".sf", "milestones", "M001", "M001-CONTEXT.md"),
     "# M001\n\nContext.",
   );
   return base;

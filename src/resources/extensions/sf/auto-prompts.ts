@@ -252,7 +252,7 @@ export async function inlineDependencySummaries(
 }
 
 /**
- * Load a well-known .gsd/ root file for optional inlining.
+ * Load a well-known .sf/ root file for optional inlining.
  * Handles the existsSync check internally.
  */
 export async function inlineGsdRootFile(
@@ -297,7 +297,7 @@ export async function inlineDecisionsFromDb(
         const formatted = inlineLevel !== "full"
           ? formatDecisionsCompact(decisions)
           : formatDecisionsForPrompt(decisions);
-        return `### Decisions\nSource: \`.gsd/DECISIONS.md\`\n\n${formatted}`;
+        return `### Decisions\nSource: \`.sf/DECISIONS.md\`\n\n${formatted}`;
       }
       // DB available but cascade returned empty — intentional per D020, don't fall back to file
       return null;
@@ -327,7 +327,7 @@ export async function inlineRequirementsFromDb(
         const formatted = inlineLevel !== "full"
           ? formatRequirementsCompact(requirements)
           : formatRequirementsForPrompt(requirements);
-        return `### Requirements\nSource: \`.gsd/REQUIREMENTS.md\`\n\n${formatted}`;
+        return `### Requirements\nSource: \`.sf/REQUIREMENTS.md\`\n\n${formatted}`;
       }
     }
   } catch (err) {
@@ -349,7 +349,7 @@ export async function inlineProjectFromDb(
       const { queryProject } = await import("./context-store.js");
       const content = queryProject();
       if (content) {
-        return `### Project\nSource: \`.gsd/PROJECT.md\`\n\n${content}`;
+        return `### Project\nSource: \`.sf/PROJECT.md\`\n\n${content}`;
       }
     }
   } catch (err) {
@@ -1005,7 +1005,7 @@ export async function buildDiscussMilestonePrompt(mid: string, midTitle: string,
     milestoneTitle: midTitle,
     inlinedTemplates: discussTemplates,
     structuredQuestionsAvailable: "false",
-    commitInstruction: "Do not commit planning artifacts — .gsd/ is managed externally.",
+    commitInstruction: "Do not commit planning artifacts — .sf/ is managed externally.",
     fastPathInstruction: "",
   });
 
@@ -1275,7 +1275,7 @@ export async function buildPlanSlicePrompt(
   const executorContextConstraints = formatExecutorConstraints();
 
   const outputRelPath = relSliceFile(base, mid, sid, "PLAN");
-  const commitInstruction = "Do not commit — .gsd/ planning docs are managed externally and not tracked in git.";
+  const commitInstruction = "Do not commit — .sf/ planning docs are managed externally and not tracked in git.";
   return loadPrompt("plan-slice", {
     workingDirectory: base,
     milestoneId: mid, sliceId: sid, sliceTitle: sTitle,
@@ -1409,7 +1409,7 @@ export async function buildExecuteTaskPrompt(
   const runtimePath = resolveRuntimeFile(base);
   const runtimeContent = existsSync(runtimePath) ? await loadFile(runtimePath) : null;
   const runtimeContext = runtimeContent
-    ? `### Runtime Context\nSource: \`.gsd/RUNTIME.md\`\n\n${runtimeContent.trim()}`
+    ? `### Runtime Context\nSource: \`.sf/RUNTIME.md\`\n\n${runtimeContent.trim()}`
     : "";
 
   const phaseAnchorSection = planAnchor ? formatAnchorForPrompt(planAnchor) : "";
@@ -1913,7 +1913,7 @@ export async function buildReassessRoadmapPrompt(
     logWarning("prompt", `loadDeferredCaptures failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 
-  const reassessCommitInstruction = "Do not commit — .gsd/ planning docs are managed externally and not tracked in git.";
+  const reassessCommitInstruction = "Do not commit — .sf/ planning docs are managed externally and not tracked in git.";
 
   return loadPrompt("reassess-roadmap", {
     workingDirectory: base,

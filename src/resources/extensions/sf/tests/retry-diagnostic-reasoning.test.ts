@@ -82,7 +82,7 @@ describe("retry diagnostic excludes lastReasoning (#2195)", () => {
   test("getDeepDiagnostic output does NOT contain lastReasoning", () => {
     // Create a temporary activity directory with a JSONL file
     const tempBase = mkdtempSync(join(tmpdir(), "sf-diag-test-"));
-    const sfDir = join(tempBase, ".gsd");
+    const sfDir = join(tempBase, ".sf");
     const activityDir = join(sfDir, "activity");
     mkdirSync(activityDir, { recursive: true });
 
@@ -123,7 +123,7 @@ describe("retry diagnostic excludes lastReasoning (#2195)", () => {
 
   test("getDeepDiagnostic still includes errors and file operations", () => {
     const tempBase = mkdtempSync(join(tmpdir(), "sf-diag-test-"));
-    const sfDir = join(tempBase, ".gsd");
+    const sfDir = join(tempBase, ".sf");
     const activityDir = join(sfDir, "activity");
     mkdirSync(activityDir, { recursive: true });
 

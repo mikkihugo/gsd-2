@@ -86,8 +86,8 @@ export function readCaptures(
   projectDir: string,
   filter: 'all' | 'pending' | 'actionable' = 'all',
 ): CapturesResult {
-  const gsd = resolveGsdRoot(projectDir);
-  const capturesPath = resolveRootFile(gsd, 'CAPTURES.md');
+  const sf = resolveGsdRoot(projectDir);
+  const capturesPath = resolveRootFile(sf, 'CAPTURES.md');
 
   if (!existsSync(capturesPath)) {
     return { captures: [], counts: { total: 0, pending: 0, resolved: 0, actionable: 0 } };

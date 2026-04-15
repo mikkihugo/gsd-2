@@ -27,7 +27,7 @@ function loadPromptFromWorktree(name: string, vars: Record<string, string> = {})
 
 function createFixtureBase(): string {
   const base = mkdtempSync(join(tmpdir(), 'sf-run-uat-test-'));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
@@ -38,7 +38,7 @@ function writeSliceFile(
   suffix: string,
   content: string,
 ): void {
-  const dir = join(base, '.gsd', 'milestones', mid, 'slices', sid);
+  const dir = join(base, '.sf', 'milestones', mid, 'slices', sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-${suffix}.md`), content);
 }
@@ -170,8 +170,8 @@ test('(j) case sensitivity', () => {
 test('(k) run-uat prompt template', () => {
   const milestoneId = 'M001';
   const sliceId = 'S01';
-  const uatPath = '.gsd/milestones/M001/slices/S01/S01-UAT.md';
-  const uatResultPath = '.gsd/milestones/M001/slices/S01/S01-ASSESSMENT.md';
+  const uatPath = '.sf/milestones/M001/slices/S01/S01-UAT.md';
+  const uatResultPath = '.sf/milestones/M001/slices/S01/S01-ASSESSMENT.md';
   const uatType = 'live-runtime';
   const inlinedContext = '<!-- no context -->';
   let promptResult: string | undefined;
@@ -233,8 +233,8 @@ test('(k2) run-uat prompt references sf_summary_save, not direct write', () => {
     workingDirectory: '/tmp/test-project',
     milestoneId: 'M001',
     sliceId: 'S01',
-    uatPath: '.gsd/milestones/M001/slices/S01/S01-UAT.md',
-    uatResultPath: '.gsd/milestones/M001/slices/S01/S01-UAT.md',
+    uatPath: '.sf/milestones/M001/slices/S01/S01-UAT.md',
+    uatResultPath: '.sf/milestones/M001/slices/S01/S01-UAT.md',
     uatType: 'artifact-driven',
     inlinedContext: '<!-- no context -->',
   });
@@ -306,7 +306,7 @@ test('test block at line 307', () => {
 test('(m) non-artifact UAT skip', async () => {
     const base = createFixtureBase();
     try {
-      const roadmapDir = join(base, '.gsd', 'milestones', 'M001');
+      const roadmapDir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(roadmapDir, { recursive: true });
       writeFileSync(
         join(roadmapDir, 'M001-ROADMAP.md'),
@@ -393,8 +393,8 @@ test('(p) run-uat prompt allows PASS when human-only checks remain as NEEDS-HUMA
       workingDirectory: '/tmp/test-project',
       milestoneId: 'M001',
       sliceId: 'S01',
-      uatPath: '.gsd/milestones/M001/slices/S01/S01-UAT.md',
-      uatResultPath: '.gsd/milestones/M001/slices/S01/S01-UAT.md',
+      uatPath: '.sf/milestones/M001/slices/S01/S01-UAT.md',
+      uatResultPath: '.sf/milestones/M001/slices/S01/S01-UAT.md',
       uatType: 'mixed',
       inlinedContext: '<!-- no context -->',
     });
@@ -418,7 +418,7 @@ test('(p) run-uat prompt allows PASS when human-only checks remain as NEEDS-HUMA
 test('(n) stale replay guard', async () => {
     const base = createFixtureBase();
     try {
-      const roadmapDir = join(base, '.gsd', 'milestones', 'M001');
+      const roadmapDir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(roadmapDir, { recursive: true });
       writeFileSync(
         join(roadmapDir, 'M001-ROADMAP.md'),
@@ -466,7 +466,7 @@ test('(q) verdict in ASSESSMENT file skips UAT dispatch (file-based path)', asyn
     // but checkNeedsRunUat only checked S{sid}-UAT.md — causing a stuck loop.
     const base = createFixtureBase();
     try {
-      const roadmapDir = join(base, '.gsd', 'milestones', 'M001');
+      const roadmapDir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(roadmapDir, { recursive: true });
       writeFileSync(
         join(roadmapDir, 'M001-ROADMAP.md'),
@@ -515,7 +515,7 @@ test('(r) no ASSESSMENT file still dispatches UAT (no false skip)', async () => 
     // normally. The ASSESSMENT check must not cause a false-negative skip.
     const base = createFixtureBase();
     try {
-      const roadmapDir = join(base, '.gsd', 'milestones', 'M001');
+      const roadmapDir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(roadmapDir, { recursive: true });
       writeFileSync(
         join(roadmapDir, 'M001-ROADMAP.md'),
@@ -562,7 +562,7 @@ test('(s) ASSESSMENT without verdict does not skip UAT dispatch', async () => {
     // NOT suppress UAT dispatch — only a file with an actual verdict should.
     const base = createFixtureBase();
     try {
-      const roadmapDir = join(base, '.gsd', 'milestones', 'M001');
+      const roadmapDir = join(base, '.sf', 'milestones', 'M001');
       mkdirSync(roadmapDir, { recursive: true });
       writeFileSync(
         join(roadmapDir, 'M001-ROADMAP.md'),

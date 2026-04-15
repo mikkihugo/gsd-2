@@ -45,7 +45,7 @@ function makeContext(basePath: string, stateOverrides?: Partial<SFState>): Dispa
 // ─── Scaffold helpers ──────────────────────────────────────────────────────
 
 function scaffoldSlicePlan(basePath: string, mid: string, sid: string): void {
-  const dir = join(basePath, ".gsd", "milestones", mid, "slices", sid);
+  const dir = join(basePath, ".sf", "milestones", mid, "slices", sid);
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${sid}-PLAN.md`), [
     `# ${sid}: Third Slice`,
@@ -58,7 +58,7 @@ function scaffoldSlicePlan(basePath: string, mid: string, sid: string): void {
 }
 
 function scaffoldTaskPlan(basePath: string, mid: string, sid: string, tid: string): void {
-  const dir = join(basePath, ".gsd", "milestones", mid, "slices", sid, "tasks");
+  const dir = join(basePath, ".sf", "milestones", mid, "slices", sid, "tasks");
   mkdirSync(dir, { recursive: true });
   writeFileSync(join(dir, `${tid}-PLAN.md`), [
     `# ${tid}: Do something`,

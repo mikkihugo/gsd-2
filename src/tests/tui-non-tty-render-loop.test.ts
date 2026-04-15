@@ -1,7 +1,7 @@
 /**
  * Test: RPC bridge TUI render loop must not burn CPU on non-TTY stdout.
  *
- * When gsd is spawned as an RPC bridge child process, stdout is a pipe
+ * When sf is spawned as an RPC bridge child process, stdout is a pipe
  * (process.stdout.isTTY === undefined). The TUI render loop must not
  * start in that scenario — otherwise it runs at ~4,600 renders/second
  * consuming 500%+ CPU doing nothing useful.

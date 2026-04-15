@@ -42,7 +42,7 @@ describe('requirements', () => {
   });
 
   const base = mkdtempSync(join(tmpdir(), "sf-requirements-test-"));
-  const sf = join(base, ".gsd");
+  const sf = join(base, ".sf");
   const mDir = join(sf, "milestones", "M001");
   const sDir = join(mDir, "slices", "S01");
   const tDir = join(sDir, "tasks");

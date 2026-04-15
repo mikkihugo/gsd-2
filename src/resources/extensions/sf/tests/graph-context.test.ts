@@ -15,7 +15,7 @@
  *   approach that avoids all module-level mocking.
  *
  *   Fixture layout per test:
- *     <tmpDir>/.gsd/graphs/graph.json
+ *     <tmpDir>/.sf/graphs/graph.json
  *
  *   builtAt controls staleness: old timestamp → stale, recent → fresh.
  */
@@ -64,12 +64,12 @@ function freshTimestamp(): string {
 }
 
 /**
- * Creates a temp project directory with a .gsd/graphs/graph.json file.
+ * Creates a temp project directory with a .sf/graphs/graph.json file.
  * Returns the projectDir path. Caller is responsible for cleanup.
  */
 function makeProjectDir(fixture: GraphFixture): string {
   const projectDir = mkdtempSync(join(tmpdir(), "graph-ctx-test-"));
-  const sfDir = join(projectDir, ".gsd");
+  const sfDir = join(projectDir, ".sf");
   const graphsDir = join(sfDir, "graphs");
   mkdirSync(graphsDir, { recursive: true });
 
@@ -135,7 +135,7 @@ describe("inlineGraphSubgraph — null returns", () => {
   });
 
   it("returns null (no throw) when graph.json is missing", async () => {
-    // A project dir with no .gsd directory at all — graphQuery returns zero nodes
+    // A project dir with no .sf directory at all — graphQuery returns zero nodes
     const projectDir = mkdtempSync(join(tmpdir(), "graph-ctx-nofile-"));
     try {
       const result = await inlineGraphSubgraph(projectDir, "auth", { budget: 3000 });
@@ -237,7 +237,7 @@ describe("inlineGraphSubgraph — correct output", () => {
     // Write a graph.json with an invalid builtAt — graphStatus will catch and return {exists: false}
     // inlineGraphSubgraph should still return the node block without stale annotation
     const projectDir = mkdtempSync(join(tmpdir(), "graph-ctx-corrupt-"));
-    const sfDir = join(projectDir, ".gsd");
+    const sfDir = join(projectDir, ".sf");
     const graphsDir = join(sfDir, "graphs");
     mkdirSync(graphsDir, { recursive: true });
 

@@ -4,7 +4,7 @@
 /**
  * Knowledge Graph for SF projects.
  *
- * Parses .gsd/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,
+ * Parses .sf/ artifacts (STATE.md, milestone ROADMAPs, slice PLANs,
  * KNOWLEDGE.md) into a graph of nodes and edges. Parse errors in any
  * single artifact are caught and never propagate — the artifact is skipped
  * and the rest of the graph is returned.
@@ -537,7 +537,7 @@ function parseLearningsSection(
 // ---------------------------------------------------------------------------
 
 /**
- * Build a KnowledgeGraph by parsing all .gsd/ artifacts.
+ * Build a KnowledgeGraph by parsing all .sf/ artifacts.
  *
  * Parse errors in any single artifact are caught — the artifact is skipped
  * and never causes buildGraph() to throw.
@@ -590,7 +590,7 @@ export async function buildGraph(projectDir: string): Promise<KnowledgeGraph> {
 // ---------------------------------------------------------------------------
 
 /**
- * Write the graph to .gsd/graphs/graph.json atomically.
+ * Write the graph to .sf/graphs/graph.json atomically.
  *
  * Writes to graph.tmp.json first, then renames to graph.json.
  * Creates the graphs/ directory if it does not exist.

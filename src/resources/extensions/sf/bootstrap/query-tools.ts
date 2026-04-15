@@ -12,7 +12,7 @@ export function registerQueryTools(pi: ExtensionAPI): void {
     description:
       "Read the current status of a milestone and all its slices from the SF database. " +
       "Returns milestone metadata, per-slice status, and task counts per slice. " +
-      "Use this instead of querying .gsd/sf.db directly via sqlite3 or better-sqlite3.",
+      "Use this instead of querying .sf/sf.db directly via sqlite3 or better-sqlite3.",
     promptSnippet: "Get milestone status, slice statuses, and task counts for a given milestoneId",
     promptGuidelines: [
       "Use this tool — not sqlite3 or better-sqlite3 — to inspect milestone or slice state from the DB.",

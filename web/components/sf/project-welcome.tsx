@@ -37,7 +37,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
         headline: "Existing project detected",
         body: "SF will map your codebase and ask a few questions about what you want to build. From there it generates structured milestones and deliverable slices.",
         primaryLabel: "Map & Initialize",
-        primaryCommand: "/gsd",
+        primaryCommand: "/sf",
         secondary: {
           label: "Browse files first",
           action: "files-view",
@@ -48,14 +48,14 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
       return {
         icon: <ArrowUpCircle className="h-8 w-8 text-foreground" strokeWidth={1.5} />,
         headline: "SF v1 project found",
-        body: "This project has a .planning/ folder from an earlier SF version. Migration converts your existing planning data into the new .gsd/ format.",
+        body: "This project has a .planning/ folder from an earlier SF version. Migration converts your existing planning data into the new .sf/ format.",
         detail: "Your original files will be preserved — migration creates the new structure alongside them.",
         primaryLabel: "Migrate to v2",
-        primaryCommand: "/gsd migrate",
+        primaryCommand: "/sf migrate",
         secondary: {
           label: "Start fresh instead",
           action: "command",
-          command: "/gsd",
+          command: "/sf",
         },
       }
 
@@ -65,7 +65,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
         headline: "Start a new project",
         body: "This folder is empty. SF will ask what you want to build, then generate a structured plan — milestones broken into deliverable slices with risk-ordered execution.",
         primaryLabel: "Start Project Setup",
-        primaryCommand: "/gsd",
+        primaryCommand: "/sf",
       }
 
     // active-sf and empty-sf shouldn't reach here, but handle gracefully
@@ -75,7 +75,7 @@ function getVariant(detection: ProjectDetection): WelcomeVariant {
         headline: "Set up your project",
         body: "Run the SF wizard to get started.",
         primaryLabel: "Get Started",
-        primaryCommand: "/gsd",
+        primaryCommand: "/sf",
       }
   }
 }

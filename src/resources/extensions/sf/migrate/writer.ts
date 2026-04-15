@@ -1,7 +1,7 @@
 // SF Directory Writer — Format Functions & Directory Orchestrator
 // Format functions: pure string-returning functions that serialize SF types into the exact markdown
 // format that SF-2's parsers expect (parseRoadmap, parsePlan, parseSummary, parseRequirementCounts).
-// writeSFDirectory: orchestrator that writes a complete .gsd directory tree from a SFProject.
+// writeSFDirectory: orchestrator that writes a complete .sf directory tree from a SFProject.
 
 import { join } from 'node:path';
 import { saveFile } from '../files.js';
@@ -412,7 +412,7 @@ export function formatState(milestones: SFMilestone[]): string {
 // ─── Directory Writer Orchestrator ─────────────────────────────────────────
 
 /**
- * Write a complete .gsd directory tree from a SFProject.
+ * Write a complete .sf directory tree from a SFProject.
  * Iterates milestones → slices → tasks, calls format functions,
  * and writes each file via saveFile(). Returns a manifest of written paths.
  *

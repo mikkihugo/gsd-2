@@ -7,7 +7,7 @@
  *   2. Pending keys exist — gate triggers collection
  *   3. No pending keys — gate skips silently
  *
- * Uses temp directories with real .gsd/milestones/M001/ structure, mirroring
+ * Uses temp directories with real .sf/milestones/M001/ structure, mirroring
  * the pattern from manifest-status.test.ts.
  */
 
@@ -25,9 +25,9 @@ function makeTempDir(prefix: string): string {
   return dir;
 }
 
-/** Create the .gsd/milestones/M001/ directory structure and write a secrets manifest. */
+/** Create the .sf/milestones/M001/ directory structure and write a secrets manifest. */
 function writeManifest(base: string, content: string): void {
-  const mDir = join(base, '.gsd', 'milestones', 'M001');
+  const mDir = join(base, '.sf', 'milestones', 'M001');
   mkdirSync(mDir, { recursive: true });
   writeFileSync(join(mDir, 'M001-SECRETS.md'), content);
 }
@@ -47,7 +47,7 @@ test('secrets gate: no manifest exists — getManifestStatus returns null', asyn
   const tmp = makeTempDir('gate-no-manifest');
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
-  // No .gsd directory at all
+  // No .sf directory at all
   const result = await getManifestStatus(tmp, 'M001');
   assert.strictEqual(result, null, 'should return null when no manifest file exists');
 });
@@ -124,7 +124,7 @@ test('secrets gate: pending keys exist — gate triggers collection, manifest up
   // status ("pending") because collectSecretsFromManifest only updates entries
   // that flow through collectOneSecret. At runtime, getManifestStatus overrides
   // env-present entries to "existing" regardless of manifest status.
-  const manifestPath = join(tmp, '.gsd', 'milestones', 'M001', 'M001-SECRETS.md');
+  const manifestPath = join(tmp, '.sf', 'milestones', 'M001', 'M001-SECRETS.md');
   const updatedContent = readFileSync(manifestPath, 'utf8');
   assert.ok(
     updatedContent.includes('**Status:** skipped'),

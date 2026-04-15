@@ -25,7 +25,7 @@ describe("notification-store", () => {
 
   beforeEach(() => {
     tmp = mkdtempSync(join(tmpdir(), "sf-notif-test-"));
-    mkdirSync(join(tmp, ".gsd"), { recursive: true });
+    mkdirSync(join(tmp, ".sf"), { recursive: true });
     _resetNotificationStore();
   });
 
@@ -38,7 +38,7 @@ describe("notification-store", () => {
     initNotificationStore(tmp);
     appendNotification("test message", "info");
 
-    const filePath = join(tmp, ".gsd", "notifications.jsonl");
+    const filePath = join(tmp, ".sf", "notifications.jsonl");
     assert.ok(existsSync(filePath));
 
     const content = readFileSync(filePath, "utf-8").trim();
@@ -221,7 +221,7 @@ describe("notification-store", () => {
 
   test("reinit switches to new project path", () => {
     const tmp2 = mkdtempSync(join(tmpdir(), "sf-notif-test2-"));
-    mkdirSync(join(tmp2, ".gsd"), { recursive: true });
+    mkdirSync(join(tmp2, ".sf"), { recursive: true });
 
     initNotificationStore(tmp);
     appendNotification("project1", "info");
@@ -270,7 +270,7 @@ describe("notification-store", () => {
     appendNotification("msg1", "info");
 
     // Simulate another process holding the lock
-    const lockPath = join(tmp, ".gsd", "notifications.lock");
+    const lockPath = join(tmp, ".sf", "notifications.lock");
     writeFileSync(lockPath, String(Date.now()), "utf-8");
 
     // markAllRead should still work (best-effort) but not delete the foreign lock
@@ -287,7 +287,7 @@ describe("notification-store", () => {
     appendNotification("msg1", "info");
 
     // Simulate another process holding the lock
-    const lockPath = join(tmp, ".gsd", "notifications.lock");
+    const lockPath = join(tmp, ".sf", "notifications.lock");
     writeFileSync(lockPath, String(Date.now()), "utf-8");
 
     // clearNotifications should still work but not delete the foreign lock

@@ -112,7 +112,7 @@ export function safeReadFile(filePath: string): string | null {
 /**
  * Create a minimal SF milestone structure in a temp directory.
  *
- * @param base - Base directory (should have .gsd/ or be a temp repo)
+ * @param base - Base directory (should have .sf/ or be a temp repo)
  * @param mid - Milestone ID (e.g., "M001")
  * @param options - What to create
  */
@@ -132,7 +132,7 @@ export function writeMilestoneFixture(
     }>;
   } = {},
 ): void {
-  const milestoneDir = join(base, ".gsd", "milestones", mid);
+  const milestoneDir = join(base, ".sf", "milestones", mid);
   mkdirSync(milestoneDir, { recursive: true });
 
   if (options.roadmap) {

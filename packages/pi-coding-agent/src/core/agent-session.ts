@@ -171,7 +171,7 @@ export interface AgentSessionConfig {
 	isClaudeCodeReady?: () => boolean;
 	/** When false, model changes (via setModel/cycleModel/extension setModel) do NOT
 	 * write defaultProvider/defaultModel back to settings.json. Used by print/one-shot
-	 * mode so that `gsd -p --model X "msg"` never mutates the persisted default (#4251). */
+	 * mode so that `sf -p --model X "msg"` never mutates the persisted default (#4251). */
 	persistModelChanges?: boolean;
 }
 
@@ -307,7 +307,7 @@ export class AgentSession {
 	// Defaults to false — callers must explicitly opt into persistence. This is the
 	// safe default for SDK consumers: a third party building on @sf-run/pi-coding-agent
 	// should not silently mutate the user's global settings just by switching models.
-	// Interactive CLI entry points (gsd wrapper's interactive branch and pi main's
+	// Interactive CLI entry points (sf wrapper's interactive branch and pi main's
 	// isInteractive branch) explicitly set this to true so user model picks still
 	// persist. One-shot/print/rpc/mcp leave it false. (#4251)
 	private _persistModelChanges: boolean;

@@ -666,8 +666,8 @@ export interface SaveArtifactOpts {
 
 /**
  * Save an artifact to DB and write the corresponding markdown file to disk.
- * The path is relative to .gsd/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
- * The full file path is computed as basePath + '.gsd/' + path.
+ * The path is relative to .sf/ (e.g. "milestones/M001/slices/S06/tasks/T01-SUMMARY.md").
+ * The full file path is computed as basePath + '.sf/' + path.
  */
 export async function saveArtifactToDb(
   opts: SaveArtifactOpts,
@@ -677,10 +677,10 @@ export async function saveArtifactToDb(
     const db = await import('./sf-db.js');
 
     // Guard against path traversal before any reads/writes
-    const sfDir = resolve(basePath, '.gsd');
-    const fullPath = resolve(basePath, '.gsd', opts.path);
+    const sfDir = resolve(basePath, '.sf');
+    const fullPath = resolve(basePath, '.sf', opts.path);
     if (!fullPath.startsWith(sfDir)) {
-      throw new SFError(SF_IO_ERROR, `saveArtifactToDb: path escapes .gsd/ directory: ${opts.path}`);
+      throw new SFError(SF_IO_ERROR, `saveArtifactToDb: path escapes .sf/ directory: ${opts.path}`);
     }
 
     // Shrinkage guard: if the file already exists and the new content is

@@ -5,13 +5,13 @@ import { createTestContext } from "./test-helpers.ts";
 
 const { assertTrue, assertMatch, assertNoMatch, report } = createTestContext();
 
-// ─── #2942: Zombie .gsd state skips init wizard ─────────────────────────────
+// ─── #2942: Zombie .sf state skips init wizard ─────────────────────────────
 //
-// A partially initialized .gsd/ (symlink exists but no PREFERENCES.md or
+// A partially initialized .sf/ (symlink exists but no PREFERENCES.md or
 // milestones/) causes the init wizard gate in showWorkflowEntry to be skipped,
 // resulting in an uninitialized project session.
 
-console.log("\n=== #2942: zombie .gsd state must not skip init wizard ===");
+console.log("\n=== #2942: zombie .sf state must not skip init wizard ===");
 
 // ── guided-flow.ts — init wizard gate must check bootstrap completeness ──
 
@@ -32,15 +32,15 @@ const afterSmartEntry = smartEntryIdx >= 0 ? guidedFlowSrc.slice(smartEntryIdx, 
 // It must also verify that bootstrap artifacts (PREFERENCES.md or milestones/) exist.
 assertTrue(
   afterSmartEntry.includes("PREFERENCES.md") || afterSmartEntry.includes("PREFERENCES"),
-  "init wizard gate checks for PREFERENCES.md, not just .gsd/ existence (#2942)",
+  "init wizard gate checks for PREFERENCES.md, not just .sf/ existence (#2942)",
 );
 
 assertTrue(
   afterSmartEntry.includes("milestones"),
-  "init wizard gate checks for milestones/ directory, not just .gsd/ existence (#2942)",
+  "init wizard gate checks for milestones/ directory, not just .sf/ existence (#2942)",
 );
 
-// The init wizard should be shown when .gsd/ exists but has no bootstrap artifacts.
+// The init wizard should be shown when .sf/ exists but has no bootstrap artifacts.
 // The old code was: if (!existsSync(sfRoot(basePath))) { ... showProjectInit ... }
 // The fix should use a compound check so zombie states trigger the wizard.
 // Verify we no longer have the bare existence check as the sole gate.
@@ -68,7 +68,7 @@ const autoStartSrc = readFileSync(
 );
 
 // After ensureGsdSymlink, the code that creates milestones/ must check for
-// the milestones directory specifically (not .gsd/ which ensureGsdSymlink already created).
+// the milestones directory specifically (not .sf/ which ensureGsdSymlink already created).
 const symlinkIdx = autoStartSrc.indexOf("ensureGsdSymlink(base)");
 assertTrue(symlinkIdx >= 0, "auto-start.ts calls ensureGsdSymlink(base)");
 
@@ -89,7 +89,7 @@ const mkdirRegion = afterSymlink.slice(0, afterSymlink.indexOf("mkdirSync") + 20
 assertMatch(
   mkdirRegion,
   /existsSync\([^)]*milestones/,
-  "milestones bootstrap checks milestones path existence, not .gsd/ (#2942)",
+  "milestones bootstrap checks milestones path existence, not .sf/ (#2942)",
 );
 
 report();

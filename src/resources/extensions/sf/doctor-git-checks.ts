@@ -16,7 +16,7 @@ import { loadEffectiveSFPreferences } from "./preferences.js";
 
 /**
  * Returns true if the directory contains only doctor artifacts
- * (e.g. `.gsd/doctor-history.jsonl`). These dirs are created by
+ * (e.g. `.sf/doctor-history.jsonl`). These dirs are created by
  * appendDoctorHistory() writing to worktree-scoped paths during the audit
  * and should not be flagged as orphaned worktrees (#3105).
  */
@@ -25,9 +25,9 @@ function isDoctorArtifactOnly(dirPath: string): boolean {
     const entries = readdirSync(dirPath);
     // Empty dir — not a doctor artifact, still orphaned
     if (entries.length === 0) return false;
-    // Only a .gsd subdirectory
-    if (entries.length === 1 && entries[0] === ".gsd") {
-      const sfEntries = readdirSync(join(dirPath, ".gsd"));
+    // Only a .sf subdirectory
+    if (entries.length === 1 && entries[0] === ".sf") {
+      const sfEntries = readdirSync(join(dirPath, ".sf"));
       return sfEntries.length <= 1 && sfEntries.every(e => e === "doctor-history.jsonl");
     }
     return false;
@@ -319,8 +319,8 @@ export async function checkGitHealth(
   try {
     const wtDir = worktreesDir(basePath);
     if (existsSync(wtDir)) {
-      // Resolve symlinks and normalize separators so that symlinked .gsd
-      // paths (e.g. ~/.gsd/projects/<hash>/worktrees/…) match the paths
+      // Resolve symlinks and normalize separators so that symlinked .sf
+      // paths (e.g. ~/.sf/projects/<hash>/worktrees/…) match the paths
       // returned by `git worktree list`.
       const normalizePath = (p: string): string => {
         try { p = realpathSync(p); } catch { /* path may not exist */ }
@@ -336,7 +336,7 @@ export async function checkGitHealth(
         } catch { continue; }
         const normalizedFullPath = normalizePath(fullPath);
         if (!registeredPaths.has(normalizedFullPath)) {
-          // Skip directories that only contain doctor artifacts (.gsd/doctor-history.jsonl).
+          // Skip directories that only contain doctor artifacts (.sf/doctor-history.jsonl).
           // appendDoctorHistory() can recreate these dirs during the audit itself,
           // causing a circular false positive (#3105 Bug 1).
           if (isDoctorArtifactOnly(fullPath)) continue;
@@ -413,7 +413,7 @@ export async function checkGitHealth(
 
   // ── Worktree lifecycle checks ──────────────────────────────────────────
   // Check SF-managed worktrees for: merged branches, stale work, dirty
-  // state, and unpushed commits. Only worktrees under .gsd/worktrees/.
+  // state, and unpushed commits. Only worktrees under .sf/worktrees/.
   try {
     const healthStatuses = getAllWorktreeHealth(basePath);
     const cwd = process.cwd();

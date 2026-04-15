@@ -10,7 +10,7 @@ import { buildNotificationWidgetLines } from "../notification-widget.js";
 test("buildNotificationWidgetLines shows unread count with shortcut pair", () => {
   const tmp = mkdtempSync(join(tmpdir(), "sf-notification-widget-"));
   try {
-    mkdirSync(join(tmp, ".gsd"), { recursive: true });
+    mkdirSync(join(tmp, ".sf"), { recursive: true });
     _resetNotificationStore();
     initNotificationStore(tmp);
     appendNotification("Need attention", "warning");

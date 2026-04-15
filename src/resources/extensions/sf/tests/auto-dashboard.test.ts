@@ -232,11 +232,11 @@ test("extractUatSliceId returns null for invalid formats", () => {
 test("widget mode respects project preference precedence and persists there", (t) => {
   const homeDir = makeTempDir("home");
   const projectDir = makeTempDir("project");
-  const globalPrefsPath = join(homeDir, ".gsd", "preferences.md");
-  const projectPrefsPath = join(projectDir, ".gsd", "preferences.md");
+  const globalPrefsPath = join(homeDir, ".sf", "preferences.md");
+  const projectPrefsPath = join(projectDir, ".sf", "preferences.md");
 
-  mkdirSync(join(homeDir, ".gsd"), { recursive: true });
-  mkdirSync(join(projectDir, ".gsd"), { recursive: true });
+  mkdirSync(join(homeDir, ".sf"), { recursive: true });
+  mkdirSync(join(projectDir, ".sf"), { recursive: true });
   writeFileSync(globalPrefsPath, "---\nversion: 1\nwidget_mode: off\n---\n", "utf-8");
   writeFileSync(projectPrefsPath, "---\nversion: 1\nwidget_mode: small\n---\n", "utf-8");
 

@@ -206,12 +206,12 @@ function buildCommandSuggestions(
     }
   }
 
-  if (phase === "planning") add("/gsd", "Open SF planning")
-  if (phase === "executing" || phase === "summarizing") add("/gsd auto", "Resume SF auto mode")
-  if (activeScope) add(`/gsd doctor ${activeScope}`, "Inspect scoped doctor report")
-  if (activeScope) add(`/gsd doctor fix ${activeScope}`, "Apply scoped doctor fixes")
-  if (validationCount > 0 && activeScope) add(`/gsd doctor audit ${activeScope}`, "Audit validation diagnostics")
-  add("/gsd status", "Check current-project status")
+  if (phase === "planning") add("/sf", "Open SF planning")
+  if (phase === "executing" || phase === "summarizing") add("/sf auto", "Resume SF auto mode")
+  if (activeScope) add(`/sf doctor ${activeScope}`, "Inspect scoped doctor report")
+  if (activeScope) add(`/sf doctor fix ${activeScope}`, "Apply scoped doctor fixes")
+  if (validationCount > 0 && activeScope) add(`/sf doctor audit ${activeScope}`, "Audit validation diagnostics")
+  add("/sf status", "Check current-project status")
 
   return [...suggestions.values()]
 }
@@ -357,7 +357,7 @@ function resolveSummary(options: {
 }
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 async function collectRecoveryDiagnosticsChildPayload(
@@ -486,7 +486,7 @@ async function collectRecoveryDiagnosticsChildPayload(
           SF_RECOVERY_UNIT_TYPE: unit?.type ?? "execute-project",
           SF_RECOVERY_UNIT_ID: unit?.id ?? "project",
           SF_RECOVERY_SESSION_FILE: sessionFile ?? "",
-          SF_RECOVERY_ACTIVITY_DIR: join(basePath, ".gsd", "activity"),
+          SF_RECOVERY_ACTIVITY_DIR: join(basePath, ".sf", "activity"),
           SF_RECOVERY_DOCTOR_MODULE: doctorModulePath,
           SF_RECOVERY_FORENSICS_MODULE: sessionForensicsModulePath,
         },

@@ -306,7 +306,7 @@ describe(
 			});
 
 			it('should not persist marketplace agent directories into package sources', async (t) => {
-				const isolatedAgentDir = join(tempDir, '.gsd', 'agent');
+				const isolatedAgentDir = join(tempDir, '.sf', 'agent');
 				const settingsPath = join(isolatedAgentDir, 'settings.json');
 				rmSync(isolatedAgentDir, { recursive: true, force: true });
 				process.env.SF_CODING_AGENT_DIR = isolatedAgentDir;

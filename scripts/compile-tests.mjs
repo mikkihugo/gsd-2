@@ -175,8 +175,8 @@ async function main() {
   const { existsSync } = await import('node:fs');
   const testDirsToClean = [
     [join(ROOT, 'dist-test', 'src', 'tests'), join(ROOT, 'src', 'tests')],
-    [join(ROOT, 'dist-test', 'src', 'resources', 'extensions', 'gsd', 'tests'),
-     join(ROOT, 'src', 'resources', 'extensions', 'gsd', 'tests')],
+    [join(ROOT, 'dist-test', 'src', 'resources', 'extensions', 'sf', 'tests'),
+     join(ROOT, 'src', 'resources', 'extensions', 'sf', 'tests')],
   ];
   let staleCleaned = 0;
   for (const [distDir, srcDir] of testDirsToClean) {

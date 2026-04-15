@@ -29,7 +29,7 @@ import {
 test('write-gate: blocks CONTEXT.md write during discussion without depth verification (absolute path)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '/Users/dev/project/.gsd/milestones/M001/M001-CONTEXT.md',
+    '/Users/dev/project/.sf/milestones/M001/M001-CONTEXT.md',
     'M001',
     false,
   );
@@ -42,7 +42,7 @@ test('write-gate: blocks CONTEXT.md write during discussion without depth verifi
 test('write-gate: blocks CONTEXT.md write during discussion without depth verification (relative path)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M005/M005-CONTEXT.md',
+    '.sf/milestones/M005/M005-CONTEXT.md',
     'M005',
     false,
   );
@@ -57,7 +57,7 @@ test('write-gate: allows CONTEXT.md write after depth verification', () => {
   markDepthVerified('M001');
   const result = shouldBlockContextWrite(
     'write',
-    '/Users/dev/project/.gsd/milestones/M001/M001-CONTEXT.md',
+    '/Users/dev/project/.sf/milestones/M001/M001-CONTEXT.md',
     'M001',
   );
   assert.strictEqual(result.block, false, 'should not block after depth verification');
@@ -70,7 +70,7 @@ test('write-gate: allows CONTEXT.md write after depth verification', () => {
 test('write-gate: blocks CONTEXT.md write when milestoneId is ambiguous', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.sf/milestones/M001/M001-CONTEXT.md',
     null,
   );
   assert.strictEqual(result.block, true, 'should block when milestone context is ambiguous');
@@ -82,7 +82,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
   // DISCUSSION.md
   const r1 = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-DISCUSSION.md',
+    '.sf/milestones/M001/M001-DISCUSSION.md',
     'M001',
   );
   assert.strictEqual(r1.block, false, 'DISCUSSION.md should pass');
@@ -90,7 +90,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
   // Slice file
   const r2 = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/slices/S01/S01-PLAN.md',
+    '.sf/milestones/M001/slices/S01/S01-PLAN.md',
     'M001',
   );
   assert.strictEqual(r2.block, false, 'slice plan should pass');
@@ -109,7 +109,7 @@ test('write-gate: allows non-CONTEXT.md writes during discussion', () => {
 test('write-gate: regex does not match slice context files (S01-CONTEXT.md)', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/slices/S01/S01-CONTEXT.md',
+    '.sf/milestones/M001/slices/S01/S01-CONTEXT.md',
     'M001',
   );
   assert.strictEqual(result.block, false, 'S01-CONTEXT.md should not be blocked');
@@ -120,7 +120,7 @@ test('write-gate: regex does not match slice context files (S01-CONTEXT.md)', ()
 test('write-gate: blocked reason contains depth_verification keyword and anti-bypass language', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M999/M999-CONTEXT.md',
+    '.sf/milestones/M999/M999-CONTEXT.md',
     'M999',
   );
   assert.strictEqual(result.block, true);
@@ -135,7 +135,7 @@ test('write-gate: blocked reason contains depth_verification keyword and anti-by
 test('write-gate: blocks CONTEXT.md write in queue mode without depth verification', () => {
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.sf/milestones/M001/M001-CONTEXT.md',
     null,   // no milestoneId in queue mode
     true,   // queue phase active
   );
@@ -150,7 +150,7 @@ test('write-gate: allows CONTEXT.md write in queue mode after depth verification
   markDepthVerified('M001');
   const result = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.sf/milestones/M001/M001-CONTEXT.md',
     null,   // no milestoneId in queue mode
     true,   // queue phase active
   );
@@ -166,14 +166,14 @@ test('write-gate: markDepthVerified unlocks only the matching milestone', () => 
 
   const allowed = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M001/M001-CONTEXT.md',
+    '.sf/milestones/M001/M001-CONTEXT.md',
     null,
   );
   assert.strictEqual(allowed.block, false, 'should allow the verified milestone');
 
   const blockedOther = shouldBlockContextWrite(
     'write',
-    '.gsd/milestones/M002/M002-CONTEXT.md',
+    '.sf/milestones/M002/M002-CONTEXT.md',
     null,
   );
   assert.strictEqual(blockedOther.block, true, 'other milestones should remain blocked');

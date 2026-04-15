@@ -3,7 +3,7 @@
  */
 
 import { AuthStorage } from "@sf-run/pi-coding-agent";
-import { loadEffectiveGSDPreferences, type RemoteQuestionsConfig } from "../gsd/preferences.js";
+import { loadEffectiveSFPreferences, type RemoteQuestionsConfig } from "../sf/preferences.js";
 import type { RemoteChannel } from "./types.js";
 
 export interface ResolvedConfig {
@@ -44,7 +44,7 @@ const AUTH_PROVIDER_ENV_MAP: Record<string, string> = {
 /**
  * Populate remote channel env vars from auth.json when they are not already
  * set in the environment. Called before every config resolution so that tokens
- * saved via `/gsd remote discord` (or `/gsd keys add discord_bot`) survive
+ * saved via `/sf remote discord` (or `/sf keys add discord_bot`) survive
  * process restarts without requiring the user to export env vars manually.
  *
  * Silently no-ops if auth.json is absent, unreadable, or malformed.
@@ -76,7 +76,7 @@ function hydrateRemoteTokensFromAuth(): void {
 
 export function resolveRemoteConfig(): ResolvedConfig | null {
   hydrateRemoteTokensFromAuth();
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveSFPreferences();
   const rq: RemoteQuestionsConfig | undefined = prefs?.preferences.remote_questions;
   if (!rq || !rq.channel || !rq.channel_id) return null;
   if (rq.channel !== "slack" && rq.channel !== "discord" && rq.channel !== "telegram") return null;
@@ -101,7 +101,7 @@ export function resolveRemoteConfig(): ResolvedConfig | null {
 
 export function getRemoteConfigStatus(): string {
   hydrateRemoteTokensFromAuth();
-  const prefs = loadEffectiveGSDPreferences();
+  const prefs = loadEffectiveSFPreferences();
   const rq: RemoteQuestionsConfig | undefined = prefs?.preferences.remote_questions;
   if (!rq || !rq.channel || !rq.channel_id) return "Remote questions: not configured";
   if (rq.channel !== "slack" && rq.channel !== "discord" && rq.channel !== "telegram") return `Remote questions: unknown channel type \"${rq.channel}\"`;

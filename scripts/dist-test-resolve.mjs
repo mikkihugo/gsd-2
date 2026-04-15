@@ -5,7 +5,7 @@
  * .js files still import '../foo.ts'. This hook redirects those to '.js' so
  * Node can find the compiled output.
  *
- * Also redirects @gsd bare imports to their compiled counterparts in dist-test.
+ * Also redirects @sf bare imports to their compiled counterparts in dist-test.
  */
 
 import { fileURLToPath, pathToFileURL } from 'node:url';

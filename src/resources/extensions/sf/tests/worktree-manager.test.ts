@@ -25,10 +25,10 @@ function makeBaseRepo(): string {
   run("git init -b main", base);
   run('git config user.name "Test User"', base);
   run('git config user.email "test@example.com"', base);
-  mkdirSync(join(base, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(base, ".sf", "milestones", "M001"), { recursive: true });
   writeFileSync(join(base, "README.md"), "# Test Project\n", "utf-8");
   writeFileSync(
-    join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(base, ".sf", "milestones", "M001", "M001-ROADMAP.md"),
     "# M001: Demo\n\n## Slices\n- [ ] **S01: First** `risk:low` `depends:[]`\n  > After this: it works\n",
     "utf-8",
   );
@@ -45,14 +45,14 @@ function makeRepoWithWorktree(worktreeName: string): { base: string; wtPath: str
 
 function makeRepoWithChanges(worktreeName: string): { base: string; wtPath: string } {
   const { base, wtPath } = makeRepoWithWorktree(worktreeName);
-  mkdirSync(join(wtPath, ".gsd", "milestones", "M002"), { recursive: true });
+  mkdirSync(join(wtPath, ".sf", "milestones", "M002"), { recursive: true });
   writeFileSync(
-    join(wtPath, ".gsd", "milestones", "M002", "M002-ROADMAP.md"),
+    join(wtPath, ".sf", "milestones", "M002", "M002-ROADMAP.md"),
     "# M002: New Feature\n\n## Slices\n- [ ] **S01: Setup** `risk:low` `depends:[]`\n  > After this: new feature ready\n",
     "utf-8",
   );
   writeFileSync(
-    join(wtPath, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(wtPath, ".sf", "milestones", "M001", "M001-ROADMAP.md"),
     "# M001: Demo (updated)\n\n## Slices\n- [x] **S01: First** `risk:low` `depends:[]`\n  > Done\n",
     "utf-8",
   );
@@ -86,8 +86,8 @@ describe("createWorktree", () => {
     assert.ok(existsSync(info.path), "worktree path should exist on disk");
     assert.ok(existsSync(join(info.path, "README.md")), "README.md should be in worktree");
     assert.ok(
-      existsSync(join(info.path, ".gsd", "milestones", "M001", "M001-ROADMAP.md")),
-      ".gsd files should be in worktree",
+      existsSync(join(info.path, ".sf", "milestones", "M001", "M001-ROADMAP.md")),
+      ".sf files should be in worktree",
     );
     const branches = run("git branch", base);
     assert.ok(branches.includes("worktree/feature-x"), "branch should be created in base repo");

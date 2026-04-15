@@ -98,8 +98,8 @@ function tailRead(filePath: string, maxBytes: number): string {
 }
 
 function discoverWorkers(basePath: string): string[] {
-  const parallelDir = join(basePath, ".gsd", "parallel");
-  const worktreeDir = join(basePath, ".gsd", "worktrees");
+  const parallelDir = join(basePath, ".sf", "parallel");
+  const worktreeDir = join(basePath, ".sf", "worktrees");
   const mids = new Set<string>();
 
   if (existsSync(parallelDir)) {
@@ -115,7 +115,7 @@ function discoverWorkers(basePath: string): string[] {
   if (existsSync(worktreeDir)) {
     try {
       for (const d of readdirSync(worktreeDir)) {
-        if (d.startsWith("M") && existsSync(join(worktreeDir, d, ".gsd", "auto.lock"))) {
+        if (d.startsWith("M") && existsSync(join(worktreeDir, d, ".sf", "auto.lock"))) {
           mids.add(d);
         }
       }
@@ -126,7 +126,7 @@ function discoverWorkers(basePath: string): string[] {
 }
 
 function querySliceProgress(basePath: string, mid: string): SliceProgress[] {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
+  const dbPath = join(basePath, ".sf", "worktrees", mid, ".sf", "sf.db");
   if (!existsSync(dbPath)) return [];
 
   try {
@@ -144,7 +144,7 @@ function querySliceProgress(basePath: string, mid: string): SliceProgress[] {
 }
 
 function extractCostFromNdjson(basePath: string, mid: string): number {
-  const stdoutPath = join(basePath, ".gsd", "parallel", `${mid}.stdout.log`);
+  const stdoutPath = join(basePath, ".sf", "parallel", `${mid}.stdout.log`);
   if (!existsSync(stdoutPath)) return 0;
   try {
     const content = readFileSync(stdoutPath, "utf-8");
@@ -166,7 +166,7 @@ function extractCostFromNdjson(basePath: string, mid: string): number {
 }
 
 function queryRecentCompletions(basePath: string, mid: string): string[] {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
+  const dbPath = join(basePath, ".sf", "worktrees", mid, ".sf", "sf.db");
   if (!existsSync(dbPath)) return [];
   try {
     const sql = `SELECT id, slice_id, one_liner FROM tasks WHERE milestone_id='${mid}' AND status='complete' AND completed_at IS NOT NULL ORDER BY completed_at DESC LIMIT 5`;
@@ -184,12 +184,12 @@ function queryRecentCompletions(basePath: string, mid: string): string[] {
 
 function collectWorkerData(basePath: string): WorkerView[] {
   const mids = discoverWorkers(basePath);
-  const parallelDir = join(basePath, ".gsd", "parallel");
+  const parallelDir = join(basePath, ".sf", "parallel");
   const workers: WorkerView[] = [];
 
   for (const mid of mids) {
     const status = readJsonSafe<StatusJson>(join(parallelDir, `${mid}.status.json`));
-    const lock = readJsonSafe<AutoLock>(join(basePath, ".gsd", "worktrees", mid, ".gsd", "auto.lock"));
+    const lock = readJsonSafe<AutoLock>(join(basePath, ".sf", "worktrees", mid, ".sf", "auto.lock"));
     const slices = querySliceProgress(basePath, mid);
 
     const pid = lock?.pid || status?.pid || 0;

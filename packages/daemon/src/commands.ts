@@ -90,7 +90,7 @@ export async function registerGuildCommands(
 // ---------------------------------------------------------------------------
 
 /**
- * Format session list for /gsd-status reply.
+ * Format session list for /sf-status reply.
  * Shows projectName, status, duration, and cost for each session.
  * Returns 'No active sessions.' if the array is empty.
  */

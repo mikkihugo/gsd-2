@@ -74,7 +74,7 @@ function createMockPi() {
 
 /** Write a minimal valid workflow definition YAML to the expected location. */
 function writeDefinition(basePath: string, name: string, content: string): void {
-  const defsDir = join(basePath, ".gsd", "workflow-defs");
+  const defsDir = join(basePath, ".sf", "workflow-defs");
   mkdirSync(defsDir, { recursive: true });
   writeFileSync(join(defsDir, `${name}.yaml`), content, "utf-8");
 }
@@ -141,7 +141,7 @@ describe("workflow catalog registration", () => {
     writeDefinition(base, "deploy-pipeline", SIMPLE_DEF);
     writeDefinition(base, "test-suite", SIMPLE_DEF);
 
-    // Change cwd so the completion scanner can find `.gsd/workflow-defs/`
+    // Change cwd so the completion scanner can find `.sf/workflow-defs/`
     process.chdir(base);
 
     const completions = getGsdArgumentCompletions("workflow run ");

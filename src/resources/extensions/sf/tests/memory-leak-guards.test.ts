@@ -35,7 +35,7 @@ test("clearActivityLogState resets dedup state so identical saves write again", 
     // First save
     saveActivityLog(ctx, baseDir, "execute-task", "M001/S01/T01");
 
-    const actDir = join(baseDir, ".gsd", "activity");
+    const actDir = join(baseDir, ".sf", "activity");
     assert.equal(readdirSync(actDir).length, 1, "first save creates one file");
 
     // Same content, same unit — deduped
@@ -68,7 +68,7 @@ test("saveActivityLog writes valid JSONL via streaming", () => {
 
     saveActivityLog(ctx, baseDir, "execute-task", "M002/S01/T01");
 
-    const actDir = join(baseDir, ".gsd", "activity");
+    const actDir = join(baseDir, ".sf", "activity");
     const files = readdirSync(actDir);
     assert.equal(files.length, 1, "one file written");
 

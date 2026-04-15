@@ -20,7 +20,7 @@ function makeMockPi() {
 
 function makeTmpBase(): string {
   const base = join(tmpdir(), `sf-journal-tool-test-${randomUUID()}`);
-  mkdirSync(join(base, ".gsd"), { recursive: true });
+  mkdirSync(join(base, ".sf"), { recursive: true });
   return base;
 }
 

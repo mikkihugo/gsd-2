@@ -34,7 +34,7 @@ export type RunCommandFn = (cmd: string) => string;
 
 // --------------- constants ---------------
 
-const LABEL = 'com.gsd.daemon';
+const LABEL = 'com.sf.daemon';
 const PLIST_FILENAME = `${LABEL}.plist`;
 
 // --------------- helpers ---------------
@@ -71,8 +71,8 @@ function buildEnvPath(nodePath: string): string {
 export function generatePlist(opts: PlistOptions): string {
   const home = homedir();
   const workDir = opts.workingDirectory ?? home;
-  const stdoutPath = opts.stdoutPath ?? resolve(home, '.gsd', 'daemon-stdout.log');
-  const stderrPath = opts.stderrPath ?? resolve(home, '.gsd', 'daemon-stderr.log');
+  const stdoutPath = opts.stdoutPath ?? resolve(home, '.sf', 'daemon-stdout.log');
+  const stderrPath = opts.stderrPath ?? resolve(home, '.sf', 'daemon-stderr.log');
   const envPath = buildEnvPath(opts.nodePath);
 
   // Forward ANTHROPIC_API_KEY so the orchestrator LLM can authenticate.

@@ -4,8 +4,8 @@
  * Regression test for the db_unavailable loop in worktree/symlink layouts.
  *
  * The path resolver must handle BOTH worktree path families:
- *   - /.gsd/worktrees/<MID>/...           (direct layout)
- *   - /.gsd/projects/<hash>/worktrees/<MID>/...  (symlink-resolved layout)
+ *   - /.sf/worktrees/<MID>/...           (direct layout)
+ *   - /.sf/projects/<hash>/worktrees/<MID>/...  (symlink-resolved layout)
  *
  * When the second layout is not recognised, ensureDbOpen derives a wrong DB
  * path, the open fails silently, and every completion tool call returns
@@ -30,54 +30,54 @@ console.log("\n=== #2517 Part 1: resolveProjectRootDbPath symlink layout ===");
 const { resolveProjectRootDbPath } = await import("../bootstrap/dynamic-tools.js");
 
 // Standard worktree layout (already works)
-const standardPath = `/home/user/myproject/.gsd/worktrees/M001/work`;
+const standardPath = `/home/user/myproject/.sf/worktrees/M001/work`;
 const standardResult = resolveProjectRootDbPath(standardPath);
 assertEq(
   standardResult,
-  join("/home/user/myproject", ".gsd", "sf.db"),
+  join("/home/user/myproject", ".sf", "sf.db"),
   "Standard worktree layout resolves to project root DB path",
 );
 
-// Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/...
+// Symlink-resolved layout: /.sf/projects/<hash>/worktrees/...
 // After PR #2952, these paths resolve to the hash-level DB (same as external-state),
 // because on POSIX getcwd() returns the canonical (symlink-resolved) path anyway, so
-// a path like <proj>/.gsd/projects/<hash>/worktrees/ in practice is always
-// ~/.gsd/projects/<hash>/worktrees/ after the OS resolves the .gsd symlink.
-const symlinkPath = `/home/user/myproject/.gsd/projects/abc123def/worktrees/M001/work`;
+// a path like <proj>/.sf/projects/<hash>/worktrees/ in practice is always
+// ~/.sf/projects/<hash>/worktrees/ after the OS resolves the .sf symlink.
+const symlinkPath = `/home/user/myproject/.sf/projects/abc123def/worktrees/M001/work`;
 const symlinkResult = resolveProjectRootDbPath(symlinkPath);
 assertEq(
   symlinkResult,
-  join("/home/user/myproject/.gsd/projects/abc123def", "sf.db"),
-  "/.gsd/projects/<hash>/worktrees/ resolves to hash-level DB (#2517, updated for #2952)",
+  join("/home/user/myproject/.sf/projects/abc123def", "sf.db"),
+  "/.sf/projects/<hash>/worktrees/ resolves to hash-level DB (#2517, updated for #2952)",
 );
 
 // Windows-style separators for symlink layout
 if (sep === "\\") {
-  const winSymlinkPath = `C:\\Users\\dev\\project\\.gsd\\projects\\abc123def\\worktrees\\M001\\work`;
+  const winSymlinkPath = `C:\\Users\\dev\\project\\.sf\\projects\\abc123def\\worktrees\\M001\\work`;
   const winResult = resolveProjectRootDbPath(winSymlinkPath);
   assertEq(
     winResult,
-    join("C:\\Users\\dev\\project\\.gsd\\projects\\abc123def", "sf.db"),
-    "Windows /.gsd/projects/<hash>/worktrees/ resolves to hash-level DB",
+    join("C:\\Users\\dev\\project\\.sf\\projects\\abc123def", "sf.db"),
+    "Windows /.sf/projects/<hash>/worktrees/ resolves to hash-level DB",
   );
 } else {
   // On non-Windows, test forward-slash variant explicitly
-  const fwdSymlinkPath = `/home/user/myproject/.gsd/projects/abc123def/worktrees/M001/work`;
+  const fwdSymlinkPath = `/home/user/myproject/.sf/projects/abc123def/worktrees/M001/work`;
   const fwdResult = resolveProjectRootDbPath(fwdSymlinkPath);
   assertEq(
     fwdResult,
-    join("/home/user/myproject/.gsd/projects/abc123def", "sf.db"),
-    "Forward-slash /.gsd/projects/<hash>/worktrees/ resolves to hash-level DB on POSIX",
+    join("/home/user/myproject/.sf/projects/abc123def", "sf.db"),
+    "Forward-slash /.sf/projects/<hash>/worktrees/ resolves to hash-level DB on POSIX",
   );
 }
 
 // Edge: deeper nesting under projects/<hash>/worktrees
-const deepSymlinkPath = `/home/user/myproject/.gsd/projects/deadbeef42/worktrees/M003/sub/dir`;
+const deepSymlinkPath = `/home/user/myproject/.sf/projects/deadbeef42/worktrees/M003/sub/dir`;
 const deepResult = resolveProjectRootDbPath(deepSymlinkPath);
 assertEq(
   deepResult,
-  join("/home/user/myproject/.gsd/projects/deadbeef42", "sf.db"),
-  "Deep /.gsd/projects/<hash>/worktrees/ path resolves to hash-level DB (#2952)",
+  join("/home/user/myproject/.sf/projects/deadbeef42", "sf.db"),
+  "Deep /.sf/projects/<hash>/worktrees/ path resolves to hash-level DB (#2952)",
 );
 
 // Non-worktree path should be unchanged
@@ -85,7 +85,7 @@ const normalPath = `/home/user/myproject`;
 const normalResult = resolveProjectRootDbPath(normalPath);
 assertEq(
   normalResult,
-  join("/home/user/myproject", ".gsd", "sf.db"),
+  join("/home/user/myproject", ".sf", "sf.db"),
   "Non-worktree path is unchanged",
 );
 

@@ -33,8 +33,8 @@ function createRepoWithCompletedMilestone(): string {
   run("git commit -m init", dir);
   run("git branch -M main", dir);
 
-  // Create .gsd structure with milestone M001 — all slices done → complete
-  const msDir = join(dir, ".gsd", "milestones", "M001");
+  // Create .sf structure with milestone M001 — all slices done → complete
+  const msDir = join(dir, ".sf", "milestones", "M001");
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "ROADMAP.md"), `---
 id: M001
@@ -57,16 +57,16 @@ Test
 _None_
 `);
 
-  // Commit .gsd files
+  // Commit .sf files
   run("git add -A", dir);
   run("git commit -m \"add milestone\"", dir);
 
   return dir;
 }
 
-/** Write a .gsd/PREFERENCES.md with the given git isolation mode. */
+/** Write a .sf/PREFERENCES.md with the given git isolation mode. */
 function writePreferencesFile(dir: string, isolation: "none" | "worktree" | "branch"): void {
-  const sfDir = join(dir, ".gsd");
+  const sfDir = join(dir, ".sf");
   mkdirSync(sfDir, { recursive: true });
   writeFileSync(join(sfDir, "PREFERENCES.md"), `---\ngit:\n  isolation: "${isolation}"\n---\n`);
 }
@@ -83,7 +83,7 @@ function createRepoWithActiveMilestone(): string {
   run("git commit -m init", dir);
   run("git branch -M main", dir);
 
-  const msDir = join(dir, ".gsd", "milestones", "M001");
+  const msDir = join(dir, ".sf", "milestones", "M001");
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "ROADMAP.md"), `---
 id: M001
@@ -126,9 +126,9 @@ describe('doctor-git', async () => {
       const dir = createRepoWithCompletedMilestone();
       cleanups.push(dir);
 
-      // Create worktree with milestone/M001 branch under .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
+      // Create worktree with milestone/M001 branch under .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", dir);
 
       const detect = await runSFDoctor(dir, { isolationMode: "worktree" });
       const orphanIssues = detect.issues.filter(i => i.code === "orphaned_auto_worktree");
@@ -154,11 +154,11 @@ describe('doctor-git', async () => {
       const dir = createRepoWithCompletedMilestone();
       cleanups.push(dir);
 
-      // Create worktree with milestone/M001 branch under .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
+      // Create worktree with milestone/M001 branch under .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", dir);
 
-      const wtPath = realpathSync(join(dir, ".gsd", "worktrees", "M001"));
+      const wtPath = realpathSync(join(dir, ".sf", "worktrees", "M001"));
 
       // Simulate the deadlock: set cwd inside the orphaned worktree
       const previousCwd = process.cwd();
@@ -247,10 +247,10 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Force-add a runtime file
-      const activityDir = join(dir, ".gsd", "activity");
+      const activityDir = join(dir, ".sf", "activity");
       mkdirSync(activityDir, { recursive: true });
       writeFileSync(join(activityDir, "test.log"), "log data\n");
-      run("git add -f .gsd/activity/test.log", dir);
+      run("git add -f .sf/activity/test.log", dir);
       run("git commit -m \"track runtime file\"", dir);
 
       const detect = await runSFDoctor(dir);
@@ -261,7 +261,7 @@ describe('doctor-git', async () => {
       assert.ok(fixed.fixesApplied.some(f => f.includes("untracked")), "fix untracks runtime files");
 
       // Verify file is no longer tracked
-      const tracked = run("git ls-files .gsd/activity/", dir);
+      const tracked = run("git ls-files .sf/activity/", dir);
       assert.deepStrictEqual(tracked, "", "runtime file untracked after fix");
     });
 
@@ -270,8 +270,8 @@ describe('doctor-git', async () => {
       const dir = realpathSync(mkdtempSync(join(tmpdir(), "doc-git-test-")));
       cleanups.push(dir);
 
-      // Create minimal .gsd structure (no git)
-      mkdirSync(join(dir, ".gsd"), { recursive: true });
+      // Create minimal .sf structure (no git)
+      mkdirSync(join(dir, ".sf"), { recursive: true });
 
       const result = await runSFDoctor(dir);
       const gitIssues = result.issues.filter(i =>
@@ -288,9 +288,9 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      // Create worktree for in-progress milestone under .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
+      // Create worktree for in-progress milestone under .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", dir);
 
       const detect = await runSFDoctor(dir, { isolationMode: "worktree" });
       const orphanIssues = detect.issues.filter(i => i.code === "orphaned_auto_worktree");
@@ -302,15 +302,15 @@ describe('doctor-git', async () => {
     // ─── Test 7: none-mode skips orphaned worktree check ───────────────
     // NOTE: loadEffectiveSFPreferences() resolves PROJECT_PREFERENCES_PATH
     // at module load time from process.cwd(). We write the prefs file to
-    // the test runner's cwd .gsd/PREFERENCES.md and clean up afterwards.
+    // the test runner's cwd .sf/PREFERENCES.md and clean up afterwards.
     if (process.platform !== "win32") {
     test('none-mode skips orphaned worktree', async () => {
       const dir = createRepoWithCompletedMilestone();
       cleanups.push(dir);
 
-      // Create worktree with milestone/M001 branch under .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
+      // Create worktree with milestone/M001 branch under .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", dir);
 
       const result = await runSFDoctor(dir, { isolationMode: "none" });
       const orphanIssues = result.issues.filter(i => i.code === "orphaned_auto_worktree");
@@ -342,7 +342,7 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Write integration branch metadata for M001 pointing to a non-existent branch
-      const metaPath = join(dir, ".gsd", "milestones", "M001", "M001-META.json");
+      const metaPath = join(dir, ".sf", "milestones", "M001", "M001-META.json");
       writeFileSync(metaPath, JSON.stringify({ integrationBranch: "feat/does-not-exist" }, null, 2));
 
       const detect = await runSFDoctor(dir);
@@ -365,7 +365,7 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Write integration branch metadata for M001 pointing to "main" (which exists)
-      const metaPath = join(dir, ".gsd", "milestones", "M001", "M001-META.json");
+      const metaPath = join(dir, ".sf", "milestones", "M001", "M001-META.json");
       writeFileSync(metaPath, JSON.stringify({ integrationBranch: "main" }, null, 2));
 
       const detect = await runSFDoctor(dir);
@@ -380,7 +380,7 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      const metaPath = join(dir, ".gsd", "milestones", "M001", "M001-META.json");
+      const metaPath = join(dir, ".sf", "milestones", "M001", "M001-META.json");
       writeFileSync(metaPath, JSON.stringify({ integrationBranch: "feat/does-not-exist" }, null, 2));
 
       const detect = await runSFDoctor(dir);
@@ -409,9 +409,9 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       run("git branch trunk", dir);
-      writeFileSync(join(dir, ".gsd", "PREFERENCES.md"), `---\ngit:\n  isolation: "worktree"\n  main_branch: "trunk"\n---\n`);
+      writeFileSync(join(dir, ".sf", "PREFERENCES.md"), `---\ngit:\n  isolation: "worktree"\n  main_branch: "trunk"\n---\n`);
 
-      const metaPath = join(dir, ".gsd", "milestones", "M001", "M001-META.json");
+      const metaPath = join(dir, ".sf", "milestones", "M001", "M001-META.json");
       writeFileSync(metaPath, JSON.stringify({ integrationBranch: "feat/does-not-exist" }, null, 2));
 
       const previousCwd = process.cwd();
@@ -447,7 +447,7 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Create a worktrees/ dir with an entry that is NOT in git worktree list
-      const orphanDir = join(dir, ".gsd", "worktrees", "orphan-feature");
+      const orphanDir = join(dir, ".sf", "worktrees", "orphan-feature");
       mkdirSync(orphanDir, { recursive: true });
       writeFileSync(join(orphanDir, "some-file.txt"), "leftover content\n");
 
@@ -476,9 +476,9 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      // Create a real registered worktree under .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b worktree/feature-1 .gsd/worktrees/feature-1", dir);
+      // Create a real registered worktree under .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b worktree/feature-1 .sf/worktrees/feature-1", dir);
 
       const detect = await runSFDoctor(dir);
       const orphanDirIssues = detect.issues.filter(i => i.code === "worktree_directory_orphaned");
@@ -507,10 +507,10 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Force-add a runtime file
-      const activityDir = join(dir, ".gsd", "activity");
+      const activityDir = join(dir, ".sf", "activity");
       mkdirSync(activityDir, { recursive: true });
       writeFileSync(join(activityDir, "test.log"), "log data\n");
-      run("git add -f .gsd/activity/test.log", dir);
+      run("git add -f .sf/activity/test.log", dir);
       run("git commit -m \"track runtime file\"", dir);
 
       const result = await runSFDoctor(dir, { isolationMode: "none" });
@@ -518,26 +518,26 @@ describe('doctor-git', async () => {
       assert.ok(trackedIssues.length > 0, "none-mode: tracked runtime files IS detected");
     });
 
-    // ─── Test: Symlinked .gsd does not cause false orphan detection ────
+    // ─── Test: Symlinked .sf does not cause false orphan detection ────
     if (process.platform !== "win32") {
-    test('worktree_directory_orphaned (symlinked .gsd not false-positive)', async () => {
+    test('worktree_directory_orphaned (symlinked .sf not false-positive)', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      // Move .gsd to an external location and replace with a symlink.
-      // This simulates the ~/.gsd/projects/<hash> layout where .gsd is a symlink.
+      // Move .sf to an external location and replace with a symlink.
+      // This simulates the ~/.sf/projects/<hash> layout where .sf is a symlink.
       const externalGsd = join(realpathSync(mkdtempSync(join(tmpdir(), "doc-git-symlink-"))), "sf-data");
       cleanups.push(externalGsd);
-      renameSync(join(dir, ".gsd"), externalGsd);
-      symlinkSync(externalGsd, join(dir, ".gsd"));
+      renameSync(join(dir, ".sf"), externalGsd);
+      symlinkSync(externalGsd, join(dir, ".sf"));
 
-      // Create a real registered worktree under the (now symlinked) .gsd/worktrees/
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b worktree/symlink-test .gsd/worktrees/symlink-test", dir);
+      // Create a real registered worktree under the (now symlinked) .sf/worktrees/
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b worktree/symlink-test .sf/worktrees/symlink-test", dir);
 
       const detect = await runSFDoctor(dir);
       const orphanDirIssues = detect.issues.filter(i => i.code === "worktree_directory_orphaned");
-      assert.deepStrictEqual(orphanDirIssues.length, 0, "registered worktree via symlinked .gsd NOT flagged as orphaned");
+      assert.deepStrictEqual(orphanDirIssues.length, 0, "registered worktree via symlinked .sf NOT flagged as orphaned");
     });
     } else {
     }
@@ -549,9 +549,9 @@ describe('doctor-git', async () => {
       cleanups.push(dir);
 
       // Create a worktree, make a commit, then merge the branch into main
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b worktree/merged-feature .gsd/worktrees/merged-feature", dir);
-      const wtPath = join(dir, ".gsd", "worktrees", "merged-feature");
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b worktree/merged-feature .sf/worktrees/merged-feature", dir);
+      const wtPath = join(dir, ".sf", "worktrees", "merged-feature");
       writeFileSync(join(wtPath, "feature.txt"), "feature\n");
       run("git add -A", wtPath);
       run("git -c user.email=test@test.com -c user.name=Test commit -m \"feature work\"", wtPath);
@@ -579,9 +579,9 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", dir);
-      const wtPath = join(dir, ".gsd", "worktrees", "M001");
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", dir);
+      const wtPath = join(dir, ".sf", "worktrees", "M001");
       writeFileSync(join(wtPath, "feature.txt"), "feature\n");
       run("git add -A", wtPath);
       run("git -c user.email=test@test.com -c user.name=Test commit -m \"feature work\"", wtPath);
@@ -603,9 +603,9 @@ describe('doctor-git', async () => {
       const dir = createRepoWithActiveMilestone();
       cleanups.push(dir);
 
-      mkdirSync(join(dir, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b worktree/active-feature .gsd/worktrees/active-feature", dir);
-      const wtPath = join(dir, ".gsd", "worktrees", "active-feature");
+      mkdirSync(join(dir, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b worktree/active-feature .sf/worktrees/active-feature", dir);
+      const wtPath = join(dir, ".sf", "worktrees", "active-feature");
       writeFileSync(join(wtPath, "wip.txt"), "work in progress\n");
       run("git add -A", wtPath);
       run("git -c user.email=test@test.com -c user.name=Test commit -m \"wip\"", wtPath);

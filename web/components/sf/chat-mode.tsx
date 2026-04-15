@@ -28,7 +28,7 @@ import { useTerminalFontSize } from "@/lib/use-terminal-font-size"
 /* ─── SF Action Definitions ─── */
 
 /**
- * Defines every /gsd subcommand available in the chat input bar.
+ * Defines every /sf subcommand available in the chat input bar.
  * Top 3 are shown as standalone buttons; the rest live in the overflow menu.
  * All commands dispatch through the main bridge session.
  */
@@ -44,33 +44,33 @@ interface SFActionDef {
 
 const SF_ACTIONS: SFActionDef[] = [
   // ── Top 3 (standalone buttons) ──
-  { label: "Discuss",   command: "/gsd discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
-  { label: "Next",      command: "/gsd next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
-  { label: "Auto",      command: "/gsd auto",      icon: Zap,               description: "Run all queued units continuously",                         category: "workflow" },
+  { label: "Discuss",   command: "/sf discuss",   icon: MessageCircle,     description: "Start guided milestone/slice discussion",                    category: "workflow",    disabledDuringAuto: true },
+  { label: "Next",      command: "/sf next",      icon: Play,              description: "Execute next task, then pause",                              category: "workflow" },
+  { label: "Auto",      command: "/sf auto",      icon: Zap,               description: "Run all queued units continuously",                         category: "workflow" },
   // ── Overflow: Workflow ──
-  { label: "Stop",      command: "/gsd stop",      icon: Square,            description: "Stop auto-mode gracefully",                                  category: "workflow" },
-  { label: "Pause",     command: "/gsd pause",     icon: Pause,             description: "Pause auto-mode (preserves state)",                          category: "workflow" },
+  { label: "Stop",      command: "/sf stop",      icon: Square,            description: "Stop auto-mode gracefully",                                  category: "workflow" },
+  { label: "Pause",     command: "/sf pause",     icon: Pause,             description: "Pause auto-mode (preserves state)",                          category: "workflow" },
   // ── Overflow: Visibility ──
-  { label: "Status",    command: "/gsd status",    icon: BarChart3,         description: "Show progress dashboard",                                    category: "visibility" },
-  { label: "Visualize", command: "/gsd visualize", icon: LayoutGrid,        description: "Interactive TUI (progress, deps, metrics, timeline)",        category: "visibility" },
-  { label: "Queue",     command: "/gsd queue",     icon: ListOrdered,       description: "Show queued/dispatched units and execution order",            category: "visibility" },
-  { label: "History",   command: "/gsd history",   icon: History,           description: "View execution history with cost/phase/model details",        category: "visibility" },
+  { label: "Status",    command: "/sf status",    icon: BarChart3,         description: "Show progress dashboard",                                    category: "visibility" },
+  { label: "Visualize", command: "/sf visualize", icon: LayoutGrid,        description: "Interactive TUI (progress, deps, metrics, timeline)",        category: "visibility" },
+  { label: "Queue",     command: "/sf queue",     icon: ListOrdered,       description: "Show queued/dispatched units and execution order",            category: "visibility" },
+  { label: "History",   command: "/sf history",   icon: History,           description: "View execution history with cost/phase/model details",        category: "visibility" },
   // ── Overflow: Course correction ──
-  { label: "Steer",     command: "/gsd steer",     icon: Compass,           description: "Apply user override to active work",                         category: "correction" },
-  { label: "Capture",   command: "/gsd capture",   icon: PenLine,           description: "Quick-capture a thought to CAPTURES.md",                     category: "correction" },
-  { label: "Triage",    command: "/gsd triage",    icon: Inbox,             description: "Classify and route pending captures",                        category: "correction",  disabledDuringAuto: true },
-  { label: "Skip",      command: "/gsd skip",      icon: SkipForward,       description: "Prevent a unit from auto-mode dispatch",                     category: "correction" },
-  { label: "Undo",      command: "/gsd undo",      icon: Undo2,             description: "Revert last completed unit",                                 category: "correction" },
+  { label: "Steer",     command: "/sf steer",     icon: Compass,           description: "Apply user override to active work",                         category: "correction" },
+  { label: "Capture",   command: "/sf capture",   icon: PenLine,           description: "Quick-capture a thought to CAPTURES.md",                     category: "correction" },
+  { label: "Triage",    command: "/sf triage",    icon: Inbox,             description: "Classify and route pending captures",                        category: "correction",  disabledDuringAuto: true },
+  { label: "Skip",      command: "/sf skip",      icon: SkipForward,       description: "Prevent a unit from auto-mode dispatch",                     category: "correction" },
+  { label: "Undo",      command: "/sf undo",      icon: Undo2,             description: "Revert last completed unit",                                 category: "correction" },
   // ── Overflow: Knowledge ──
-  { label: "Knowledge", command: "/gsd knowledge", icon: BookOpen,          description: "Add rule, pattern, or lesson to KNOWLEDGE.md",               category: "knowledge" },
+  { label: "Knowledge", command: "/sf knowledge", icon: BookOpen,          description: "Add rule, pattern, or lesson to KNOWLEDGE.md",               category: "knowledge" },
   // ── Overflow: Configuration ──
-  { label: "Mode",      command: "/gsd mode",      icon: SlidersHorizontal, description: "Set workflow mode (solo/team)",                               category: "config" },
-  { label: "Prefs",     command: "/gsd prefs",     icon: Settings,          description: "Manage preferences (global/project)",                        category: "config" },
+  { label: "Mode",      command: "/sf mode",      icon: SlidersHorizontal, description: "Set workflow mode (solo/team)",                               category: "config" },
+  { label: "Prefs",     command: "/sf prefs",     icon: Settings,          description: "Manage preferences (global/project)",                        category: "config" },
   // ── Overflow: Maintenance ──
-  { label: "Doctor",    command: "/gsd doctor",    icon: Stethoscope,       description: "Diagnose and repair .gsd/ state",                            category: "maintenance" },
-  { label: "Export",    command: "/gsd export",    icon: FileOutput,        description: "Export milestone/slice results (JSON or Markdown)",           category: "maintenance" },
-  { label: "Cleanup",   command: "/gsd cleanup",   icon: Trash2,            description: "Remove merged branches or snapshots",                        category: "maintenance" },
-  { label: "Remote",    command: "/gsd remote",    icon: Globe,             description: "Control remote auto-mode (Slack/Discord)",                    category: "maintenance" },
+  { label: "Doctor",    command: "/sf doctor",    icon: Stethoscope,       description: "Diagnose and repair .sf/ state",                            category: "maintenance" },
+  { label: "Export",    command: "/sf export",    icon: FileOutput,        description: "Export milestone/slice results (JSON or Markdown)",           category: "maintenance" },
+  { label: "Cleanup",   command: "/sf cleanup",   icon: Trash2,            description: "Remove merged branches or snapshots",                        category: "maintenance" },
+  { label: "Remote",    command: "/sf remote",    icon: Globe,             description: "Control remote auto-mode (Slack/Discord)",                    category: "maintenance" },
 ]
 
 /** Top 3 shown as standalone buttons next to chat input */
@@ -103,13 +103,13 @@ function groupByCategory(actions: SFActionDef[]): Array<{ category: SFActionDef[
 /**
  * ChatMode — main view for the Chat tab.
  *
- * All /gsd commands dispatch through the main bridge session.
+ * All /sf commands dispatch through the main bridge session.
  * Commands that inject competing LLM prompts (discuss, triage)
  * are disabled while auto-mode is active.
  *
  * Observability:
  *   - This component mounts only when activeView === "chat" (no hidden pre-init).
- *   - sessionStorage key "gsd-active-view:<cwd>" equals "chat" when this view is active.
+ *   - sessionStorage key "sf-active-view:<cwd>" equals "chat" when this view is active.
  *   - Header toolbar: data-testid="chat-mode-action-bar" confirms toolbar rendered.
  *   - Primary button: data-testid="chat-primary-action" reflects current workflowAction label.
  *   - Secondary buttons: data-testid="chat-secondary-action-{command}".
@@ -137,8 +137,8 @@ export function ChatMode({ className }: { className?: string }) {
 
       {/* ── Main chat pane ── */}
       <ChatPane
-        sessionId="gsd-main"
-        command="gsd"
+        sessionId="sf-main"
+        command="sf"
         className="flex-1"
         onOpenAction={(action) => handleAction(action.command)}
       />
@@ -1156,7 +1156,7 @@ function ChatMessageList({
  * - Disabled when disconnected; shows "Disconnected" badge
  * - Send button visible when input has content and connected
  * - Top 3 action buttons (Discuss, Next, Auto) shown standalone
- * - Overflow menu (⋯) contains all remaining /gsd subcommands grouped by category
+ * - Overflow menu (⋯) contains all remaining /sf subcommands grouped by category
  * - Every action has a tooltip with description on hover
  */
 function ChatInputBar({

@@ -64,7 +64,7 @@ test("bootstrapAutoSession checks manual session override before preferences", (
 
 test("bootstrapAutoSession prefers session model over PREFERENCES.md when provider is custom (#4122)", () => {
   // Custom providers (Ollama, vLLM, OpenAI-compatible proxies) live in
-  // ~/.gsd/agent/models.json, not PREFERENCES.md.  When the user picks one
+  // ~/.sf/agent/models.json, not PREFERENCES.md.  When the user picks one
   // via /sf model, that selection must win over any preferredModel from
   // PREFERENCES.md, otherwise auto-mode tries to start a built-in provider
   // the user is not logged into and pauses with "Not logged in".

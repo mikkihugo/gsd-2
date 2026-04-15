@@ -15,9 +15,9 @@ import { Editor, type EditorTheme, Key, matchesKey, Text, truncateToWidth, wrapT
 import { Type } from "@sinclair/typebox";
 import { makeUI } from "./shared/tui.js";
 import { maskEditorLine, type ProgressStatus } from "./shared/mod.js";
-import { parseSecretsManifest, formatSecretsManifest } from "./gsd/files.js";
-import { resolveMilestoneFile } from "./gsd/paths.js";
-import type { SecretsManifestEntry } from "./gsd/types.js";
+import { parseSecretsManifest, formatSecretsManifest } from "./sf/files.js";
+import { resolveMilestoneFile } from "./sf/paths.js";
+import type { SecretsManifestEntry } from "./sf/types.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -88,7 +88,7 @@ async function writeEnvKey(filePath: string, key: string, value: string): Promis
 // Re-export from env-utils.ts so existing consumers still work.
 // The implementation lives in env-utils.ts to avoid pulling @sf-run/pi-tui
 // into modules that only need env-checking (e.g. files.ts during reports).
-import { checkExistingEnvKeys } from "./gsd/env-utils.js";
+import { checkExistingEnvKeys } from "./sf/env-utils.js";
 export { checkExistingEnvKeys };
 
 /**

@@ -141,7 +141,7 @@ export function isValidationTerminal(validationContent: string): boolean {
 // ── deriveState memoization ─────────────────────────────────────────────────
 // Cache the most recent deriveState() result keyed by basePath. Within a single
 // dispatch cycle (~100ms window), repeated calls return the cached value instead
-// of re-reading the entire .gsd/ tree from disk.
+// of re-reading the entire .sf/ tree from disk.
 
 interface StateCache {
   basePath: string;
@@ -1018,7 +1018,7 @@ export async function _deriveStateImpl(basePath: string): Promise<SFState> {
   }
 
   // ── Batch-parse file cache ──────────────────────────────────────────────
-  // When the native Rust parser is available, read every .md file under .gsd/
+  // When the native Rust parser is available, read every .md file under .sf/
   // in one call and build an in-memory content map keyed by absolute path.
   // This eliminates O(N) individual fs.readFile calls during traversal.
   const fileContentCache = new Map<string, string>();

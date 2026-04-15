@@ -19,7 +19,7 @@ test("/sf inspect opens existing database when it was not yet opened in session"
     fs.rmSync(tmp, { recursive: true, force: true });
   });
 
-  const sfDir = path.join(tmp, ".gsd");
+  const sfDir = path.join(tmp, ".sf");
   fs.mkdirSync(sfDir, { recursive: true });
   const dbPath = path.join(sfDir, "sf.db");
 

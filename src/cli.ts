@@ -378,7 +378,7 @@ if (cliFlags.messages[0] === 'headless') {
   await ensureRtkBootstrap()
   // Sync bundled resources before headless runs (#3471). Without this,
   // headless-query loads from src/resources/ while auto/interactive load
-  // from ~/.gsd/agent/extensions/ — different extension copies diverge.
+  // from ~/.sf/agent/extensions/ — different extension copies diverge.
   initResources(agentDir)
   const { runHeadless, parseHeadlessArgs } = await import('./headless.js')
   await runHeadless(parseHeadlessArgs(process.argv))
@@ -558,7 +558,7 @@ if (isPrintMode) {
   markStartup('resourceLoader.reload')
 
   // Print mode is a one-shot invocation. The --model flag is a transient
-  // override (e.g. verification smoke tests like `gsd -p --model longcat/X "reply ok"`)
+  // override (e.g. verification smoke tests like `sf -p --model longcat/X "reply ok"`)
   // and MUST NOT mutate the persisted defaultProvider/defaultModel in settings.json (#4251).
   // We disable persistence at session construction so every downstream path
   // (setModel override, fallback reapply, validation repair) is gated in one place.
@@ -611,7 +611,7 @@ if (isPrintMode) {
     // Activate every registered tool before starting the MCP transport.
     // `session.agent.state.tools` is the *active* subset, not the full
     // registry — if we expose only the active set, extension-registered
-    // tools (gsd workflow, browser-tools, mac-tools, search-the-web, …)
+    // tools (sf workflow, browser-tools, mac-tools, search-the-web, …)
     // are invisible to MCP clients. Flipping the active set to every
     // known tool name makes `state.tools` mirror the full registry for
     // this MCP session, which is what an external client expects.
@@ -635,7 +635,7 @@ if (isPrintMode) {
 }
 
 // ---------------------------------------------------------------------------
-// Worktree subcommand — `gsd worktree <list|merge|clean|remove>`
+// Worktree subcommand — `sf worktree <list|merge|clean|remove>`
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'worktree' || cliFlags.messages[0] === 'wt') {
   const { handleList, handleMerge, handleClean, handleRemove } = await import('./worktree-cli.js')
@@ -676,8 +676,8 @@ if (!cliFlags.worktree && !isPrintMode) {
 }
 
 // ---------------------------------------------------------------------------
-// Auto-redirect: `gsd auto` with piped stdout → headless mode (#2732)
-// When stdout is not a TTY (e.g. `gsd auto | cat`, `gsd auto > file`),
+// Auto-redirect: `sf auto` with piped stdout → headless mode (#2732)
+// When stdout is not a TTY (e.g. `sf auto | cat`, `sf auto > file`),
 // the TUI cannot render and the process hangs. Redirect to headless mode
 // which handles non-interactive output gracefully.
 // ---------------------------------------------------------------------------
@@ -698,7 +698,7 @@ const cwd = process.cwd()
 const projectSessionsDir = getProjectSessionsDir(cwd)
 
 // Migrate legacy flat sessions: before per-directory scoping, all .jsonl session
-// files lived directly in ~/.gsd/sessions/. Move them into the correct per-cwd
+// files lived directly in ~/.sf/sessions/. Move them into the correct per-cwd
 // subdirectory so /resume can find them.
 migrateLegacyFlatSessions(sessionsDir, projectSessionsDir)
 

@@ -101,7 +101,7 @@ export function renderPlanProjection(basePath: string, milestoneId: string, slic
   const taskRows = getSliceTasks(milestoneId, sliceId);
 
   const content = renderPlanContent(sliceRow, taskRows);
-  const dir = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId);
+  const dir = join(basePath, ".sf", "milestones", milestoneId, "slices", sliceId);
   mkdirSync(dir, { recursive: true });
   atomicWriteSync(join(dir, `${sliceId}-PLAN.md`), content);
 }
@@ -158,7 +158,7 @@ export function renderRoadmapProjection(basePath: string, milestoneId: string): 
   const sliceRows = getMilestoneSlices(milestoneId);
 
   const content = renderRoadmapContent(milestoneRow, sliceRows);
-  const dir = join(basePath, ".gsd", "milestones", milestoneId);
+  const dir = join(basePath, ".sf", "milestones", milestoneId);
   mkdirSync(dir, { recursive: true });
   atomicWriteSync(join(dir, `${milestoneId}-ROADMAP.md`), content);
 }
@@ -275,7 +275,7 @@ export function renderSummaryProjection(basePath: string, milestoneId: string, s
 
   const evidenceRows = getVerificationEvidence(milestoneId, sliceId, taskId);
   const content = renderSummaryContent(taskRow, sliceId, milestoneId, evidenceRows);
-  const dir = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId, "tasks");
+  const dir = join(basePath, ".sf", "milestones", milestoneId, "slices", sliceId, "tasks");
   mkdirSync(dir, { recursive: true });
   atomicWriteSync(join(dir, `${taskId}-SUMMARY.md`), content);
 }
@@ -360,7 +360,7 @@ export async function renderStateProjection(basePath: string): Promise<void> {
     }
     const state = await deriveState(basePath);
     const content = renderStateContent(state);
-    const dir = join(basePath, ".gsd");
+    const dir = join(basePath, ".sf");
     mkdirSync(dir, { recursive: true });
     atomicWriteSync(join(dir, "STATE.md"), content);
   } catch (err) {
@@ -429,17 +429,17 @@ export function regenerateIfMissing(
 
   switch (fileType) {
     case "PLAN":
-      filePath = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId, `${sliceId}-PLAN.md`);
+      filePath = join(basePath, ".sf", "milestones", milestoneId, "slices", sliceId, `${sliceId}-PLAN.md`);
       break;
     case "ROADMAP":
-      filePath = join(basePath, ".gsd", "milestones", milestoneId, `${milestoneId}-ROADMAP.md`);
+      filePath = join(basePath, ".sf", "milestones", milestoneId, `${milestoneId}-ROADMAP.md`);
       break;
     case "SUMMARY":
       // For SUMMARY, we regenerate all task summaries in the slice
-      filePath = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId, "tasks");
+      filePath = join(basePath, ".sf", "milestones", milestoneId, "slices", sliceId, "tasks");
       break;
     case "STATE":
-      filePath = join(basePath, ".gsd", "STATE.md");
+      filePath = join(basePath, ".sf", "STATE.md");
       break;
   }
 
@@ -449,7 +449,7 @@ export function regenerateIfMissing(
     const doneTasks = taskRows.filter(t => t.status === "done" || t.status === "complete");
     let regenerated = 0;
     for (const task of doneTasks) {
-      const summaryPath = join(basePath, ".gsd", "milestones", milestoneId, "slices", sliceId, "tasks", `${task.id}-SUMMARY.md`);
+      const summaryPath = join(basePath, ".sf", "milestones", milestoneId, "slices", sliceId, "tasks", `${task.id}-SUMMARY.md`);
       if (!existsSync(summaryPath)) {
         try {
           renderSummaryProjection(basePath, milestoneId, sliceId, task.id);

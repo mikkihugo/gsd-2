@@ -116,10 +116,10 @@ function projectRequest(projectCwd: string, url: string, init?: RequestInit): Re
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-onboarding-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-web-onboarding-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".sf", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S02");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -191,20 +191,20 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo Milestone",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".sf/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S02",
             title: "First-run setup wizard",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S02/S02-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S02/tasks",
+            planPath: ".sf/milestones/M001/slices/S02/S02-PLAN.md",
+            tasksDir: ".sf/milestones/M001/slices/S02/tasks",
             tasks: [
               {
                 id: "T01",
                 title: "Establish shared onboarding auth truth and browser setup API",
                 done: false,
-                planPath: ".gsd/milestones/M001/slices/S02/tasks/T01-PLAN.md",
+                planPath: ".sf/milestones/M001/slices/S02/tasks/T01-PLAN.md",
               },
             ],
           },

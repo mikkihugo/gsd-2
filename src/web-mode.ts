@@ -523,7 +523,7 @@ async function waitForBootReady(url: string, timeoutMs = 180_000, stderr?: Writa
 /**
  * If a previous web server instance is registered for the same `cwd`, attempt
  * to kill it and remove its registry entry so the new launch can bind the port
- * cleanly.  This handles the "orphan process" scenario where a prior `gsd --web`
+ * cleanly.  This handles the "orphan process" scenario where a prior `sf --web`
  * was terminated without clean shutdown (e.g. terminal closed).
  */
 function cleanupStaleInstance(cwd: string, stderr: WritableLike, registryPath?: string): void {
@@ -577,7 +577,7 @@ export async function launchWebMode(
   stderr.write(`[forge] Starting web mode…\n`)
 
   // Kill any stale server instance for this project before reserving a port.
-  // This prevents EADDRINUSE when the previous `gsd --web` was terminated
+  // This prevents EADDRINUSE when the previous `sf --web` was terminated
   // without a clean shutdown (e.g. terminal closed, crash).
   cleanupStaleInstance(options.cwd, stderr, deps.registryPath)
 

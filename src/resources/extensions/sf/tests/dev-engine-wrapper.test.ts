@@ -77,9 +77,9 @@ describe("DevWorkflowEngine", () => {
     const { DevWorkflowEngine } = await import("../dev-workflow-engine.ts");
     const engine = new DevWorkflowEngine();
 
-    // Create a minimal temp .gsd structure for deriveState
+    // Create a minimal temp .sf structure for deriveState
     const tempDir = mkdtempSync(join(tmpdir(), "sf-engine-test-"));
-    mkdirSync(join(tempDir, ".gsd", "milestones"), { recursive: true });
+    mkdirSync(join(tempDir, ".sf", "milestones"), { recursive: true });
 
     t.after(() => rmSync(tempDir, { recursive: true, force: true }));
 

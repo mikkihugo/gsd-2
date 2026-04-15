@@ -24,7 +24,7 @@ const { assertTrue, assertEq, report } = createTestContext();
 // ─── Fixture: project with many completed milestones ─────────────────────
 
 const tmpBase = mkdtempSync(join(tmpdir(), "sf-queue-perf-"));
-const sf = join(tmpBase, ".gsd");
+const sf = join(tmpBase, ".sf");
 mkdirSync(join(sf, "milestones"), { recursive: true });
 
 const COMPLETED_COUNT = 25;

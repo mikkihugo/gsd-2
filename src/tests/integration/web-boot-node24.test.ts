@@ -11,13 +11,13 @@ const [nodeMajor, nodeMinor] = process.versions.node.split(".").map(Number)
 const isNode22_7OrNewer = nodeMajor > 22 || (nodeMajor === 22 && nodeMinor >= 7)
 
 test("resolveTypeStrippingFlag returns --experimental-strip-types for paths outside node_modules", () => {
-  const flag = resolveTypeStrippingFlag("/home/user/projects/gsd")
+  const flag = resolveTypeStrippingFlag("/home/user/projects/sf")
   assert.equal(flag, "--experimental-strip-types")
 })
 
 test("resolveTypeStrippingFlag returns --experimental-strip-types for path with node_modules substring not as directory", () => {
-  // e.g. /home/user/my_node_modules_backup/gsd — not actually under node_modules/
-  const flag = resolveTypeStrippingFlag("/home/user/my_node_modules_backup/gsd")
+  // e.g. /home/user/my_node_modules_backup/sf — not actually under node_modules/
+  const flag = resolveTypeStrippingFlag("/home/user/my_node_modules_backup/sf")
   assert.equal(flag, "--experimental-strip-types")
 })
 

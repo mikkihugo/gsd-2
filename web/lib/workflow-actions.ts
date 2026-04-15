@@ -37,8 +37,8 @@ export function deriveWorkflowAction(input: WorkflowActionInput): WorkflowAction
   // Suppress the action bar to avoid duplicate/confusing buttons.
   if (
     projectDetectionKind &&
-    projectDetectionKind !== "active-gsd" &&
-    projectDetectionKind !== "empty-gsd"
+    projectDetectionKind !== "active-sf" &&
+    projectDetectionKind !== "empty-sf"
   ) {
     return { primary: null, secondaries: [], disabled: true, disabledReason: "Project setup pending", isNewMilestone: false }
   }
@@ -64,42 +64,42 @@ export function deriveWorkflowAction(input: WorkflowActionInput): WorkflowAction
   let isNewMilestone = false
 
   if (autoActive && !autoPaused) {
-    primary = { label: "Stop Auto", command: "/gsd stop", variant: "destructive" }
+    primary = { label: "Stop Auto", command: "/sf stop", variant: "destructive" }
   } else if (autoPaused) {
-    primary = { label: "Resume Auto", command: "/gsd auto", variant: "default" }
+    primary = { label: "Resume Auto", command: "/sf auto", variant: "default" }
   } else {
     // Auto is not active
     if (phase === "complete") {
       // All milestones done — surface a distinct "New Milestone" action
-      primary = { label: "New Milestone", command: "/gsd", variant: "default" }
+      primary = { label: "New Milestone", command: "/sf", variant: "default" }
       isNewMilestone = true
     } else if (phase === "planning") {
-      primary = { label: "Plan", command: "/gsd", variant: "default" }
+      primary = { label: "Plan", command: "/sf", variant: "default" }
     } else if (phase === "executing" || phase === "summarizing") {
-      primary = { label: "Start Auto", command: "/gsd auto", variant: "default" }
+      primary = { label: "Start Auto", command: "/sf auto", variant: "default" }
     } else if (phase === "pre-planning" && !hasMilestones) {
-      primary = { label: "Initialize Project", command: "/gsd", variant: "default" }
+      primary = { label: "Initialize Project", command: "/sf", variant: "default" }
     } else if (phase === "blocked") {
-      primary = { label: "Blocked", command: "/gsd", variant: "default" }
+      primary = { label: "Blocked", command: "/sf", variant: "default" }
       disabled = true
       disabledReason = "Project is blocked — check blockers"
     } else if (phase === "paused") {
-      primary = { label: "Resume", command: "/gsd auto", variant: "default" }
+      primary = { label: "Resume", command: "/sf auto", variant: "default" }
     } else if (phase === "validating-milestone") {
-      primary = { label: "Validate", command: "/gsd", variant: "default" }
+      primary = { label: "Validate", command: "/sf", variant: "default" }
     } else if (phase === "completing-milestone") {
-      primary = { label: "Complete Milestone", command: "/gsd", variant: "default" }
+      primary = { label: "Complete Milestone", command: "/sf", variant: "default" }
     } else if (phase === "needs-discussion") {
-      primary = { label: "Discuss", command: "/gsd", variant: "default" }
+      primary = { label: "Discuss", command: "/sf", variant: "default" }
     } else if (phase === "replanning-slice") {
-      primary = { label: "Replan", command: "/gsd", variant: "default" }
+      primary = { label: "Replan", command: "/sf", variant: "default" }
     } else {
-      primary = { label: "Continue", command: "/gsd", variant: "default" }
+      primary = { label: "Continue", command: "/sf", variant: "default" }
     }
 
     // Add "Step" secondary when auto is not active (not for new milestone — no step concept there)
-    if (primary.command !== "/gsd next" && !isNewMilestone) {
-      secondaries.push({ label: "Step", command: "/gsd next" })
+    if (primary.command !== "/sf next" && !isNewMilestone) {
+      secondaries.push({ label: "Step", command: "/sf next" })
     }
   }
 

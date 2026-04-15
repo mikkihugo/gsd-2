@@ -1,9 +1,9 @@
 /**
  * gitignore-tracked-sf.test.ts — Regression tests for #1364.
  *
- * Verifies that ensureGitignore() does NOT add ".gsd" to .gitignore
- * when .gsd/ contains git-tracked files, and that migrateToExternalState()
- * aborts migration for tracked .gsd/ directories.
+ * Verifies that ensureGitignore() does NOT add ".sf" to .gitignore
+ * when .sf/ contains git-tracked files, and that migrateToExternalState()
+ * aborts migration for tracked .sf/ directories.
  *
  * Uses real temporary git repos — no mocks.
  */
@@ -53,55 +53,55 @@ function cleanup(dir: string): void {
 
 // ─── hasGitTrackedGsdFiles ───────────────────────────────────────────
 
-test("hasGitTrackedGsdFiles returns false when .gsd/ does not exist", (t) => {
+test("hasGitTrackedGsdFiles returns false when .sf/ does not exist", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
   assert.equal(hasGitTrackedGsdFiles(dir), false);
 });
 
-test("hasGitTrackedGsdFiles returns true when .gsd/ has tracked files", (t) => {
+test("hasGitTrackedGsdFiles returns true when .sf/ has tracked files", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Test Project\n");
-  git(dir, "add", ".gsd/PROJECT.md");
+  mkdirSync(join(dir, ".sf", "milestones"), { recursive: true });
+  writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Test Project\n");
+  git(dir, "add", ".sf/PROJECT.md");
   git(dir, "commit", "-m", "add sf");
   assert.equal(hasGitTrackedGsdFiles(dir), true);
 });
 
-test("hasGitTrackedGsdFiles returns false when .gsd/ exists but is untracked", (t) => {
+test("hasGitTrackedGsdFiles returns false when .sf/ exists but is untracked", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "STATE.md"), "state\n");
+  mkdirSync(join(dir, ".sf"), { recursive: true });
+  writeFileSync(join(dir, ".sf", "STATE.md"), "state\n");
   // Not git-added — should return false
   assert.equal(hasGitTrackedGsdFiles(dir), false);
 });
 
-// ─── ensureGitignore — tracked .gsd/ protection ─────────────────────
+// ─── ensureGitignore — tracked .sf/ protection ─────────────────────
 
-test("ensureGitignore does NOT add .gsd when .gsd/ has tracked files (#1364)", (t) => {
+test("ensureGitignore does NOT add .sf when .sf/ has tracked files (#1364)", (t) => {
   const dir = makeTempRepo();
   try {
-    // Set up .gsd/ with tracked files
-    mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
-    writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Test Project\n");
-    writeFileSync(join(dir, ".gsd", "DECISIONS.md"), "# Decisions\n");
-    git(dir, "add", ".gsd/");
+    // Set up .sf/ with tracked files
+    mkdirSync(join(dir, ".sf", "milestones"), { recursive: true });
+    writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Test Project\n");
+    writeFileSync(join(dir, ".sf", "DECISIONS.md"), "# Decisions\n");
+    git(dir, "add", ".sf/");
     git(dir, "commit", "-m", "track sf state");
 
     // Run ensureGitignore
     ensureGitignore(dir);
 
-    // Verify .gsd is NOT in .gitignore
+    // Verify .sf is NOT in .gitignore
     const gitignore = readFileSync(join(dir, ".gitignore"), "utf-8");
     const lines = gitignore.split("\n").map((l) => l.trim());
     assert.ok(
-      !lines.includes(".gsd"),
-      `Expected .gsd NOT to appear in .gitignore, but it does:\n${gitignore}`,
+      !lines.includes(".sf"),
+      `Expected .sf NOT to appear in .gitignore, but it does:\n${gitignore}`,
     );
 
     // Other baseline patterns should still be present
@@ -112,18 +112,18 @@ test("ensureGitignore does NOT add .gsd when .gsd/ has tracked files (#1364)", (
   }
 });
 
-test("ensureGitignore adds .gsd when .gsd/ has NO tracked files", (t) => {
+test("ensureGitignore adds .sf when .sf/ has NO tracked files", (t) => {
   const dir = makeTempRepo();
   try {
-    // Run ensureGitignore (no .gsd/ at all)
+    // Run ensureGitignore (no .sf/ at all)
     ensureGitignore(dir);
 
-    // Verify .gsd IS in .gitignore
+    // Verify .sf IS in .gitignore
     const gitignore = readFileSync(join(dir, ".gitignore"), "utf-8");
     const lines = gitignore.split("\n").map((l) => l.trim());
     assert.ok(
-      lines.includes(".gsd"),
-      `Expected .gsd in .gitignore, but it's missing:\n${gitignore}`,
+      lines.includes(".sf"),
+      `Expected .sf in .gitignore, but it's missing:\n${gitignore}`,
     );
   } finally {
     cleanup(dir);
@@ -141,24 +141,24 @@ test("ensureGitignore respects manageGitignore: false", (t) => {
 
 // ─── ensureGitignore — verify no tracked files become invisible ─────
 
-test("ensureGitignore with tracked .gsd/ does not cause git to see files as deleted", (t) => {
+test("ensureGitignore with tracked .sf/ does not cause git to see files as deleted", (t) => {
   const dir = makeTempRepo();
   try {
-    // Create tracked .gsd/ files
-    mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
-    writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Project\n");
+    // Create tracked .sf/ files
+    mkdirSync(join(dir, ".sf", "milestones", "M001"), { recursive: true });
+    writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Project\n");
     writeFileSync(
-      join(dir, ".gsd", "milestones", "M001", "M001-CONTEXT.md"),
+      join(dir, ".sf", "milestones", "M001", "M001-CONTEXT.md"),
       "# M001\n",
     );
-    git(dir, "add", ".gsd/");
+    git(dir, "add", ".sf/");
     git(dir, "commit", "-m", "track sf state");
 
     // Run ensureGitignore
     ensureGitignore(dir);
 
-    // git status should show NO deleted files under .gsd/
-    const status = git(dir, "status", "--porcelain", ".gsd/");
+    // git status should show NO deleted files under .sf/
+    const status = git(dir, "status", "--porcelain", ".sf/");
 
     // Filter for deletions (lines starting with " D" or "D ")
     const deletions = status
@@ -168,7 +168,7 @@ test("ensureGitignore with tracked .gsd/ does not cause git to see files as dele
     assert.equal(
       deletions.length,
       0,
-      `Expected no deleted .gsd/ files, but found:\n${deletions.join("\n")}`,
+      `Expected no deleted .sf/ files, but found:\n${deletions.join("\n")}`,
     );
   } finally {
     cleanup(dir);
@@ -178,10 +178,10 @@ test("ensureGitignore with tracked .gsd/ does not cause git to see files as dele
 test("hasGitTrackedGsdFiles returns true (fail-safe) when git is not available", (t) => {
   const dir = makeTempRepo();
   try {
-    // Create and track .gsd/ files
-    mkdirSync(join(dir, ".gsd"), { recursive: true });
-    writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Project\n");
-    git(dir, "add", ".gsd/");
+    // Create and track .sf/ files
+    mkdirSync(join(dir, ".sf"), { recursive: true });
+    writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Project\n");
+    git(dir, "add", ".sf/");
     git(dir, "commit", "-m", "track sf");
 
     // Corrupt the git index to simulate git failure
@@ -197,30 +197,30 @@ test("hasGitTrackedGsdFiles returns true (fail-safe) when git is not available",
   }
 });
 
-// ─── migrateToExternalState — tracked .gsd/ protection ──────────────
+// ─── migrateToExternalState — tracked .sf/ protection ──────────────
 
-test("migrateToExternalState aborts when .gsd/ has tracked files (#1364)", (t) => {
+test("migrateToExternalState aborts when .sf/ has tracked files (#1364)", (t) => {
   const dir = makeTempRepo();
   try {
-    // Create tracked .gsd/ files
-    mkdirSync(join(dir, ".gsd", "milestones"), { recursive: true });
-    writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Project\n");
-    git(dir, "add", ".gsd/");
+    // Create tracked .sf/ files
+    mkdirSync(join(dir, ".sf", "milestones"), { recursive: true });
+    writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Project\n");
+    git(dir, "add", ".sf/");
     git(dir, "commit", "-m", "track sf state");
 
     // Attempt migration — should abort without moving anything
     const result = migrateToExternalState(dir);
 
-    assert.equal(result.migrated, false, "Should NOT migrate tracked .gsd/");
+    assert.equal(result.migrated, false, "Should NOT migrate tracked .sf/");
     assert.equal(result.error, undefined, "Should not report an error — just skip");
 
-    // .gsd/ should still be a real directory, not a symlink
-    assert.ok(existsSync(join(dir, ".gsd", "PROJECT.md")), ".gsd/PROJECT.md should still exist");
+    // .sf/ should still be a real directory, not a symlink
+    assert.ok(existsSync(join(dir, ".sf", "PROJECT.md")), ".sf/PROJECT.md should still exist");
 
-    // No .gsd.migrating should exist
+    // No .sf.migrating should exist
     assert.ok(
-      !existsSync(join(dir, ".gsd.migrating")),
-      ".gsd.migrating should not exist",
+      !existsSync(join(dir, ".sf.migrating")),
+      ".sf.migrating should not exist",
     );
   } finally {
     cleanup(dir);
@@ -230,13 +230,13 @@ test("migrateToExternalState aborts when .gsd/ has tracked files (#1364)", (t) =
 test("migrateToExternalState cleans git index so tracked files don't show as deleted (#1364 path 2)", (t) => {
   const dir = makeTempRepo();
   try {
-    // Track .gsd/ files, then untrack them so migration proceeds
-    mkdirSync(join(dir, ".gsd", "milestones", "M001"), { recursive: true });
-    writeFileSync(join(dir, ".gsd", "PROJECT.md"), "# Project\n");
-    writeFileSync(join(dir, ".gsd", "milestones", "M001", "PLAN.md"), "# Plan\n");
-    git(dir, "add", ".gsd/");
+    // Track .sf/ files, then untrack them so migration proceeds
+    mkdirSync(join(dir, ".sf", "milestones", "M001"), { recursive: true });
+    writeFileSync(join(dir, ".sf", "PROJECT.md"), "# Project\n");
+    writeFileSync(join(dir, ".sf", "milestones", "M001", "PLAN.md"), "# Plan\n");
+    git(dir, "add", ".sf/");
     git(dir, "commit", "-m", "track sf state");
-    git(dir, "rm", "-r", "--cached", ".gsd/");
+    git(dir, "rm", "-r", "--cached", ".sf/");
     git(dir, "commit", "-m", "untrack sf (simulates pre-migration project)");
 
     const result = migrateToExternalState(dir);

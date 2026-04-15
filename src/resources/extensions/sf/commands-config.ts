@@ -34,7 +34,7 @@ function getStoredToolKey(auth: AuthStorage, providerId: string): string | undef
  */
 export function loadToolApiKeys(): void {
   try {
-    const authPath = join(process.env.HOME ?? "", ".gsd", "agent", "auth.json");
+    const authPath = join(process.env.HOME ?? "", ".sf", "agent", "auth.json");
     if (!existsSync(authPath)) return;
 
     const auth = AuthStorage.create(authPath);
@@ -50,7 +50,7 @@ export function loadToolApiKeys(): void {
 }
 
 export function getConfigAuthStorage(): AuthStorage {
-  const authPath = join(process.env.HOME ?? "", ".gsd", "agent", "auth.json");
+  const authPath = join(process.env.HOME ?? "", ".sf", "agent", "auth.json");
   mkdirSync(dirname(authPath), { recursive: true });
   return AuthStorage.create(authPath);
 }

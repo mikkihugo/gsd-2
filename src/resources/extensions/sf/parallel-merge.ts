@@ -38,7 +38,7 @@ export type MergeOrder = "sequential" | "by-completion";
  * Returns true when milestones.status = 'complete' in the worktree's sf.db.
  */
 export function isMilestoneCompleteInWorktreeDb(basePath: string, mid: string): boolean {
-  const dbPath = join(basePath, ".gsd", "worktrees", mid, ".gsd", "sf.db");
+  const dbPath = join(basePath, ".sf", "worktrees", mid, ".sf", "sf.db");
   if (!existsSync(dbPath)) return false;
 
   try {
@@ -56,11 +56,11 @@ export function isMilestoneCompleteInWorktreeDb(basePath: string, mid: string): 
 
 /**
  * Discover milestone IDs with status='complete' in their worktree DB,
- * scanning .gsd/worktrees/<MID>/.gsd/sf.db for each worktree directory.
+ * scanning .sf/worktrees/<MID>/.sf/sf.db for each worktree directory.
  */
 function discoverDbCompletedMilestones(basePath: string): Set<string> {
   const completed = new Set<string>();
-  const worktreeDir = join(basePath, ".gsd", "worktrees");
+  const worktreeDir = join(basePath, ".sf", "worktrees");
   try {
     for (const entry of readdirSync(worktreeDir)) {
       if (entry.startsWith("M") && isMilestoneCompleteInWorktreeDb(basePath, entry)) {
@@ -115,7 +115,7 @@ export function determineMergeOrder(
         title: mid,
         pid: 0,
         process: null,
-        worktreePath: basePath ? join(basePath, ".gsd", "worktrees", mid) : "",
+        worktreePath: basePath ? join(basePath, ".sf", "worktrees", mid) : "",
         startedAt: 0,
         state: "stopped",
         cost: 0,

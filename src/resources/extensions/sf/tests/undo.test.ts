@@ -31,15 +31,15 @@ function makeTempDir(prefix: string): string {
 test("handleUndo without --force only warns and leaves completed units intact", async () => {
   const base = makeTempDir("sf-undo-confirm");
   try {
-    mkdirSync(join(base, ".gsd"), { recursive: true });
-    mkdirSync(join(base, ".gsd", "activity"), { recursive: true });
+    mkdirSync(join(base, ".sf"), { recursive: true });
+    mkdirSync(join(base, ".sf", "activity"), { recursive: true });
     writeFileSync(
-      join(base, ".gsd", "completed-units.json"),
+      join(base, ".sf", "completed-units.json"),
       JSON.stringify(["execute-task/M001/S01/T01"]),
       "utf-8",
     );
     writeFileSync(
-      join(base, ".gsd", "activity", "001-execute-task-M001-S01-T01.jsonl"),
+      join(base, ".sf", "activity", "001-execute-task-M001-S01-T01.jsonl"),
       "",
       "utf-8",
     );
@@ -59,7 +59,7 @@ test("handleUndo without --force only warns and leaves completed units intact", 
     assert.equal(notifications[0]?.level, "warning");
     assert.match(notifications[0]?.message ?? "", /Run \/sf undo --force to confirm\./);
     assert.deepEqual(
-      JSON.parse(readFileSync(join(base, ".gsd", "completed-units.json"), "utf-8")),
+      JSON.parse(readFileSync(join(base, ".sf", "completed-units.json"), "utf-8")),
       ["execute-task/M001/S01/T01"],
     );
   } finally {
@@ -70,7 +70,7 @@ test("handleUndo without --force only warns and leaves completed units intact", 
 test("uncheckTaskInPlan flips a checked task back to unchecked", () => {
   const base = makeTempDir("sf-undo-plan");
   try {
-    const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+    const sliceDir = join(base, ".sf", "milestones", "M001", "slices", "S01");
     mkdirSync(sliceDir, { recursive: true });
     const planFile = join(sliceDir, "S01-PLAN.md");
     writeFileSync(
@@ -94,7 +94,7 @@ test("uncheckTaskInPlan flips a checked task back to unchecked", () => {
 test("findCommitsForUnit reads the newest matching activity log and dedupes SHAs", () => {
   const base = makeTempDir("sf-undo-activity");
   try {
-    const activityDir = join(base, ".gsd", "activity");
+    const activityDir = join(base, ".sf", "activity");
     mkdirSync(activityDir, { recursive: true });
 
     writeFileSync(
@@ -170,7 +170,7 @@ function makeCtx(): { notifications: Array<{ message: string; level: string }>; 
 
 function setupTaskFixture(base: string): void {
   // Create milestone/slice/task directory structure
-  const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+  const sliceDir = join(base, ".sf", "milestones", "M001", "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });
 
@@ -247,12 +247,12 @@ test("handleUndoTask with --force resets task and re-renders plan", async () => 
     assert.equal(task?.status, "pending");
 
     // Summary file deleted
-    const summaryPath = join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md");
+    const summaryPath = join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks", "T01-SUMMARY.md");
     assert.equal(existsSync(summaryPath), false);
 
     // Plan checkbox unchecked
     const planContent = readFileSync(
-      join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
+      join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"),
       "utf-8",
     );
     assert.match(planContent, /\[ \] \*\*T01:/);
@@ -289,9 +289,9 @@ test("handleUndoTask accepts partial ID (T01) and resolves from state", async ()
     setupTaskFixture(base);
 
     // Create STATE.md so deriveState can resolve the active milestone/slice
-    mkdirSync(join(base, ".gsd"), { recursive: true });
+    mkdirSync(join(base, ".sf"), { recursive: true });
     writeFileSync(
-      join(base, ".gsd", "STATE.md"),
+      join(base, ".sf", "STATE.md"),
       [
         "# SF State",
         "",
@@ -318,7 +318,7 @@ test("handleUndoTask accepts partial ID (T01) and resolves from state", async ()
 // ─── handleResetSlice tests ──────────────────────────────────────────────────
 
 function setupSliceFixture(base: string): void {
-  const mDir = join(base, ".gsd", "milestones", "M001");
+  const mDir = join(base, ".sf", "milestones", "M001");
   const sliceDir = join(mDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
   mkdirSync(tasksDir, { recursive: true });
@@ -415,12 +415,12 @@ test("handleResetSlice with --force resets slice and all tasks", async () => {
     assert.equal(t2?.status, "pending");
 
     // Task summaries deleted
-    const tasksDir = join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks");
+    const tasksDir = join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks");
     assert.equal(existsSync(join(tasksDir, "T01-SUMMARY.md")), false);
     assert.equal(existsSync(join(tasksDir, "T02-SUMMARY.md")), false);
 
     // Slice summary and UAT deleted
-    const sliceDir = join(base, ".gsd", "milestones", "M001", "slices", "S01");
+    const sliceDir = join(base, ".sf", "milestones", "M001", "slices", "S01");
     assert.equal(existsSync(join(sliceDir, "S01-SUMMARY.md")), false);
     assert.equal(existsSync(join(sliceDir, "S01-UAT.md")), false);
 
@@ -431,7 +431,7 @@ test("handleResetSlice with --force resets slice and all tasks", async () => {
 
     // Roadmap checkbox unchecked
     const roadmapContent = readFileSync(
-      join(base, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+      join(base, ".sf", "milestones", "M001", "M001-ROADMAP.md"),
       "utf-8",
     );
     assert.match(roadmapContent, /\[ \] \*\*S01:/);

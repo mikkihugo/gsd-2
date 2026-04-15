@@ -196,7 +196,7 @@ export async function handleCompleteMilestone(
   if (milestoneDir) {
     summaryPath = join(milestoneDir, `${params.milestoneId}-SUMMARY.md`);
   } else {
-    const sfDir = join(basePath, ".gsd");
+    const sfDir = join(basePath, ".sf");
     const manualDir = join(sfDir, "milestones", params.milestoneId);
     mkdirSync(manualDir, { recursive: true });
     summaryPath = join(manualDir, `${params.milestoneId}-SUMMARY.md`);

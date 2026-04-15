@@ -123,7 +123,7 @@ export async function handleImportClaude(ctx: ExtensionCommandContext, scope: "g
   const writePrefs = async (prefs: Record<string, unknown>): Promise<void> => {
     prefs.version = prefs.version || 1;
     const frontmatter = serializePreferencesToFrontmatter(prefs);
-    let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
+    let body = "\n# SF Skill Preferences\n\nSee `~/.sf/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
     if (existsSync(path)) {
       const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
       if (preserved) body = preserved;
@@ -145,7 +145,7 @@ export async function handlePrefsMode(ctx: ExtensionCommandContext, scope: "glob
   prefs.version = prefs.version || 1;
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
-  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.sf/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;
@@ -739,7 +739,7 @@ export async function handlePrefsWizard(
   const frontmatter = serializePreferencesToFrontmatter(prefs);
 
   // Preserve existing body content (everything after closing ---)
-  let body = "\n# SF Skill Preferences\n\nSee `~/.gsd/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
+  let body = "\n# SF Skill Preferences\n\nSee `~/.sf/agent/extensions/sf/docs/preferences-reference.md` for full field documentation and examples.\n";
   if (existsSync(path)) {
     const preserved = extractBodyAfterFrontmatter(readFileSync(path, "utf-8"));
     if (preserved) body = preserved;

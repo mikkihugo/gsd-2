@@ -26,7 +26,7 @@ import {
 const repoRoot = join(import.meta.dirname, "..", "..", "..");
 
 function makeTempFixture(): { projectCwd: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-auto-lock-test-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-auto-lock-test-"));
   const projectCwd = join(root, "project");
   mkdirSync(projectCwd, { recursive: true });
   return {
@@ -47,13 +47,13 @@ function writeAutoModule(dir: string, payload: Record<string, unknown>): string 
 }
 
 function writeSessionLock(projectCwd: string, data: Record<string, unknown>): void {
-  const gsdDir = join(projectCwd, ".gsd");
+  const gsdDir = join(projectCwd, ".sf");
   mkdirSync(gsdDir, { recursive: true });
   writeFileSync(join(gsdDir, "auto.lock"), JSON.stringify(data));
 }
 
 function writePausedSession(projectCwd: string, data: Record<string, unknown>): void {
-  const runtimeDir = join(projectCwd, ".gsd", "runtime");
+  const runtimeDir = join(projectCwd, ".sf", "runtime");
   mkdirSync(runtimeDir, { recursive: true });
   writeFileSync(join(runtimeDir, "paused-session.json"), JSON.stringify(data));
 }

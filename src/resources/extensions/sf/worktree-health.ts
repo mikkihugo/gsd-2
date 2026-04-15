@@ -4,7 +4,7 @@
  * Used by doctor-checks.ts for health audits and by worktree-command.ts
  * for the enhanced `/worktree list` display.
  *
- * Only inspects worktrees under .gsd/worktrees/ — SF owns what SF creates.
+ * Only inspects worktrees under .sf/worktrees/ — SF owns what SF creates.
  */
 
 import { existsSync } from "node:fs";

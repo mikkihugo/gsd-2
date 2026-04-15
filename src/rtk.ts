@@ -49,7 +49,7 @@ export function isRtkEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
 }
 
 function resolveAppRoot(env: NodeJS.ProcessEnv = process.env): string {
-  return env.SF_HOME || env.GSD_HOME || join(osHomedir(), ".gsd");
+  return env.SF_HOME || env.GSD_HOME || join(osHomedir(), ".sf");
 }
 
 export function getManagedRtkDir(env: NodeJS.ProcessEnv = process.env): string {

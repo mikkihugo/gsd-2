@@ -94,12 +94,12 @@ function makeTempDir(): string {
 }
 
 /**
- * Create a standard .gsd/ fixture with M001 containing S01 (2 tasks) and S02 (1 task).
+ * Create a standard .sf/ fixture with M001 containing S01 (2 tasks) and S02 (1 task).
  * Same structure as state-machine-live-validation.test.ts for consistency.
  */
 function createFullFixture(): string {
   const base = makeTempDir();
-  const sfDir = join(base, ".gsd");
+  const sfDir = join(base, ".sf");
   const m001Dir = join(sfDir, "milestones", "M001");
   const s01Dir = join(m001Dir, "slices", "S01");
   const s01Tasks = join(s01Dir, "tasks");
@@ -194,7 +194,7 @@ function createFullFixture(): string {
  */
 function createMultiMilestoneFixture(): string {
   const base = makeTempDir();
-  const sfDir = join(base, ".gsd");
+  const sfDir = join(base, ".sf");
 
   for (const mid of ["M001", "M002", "M003"]) {
     const mDir = join(sfDir, "milestones", mid);
@@ -296,7 +296,7 @@ describe("state derivation failures", () => {
   test("file deleted between deriveState calls produces consistent result", async () => {
     // Simulates race condition: PLAN file exists on first derive, deleted before second
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -306,7 +306,7 @@ describe("state derivation failures", () => {
     assert.equal(stateBefore.phase, "executing");
 
     // Delete the task plan file mid-flow
-    const planPath = join(base, ".gsd", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md");
+    const planPath = join(base, ".sf", "milestones", "M001", "slices", "S01", "tasks", "T01-PLAN.md");
     if (existsSync(planPath)) unlinkSync(planPath);
 
     invalidateAllCaches();
@@ -321,11 +321,11 @@ describe("state derivation failures", () => {
 
   test("partial DB write: milestone inserted but no slices → pre-planning", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001: Test\n\n## Purpose\nTest.\n");
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     // Only insert milestone — no slices, no roadmap
     insertMilestone({ id: "M001", title: "Partial", status: "active" });
 
@@ -338,7 +338,7 @@ describe("state derivation failures", () => {
 
   test("cache staleness: derive within TTL returns same result after DB mutation", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "pending" });
@@ -363,13 +363,13 @@ describe("state derivation failures", () => {
 
   test("corrupt ROADMAP: binary content does not crash deriveState", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001: Corrupt\n\n## Purpose\nTest.\n");
     // Write binary garbage as ROADMAP
     writeFileSync(join(mDir, "M001-ROADMAP.md"), Buffer.from([0x00, 0xFF, 0xFE, 0x89, 0x50, 0x4E, 0x47]));
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Corrupt", status: "active" });
 
     invalidateAllCaches();
@@ -380,12 +380,12 @@ describe("state derivation failures", () => {
 
   test("0-byte ROADMAP file is treated as no roadmap (pre-planning)", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001: Empty\n\n## Purpose\nTest.\n");
     writeFileSync(join(mDir, "M001-ROADMAP.md"), "");
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Empty", status: "active" });
 
     invalidateAllCaches();
@@ -395,7 +395,7 @@ describe("state derivation failures", () => {
 
   test("ROADMAP with no ## Slices section derives pre-planning", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(join(mDir, "M001-CONTEXT.md"), "# M001: No Slices\n\n## Purpose\nTest.\n");
     writeFileSync(
@@ -418,7 +418,7 @@ describe("state derivation failures", () => {
       ].join("\n"),
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "No Slices", status: "active" });
 
     invalidateAllCaches();
@@ -468,13 +468,13 @@ describe("transition boundary failures", () => {
 
   test("mid-transition: CONTEXT.md created between derives transitions needs-discussion → pre-planning correctly", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
 
     // Start with only CONTEXT-DRAFT → needs-discussion
     writeFileSync(join(mDir, "M001-CONTEXT-DRAFT.md"), "# Draft\nSome draft.\n");
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     invalidateAllCaches();
     const state1 = await deriveState(base);
     assert.equal(state1.phase, "needs-discussion");
@@ -490,7 +490,7 @@ describe("transition boundary failures", () => {
 
   test("cascading slice dependencies: S02 depends S01, S03 depends S02 — only S01 eligible", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
 
     // Create 3 slices with chain deps
     for (const sid of ["S01", "S02", "S03"]) {
@@ -546,7 +546,7 @@ describe("transition boundary failures", () => {
       ].join("\n"),
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Chain", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Base", status: "pending", depends: [] });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Middle", status: "pending", depends: ["S01"] });
@@ -565,7 +565,7 @@ describe("transition boundary failures", () => {
 
   test("cascading deps: completing S01 unblocks S02 (not S03)", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     for (const sid of ["S01", "S02", "S03"]) {
       const sDir = join(mDir, "slices", sid, "tasks");
       mkdirSync(sDir, { recursive: true });
@@ -614,7 +614,7 @@ describe("transition boundary failures", () => {
       ].join("\n"),
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Chain", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "Base", status: "complete", depends: [] });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Middle", status: "pending", depends: ["S01"] });
@@ -633,7 +633,7 @@ describe("transition boundary failures", () => {
 
   test("multi-milestone deps: M002 depends M001, M003 depends M002 — blocked correctly", async () => {
     base = createMultiMilestoneFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "First", status: "active" });
     insertMilestone({ id: "M002", title: "Second", status: "active", depends_on: ["M001"] });
     insertMilestone({ id: "M003", title: "Third", status: "active", depends_on: ["M002"] });
@@ -654,7 +654,7 @@ describe("transition boundary failures", () => {
 
   test("blocker_discovered in task transitions to replanning-slice", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete", blockerDiscovered: true });
@@ -668,7 +668,7 @@ describe("transition boundary failures", () => {
 
   test("replan loop protection: replan already done skips replanning-slice", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
     insertTask({ id: "T01", sliceId: "S01", milestoneId: "M001", status: "complete", blockerDiscovered: true });
@@ -693,7 +693,7 @@ describe("transition boundary failures", () => {
 
   test("blocked state: all slices have unmet deps → fallback picks slice", async () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(join(mDir, "slices", "S01", "tasks"), { recursive: true });
     mkdirSync(join(mDir, "slices", "S02", "tasks"), { recursive: true });
 
@@ -726,7 +726,7 @@ describe("transition boundary failures", () => {
       ].join("\n"),
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Blocked", status: "active" });
     // Circular deps: S01→S02 and S02→S01 — both blocked
     insertSlice({ id: "S01", milestoneId: "M001", title: "A", status: "pending", depends: ["S02"] });
@@ -756,7 +756,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch with null activeSlice in executing phase → stop (error)", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
 
     const ctx = buildDispatchCtx(base, "M001", {
@@ -773,7 +773,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch for unhandled phase → stop with diagnostic", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
 
     const ctx = buildDispatchCtx(base, "M001", {
       phase: "paused" as any,
@@ -787,7 +787,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch: summarizing with null activeSlice → stop (error)", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
 
     const ctx = buildDispatchCtx(base, "M001", {
       phase: "summarizing",
@@ -805,7 +805,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch: evaluating-gates without gate config → skip (gates omitted)", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "in_progress" });
 
@@ -826,7 +826,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch: needs-discussion → discuss-milestone dispatch", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
 
     const ctx = buildDispatchCtx(base, "M001", {
       phase: "needs-discussion",
@@ -841,7 +841,7 @@ describe("dispatch failure modes", () => {
 
   test("dispatch: complete phase → stop with info level", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
 
     const ctx = buildDispatchCtx(base, "M001", {
       phase: "complete",
@@ -884,7 +884,7 @@ describe("completion and verification failures", () => {
 
   test("needs-remediation VALIDATION blocks milestone completion dispatch", async () => {
     base = createFullFixture();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     writeFileSync(
       join(mDir, "M001-VALIDATION.md"),
       [
@@ -899,7 +899,7 @@ describe("completion and verification failures", () => {
       ].join("\n"),
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
@@ -920,7 +920,7 @@ describe("completion and verification failures", () => {
 
   test("missing slice SUMMARY blocks milestone validation dispatch", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     // Use "pending" status — closed slices (complete/done/skipped) are
     // excluded from SUMMARY checks per #3620.
@@ -980,7 +980,7 @@ describe("completion and verification failures", () => {
 
   test("all slices done + no VALIDATION → validating-milestone (not completing)", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
@@ -1000,11 +1000,11 @@ describe("completion and verification failures", () => {
   test("all slices done + terminal VALIDATION + no SUMMARY → completing-milestone", async () => {
     base = createFullFixture();
     writeFileSync(
-      join(base, ".gsd", "milestones", "M001", "M001-VALIDATION.md"),
+      join(base, ".sf", "milestones", "M001", "M001-VALIDATION.md"),
       "---\nverdict: pass\n---\n# Validation\nPassed.\n",
     );
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
@@ -1059,10 +1059,10 @@ describe("ghost milestone edge cases", () => {
 
   test("empty directory with DB row is NOT a ghost (#2921)", () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
 
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Queued", status: "active" });
 
     assert.equal(isGhostMilestone(base, "M001"), false, "DB row means not a ghost");
@@ -1070,17 +1070,17 @@ describe("ghost milestone edge cases", () => {
 
   test("empty directory with worktree is NOT a ghost (#2921)", () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     // Simulate worktree existence
-    mkdirSync(join(base, ".gsd", "worktrees", "M001"), { recursive: true });
+    mkdirSync(join(base, ".sf", "worktrees", "M001"), { recursive: true });
 
     assert.equal(isGhostMilestone(base, "M001"), false, "worktree means not a ghost");
   });
 
   test("empty directory without DB or worktree IS a ghost", () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
 
     assert.equal(isGhostMilestone(base, "M001"), true, "no DB, no worktree, no files → ghost");
@@ -1088,7 +1088,7 @@ describe("ghost milestone edge cases", () => {
 
   test("directory with only META.json is still a ghost", () => {
     base = makeTempDir();
-    const mDir = join(base, ".gsd", "milestones", "M001");
+    const mDir = join(base, ".sf", "milestones", "M001");
     mkdirSync(mDir, { recursive: true });
     writeFileSync(join(mDir, "META.json"), '{"created":"2026-01-01"}');
 
@@ -1097,7 +1097,7 @@ describe("ghost milestone edge cases", () => {
 
   test("ghost milestones are skipped in state derivation", async () => {
     base = makeTempDir();
-    const sfDir = join(base, ".gsd", "milestones");
+    const sfDir = join(base, ".sf", "milestones");
 
     // M001 is ghost — empty dir
     mkdirSync(join(sfDir, "M001"), { recursive: true });
@@ -1126,17 +1126,17 @@ describe("dispatch guard integration", () => {
 
   test("skip_milestone_validation preference writes pass-through VALIDATION", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
     insertSlice({ id: "S01", milestoneId: "M001", title: "First", status: "complete" });
     insertSlice({ id: "S02", milestoneId: "M001", title: "Second", status: "complete" });
     // Write slice SUMMARYs so the missing SUMMARY guard doesn't fire
     writeFileSync(
-      join(base, ".gsd", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
+      join(base, ".sf", "milestones", "M001", "slices", "S01", "S01-SUMMARY.md"),
       "# S01 Summary\nDone.\n",
     );
     writeFileSync(
-      join(base, ".gsd", "milestones", "M001", "slices", "S02", "S02-SUMMARY.md"),
+      join(base, ".sf", "milestones", "M001", "slices", "S02", "S02-SUMMARY.md"),
       "# S02 Summary\nDone.\n",
     );
 
@@ -1151,7 +1151,7 @@ describe("dispatch guard integration", () => {
     assert.equal(result.action, "skip", "skip_milestone_validation should produce skip action");
 
     // Should have written a pass-through VALIDATION file
-    const validationPath = join(base, ".gsd", "milestones", "M001", "M001-VALIDATION.md");
+    const validationPath = join(base, ".sf", "milestones", "M001", "M001-VALIDATION.md");
     assert.ok(existsSync(validationPath), "VALIDATION file should be written");
     const content = readFileSync(validationPath, "utf-8");
     assert.ok(content.includes("verdict: pass"), "should contain pass verdict");
@@ -1160,11 +1160,11 @@ describe("dispatch guard integration", () => {
 
   test("rewrite-docs circuit breaker: exceeding MAX attempts resolves all overrides", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
     insertMilestone({ id: "M001", title: "Active", status: "active" });
 
     // Write a rewrite count at the max
-    const runtimeDir = join(base, ".gsd", "runtime");
+    const runtimeDir = join(base, ".sf", "runtime");
     mkdirSync(runtimeDir, { recursive: true });
     writeFileSync(
       join(runtimeDir, "rewrite-count.json"),
@@ -1178,7 +1178,7 @@ describe("dispatch guard integration", () => {
 
   test("replanning-slice with null activeSlice → stop (error)", async () => {
     base = createFullFixture();
-    openDatabase(join(base, ".gsd", "sf.db"));
+    openDatabase(join(base, ".sf", "sf.db"));
 
     const ctx = buildDispatchCtx(base, "M001", {
       phase: "replanning-slice",

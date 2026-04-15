@@ -1,7 +1,7 @@
 /**
  * SF Auto Mode — Fresh Session Per Unit
  *
- * State machine driven by .gsd/ files on disk. Each "unit" of work
+ * State machine driven by .sf/ files on disk. Each "unit" of work
  * (plan slice, execute task, complete slice) gets a fresh session via
  * the stashed ctx.newSession() pattern.
  *
@@ -1465,10 +1465,10 @@ export async function startAuto(
     // bundled extension updates before resume-time verification/state logic runs.
     // SF_PKG_ROOT is set by loader.ts and points to the sf-run package root.
     // The relative import ("../../../resource-loader.js") only works from the source
-    // tree; deployed extensions live at ~/.gsd/agent/extensions/sf/ where the
-    // relative path resolves to ~/.gsd/agent/resource-loader.js which doesn't exist.
+    // tree; deployed extensions live at ~/.sf/agent/extensions/sf/ where the
+    // relative path resolves to ~/.sf/agent/resource-loader.js which doesn't exist.
     // Using SF_PKG_ROOT constructs a correct absolute path in both contexts (#3949).
-    const agentDir = process.env.SF_CODING_AGENT_DIR || join(process.env.SF_HOME || homedir(), ".gsd", "agent");
+    const agentDir = process.env.SF_CODING_AGENT_DIR || join(process.env.SF_HOME || homedir(), ".sf", "agent");
     const pkgRoot = process.env.SF_PKG_ROOT;
     const resourceLoaderPath = pkgRoot
       ? pathToFileURL(join(pkgRoot, "dist", "resource-loader.js")).href

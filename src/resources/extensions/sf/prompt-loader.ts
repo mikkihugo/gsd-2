@@ -9,7 +9,7 @@
  *
  * All templates are eagerly loaded into cache at module init via warmCache().
  * This prevents a running session from being invalidated when another `sf`
- * launch overwrites ~/.gsd/agent/ with newer templates via initResources().
+ * launch overwrites ~/.sf/agent/ with newer templates via initResources().
  * Without eager caching, the in-memory extension code (which knows variable
  * set A) can read a newer template from disk (which expects variable set B),
  * causing a "template declares {{X}} but no value was provided" crash
@@ -31,7 +31,7 @@ import { logWarning } from "./workflow-logger.js";
  * On Windows (npm global install via MSYS2 / Git Bash) this can resolve to
  * the npm-global `AppData/Roaming/npm/…` path, which does NOT contain the
  * prompts/ and templates/ subtrees that initResources() copies to
- * `~/.gsd/agent/extensions/sf/`. Detect the mismatch and fall back to
+ * `~/.sf/agent/extensions/sf/`. Detect the mismatch and fall back to
  * the user-local agent directory.
  */
 function resolveExtensionDir(): string {
@@ -39,7 +39,7 @@ function resolveExtensionDir(): string {
   if (existsSync(join(moduleDir, "prompts"))) return moduleDir;
 
   // Fallback: user-local agent directory
-  const sfHome = process.env.SF_HOME || join(homedir(), ".gsd");
+  const sfHome = process.env.SF_HOME || join(homedir(), ".sf");
   const agentGsdDir = join(sfHome, "agent", "extensions", "sf");
   if (existsSync(join(agentGsdDir, "prompts"))) return agentGsdDir;
 
@@ -53,7 +53,7 @@ const templatesDir = join(__extensionDir, "templates");
 
 /**
  * Return the resolved templates directory path for use in prompts.
- * Avoids hardcoding `~/.gsd/agent/extensions/sf/templates/` in templates. (#3575)
+ * Avoids hardcoding `~/.sf/agent/extensions/sf/templates/` in templates. (#3575)
  */
 export function getTemplatesDir(): string {
   return templatesDir;

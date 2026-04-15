@@ -20,9 +20,9 @@ test("resolvePreferredModelConfig synthesizes heavy routing ceiling when models 
   const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".sf"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".sf", "PREFERENCES.md"),
       [
         "---",
         "dynamic_routing:",
@@ -63,9 +63,9 @@ test("resolvePreferredModelConfig falls back to auto start model when heavy tier
   const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".sf"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".sf", "PREFERENCES.md"),
       [
         "---",
         "dynamic_routing:",
@@ -105,9 +105,9 @@ test("resolvePreferredModelConfig keeps explicit phase models as the ceiling", (
   const tempGsdHome = makeTempDir("sf-routing-home-");
 
   try {
-    mkdirSync(join(tempProject, ".gsd"), { recursive: true });
+    mkdirSync(join(tempProject, ".sf"), { recursive: true });
     writeFileSync(
-      join(tempProject, ".gsd", "PREFERENCES.md"),
+      join(tempProject, ".sf", "PREFERENCES.md"),
       [
         "---",
         "models:",

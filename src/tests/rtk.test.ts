@@ -48,10 +48,10 @@ test("resolveRtkAssetName maps supported release assets correctly", () => {
 
 test("prependPathEntry preserves the original PATH key casing and avoids duplicates", () => {
   const env: NodeJS.ProcessEnv = { Path: "/usr/bin" };
-  prependPathEntry(env, "/tmp/gsd-bin");
-  assert.equal(env.Path, `/tmp/gsd-bin${delimiter}${"/usr/bin"}`);
-  prependPathEntry(env, "/tmp/gsd-bin");
-  assert.equal(env.Path, `/tmp/gsd-bin${delimiter}${"/usr/bin"}`);
+  prependPathEntry(env, "/tmp/sf-bin");
+  assert.equal(env.Path, `/tmp/sf-bin${delimiter}${"/usr/bin"}`);
+  prependPathEntry(env, "/tmp/sf-bin");
+  assert.equal(env.Path, `/tmp/sf-bin${delimiter}${"/usr/bin"}`);
 });
 
 test("buildRtkEnv prepends the managed bin dir and disables telemetry", () => {
@@ -93,7 +93,7 @@ test("rewriteCommandWithRtk respects the disable flag", () => {
 
 test("rewriteCommandWithRtk falls back to the managed RTK path when SF_RTK_PATH is unset", () => {
   const fake = createFakeRtk({ "git status": "rtk git status" });
-  const managedHome = mkdtempSync(join(tmpdir(), "gsd-rtk-managed-home-"));
+  const managedHome = mkdtempSync(join(tmpdir(), "sf-rtk-managed-home-"));
   const managedDir = join(managedHome, "agent", "bin");
   const managedPath = join(managedDir, process.platform === "win32" ? "rtk.cmd" : "rtk");
 

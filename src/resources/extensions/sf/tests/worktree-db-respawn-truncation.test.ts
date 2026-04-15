@@ -24,7 +24,7 @@ import assert from 'node:assert/strict';
 
 function createBase(name: string): string {
   const base = mkdtempSync(join(tmpdir(), `sf-wt-respawn-${name}-`));
-  mkdirSync(join(base, '.gsd', 'milestones'), { recursive: true });
+  mkdirSync(join(base, '.sf', 'milestones'), { recursive: true });
   return base;
 }
 
@@ -42,26 +42,26 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
 
     try {
       // Set up milestone artifacts in main project root
-      const m001Dir = join(mainBase, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(mainBase, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
       // Simulate a freshly-migrated worktree DB (non-empty, like after sf-migrate)
       // Real DBs are ~1.7MB; we use a smaller payload to prove the size check works
       const fakeDbContent = Buffer.alloc(4096, 0x42); // 4KB non-empty DB
-      writeFileSync(join(wtBase, '.gsd', 'sf.db'), fakeDbContent);
+      writeFileSync(join(wtBase, '.sf', 'sf.db'), fakeDbContent);
 
-      const sizeBefore = statSync(join(wtBase, '.gsd', 'sf.db')).size;
+      const sizeBefore = statSync(join(wtBase, '.sf', 'sf.db')).size;
       assert.ok(sizeBefore > 0, 'sf.db is non-empty before sync');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
       // The non-empty DB must survive the sync
       assert.ok(
-        existsSync(join(wtBase, '.gsd', 'sf.db')),
+        existsSync(join(wtBase, '.sf', 'sf.db')),
         '#2815: non-empty sf.db must not be deleted by sync',
       );
-      const sizeAfter = statSync(join(wtBase, '.gsd', 'sf.db')).size;
+      const sizeAfter = statSync(join(wtBase, '.sf', 'sf.db')).size;
       assert.equal(
         sizeAfter,
         sizeBefore,
@@ -80,18 +80,18 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
     const wtBase = createBase('wt');
 
     try {
-      const m001Dir = join(mainBase, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(mainBase, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
       // Create an empty (0-byte) sf.db — this is stale/corrupt and should be deleted
-      writeFileSync(join(wtBase, '.gsd', 'sf.db'), '');
-      assert.ok(existsSync(join(wtBase, '.gsd', 'sf.db')), 'empty sf.db exists before sync');
+      writeFileSync(join(wtBase, '.sf', 'sf.db'), '');
+      assert.ok(existsSync(join(wtBase, '.sf', 'sf.db')), 'empty sf.db exists before sync');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
       assert.ok(
-        !existsSync(join(wtBase, '.gsd', 'sf.db')),
+        !existsSync(join(wtBase, '.sf', 'sf.db')),
         '#853: empty sf.db must still be deleted after sync',
       );
     } finally {
@@ -107,13 +107,13 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
     const wtBase = createBase('wt');
 
     try {
-      const m001Dir = join(mainBase, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(mainBase, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
       // Create an empty (0-byte) sf.db plus orphaned WAL and SHM files —
       // this is the exact state that causes Node 24 node:sqlite CPU spin (#2478).
-      const wtGsd = join(wtBase, '.gsd');
+      const wtGsd = join(wtBase, '.sf');
       writeFileSync(join(wtGsd, 'sf.db'), '');
       writeFileSync(join(wtGsd, 'sf.db-wal'), Buffer.alloc(605672, 0xAA));
       writeFileSync(join(wtGsd, 'sf.db-shm'), Buffer.alloc(32768, 0xBB));
@@ -149,13 +149,13 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
     const wtBase = createBase('wt');
 
     try {
-      const m001Dir = join(mainBase, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(mainBase, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
 
       // Orphaned WAL/SHM with NO sf.db at all — can happen from a previous
       // partial cleanup. These must still be cleaned up.
-      const wtGsd = join(wtBase, '.gsd');
+      const wtGsd = join(wtBase, '.sf');
       writeFileSync(join(wtGsd, 'sf.db-wal'), Buffer.alloc(1024, 0xAA));
       writeFileSync(join(wtGsd, 'sf.db-shm'), Buffer.alloc(1024, 0xBB));
 
@@ -186,29 +186,29 @@ describe('worktree-db-respawn-truncation (#2815)', async () => {
     const wtBase = createBase('wt');
 
     try {
-      const m001Dir = join(mainBase, '.gsd', 'milestones', 'M001');
+      const m001Dir = join(mainBase, '.sf', 'milestones', 'M001');
       mkdirSync(m001Dir, { recursive: true });
       writeFileSync(join(m001Dir, 'M001-ROADMAP.md'), '# Roadmap');
       mkdirSync(join(m001Dir, 'slices', 'S01'), { recursive: true });
       writeFileSync(join(m001Dir, 'slices', 'S01', 'S01-PLAN.md'), '# Plan');
 
       // Non-empty DB in worktree
-      writeFileSync(join(wtBase, '.gsd', 'sf.db'), 'populated-db-data');
+      writeFileSync(join(wtBase, '.sf', 'sf.db'), 'populated-db-data');
 
       syncProjectRootToWorktree(mainBase, wtBase, 'M001');
 
       // Artifacts must still be synced
       assert.ok(
-        existsSync(join(wtBase, '.gsd', 'milestones', 'M001', 'M001-ROADMAP.md')),
+        existsSync(join(wtBase, '.sf', 'milestones', 'M001', 'M001-ROADMAP.md')),
         'milestone artifacts synced even with preserved DB',
       );
       assert.ok(
-        existsSync(join(wtBase, '.gsd', 'milestones', 'M001', 'slices', 'S01', 'S01-PLAN.md')),
+        existsSync(join(wtBase, '.sf', 'milestones', 'M001', 'slices', 'S01', 'S01-PLAN.md')),
         'slice artifacts synced even with preserved DB',
       );
       // DB must still exist
       assert.ok(
-        existsSync(join(wtBase, '.gsd', 'sf.db')),
+        existsSync(join(wtBase, '.sf', 'sf.db')),
         '#2815: DB preserved alongside artifact sync',
       );
     } finally {

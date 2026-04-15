@@ -101,7 +101,7 @@ export interface CreateAgentSessionOptions {
 	isClaudeCodeReady?: () => boolean;
 	/** When false, model changes do NOT write defaultProvider/defaultModel back to
 	 * settings.json. main.ts sets this to false for print/one-shot mode so
-	 * `gsd -p --model X "msg"` cannot mutate the persisted default (#4251). */
+	 * `sf -p --model X "msg"` cannot mutate the persisted default (#4251). */
 	persistModelChanges?: boolean;
 }
 

@@ -120,7 +120,7 @@ interface TerminalSpawnSpec {
 }
 
 const ALLOWED_TERMINAL_COMMANDS = new Set([
-  "gsd",
+  "sf",
   process.env.SHELL || "/bin/zsh",
   "/bin/bash",
   "/bin/zsh",
@@ -142,7 +142,7 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
     };
   }
 
-  if (command === "gsd") {
+  if (command === "sf") {
     try {
       const cliEntry = resolveGsdCliEntry({
         packageRoot: process.env.SF_WEB_PACKAGE_ROOT || process.cwd(),
@@ -156,11 +156,11 @@ function resolveTerminalSpawnSpec(cwd: string, command?: string, commandArgs: st
       return {
         executable: cliEntry.command,
         args: cliEntry.args,
-        label: "gsd",
+        label: "sf",
       };
     } catch (error) {
       console.warn(
-        "[pty] Falling back to PATH-resolved gsd:",
+        "[pty] Falling back to PATH-resolved sf:",
         error instanceof Error ? error.message : String(error),
       );
     }

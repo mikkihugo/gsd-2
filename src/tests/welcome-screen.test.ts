@@ -48,7 +48,7 @@ test('renders model and provider', () => {
 
 test('renders cwd hint', () => {
   const out = strip(capture({ version: '1.0.0' }))
-  assert.ok(out.includes('/gsd to begin'), 'hint line missing')
+  assert.ok(out.includes('/sf to begin'), 'hint line missing')
 })
 
 test('skips when not a TTY', (t) => {

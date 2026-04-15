@@ -19,14 +19,14 @@ test("buildProjectPath appends project while preserving existing query params", 
 
 test("buildProjectAbsoluteUrl produces a same-origin URL with the active project scope", () => {
   const url = buildProjectAbsoluteUrl(
-    "/api/terminal/stream?id=gsd-interactive&command=gsd",
+    "/api/terminal/stream?id=sf-interactive&command=sf",
     "http://localhost:3000",
     "/Users/sn0w/Documents/dev/Other Project",
   )
 
   assert.equal(url.origin, "http://localhost:3000")
   assert.equal(url.pathname, "/api/terminal/stream")
-  assert.equal(url.searchParams.get("id"), "gsd-interactive")
-  assert.equal(url.searchParams.get("command"), "gsd")
+  assert.equal(url.searchParams.get("id"), "sf-interactive")
+  assert.equal(url.searchParams.get("command"), "sf")
   assert.equal(url.searchParams.get("project"), "/Users/sn0w/Documents/dev/Other Project")
 })

@@ -7,7 +7,7 @@ import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const autoTsPath = join(__dirname, "..", "resources", "extensions", "gsd", "auto.ts");
+const autoTsPath = join(__dirname, "..", "resources", "extensions", "sf", "auto.ts");
 const loaderTsPath = join(__dirname, "..", "loader.ts");
 
 test("loader.ts sets SF_PKG_ROOT env var", () => {

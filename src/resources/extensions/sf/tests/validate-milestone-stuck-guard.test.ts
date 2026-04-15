@@ -54,13 +54,13 @@ function setupTestEnvironment(): void {
   tempDir = join(tmpdir(), `validate-milestone-guard-${Date.now()}-${Math.random().toString(36).slice(2)}`);
   mkdirSync(tempDir, { recursive: true });
 
-  const milestoneDir = join(tempDir, ".gsd", "milestones", "M001");
+  const milestoneDir = join(tempDir, ".sf", "milestones", "M001");
   mkdirSync(milestoneDir, { recursive: true });
 
   process.chdir(tempDir);
   _clearGsdRootCache();
 
-  dbPath = join(tempDir, ".gsd", "sf.db");
+  dbPath = join(tempDir, ".sf", "sf.db");
   openDatabase(dbPath);
   invalidateAllCaches();
 }
@@ -72,7 +72,7 @@ function cleanupTestEnvironment(): void {
 }
 
 function writeValidationFile(verdict: string): void {
-  const path = join(tempDir, ".gsd", "milestones", "M001", "M001-VALIDATION.md");
+  const path = join(tempDir, ".sf", "milestones", "M001", "M001-VALIDATION.md");
   const content = `---
 verdict: ${verdict}
 remediation_round: 1

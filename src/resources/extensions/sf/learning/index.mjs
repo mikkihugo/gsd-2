@@ -13,7 +13,7 @@
  *
  *   import { init } from "./index.mjs";
  *   const plugin = await init(pi, {
- *     dbPath: "~/.gsd/sf-learning.db",
+ *     dbPath: "~/.sf/sf-learning.db",
  *     priorsPath: "./src/data/model-benchmarks.json",
  *     weightsPath: "./src/data/unit-weights.json",
  *     nPrior: 10,
@@ -55,7 +55,7 @@ import { writeFallbackChains } from "./fallback-chain-writer.mjs";
 
 const MODULE_DIRECTORY = dirname(fileURLToPath(import.meta.url));
 const SCHEMA_PATH = resolve(MODULE_DIRECTORY, "outcome-schema.sql");
-const DEFAULT_DB_PATH = "~/.gsd/sf-learning.db";
+const DEFAULT_DB_PATH = "~/.sf/sf-learning.db";
 const DEFAULT_N_PRIOR = 10;
 const DEFAULT_ROLLING_DAYS = 30;
 const DEFAULT_EXPLORATION_C = 1.4;
@@ -63,7 +63,7 @@ const HOME_REGEX = /^~(?=$|\/)/;
 
 /**
  * @typedef {Object} PluginConfig
- * @property {string} [dbPath]              - default: ~/.gsd/sf-learning.db
+ * @property {string} [dbPath]              - default: ~/.sf/sf-learning.db
  * @property {string} [priorsPath]          - default: <plugin>/data/model-benchmarks.json
  * @property {string} [weightsPath]         - default: <plugin>/data/unit-weights.json
  * @property {number} [nPrior=10]
@@ -266,7 +266,7 @@ export async function init(pi, config = {}) {
     }
 
     // Regenerate pi-ai runtime fallback chains (read by FallbackResolver).
-    // Writes ~/.gsd/agent/settings.json → fallback.chains.* atomically.
+    // Writes ~/.sf/agent/settings.json → fallback.chains.* atomically.
     // Failure is logged but never blocks plugin init — stale chains are
     // still better than a broken plugin.
     let fallbackWriteSummary = null;

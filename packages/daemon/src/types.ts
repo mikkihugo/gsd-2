@@ -137,7 +137,7 @@ export interface CostAccumulator {
 // ---------------------------------------------------------------------------
 
 /** Marker types detectable by the project scanner */
-export type ProjectMarker = 'git' | 'node' | 'gsd' | 'rust' | 'python' | 'go';
+export type ProjectMarker = 'git' | 'node' | 'sf' | 'rust' | 'python' | 'go';
 
 export interface ProjectInfo {
   /** Directory name (basename) */
@@ -161,7 +161,7 @@ export interface StartSessionOptions {
   /** Absolute path to the project directory */
   projectDir: string;
 
-  /** Command to send after '/gsd auto' (default: none) */
+  /** Command to send after '/sf auto' (default: none) */
   command?: string;
 
   /** Model ID override */

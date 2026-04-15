@@ -11,7 +11,7 @@ const CAPTURES_MAX_BUFFER = 2 * 1024 * 1024
 const CAPTURES_MODULE_ENV = "SF_CAPTURES_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**

@@ -26,8 +26,8 @@ function createTestRepo(): string {
   run("git init -b main", repo);
   run(`git config user.name "SF Test"`, repo);
   run(`git config user.email "test@sf.dev"`, repo);
-  mkdirSync(join(repo, ".gsd", "runtime"), { recursive: true });
-  mkdirSync(join(repo, ".gsd", "milestones", "M001"), { recursive: true });
+  mkdirSync(join(repo, ".sf", "runtime"), { recursive: true });
+  mkdirSync(join(repo, ".sf", "milestones", "M001"), { recursive: true });
   writeFileSync(join(repo, "README.md"), "init\n");
   run("git add -A", repo);
   run(`git commit -m "init"`, repo);
@@ -129,7 +129,7 @@ test('cleanupQuickBranch: merges back and cleans up (same session)', async () =>
       slug: "fix-typo",
       description: "fix typo",
     };
-    const runtimeDir = join(repo, ".gsd", "runtime");
+    const runtimeDir = join(repo, ".sf", "runtime");
     mkdirSync(runtimeDir, { recursive: true });
     writeFileSync(join(runtimeDir, "quick-return.json"), JSON.stringify(returnState) + "\n");
 
@@ -174,7 +174,7 @@ test('cleanupQuickBranch: recovers from disk state (cross-session)', async () =>
     run(`git commit -m "add-docs"`, repo);
 
     // Write disk state manually (simulates what handleQuick would persist)
-    const runtimeDir = join(repo, ".gsd", "runtime");
+    const runtimeDir = join(repo, ".sf", "runtime");
     mkdirSync(runtimeDir, { recursive: true });
     writeFileSync(join(runtimeDir, "quick-return.json"), JSON.stringify({
       basePath: repo,

@@ -2,8 +2,8 @@
  * gitignore-staging-2570.test.ts — Regression tests for #2570.
  *
  * Verifies that:
- * 1. isGsdGitignored() detects when .gsd is covered by .gitignore
- * 2. The rethink prompt uses {{commitInstruction}} instead of hardcoded git add .gsd/
+ * 1. isGsdGitignored() detects when .sf is covered by .gitignore
+ * 2. The rethink prompt uses {{commitInstruction}} instead of hardcoded git add .sf/
  * 3. rethink.ts passes the correct commitInstruction based on gitignore state
  *
  * Uses real temporary git repos — no mocks.
@@ -53,25 +53,25 @@ function cleanup(dir: string): void {
 
 // ─── isGsdGitignored ─────────────────────────────────────────────────
 
-test("isGsdGitignored returns true when .gsd is in .gitignore (#2570)", (t) => {
+test("isGsdGitignored returns true when .sf is in .gitignore (#2570)", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  writeFileSync(join(dir, ".gitignore"), ".gsd\n");
+  writeFileSync(join(dir, ".gitignore"), ".sf\n");
   assert.equal(isGsdGitignored(dir), true);
 });
 
-test("isGsdGitignored returns true when .gsd/ (with slash) is in .gitignore", (t) => {
+test("isGsdGitignored returns true when .sf/ (with slash) is in .gitignore", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  writeFileSync(join(dir, ".gitignore"), ".gsd/\n");
-  // Create .gsd directory so git check-ignore can match the directory-only pattern
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
+  writeFileSync(join(dir, ".gitignore"), ".sf/\n");
+  // Create .sf directory so git check-ignore can match the directory-only pattern
+  mkdirSync(join(dir, ".sf"), { recursive: true });
   assert.equal(isGsdGitignored(dir), true);
 });
 
-test("isGsdGitignored returns false when .gsd is NOT in .gitignore", (t) => {
+test("isGsdGitignored returns false when .sf is NOT in .gitignore", (t) => {
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
@@ -89,7 +89,7 @@ test("isGsdGitignored returns false when no .gitignore exists", (t) => {
 
 // ─── rethink.md prompt template ─────────────────────────────────────
 
-test("rethink.md prompt uses {{commitInstruction}} not hardcoded git add .gsd/ (#2570)", () => {
+test("rethink.md prompt uses {{commitInstruction}} not hardcoded git add .sf/ (#2570)", () => {
   const promptPath = join(
     import.meta.dirname!,
     "..",
@@ -99,10 +99,10 @@ test("rethink.md prompt uses {{commitInstruction}} not hardcoded git add .gsd/ (
   );
   const content = readFileSync(promptPath, "utf-8");
 
-  // Must NOT contain hardcoded `git add .gsd/`
+  // Must NOT contain hardcoded `git add .sf/`
   assert.ok(
-    !content.includes("git add .gsd/"),
-    `rethink.md must not contain hardcoded "git add .gsd/" — use {{commitInstruction}} instead.\nFound: ${content.match(/.*git add .gsd\/.*/)?.[0]}`,
+    !content.includes("git add .sf/"),
+    `rethink.md must not contain hardcoded "git add .sf/" — use {{commitInstruction}} instead.\nFound: ${content.match(/.*git add .sf\/.*/)?.[0]}`,
   );
 
   // Must contain the {{commitInstruction}} placeholder
@@ -112,9 +112,9 @@ test("rethink.md prompt uses {{commitInstruction}} not hardcoded git add .gsd/ (
   );
 });
 
-// ─── smartStage respects .gitignore for .gsd/ (#2570) ───────────────
+// ─── smartStage respects .gitignore for .sf/ (#2570) ───────────────
 
-test("smartStage does not stage .gsd/ files when .gsd is gitignored (#2570)", async (t) => {
+test("smartStage does not stage .sf/ files when .sf is gitignored (#2570)", async (t) => {
   // This imports GitServiceImpl to test through the public commit() method
   // which calls smartStage() internally.
   const { GitServiceImpl } = await import("../../git-service.ts");
@@ -122,29 +122,29 @@ test("smartStage does not stage .gsd/ files when .gsd is gitignored (#2570)", as
   const dir = makeTempRepo();
   t.after(() => { cleanup(dir); });
 
-  // Add .gsd to .gitignore
-  writeFileSync(join(dir, ".gitignore"), ".gsd\nnode_modules/\n");
+  // Add .sf to .gitignore
+  writeFileSync(join(dir, ".gitignore"), ".sf\nnode_modules/\n");
   git(dir, "add", ".gitignore");
-  git(dir, "commit", "-m", "add gitignore with .gsd");
+  git(dir, "commit", "-m", "add gitignore with .sf");
 
-  // Create .gsd/ milestone artifacts (NOT tracked, NOT symlinked)
-  mkdirSync(join(dir, ".gsd", "milestones", "M001", "slices", "S01"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "milestones", "M001", "slices", "S01", "S01-PLAN.md"), "# Plan");
-  writeFileSync(join(dir, ".gsd", "DECISIONS.md"), "# Decisions");
+  // Create .sf/ milestone artifacts (NOT tracked, NOT symlinked)
+  mkdirSync(join(dir, ".sf", "milestones", "M001", "slices", "S01"), { recursive: true });
+  writeFileSync(join(dir, ".sf", "milestones", "M001", "slices", "S01", "S01-PLAN.md"), "# Plan");
+  writeFileSync(join(dir, ".sf", "DECISIONS.md"), "# Decisions");
 
   // Create a normal source file
   writeFileSync(join(dir, "src.ts"), "export const x = 1;");
 
   // Commit through GitServiceImpl (uses smartStage internally)
   const svc = new GitServiceImpl(dir);
-  const msg = svc.commit({ message: "test: should not include .gsd files" });
+  const msg = svc.commit({ message: "test: should not include .sf files" });
   assert.ok(msg !== null, "commit should succeed");
 
   // Check what was committed
   const committed = git(dir, "show", "--name-only", "HEAD");
   assert.ok(committed.includes("src.ts"), "source files ARE committed");
   assert.ok(
-    !committed.includes(".gsd/"),
-    `gitignored .gsd/ files must NOT be staged by smartStage.\nCommitted files: ${committed}`,
+    !committed.includes(".sf/"),
+    `gitignored .sf/ files must NOT be staged by smartStage.\nCommitted files: ${committed}`,
   );
 });

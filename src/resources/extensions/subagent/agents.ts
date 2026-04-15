@@ -6,7 +6,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { getAgentDir, parseFrontmatter } from "@sf-run/pi-coding-agent";
 
-const PROJECT_AGENT_DIR_CANDIDATES = [".gsd", ".pi"] as const;
+const PROJECT_AGENT_DIR_CANDIDATES = [".sf", ".pi"] as const;
 
 export type AgentScope = "user" | "project" | "both";
 

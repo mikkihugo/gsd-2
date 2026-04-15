@@ -212,7 +212,7 @@ export function auditOrphanedMilestoneBranches(
 
         // If the directory still exists after git worktree remove (either it
         // wasn't registered or the remove was a noop), fall back to direct
-        // filesystem removal — but only inside .gsd/worktrees/ for safety (#2365).
+        // filesystem removal — but only inside .sf/worktrees/ for safety (#2365).
         if (existsSync(wtDir)) {
           if (isInsideWorktreesDir(basePath, wtDir)) {
             try {
@@ -222,7 +222,7 @@ export function auditOrphanedMilestoneBranches(
               warnings.push(`Failed to remove worktree directory for ${milestoneId}: ${err2 instanceof Error ? err2.message : String(err2)}`);
             }
           } else {
-            warnings.push(`Orphaned worktree directory for ${milestoneId} is outside .gsd/worktrees/ — skipping removal for safety.`);
+            warnings.push(`Orphaned worktree directory for ${milestoneId} is outside .sf/worktrees/ — skipping removal for safety.`);
           }
         } else {
           recovered.push(`Removed orphaned worktree directory for ${milestoneId}.`);
@@ -281,7 +281,7 @@ export async function bootstrapAutoSession(
   // selection for subsequent /sf runs in the same session.
   //
   // Exception (#4122): when the session provider is a custom provider declared
-  // in ~/.gsd/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
+  // in ~/.sf/agent/models.json (Ollama, vLLM, OpenAI-compatible proxy, etc.),
   // PREFERENCES.md is skipped entirely. PREFERENCES.md cannot reference custom
   // providers, so honoring it would silently reroute auto-mode to a built-in
   // provider the user is not logged into and surface as "Not logged in · Please
@@ -336,7 +336,7 @@ export async function bootstrapAutoSession(
     // nativeIsRepo() uses `git rev-parse` which traverses up to parent dirs,
     // so a parent repo can make it return true even when base has no .git of
     // its own. Check for a local .git instead (defense-in-depth for the case
-    // where isInheritedRepo() returns a false negative, e.g. stale .gsd at
+    // where isInheritedRepo() returns a false negative, e.g. stale .sf at
     // the parent git root). See #2393 and related issue.
     const hasLocalGit = existsSync(join(base, ".git"));
     if (!hasLocalGit || isInheritedRepo(base)) {
@@ -345,9 +345,9 @@ export async function bootstrapAutoSession(
       nativeInit(base, mainBranch);
     }
 
-    // Migrate legacy in-project .gsd/ to external state directory.
-    // Migration MUST run before ensureGitignore to avoid adding ".gsd" to
-    // .gitignore when .gsd/ is git-tracked (data-loss bug #1364).
+    // Migrate legacy in-project .sf/ to external state directory.
+    // Migration MUST run before ensureGitignore to avoid adding ".sf" to
+    // .gitignore when .sf/ is git-tracked (data-loss bug #1364).
     recoverFailedMigration(base);
     const migration = migrateToExternalState(base);
     if (migration.error) {
@@ -357,17 +357,17 @@ export async function bootstrapAutoSession(
     ensureGsdSymlink(base);
 
     // Ensure .gitignore has baseline patterns.
-    // ensureGitignore checks for git-tracked .gsd/ files and skips the
-    // ".gsd" pattern if the project intentionally tracks .gsd/ in git.
+    // ensureGitignore checks for git-tracked .sf/ files and skips the
+    // ".sf" pattern if the project intentionally tracks .sf/ in git.
     const gitPrefs = loadEffectiveSFPreferences()?.preferences?.git;
     const manageGitignore = gitPrefs?.manage_gitignore;
     ensureGitignore(base, { manageGitignore });
     if (manageGitignore !== false) untrackRuntimeFiles(base);
 
     // Bootstrap milestones/ if it doesn't exist.
-    // Check milestones/ directly — ensureGsdSymlink above already created .gsd/,
-    // so checking .gsd/ existence would be dead code (#2942).
-    const sfDir = join(base, ".gsd");
+    // Check milestones/ directly — ensureGsdSymlink above already created .sf/,
+    // so checking .sf/ existence would be dead code (#2942).
+    const sfDir = join(base, ".sf");
     const milestonesPath = join(sfDir, "milestones");
     if (!existsSync(milestonesPath)) {
       mkdirSync(milestonesPath, { recursive: true });
@@ -471,7 +471,7 @@ export async function bootstrapAutoSession(
       (state.phase === "pre-planning" || state.phase === "complete") &&
       shouldUseWorktreeIsolation() &&
       !detectWorktreeName(base) &&
-      !base.includes(`${pathSep}.gsd${pathSep}worktrees${pathSep}`)
+      !base.includes(`${pathSep}.sf${pathSep}worktrees${pathSep}`)
     ) {
       const milestoneBranch = `milestone/${state.activeMilestone.id}`;
       const { nativeBranchExists } = await import("./native-git-bridge.js");
@@ -698,14 +698,14 @@ export async function bootstrapAutoSession(
     s.originalBasePath = base;
 
     const isUnderGsdWorktrees = (p: string): boolean => {
-      // Direct layout: /.gsd/worktrees/
-      const marker = `${pathSep}.gsd${pathSep}worktrees${pathSep}`;
+      // Direct layout: /.sf/worktrees/
+      const marker = `${pathSep}.sf${pathSep}worktrees${pathSep}`;
       if (p.includes(marker)) return true;
-      const worktreesSuffix = `${pathSep}.gsd${pathSep}worktrees`;
+      const worktreesSuffix = `${pathSep}.sf${pathSep}worktrees`;
       if (p.endsWith(worktreesSuffix)) return true;
-      // Symlink-resolved layout: /.gsd/projects/<hash>/worktrees/
+      // Symlink-resolved layout: /.sf/projects/<hash>/worktrees/
       const symlinkRe = new RegExp(
-        `\\${pathSep}\\.gsd\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees(?:\\${pathSep}|$)`,
+        `\\${pathSep}\\.sf\\${pathSep}projects\\${pathSep}[a-f0-9]+\\${pathSep}worktrees(?:\\${pathSep}|$)`,
       );
       return symlinkRe.test(p);
     };
@@ -727,7 +727,7 @@ export async function bootstrapAutoSession(
 
     // ── DB lifecycle ──
     const sfDbPath = resolveProjectRootDbPath(s.basePath);
-    const sfDirPath = join(s.basePath, ".gsd");
+    const sfDirPath = join(s.basePath, ".sf");
     if (existsSync(sfDirPath) && !existsSync(sfDbPath)) {
       const hasDecisions = existsSync(join(sfDirPath, "DECISIONS.md"));
       const hasRequirements = existsSync(join(sfDirPath, "REQUIREMENTS.md"));
@@ -915,7 +915,7 @@ export async function bootstrapAutoSession(
 
     // Pre-flight: validate milestone queue
     try {
-      const msDir = join(base, ".gsd", "milestones");
+      const msDir = join(base, ".sf", "milestones");
       if (existsSync(msDir)) {
         const milestoneIds = readdirSync(msDir, { withFileTypes: true })
           .filter((d) => d.isDirectory() && /^M\d{3}/.test(d.name))

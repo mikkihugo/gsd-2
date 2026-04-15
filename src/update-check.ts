@@ -85,7 +85,7 @@ function printUpdateBanner(current: string, latest: string): void {
   const installCmd = resolveInstallCommand('sf-run')
   process.stderr.write(
     `  ${chalk.yellow('Update available:')} ${chalk.dim(`v${current}`)} → ${chalk.bold(`v${latest}`)}\n` +
-    `  ${chalk.dim('Run')} ${installCmd} ${chalk.dim('or')} /gsd update ${chalk.dim('to upgrade')}\n\n`,
+    `  ${chalk.dim('Run')} ${installCmd} ${chalk.dim('or')} /sf update ${chalk.dim('to upgrade')}\n\n`,
   )
 }
 
@@ -228,7 +228,7 @@ export async function checkAndPromptForUpdates(options: UpdateCheckOptions = {})
       process.stderr.write(`\n  ${chalk.yellow(`Update failed. You can run: ${installCmd}`)}\n\n`)
     }
   } else {
-    process.stderr.write(`  ${chalk.dim('Skipped. Run')} gsd update ${chalk.dim('anytime to upgrade.')}\n\n`)
+    process.stderr.write(`  ${chalk.dim('Skipped. Run')} sf update ${chalk.dim('anytime to upgrade.')}\n\n`)
   }
 
   return false

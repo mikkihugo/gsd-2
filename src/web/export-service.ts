@@ -11,12 +11,12 @@ const EXPORT_MAX_BUFFER = 4 * 1024 * 1024
 const EXPORT_MODULE_ENV = "SF_EXPORT_MODULE"
 
 function resolveTsLoaderPath(packageRoot: string): string {
-  return join(packageRoot, "src", "resources", "extensions", "gsd", "tests", "resolve-ts.mjs")
+  return join(packageRoot, "src", "resources", "extensions", "sf", "tests", "resolve-ts.mjs")
 }
 
 /**
  * Generates an export file via a child process and returns its content.
- * The child calls writeExportFile() which creates a timestamped file in .gsd/,
+ * The child calls writeExportFile() which creates a timestamped file in .sf/,
  * then reads its content back for browser display.
  */
 export async function collectExportData(

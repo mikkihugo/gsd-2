@@ -35,7 +35,7 @@ export function buildRtkEnv(env: NodeJS.ProcessEnv = process.env): NodeJS.Proces
 }
 
 function getManagedRtkDir(env: NodeJS.ProcessEnv = process.env): string {
-  return join(env.SF_HOME || join(homedir(), ".gsd"), "agent", "bin");
+  return join(env.SF_HOME || join(homedir(), ".sf"), "agent", "bin");
 }
 
 function getRtkBinaryName(platform: NodeJS.Platform = process.platform): string {

@@ -11,7 +11,7 @@ import {
 
 test("ensureProjectWorkflowMcpConfig creates .mcp.json with the workflow server", () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "sf-mcp-init-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".sf"), { recursive: true });
 
   try {
     const result = ensureProjectWorkflowMcpConfig(projectRoot);
@@ -39,7 +39,7 @@ test("ensureProjectWorkflowMcpConfig creates .mcp.json with the workflow server"
 
 test("ensureProjectWorkflowMcpConfig preserves existing mcp servers", () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "sf-mcp-init-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".sf"), { recursive: true });
   const configPath = join(projectRoot, ".mcp.json");
 
   writeFileSync(
@@ -74,7 +74,7 @@ test("ensureProjectWorkflowMcpConfig preserves existing mcp servers", () => {
 
 test("ensureProjectWorkflowMcpConfig is idempotent when config is already current", () => {
   const projectRoot = mkdtempSync(join(tmpdir(), "sf-mcp-init-"));
-  mkdirSync(join(projectRoot, ".gsd"), { recursive: true });
+  mkdirSync(join(projectRoot, ".sf"), { recursive: true });
 
   try {
     const first = ensureProjectWorkflowMcpConfig(projectRoot);

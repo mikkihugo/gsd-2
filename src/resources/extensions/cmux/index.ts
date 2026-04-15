@@ -2,10 +2,10 @@ import { execFileSync, spawn } from "node:child_process";
 import { existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { GSDPreferences } from "../gsd/preferences.js";
-import type { GSDState, Phase } from "../gsd/types.js";
+import type { SFPreferences } from "../sf/preferences.js";
+import type { SFState, Phase } from "../sf/types.js";
 const DEFAULT_SOCKET_PATH = "/tmp/cmux.sock";
-const STATUS_KEY = "gsd";
+const STATUS_KEY = "sf";
 const lastSidebarSnapshots = new Map<string, string>();
 let cmuxPromptedThisSession = false;
 let cachedCliAvailability: boolean | null = null;
@@ -52,7 +52,7 @@ export function detectCmuxEnvironment(
 }
 
 export function resolveCmuxConfig(
-  preferences: GSDPreferences | undefined,
+  preferences: SFPreferences | undefined,
   env: NodeJS.ProcessEnv = process.env,
   socketExists: (path: string) => boolean = existsSync,
   cliAvailable: () => boolean = isCmuxCliAvailable,
@@ -71,7 +71,7 @@ export function resolveCmuxConfig(
 }
 
 export function shouldPromptToEnableCmux(
-  preferences: GSDPreferences | undefined,
+  preferences: SFPreferences | undefined,
   env: NodeJS.ProcessEnv = process.env,
   socketExists: (path: string) => boolean = existsSync,
   cliAvailable: () => boolean = isCmuxCliAvailable,
@@ -113,7 +113,7 @@ export function emitOsc777Notification(title: string, body: string): void {
   process.stdout.write(`\x1b]777;notify;${safeTitle};${safeBody}\x07`);
 }
 
-export function buildCmuxStatusLabel(state: GSDState): string {
+export function buildCmuxStatusLabel(state: SFState): string {
   const parts: string[] = [];
   if (state.activeMilestone) parts.push(state.activeMilestone.id);
   if (state.activeSlice) parts.push(state.activeSlice.id);
@@ -125,7 +125,7 @@ export function buildCmuxStatusLabel(state: GSDState): string {
   return `${parts.join(" ")} · ${state.phase}`;
 }
 
-export function buildCmuxProgress(state: GSDState): CmuxSidebarProgress | null {
+export function buildCmuxProgress(state: SFState): CmuxSidebarProgress | null {
   const progress = state.progress;
   if (!progress) return null;
 
@@ -171,7 +171,7 @@ export class CmuxClient {
     this.config = config;
   }
 
-  static fromPreferences(preferences: GSDPreferences | undefined): CmuxClient {
+  static fromPreferences(preferences: SFPreferences | undefined): CmuxClient {
     return new CmuxClient(resolveCmuxConfig(preferences));
   }
 
@@ -270,7 +270,7 @@ export class CmuxClient {
     ]));
   }
 
-  log(message: string, level: CmuxLogLevel = "info", source = "gsd"): void {
+  log(message: string, level: CmuxLogLevel = "info", source = "sf"): void {
     if (!this.config.sidebar) return;
     this.runSync(this.appendWorkspace([
       "log",
@@ -319,13 +319,13 @@ export class CmuxClient {
   /**
    * Create a grid of surfaces for parallel agent execution.
    *
-   * Layout strategy (gsd stays in the original surface):
-   *   1 agent:  [gsd | A]
-   *   2 agents: [gsd | A]
+   * Layout strategy (sf stays in the original surface):
+   *   1 agent:  [sf | A]
+   *   2 agents: [sf | A]
    *             [    | B]
-   *   3 agents: [gsd | A]
+   *   3 agents: [sf | A]
    *             [ C  | B]
-   *   4 agents: [gsd | A]
+   *   4 agents: [sf | A]
    *             [ C  | B]  (D splits from B downward)
    *             [    | D]
    *
@@ -335,7 +335,7 @@ export class CmuxClient {
     if (!this.config.splits || count <= 0) return [];
     const surfaces: string[] = [];
 
-    // First split: create right column from the gsd surface
+    // First split: create right column from the sf surface
     const rightCol = await this.createSplitFrom(this.config.surfaceId, "right");
     if (!rightCol) return [];
     surfaces.push(rightCol);
@@ -347,7 +347,7 @@ export class CmuxClient {
     surfaces.push(bottomRight);
     if (count === 2) return surfaces;
 
-    // Third split: split gsd surface down → bottom-left
+    // Third split: split sf surface down → bottom-left
     const bottomLeft = await this.createSplitFrom(this.config.surfaceId, "down");
     if (!bottomLeft) return surfaces;
     surfaces.push(bottomLeft);
@@ -372,7 +372,7 @@ export class CmuxClient {
   }
 }
 
-export function syncCmuxSidebar(preferences: GSDPreferences | undefined, state: GSDState): void {
+export function syncCmuxSidebar(preferences: SFPreferences | undefined, state: SFState): void {
   const client = CmuxClient.fromPreferences(preferences);
   const config = client.getConfig();
   if (!config.sidebar) return;
@@ -388,7 +388,7 @@ export function syncCmuxSidebar(preferences: GSDPreferences | undefined, state: 
   lastSidebarSnapshots.set(key, snapshot);
 }
 
-export function clearCmuxSidebar(preferences: GSDPreferences | undefined): void {
+export function clearCmuxSidebar(preferences: SFPreferences | undefined): void {
   const config = resolveCmuxConfig(preferences);
   if (!config.available || !config.cliAvailable) return;
   const client = new CmuxClient({ ...config, enabled: true, sidebar: true });
@@ -399,7 +399,7 @@ export function clearCmuxSidebar(preferences: GSDPreferences | undefined): void 
 }
 
 export function logCmuxEvent(
-  preferences: GSDPreferences | undefined,
+  preferences: SFPreferences | undefined,
   message: string,
   level: CmuxLogLevel = "info",
 ): void {

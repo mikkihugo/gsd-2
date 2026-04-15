@@ -9,7 +9,7 @@ export function GET(): Response {
   const packageRoot = process.env.SF_WEB_PACKAGE_ROOT ?? "";
   const isSourceDev = hostKind === "source-dev";
 
-  // When running via `npm run gsd:web` from the monorepo, the host resolves
+  // When running via `npm run sf:web` from the monorepo, the host resolves
   // as packaged-standalone (because the build exists), but the source web/
   // directory is still present at the package root. A truly published package
   // won't have web/app/ next to dist/.

@@ -2,13 +2,13 @@
  * Integration test for `sf headless` CLI subcommand
  *
  * Validates that the headless CLI entry point works end-to-end:
- *   1. Creates a temp dir with a complete .gsd/ project fixture
+ *   1. Creates a temp dir with a complete .sf/ project fixture
  *   2. Initializes a git repo in the temp dir
  *   3. Spawns `node dist/loader.js headless --json next` as a child process
  *   4. Waits for the process to exit (with a 5-minute timeout)
  *   5. Validates exit code, JSONL stdout, stderr progress, and task artifact
  *
- * Auth: Uses OAuth credentials from ~/.gsd/agent/auth.json (Claude Code Max).
+ * Auth: Uses OAuth credentials from ~/.sf/agent/auth.json (Claude Code Max).
  * Falls back to ANTHROPIC_API_KEY env var if OAuth is not configured (D013).
  *
  * Usage:
@@ -29,7 +29,7 @@ const TIMEOUT_MS = parseInt(process.env.HEADLESS_TIMEOUT_MS ?? "300000", 10); //
 const DRY_RUN = process.argv.includes("--dry-run");
 
 // ── Fixture Data ─────────────────────────────────────────────────────────────
-// A complete .gsd/ project state that deriveState() can parse.
+// A complete .sf/ project state that deriveState() can parse.
 // The trivial task asks the agent to create a single file — zero questions needed.
 
 const FIXTURE_PROJECT_MD = `# Project
@@ -247,8 +247,8 @@ function createFixture(): string {
   execSync('git config user.email "test@test.com"', { cwd: tmpDir, stdio: "pipe" });
   execSync('git config user.name "Test"', { cwd: tmpDir, stdio: "pipe" });
 
-  // Create .gsd/ structure
-  const sfDir = join(tmpDir, ".gsd");
+  // Create .sf/ structure
+  const sfDir = join(tmpDir, ".sf");
   const milestonesDir = join(sfDir, "milestones");
   const m001Dir = join(milestonesDir, "M001");
   const slicesDir = join(m001Dir, "slices");
@@ -267,11 +267,11 @@ function createFixture(): string {
 
   // Add .gitignore for runtime files
   writeFileSync(join(tmpDir, ".gitignore"), [
-    ".gsd/auto.lock",
-    ".gsd/completed-units.json",
-    ".gsd/metrics.json",
-    ".gsd/activity/",
-    ".gsd/runtime/",
+    ".sf/auto.lock",
+    ".sf/completed-units.json",
+    ".sf/metrics.json",
+    ".sf/activity/",
+    ".sf/runtime/",
   ].join("\n") + "\n");
 
   // Initial commit so SF has a clean git state
@@ -330,12 +330,12 @@ async function main(): Promise<void> {
 
   // Validate fixture structure
   const requiredFiles = [
-    ".gsd/PROJECT.md",
-    ".gsd/STATE.md",
-    ".gsd/milestones/M001/M001-CONTEXT.md",
-    ".gsd/milestones/M001/M001-ROADMAP.md",
-    ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-    ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md",
+    ".sf/PROJECT.md",
+    ".sf/STATE.md",
+    ".sf/milestones/M001/M001-CONTEXT.md",
+    ".sf/milestones/M001/M001-ROADMAP.md",
+    ".sf/milestones/M001/slices/S01/S01-PLAN.md",
+    ".sf/milestones/M001/slices/S01/tasks/T01-PLAN.md",
   ];
 
   for (const file of requiredFiles) {
@@ -351,9 +351,9 @@ async function main(): Promise<void> {
   // ── Step 2: Validate environment ────────────────────────────────────────
   console.log("\n[2/6] Validating environment...");
 
-  // Auth: prefer OAuth credentials from ~/.gsd/agent/auth.json (D013).
+  // Auth: prefer OAuth credentials from ~/.sf/agent/auth.json (D013).
   // Fall back to ANTHROPIC_API_KEY env var if present.
-  const authJsonPath = join(homedir(), ".gsd", "agent", "auth.json");
+  const authJsonPath = join(homedir(), ".sf", "agent", "auth.json");
   let hasOAuth = false;
   if (existsSync(authJsonPath)) {
     try {
@@ -365,12 +365,12 @@ async function main(): Promise<void> {
   }
 
   if (hasOAuth) {
-    console.log("  OK OAuth credentials found in ~/.gsd/agent/auth.json (Claude Code Max)");
+    console.log("  OK OAuth credentials found in ~/.sf/agent/auth.json (Claude Code Max)");
   } else if (process.env.ANTHROPIC_API_KEY) {
     console.log("  OK ANTHROPIC_API_KEY present (env var fallback)");
   } else {
     console.error("  FAIL: No auth available. Need either:");
-    console.error("    - OAuth credentials in ~/.gsd/agent/auth.json (Claude Code Max)");
+    console.error("    - OAuth credentials in ~/.sf/agent/auth.json (Claude Code Max)");
     console.error("    - ANTHROPIC_API_KEY environment variable");
     cleanup(fixtureDir);
     process.exit(1);

@@ -64,10 +64,10 @@ function attachJsonLineReader(stream: PassThrough, onLine: (line: string) => voi
 }
 
 function makeWorkspaceFixture(): { projectCwd: string; sessionsDir: string; cleanup: () => void } {
-  const root = mkdtempSync(join(tmpdir(), "gsd-web-assembled-"));
+  const root = mkdtempSync(join(tmpdir(), "sf-web-assembled-"));
   const projectCwd = join(root, "project");
   const sessionsDir = join(root, "sessions");
-  const milestoneDir = join(projectCwd, ".gsd", "milestones", "M001");
+  const milestoneDir = join(projectCwd, ".sf", "milestones", "M001");
   const sliceDir = join(milestoneDir, "slices", "S01");
   const tasksDir = join(sliceDir, "tasks");
 
@@ -136,15 +136,15 @@ function fakeWorkspaceIndex() {
       {
         id: "M001",
         title: "Demo",
-        roadmapPath: ".gsd/milestones/M001/M001-ROADMAP.md",
+        roadmapPath: ".sf/milestones/M001/M001-ROADMAP.md",
         slices: [
           {
             id: "S01",
             title: "Demo",
             done: false,
-            planPath: ".gsd/milestones/M001/slices/S01/S01-PLAN.md",
-            tasksDir: ".gsd/milestones/M001/slices/S01/tasks",
-            tasks: [{ id: "T01", title: "Work", done: false, planPath: ".gsd/milestones/M001/slices/S01/tasks/T01-PLAN.md" }],
+            planPath: ".sf/milestones/M001/slices/S01/S01-PLAN.md",
+            tasksDir: ".sf/milestones/M001/slices/S01/tasks",
+            tasks: [{ id: "T01", title: "Work", done: false, planPath: ".sf/milestones/M001/slices/S01/tasks/T01-PLAN.md" }],
           },
         ],
       },
@@ -1022,14 +1022,14 @@ test("assembled slash-command behavior keeps built-ins safe while preserving SF 
   assert.match(builtInReject.notice ?? "", /blocked instead of falling through to the model/i);
   assert.equal(builtInReject.status, null);
 
-  // /gsd status is now a browser surface (S02), verify that
-  const gsdSurface = await submitBrowserInput("/gsd status");
+  // /sf status is now a browser surface (S02), verify that
+  const gsdSurface = await submitBrowserInput("/sf status");
   assert.equal(gsdSurface.outcome.kind, "surface");
-  assert.equal(gsdSurface.outcome.surface, "gsd-status");
+  assert.equal(gsdSurface.outcome.surface, "sf-status");
   assert.equal(gsdSurface.status, null);
 
-  // /gsd auto is a passthrough subcommand — reaches the bridge as a prompt
-  const gsdPrompt = await submitBrowserInput("/gsd auto");
+  // /sf auto is a passthrough subcommand — reaches the bridge as a prompt
+  const gsdPrompt = await submitBrowserInput("/sf auto");
   assert.equal(gsdPrompt.outcome.kind, "prompt");
   assert.equal(gsdPrompt.status, 200);
   assert.equal(gsdPrompt.body.command, "prompt");
@@ -1041,5 +1041,5 @@ test("assembled slash-command behavior keeps built-ins safe while preserving SF 
     "only browser-executable slash commands should reach the live bridge; built-in surfaces/rejects must stay out of prompt text",
   );
   const promptCommand = bridgeCommands.find((command) => command.type === "prompt");
-  assert.equal(promptCommand?.message, "/gsd auto", "SF passthrough commands must stay on the extension prompt path");
+  assert.equal(promptCommand?.message, "/sf auto", "SF passthrough commands must stay on the extension prompt path");
 });

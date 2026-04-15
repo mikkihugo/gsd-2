@@ -77,11 +77,11 @@ describe("formatSkillRef", () => {
     const resolutions = makeResolutions([
       ["lint-fix", {
         method: "project-skill",
-        resolvedPath: "/repo/.gsd/skills/lint-fix/SKILL.md",
+        resolvedPath: "/repo/.sf/skills/lint-fix/SKILL.md",
       }],
     ]);
     const result = formatSkillRef("lint-fix", resolutions);
     assert.match(result, /lint-fix/);
-    assert.match(result, /\.gsd\/skills\/lint-fix\/SKILL\.md/);
+    assert.match(result, /\.sf\/skills\/lint-fix\/SKILL\.md/);
   });
 });

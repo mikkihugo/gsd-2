@@ -2,7 +2,7 @@
 // Centralized warning/error accumulator for the workflow engine pipeline.
 // Captures structured entries that the auto-loop can drain after each unit
 // to surface root causes for stuck loops, silent degradation, and blocked writes.
-// Error-severity entries are persisted to .gsd/audit-log.jsonl (sanitized) for
+// Error-severity entries are persisted to .sf/audit-log.jsonl (sanitized) for
 // post-mortem analysis. Warnings are ephemeral (stderr + buffer only) to avoid
 // log amplification from expected-control-flow catch paths.
 //
@@ -215,7 +215,7 @@ export function formatForNotification(entries: readonly LogEntry[]): string {
 export function readAuditLog(basePath?: string): LogEntry[] {
   const bp = basePath ?? _auditBasePath;
   if (!bp) return [];
-  const auditPath = join(bp, ".gsd", "audit-log.jsonl");
+  const auditPath = join(bp, ".sf", "audit-log.jsonl");
   if (!existsSync(auditPath)) return [];
   try {
     const content = readFileSync(auditPath, "utf-8");
@@ -300,12 +300,12 @@ function _push(
     }
   }
 
-  // Persist errors to .gsd/audit-log.jsonl so they survive context resets.
+  // Persist errors to .sf/audit-log.jsonl so they survive context resets.
   // Only error-severity entries are persisted — warnings are ephemeral (stderr + buffer)
   // to avoid log amplification from expected-control-flow catch paths.
   if (_auditBasePath && severity === "error") {
     try {
-      const auditDir = join(_auditBasePath, ".gsd");
+      const auditDir = join(_auditBasePath, ".sf");
       mkdirSync(auditDir, { recursive: true });
       const sanitized = _sanitizeForAudit(entry);
       appendFileSync(join(auditDir, "audit-log.jsonl"), JSON.stringify(sanitized) + "\n", "utf-8");

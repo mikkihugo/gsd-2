@@ -51,9 +51,9 @@ function createTempRepo(): string {
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
-  // Mirror production: .gsd/worktrees/ is gitignored so autoCommitDirtyState
+  // Mirror production: .sf/worktrees/ is gitignored so autoCommitDirtyState
   // doesn't pick up the worktrees directory as dirty state (#1127 fix).
-  writeFileSync(join(dir, ".gitignore"), ".gsd/worktrees/\n");
+  writeFileSync(join(dir, ".gitignore"), ".sf/worktrees/\n");
   run("git add .", dir);
   run("git commit -m init", dir);
   run("git branch -M main", dir);
@@ -61,7 +61,7 @@ function createTempRepo(): string {
 }
 
 function createMilestoneArtifacts(dir: string, mid: string): void {
-  const msDir = join(dir, ".gsd", "milestones", mid);
+  const msDir = join(dir, ".sf", "milestones", mid);
   mkdirSync(msDir, { recursive: true });
   writeFileSync(join(msDir, "CONTEXT.md"), `# ${mid} Context\n`);
   const roadmap = [
@@ -159,7 +159,7 @@ test("single milestone worktree is merged to main when all complete (#962)", (t)
   // Simulate the fix: merge before stopping (what the "all complete" path now does)
   const roadmapPath = join(
     tempDir,
-    ".gsd",
+    ".sf",
     "milestones",
     "M001",
     "M001-ROADMAP.md",
@@ -220,7 +220,7 @@ test("last milestone worktree is merged when it's the final one (#962)", (t) => 
   run("git add .", wt1);
   run('git commit -m "feat(M001): m001 work"', wt1);
   const roadmap1 = readFileSync(
-    join(tempDir, ".gsd", "milestones", "M001", "M001-ROADMAP.md"),
+    join(tempDir, ".sf", "milestones", "M001", "M001-ROADMAP.md"),
     "utf-8",
   );
   mergeMilestoneToMain(tempDir, "M001", roadmap1);
@@ -231,7 +231,7 @@ test("last milestone worktree is merged when it's the final one (#962)", (t) => 
   run("git add .", wt2);
   run('git commit -m "feat(M002): m002 work"', wt2);
   const roadmap2 = readFileSync(
-    join(tempDir, ".gsd", "milestones", "M002", "M002-ROADMAP.md"),
+    join(tempDir, ".sf", "milestones", "M002", "M002-ROADMAP.md"),
     "utf-8",
   );
   mergeMilestoneToMain(tempDir, "M002", roadmap2);

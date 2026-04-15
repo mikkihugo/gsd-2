@@ -121,7 +121,7 @@ export interface BatchParsedFile {
 }
 
 /**
- * Batch-parse all .md files in a .gsd/ directory tree using the native parser.
+ * Batch-parse all .md files in a .sf/ directory tree using the native parser.
  * Returns null if native module unavailable.
  */
 export function nativeBatchParseGsdFiles(directory: string): BatchParsedFile[] | null {
@@ -154,7 +154,7 @@ export interface GsdTreeEntry {
 }
 
 /**
- * Native-backed directory tree scan of a .gsd/ directory.
+ * Native-backed directory tree scan of a .sf/ directory.
  * Returns a flat list of all entries, or null if native module unavailable.
  */
 export function nativeScanGsdTree(directory: string): GsdTreeEntry[] | null {

@@ -101,7 +101,7 @@ function stateFilePath(basePath: string): string {
 }
 
 /**
- * Persist the current orchestrator state to .gsd/orchestrator.json.
+ * Persist the current orchestrator state to .sf/orchestrator.json.
  * Uses atomic write (tmp + rename) to prevent partial reads.
  */
 export function persistState(basePath: string): void {
@@ -158,7 +158,7 @@ function isPidAlive(pid: number): boolean {
 }
 
 /**
- * Restore orchestrator state from .gsd/orchestrator.json.
+ * Restore orchestrator state from .sf/orchestrator.json.
  * Checks PID liveness for each worker:
  * - Living PID → state "running", process stays null (no handle)
  * - Dead PID → removed from restored state
@@ -251,7 +251,7 @@ function restoreRuntimeState(basePath: string): boolean {
 
   // Fallback: rebuild coordinator state from live session status files.
   // This covers cases where orchestrator.json is missing/corrupt but workers are
-  // still running and writing heartbeats under .gsd/parallel/.
+  // still running and writing heartbeats under .sf/parallel/.
   cleanupStaleSessions(basePath);
   const statuses = readAllSessionStatuses(basePath);
   if (statuses.length === 0) {
@@ -548,7 +548,7 @@ function createMilestoneWorktree(basePath: string, milestoneId: string): string 
   // Run post-create hook if configured
   runWorktreePostCreateHook(basePath, info.path);
 
-  // Copy .gsd/ planning artifacts (milestones, CONTEXT, ROADMAP, etc.) from the
+  // Copy .sf/ planning artifacts (milestones, CONTEXT, ROADMAP, etc.) from the
   // project root into the worktree. Without this, workers for newly-planned
   // milestones can't find their roadmap and exit immediately (#2184 Bug 4).
   syncSfStateToWorktree(basePath, info.path);
@@ -594,8 +594,8 @@ export function spawnWorker(
       SF_MILESTONE_LOCK: milestoneId,
       // Pass the real project root so workers don't need to re-derive it.
       // Without this, process.cwd() resolves symlinks and the worktree
-      // path heuristic can match the user-level ~/.gsd instead of the
-      // project .gsd, causing writes to ~ and corrupting user config.
+      // path heuristic can match the user-level ~/.sf instead of the
+      // project .sf, causing writes to ~ and corrupting user config.
       SF_PROJECT_ROOT: basePath,
       // Prevent workers from spawning their own parallel sessions
       SF_PARALLEL_WORKER: "1",

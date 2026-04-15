@@ -38,8 +38,8 @@ function createTempRepo(): string {
   run("git config user.email test@test.com", dir);
   run("git config user.name Test", dir);
   writeFileSync(join(dir, "README.md"), "# test\n");
-  mkdirSync(join(dir, ".gsd"), { recursive: true });
-  writeFileSync(join(dir, ".gsd", "STATE.md"), "# State\n");
+  mkdirSync(join(dir, ".sf"), { recursive: true });
+  writeFileSync(join(dir, ".sf", "STATE.md"), "# State\n");
   run("git add .", dir);
   run("git commit -m init", dir);
   run("git branch -M main", dir);
@@ -64,7 +64,7 @@ function addSliceToMilestone(
   commits: Array<{ file: string; content: string; message: string }>,
 ): void {
   const normalizedPath = wtPath.replaceAll("\\", "/");
-  const marker = "/.gsd/worktrees/";
+  const marker = "/.sf/worktrees/";
   const idx = normalizedPath.indexOf(marker);
   const worktreeName = idx !== -1 ? normalizedPath.slice(idx + marker.length).split("/")[0] : null;
 
@@ -179,7 +179,7 @@ describe('worktree-e2e', async () => {
       tempDirs.push(repo);
 
       // Create completed milestone roadmap
-      const msDir = join(repo, ".gsd", "milestones", "M001");
+      const msDir = join(repo, ".sf", "milestones", "M001");
       mkdirSync(msDir, { recursive: true });
       writeFileSync(join(msDir, "ROADMAP.md"), `---
 id: M001
@@ -205,8 +205,8 @@ _None_
       run("git commit -m \"add milestone\"", repo);
 
       // Create orphaned worktree
-      mkdirSync(join(repo, ".gsd", "worktrees"), { recursive: true });
-      run("git worktree add -b milestone/M001 .gsd/worktrees/M001", repo);
+      mkdirSync(join(repo, ".sf", "worktrees"), { recursive: true });
+      run("git worktree add -b milestone/M001 .sf/worktrees/M001", repo);
 
       // Detect
       const detect = await runSFDoctor(repo, { isolationMode: "worktree" });
