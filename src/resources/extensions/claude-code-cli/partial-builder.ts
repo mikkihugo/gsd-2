@@ -15,8 +15,8 @@ import type {
 	ToolCall,
 	Usage,
 	WebSearchResultContent,
-} from "@gsd/pi-ai";
-import { hasXmlParameterTags, repairToolJson } from "@gsd/pi-ai";
+} from "@sf-run/pi-ai";
+import { hasXmlParameterTags, repairToolJson } from "@sf-run/pi-ai";
 import type { BetaContentBlock, BetaRawMessageStreamEvent, NonNullableUsage } from "./sdk-types.js";
 
 // ---------------------------------------------------------------------------

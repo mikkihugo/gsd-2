@@ -145,6 +145,14 @@ export function validatePreferences(preferences: GSDPreferences): {
     validated.unique_milestone_ids = !!preferences.unique_milestone_ids;
   }
 
+  if (preferences.persist_model_changes !== undefined) {
+    if (typeof preferences.persist_model_changes === "boolean") {
+      validated.persist_model_changes = preferences.persist_model_changes;
+    } else {
+      errors.push("persist_model_changes must be a boolean");
+    }
+  }
+
   if (preferences.budget_ceiling !== undefined) {
     const raw = preferences.budget_ceiling;
     if (typeof raw === "number" && Number.isFinite(raw)) {
@@ -277,11 +285,11 @@ export function validatePreferences(preferences: GSDPreferences): {
 
   // ─── Search Provider ─────────────────────────────────────────────
   if (preferences.search_provider !== undefined) {
-    const validSearchProviders = new Set(["brave", "tavily", "ollama", "native", "auto"]);
+    const validSearchProviders = new Set(["brave", "tavily", "ollama", "combosearch", "native", "auto"]);
     if (typeof preferences.search_provider === "string" && validSearchProviders.has(preferences.search_provider)) {
       validated.search_provider = preferences.search_provider as GSDPreferences["search_provider"];
     } else {
-      errors.push(`search_provider must be one of: brave, tavily, ollama, native, auto`);
+      errors.push(`search_provider must be one of: brave, tavily, ollama, combosearch, native, auto`);
     }
   }
 

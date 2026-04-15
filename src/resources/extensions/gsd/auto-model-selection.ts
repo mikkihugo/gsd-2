@@ -4,11 +4,11 @@
  * and fallback chains.
  */
 
-import type { Api, Model } from "@gsd/pi-ai";
-import { getProviderCapabilities } from "@gsd/pi-ai";
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { Api, Model } from "@sf-run/pi-ai";
+import { getProviderCapabilities } from "@sf-run/pi-ai";
+import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 import type { GSDPreferences } from "./preferences.js";
-import { resolveModelWithFallbacksForUnit, resolveDynamicRoutingConfig } from "./preferences.js";
+import { resolveModelWithFallbacksForUnit, resolveDynamicRoutingConfig, resolvePersistModelChanges } from "./preferences.js";
 import type { ComplexityTier } from "./complexity-classifier.js";
 import { classifyUnitComplexity, extractTaskMetadata, tierLabel } from "./complexity-classifier.js";
 import { resolveModelForComplexity, escalateTier, getEligibleModels, loadCapabilityOverrides, adjustToolSet, filterToolsForProvider } from "./model-router.js";
@@ -78,6 +78,7 @@ export async function selectAndApplyModel(
   sessionModelOverride?: { provider: string; id: string } | null,
 ): Promise<ModelSelectionResult> {
   const uokFlags = resolveUokFlags(prefs);
+  const persistModelChanges = resolvePersistModelChanges();
   const effectiveSessionModelOverride = sessionModelOverride === undefined
     ? getSessionModelOverride(ctx.sessionManager.getSessionId())
     : (sessionModelOverride ?? undefined);
@@ -335,7 +336,7 @@ export async function selectAndApplyModel(
         }
       }
 
-      const ok = await pi.setModel(model, { persist: false });
+      const ok = await pi.setModel(model, { persist: persistModelChanges });
       if (ok) {
         appliedModel = model;
 
@@ -364,12 +365,14 @@ export async function selectAndApplyModel(
           pi.setActiveTools(finalToolNames);
         }
 
-        if (verbose) {
+        {
           const fallbackNote = modelId === effectiveModelConfig.primary
             ? ""
             : ` (fallback from ${effectiveModelConfig.primary})`;
           const phase = unitPhaseLabel(unitType);
           ctx.ui.notify(`Model [${phase}]${routingTierLabel}: ${model.provider}/${model.id}${fallbackNote}`, "info");
+        }
+        if (verbose) {
           // ADR-005: Report tools filtered due to provider incompatibility
           if (removedTools.length > 0) {
             ctx.ui.notify(
@@ -400,11 +403,11 @@ export async function selectAndApplyModel(
       m => m.provider === autoModeStartModel.provider && m.id === autoModeStartModel.id,
     );
     if (startModel) {
-      const ok = await pi.setModel(startModel, { persist: false });
+      const ok = await pi.setModel(startModel, { persist: persistModelChanges });
       if (!ok) {
         const byId = availableModels.find(m => m.id === autoModeStartModel.id);
         if (byId) {
-          const fallbackOk = await pi.setModel(byId, { persist: false });
+          const fallbackOk = await pi.setModel(byId, { persist: persistModelChanges });
           if (fallbackOk) appliedModel = byId;
         }
       } else {

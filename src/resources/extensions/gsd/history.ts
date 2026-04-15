@@ -1,7 +1,7 @@
 // GSD Extension — Session History View
 // Human-readable display of past auto-mode unit executions.
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 import { formatDuration, truncateWithEllipsis } from "../shared/format-utils.js";
 import { padRight } from "../shared/layout-utils.js";
 import {

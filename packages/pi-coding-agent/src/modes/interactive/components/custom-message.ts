@@ -1,6 +1,6 @@
-import type { TextContent } from "@gsd/pi-ai";
-import type { Component } from "@gsd/pi-tui";
-import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gsd/pi-tui";
+import type { TextContent } from "@sf-run/pi-ai";
+import type { Component } from "@sf-run/pi-tui";
+import { Box, Container, Markdown, type MarkdownTheme, Spacer, Text } from "@sf-run/pi-tui";
 import type { MessageRenderer } from "../../../core/extensions/types.js";
 import type { CustomMessage } from "../../../core/messages.js";
 import { getMarkdownTheme, theme } from "../theme/theme.js";

@@ -10,11 +10,11 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createJiti } from "@mariozechner/jiti";
-import * as _bundledPiAgentCore from "@gsd/pi-agent-core";
-import * as _bundledPiAi from "@gsd/pi-ai";
-import * as _bundledPiAiOauth from "@gsd/pi-ai/oauth";
-import type { KeyId } from "@gsd/pi-tui";
-import * as _bundledPiTui from "@gsd/pi-tui";
+import * as _bundledPiAgentCore from "@sf-run/pi-agent-core";
+import * as _bundledPiAi from "@sf-run/pi-ai";
+import * as _bundledPiAiOauth from "@sf-run/pi-ai/oauth";
+import type { KeyId } from "@sf-run/pi-tui";
+import * as _bundledPiTui from "@sf-run/pi-tui";
 // Static imports of packages that extensions may use.
 // These MUST be static so Bun bundles them into the compiled binary.
 // The virtualModules option then makes them available to extensions.
@@ -31,7 +31,7 @@ import * as _bundledMcpServerStreamableHttp from "@modelcontextprotocol/sdk/serv
 import * as _bundledMcpTypes from "@modelcontextprotocol/sdk/types.js";
 import { getAgentDir, isBunBinary } from "../../config.js";
 // NOTE: This import works because loader.ts exports are NOT re-exported from index.ts,
-// avoiding a circular dependency. Extensions can import from @gsd/pi-coding-agent.
+// avoiding a circular dependency. Extensions can import from "@sf-run/pi-coding-agent.
 import * as _bundledPiCodingAgent from "../../index.js";
 import { createEventBus, type EventBus } from "../event-bus.js";
 import type { ExecOptions } from "../exec.js";
@@ -58,11 +58,11 @@ import type {
  */
 const STATIC_BUNDLED_MODULES: Record<string, unknown> = {
 	"@sinclair/typebox": _bundledTypebox,
-	"@gsd/pi-agent-core": _bundledPiAgentCore,
-	"@gsd/pi-tui": _bundledPiTui,
-	"@gsd/pi-ai": _bundledPiAi,
-	"@gsd/pi-ai/oauth": _bundledPiAiOauth,
-	"@gsd/pi-coding-agent": _bundledPiCodingAgent,
+	"@sf-run/pi-agent-core": _bundledPiAgentCore,
+	"@sf-run/pi-tui": _bundledPiTui,
+	"@sf-run/pi-ai": _bundledPiAi,
+	"@sf-run/pi-ai/oauth": _bundledPiAiOauth,
+	"@sf-run/pi-coding-agent": _bundledPiCodingAgent,
 	"yaml": _bundledYaml,
 	"@modelcontextprotocol/sdk/client": _bundledMcpClient,
 	"@modelcontextprotocol/sdk/client/stdio": _bundledMcpStdio,
@@ -324,19 +324,19 @@ function getAliases(): Record<string, string> {
 		// Auto-discovered subpath exports (lowest priority — overridden by manual entries below)
 		...autoDiscovered,
 		// Manual entries for workspace packages and packages needing special resolution
-		"@gsd/pi-coding-agent": packageIndex,
-		"@gsd/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gsd/pi-agent-core"),
-		"@gsd/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gsd/pi-tui"),
-		"@gsd/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gsd/pi-ai"),
-		"@gsd/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gsd/pi-ai/oauth"),
+		"@sf-run/pi-coding-agent": packageIndex,
+		"@sf-run/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@sf-run/pi-agent-core"),
+		"@sf-run/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@sf-run/pi-tui"),
+		"@sf-run/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@sf-run/pi-ai"),
+		"@sf-run/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@sf-run/pi-ai/oauth"),
 		"@sinclair/typebox": typeboxRoot,
 		"yaml": yamlRoot,
 		// Aliases for external PI ecosystem packages that import from the original scope
 		"@mariozechner/pi-coding-agent": packageIndex,
-		"@mariozechner/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@gsd/pi-agent-core"),
-		"@mariozechner/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@gsd/pi-tui"),
-		"@mariozechner/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@gsd/pi-ai"),
-		"@mariozechner/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@gsd/pi-ai/oauth"),
+		"@mariozechner/pi-agent-core": resolveWorkspaceOrImport("agent/dist/index.js", "@sf-run/pi-agent-core"),
+		"@mariozechner/pi-tui": resolveWorkspaceOrImport("tui/dist/index.js", "@sf-run/pi-tui"),
+		"@mariozechner/pi-ai": resolveWorkspaceOrImport("ai/dist/index.js", "@sf-run/pi-ai"),
+		"@mariozechner/pi-ai/oauth": resolveWorkspaceOrImport("ai/dist/oauth.js", "@sf-run/pi-ai/oauth"),
 	};
 
 	return _aliases;
@@ -638,7 +638,7 @@ export function containsTypeScriptSyntax(source: string): boolean {
  * Shared jiti instance for loading extension modules.
  *
  * Before this fix (#2108), each extension created a NEW jiti instance with
- * `moduleCache: false`, causing shared dependencies (e.g. @gsd/pi-agent-core)
+ * `moduleCache: false`, causing shared dependencies (e.g. @sf-run/pi-agent-core)
  * to be recompiled for every extension — turning a ~3s parallel load into a
  * ~15-30s serial compilation bottleneck.
  *

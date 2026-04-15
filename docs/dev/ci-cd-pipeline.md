@@ -42,10 +42,10 @@ npx gsd-pi@latest    # or just: npx gsd-pi
 
 ```bash
 # Test candidate
-docker run --rm -v $(pwd):/workspace ghcr.io/gsd-build/gsd-pi:next --version
+docker run --rm -v $(pwd):/workspace ghcr.io/singularity-forge/sf-run:next --version
 
 # Stable
-docker run --rm -v $(pwd):/workspace ghcr.io/gsd-build/gsd-pi:latest --version
+docker run --rm -v $(pwd):/workspace ghcr.io/singularity-forge/sf-run:latest --version
 ```
 
 ### Checking if a Fix Landed
@@ -129,9 +129,9 @@ If a broken version reaches production:
 npm dist-tag add gsd-pi@<previous-good-version> latest
 
 # Roll back Docker
-docker pull ghcr.io/gsd-build/gsd-pi:<previous-good-version>
-docker tag ghcr.io/gsd-build/gsd-pi:<previous-good-version> ghcr.io/gsd-build/gsd-pi:latest
-docker push ghcr.io/gsd-build/gsd-pi:latest
+docker pull ghcr.io/singularity-forge/sf-run:<previous-good-version>
+docker tag ghcr.io/singularity-forge/sf-run:<previous-good-version> ghcr.io/singularity-forge/sf-run:latest
+docker push ghcr.io/singularity-forge/sf-run:latest
 ```
 
 For `@dev` or `@next` rollbacks, the next successful merge will overwrite the tag automatically.
@@ -153,8 +153,8 @@ For `@dev` or `@next` rollbacks, the next successful merge will overwrite the ta
 
 | Image | Base | Purpose | Tags |
 |-------|------|---------|------|
-| `ghcr.io/gsd-build/gsd-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
-| `ghcr.io/gsd-build/gsd-pi` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
+| `ghcr.io/singularity-forge/sf-ci-builder` | `node:24-bookworm` | CI build environment with Rust toolchain | `:latest`, `:<date>` |
+| `ghcr.io/singularity-forge/sf-run` | `node:24-slim` | User-facing runtime | `:latest`, `:next`, `:v<version>` |
 
 The CI builder image is rebuilt automatically when the `Dockerfile` changes. It eliminates ~3-5 min of toolchain setup per CI run.
 

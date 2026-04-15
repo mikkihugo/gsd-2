@@ -3,7 +3,7 @@
 // notification store. Uses a WeakSet to prevent double-wrapping and handle
 // UI context replacement on /reload gracefully.
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import { appendNotification, type NotifySeverity } from "../notification-store.js";
 

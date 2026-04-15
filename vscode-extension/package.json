@@ -8,11 +8,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2"
+    "url": "https://github.com/singularity-forge/sf-run"
   },
-  "homepage": "https://github.com/gsd-build/gsd-2/blob/main/vscode-extension/README.md",
+  "homepage": "https://github.com/singularity-forge/sf-run/blob/main/vscode-extension/README.md",
   "bugs": {
-    "url": "https://github.com/gsd-build/gsd-2/issues"
+    "url": "https://github.com/singularity-forge/sf-run/issues"
   },
   "keywords": [
     "ai",

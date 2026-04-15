@@ -1,5 +1,5 @@
-import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@gsd/pi-coding-agent";
-import type { Model } from "@gsd/pi-ai";
+import type { ExtensionAPI, ExtensionCommandContext, ExtensionContext } from "@sf-run/pi-coding-agent";
+import type { Model } from "@sf-run/pi-ai";
 import type { GSDState } from "../../types.js";
 
 import { computeProgressScore, formatProgressLine } from "../../progress-score.js";

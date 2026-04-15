@@ -1,4 +1,4 @@
-import { RpcClient } from '@gsd-build/rpc-client';
+import { RpcClient } from '@singularity-forge/rpc-client';
 
 const client = new RpcClient({ cwd: process.cwd() });
 await client.start();

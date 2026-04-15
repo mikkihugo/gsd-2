@@ -3,7 +3,7 @@
 // the most recent notification message. Refreshes every 30 seconds.
 // Widget key: "gsd-notifications", placement: "belowEditor"
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import { getUnreadCount, onNotificationStoreChange } from "./notification-store.js";
 import { formattedShortcutPair } from "./shortcut-defs.js";

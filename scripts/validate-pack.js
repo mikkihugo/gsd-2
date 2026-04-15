@@ -47,8 +47,8 @@ try {
   npmCacheDir = mkdtempSync(join(tmpdir(), 'validate-pack-npm-cache-'));
   mkdirSync(npmCacheDir, { recursive: true });
 
-  // --- Guard: workspace packages must not have @gsd/* cross-deps ---
-  console.log('==> Checking workspace packages for @gsd/* cross-deps...');
+  // --- Guard: workspace packages must not have @sf-run/* cross-deps ---
+  console.log('==> Checking workspace packages for @sf-run/* cross-deps...');
   const workspaces = ['native', 'pi-agent-core', 'pi-ai', 'pi-coding-agent', 'pi-tui'];
   let crossFailed = false;
 
@@ -56,7 +56,7 @@ try {
     const pkgPath = join(ROOT, 'packages', ws, 'package.json');
     if (!existsSync(pkgPath)) continue;
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
-    const deps = Object.keys(pkg.dependencies || {}).filter(d => d.startsWith('@gsd/'));
+    const deps = Object.keys(pkg.dependencies || {}).filter(d => d.startsWith('@sf-run/'));
     if (deps.length) {
       console.log(`    LEAKED in ${ws}: ${deps.join(', ')}`);
       crossFailed = true;
@@ -64,11 +64,11 @@ try {
   }
 
   if (crossFailed) {
-    console.log('ERROR: Workspace packages have @gsd/* cross-dependencies.');
+    console.log('ERROR: Workspace packages have @sf-run/* cross-dependencies.');
     console.log('    These cause 404s when npm resolves them from the registry.');
     process.exit(1);
   }
-  console.log('    No @gsd/* cross-dependencies.');
+  console.log('    No @sf-run/* cross-dependencies.');
 
   // --- Pack tarball ---
   console.log('==> Packing tarball...');
@@ -144,10 +144,10 @@ try {
     process.exit(1);
   }
 
-  // --- Verify @gsd/* packages resolved correctly post-install ---
+  // --- Verify @sf-run/* packages resolved correctly post-install ---
   // This catches the Windows-style failure where symlinkSync fails silently and
-  // node_modules/@gsd/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
-  console.log('==> Verifying @gsd/* workspace package resolution...');
+  // node_modules/@sf-run/ is never populated, causing ERR_MODULE_NOT_FOUND at runtime.
+  console.log('==> Verifying @sf-run/* workspace package resolution...');
   const installedRoot = join(installDir, 'node_modules', 'gsd-pi');
   const criticalPackages = [
     { scope: '@gsd', name: 'pi-coding-agent' },
@@ -167,11 +167,11 @@ try {
     }
   }
   if (resolutionFailed) {
-    console.log('ERROR: @gsd/* packages are not resolvable after install.');
+    console.log('ERROR: @sf-run/* packages are not resolvable after install.');
     console.log('    This will cause ERR_MODULE_NOT_FOUND on first run (especially on Windows).');
     process.exit(1);
   }
-  console.log('    @gsd/* packages are resolvable.');
+  console.log('    @sf-run/* packages are resolvable.');
 
   // --- Run the binary to confirm end-to-end resolution ---
   console.log('==> Running installed binary (gsd -v)...');

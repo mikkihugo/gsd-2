@@ -1298,16 +1298,62 @@ export class DefaultPackageManager implements PackageManager {
 		if (scope === "project") {
 			return join(this.cwd, CONFIG_DIR_NAME, "npm");
 		}
-		return join(this.getGlobalNpmRoot(), "..");
+		return join(this.getGlobalPackageRoot(), "..");
 	}
 
 	private getGlobalNpmRoot(): string {
 		if (this.globalNpmRoot) {
 			return this.globalNpmRoot;
 		}
-		const result = this.runCommandSync("npm", ["root", "-g"]);
-		this.globalNpmRoot = result.trim();
+		const configuredRoot = process.env.PI_GLOBAL_PACKAGE_ROOT?.trim();
+		if (configuredRoot) {
+			this.globalNpmRoot = configuredRoot;
+			return this.globalNpmRoot;
+		}
+		const discoveredRoot = this.discoverGlobalPackageRoot();
+		if (discoveredRoot) {
+			this.globalNpmRoot = discoveredRoot;
+			return this.globalNpmRoot;
+		}
+		this.globalNpmRoot = join(homedir(), ".npm-global", "lib", "node_modules");
 		return this.globalNpmRoot;
+	}
+
+	private getGlobalPackageRoot(): string {
+		return this.getGlobalNpmRoot();
+	}
+
+	private discoverGlobalPackageRoot(): string | undefined {
+		const bunPath = this.getExecutablePath("bun");
+		if (bunPath) {
+			const bunRoot = join(dirname(dirname(bunPath)), "install", "global", "node_modules");
+			if (existsSync(bunRoot)) {
+				return bunRoot;
+			}
+
+			const bunReportedRoot = this.tryRunCommandSync("bun", ["pm", "bin"]);
+			if (bunReportedRoot) {
+				const normalized = bunReportedRoot.trim();
+				if (normalized) {
+					const candidate = normalized.endsWith("node_modules")
+						? normalized
+						: join(normalized, "..", "node_modules");
+					if (existsSync(candidate)) {
+						return candidate;
+					}
+				}
+			}
+		}
+
+		const npmRoot = this.tryRunCommandSync("npm", ["root", "-g"]);
+		if (npmRoot) {
+			const normalized = npmRoot.trim();
+			if (normalized) {
+				return normalized;
+			}
+		}
+
+		return undefined;
 	}
 
 	private getNpmInstallPath(source: NpmSource, scope: SourceScope): string {
@@ -1841,5 +1887,36 @@ export class DefaultPackageManager implements PackageManager {
 			throw new Error(`Failed to run ${command} ${args.join(" ")}: ${result.stderr || result.stdout}`);
 		}
 		return (result.stdout || result.stderr || "").trim();
+	}
+
+	private tryRunCommandSync(command: string, args: string[]): string | undefined {
+		try {
+			return this.runCommandSync(command, args);
+		} catch {
+			return undefined;
+		}
+	}
+
+	private getExecutablePath(command: string): string | undefined {
+		const pathValue = process.env.PATH;
+		if (!pathValue) return undefined;
+
+		const pathExt =
+			process.platform === "win32"
+				? (process.env.PATHEXT?.split(";").filter(Boolean) ?? [".EXE", ".CMD", ".BAT", ".COM"])
+				: [""];
+		const separator = process.platform === "win32" ? ";" : ":";
+
+		for (const entry of pathValue.split(separator)) {
+			if (!entry) continue;
+			for (const ext of pathExt) {
+				const candidate = join(entry, `${command}${ext}`);
+				if (existsSync(candidate)) {
+					return candidate;
+				}
+			}
+		}
+
+		return undefined;
 	}
 }

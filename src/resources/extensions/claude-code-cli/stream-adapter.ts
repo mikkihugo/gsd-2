@@ -16,9 +16,9 @@ import type {
 	SimpleStreamOptions,
 	ThinkingLevel,
 	ToolCall,
-} from "@gsd/pi-ai";
-import type { ExtensionUIContext } from "@gsd/pi-coding-agent";
-import { EventStream, mapThinkingLevelToEffort, supportsAdaptiveThinking } from "@gsd/pi-ai";
+} from "@sf-run/pi-ai";
+import type { ExtensionUIContext } from "@sf-run/pi-coding-agent";
+import { EventStream, mapThinkingLevelToEffort, supportsAdaptiveThinking } from "@sf-run/pi-ai";
 import { execSync } from "node:child_process";
 import { PartialMessageBuilder, ZERO_USAGE, mapUsage } from "./partial-builder.js";
 import { buildWorkflowMcpServers } from "../gsd/workflow-mcp.js";
@@ -131,7 +131,7 @@ const SENSITIVE_FIELD_PATTERN = /(password|passphrase|secret|token|api[_\s-]*key
 
 /**
  * Construct an AssistantMessageEventStream using EventStream directly.
- * (The class itself is only re-exported as a type from the @gsd/pi-ai barrel.)
+ * (The class itself is only re-exported as a type from the @sf-run/pi-ai barrel.)
  */
 function createAssistantStream(): AssistantMessageEventStream {
 	return new EventStream<AssistantMessageEvent, AssistantMessage>(

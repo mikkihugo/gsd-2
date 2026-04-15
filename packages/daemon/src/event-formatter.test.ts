@@ -1,9 +1,9 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder } from 'discord.js';
-import type { SdkAgentEvent } from '@gsd-build/rpc-client';
+import type { SdkAgentEvent } from '@singularity-forge/rpc-client';
 import type { PendingBlocker, FormattedEvent } from './types.js';
-import type { RpcExtensionUIRequest } from '@gsd-build/rpc-client';
+import type { RpcExtensionUIRequest } from '@singularity-forge/rpc-client';
 import {
   formatToolStart,
   formatToolEnd,

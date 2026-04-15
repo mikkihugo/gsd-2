@@ -279,7 +279,7 @@ Run GSD in an isolated sandbox without installing Node.js on your host.
 **Step 2 — Clone the GSD repo:**
 
 ```bash
-git clone https://github.com/gsd-build/gsd-2.git
+git clone https://github.com/singularity-forge/sf-run.git
 cd gsd-2/docker
 ```
 

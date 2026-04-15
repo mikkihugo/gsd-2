@@ -8,9 +8,9 @@
  * - Content-type awareness (JSON passthrough, PDF detection)
  */
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { truncateHead, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import type { ExtensionAPI } from "@sf-run/pi-coding-agent";
+import { truncateHead, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@sf-run/pi-coding-agent";
+import { Text } from "@sf-run/pi-tui";
 import { Type } from "@sinclair/typebox";
 
 import { LRUTTLCache } from "./cache.js";

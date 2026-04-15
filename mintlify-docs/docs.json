@@ -33,7 +33,7 @@
     "links": [
       {
         "label": "GitHub",
-        "href": "https://github.com/gsd-build/gsd-2"
+        "href": "https://github.com/singularity-forge/sf-run"
       }
     ],
     "primary": {
@@ -44,7 +44,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/gsd-build/gsd-2"
+      "github": "https://github.com/singularity-forge/sf-run"
     }
   },
   "navigation": {

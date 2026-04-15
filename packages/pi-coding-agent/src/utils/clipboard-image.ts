@@ -1,7 +1,7 @@
 import { spawnSync } from "child_process";
 
-import { readImageFromClipboard as nativeReadImage } from "@gsd/native/clipboard";
-import { ImageFormat, parseImage } from "@gsd/native/image";
+import { readImageFromClipboard as nativeReadImage } from "@sf-run/native/clipboard";
+import { ImageFormat, parseImage } from "@sf-run/native/image";
 
 export type ClipboardImage = {
 	bytes: Uint8Array;

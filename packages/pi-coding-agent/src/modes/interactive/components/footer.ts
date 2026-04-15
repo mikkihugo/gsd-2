@@ -1,4 +1,4 @@
-import { type Component, truncateToWidth, visibleWidth } from "@gsd/pi-tui";
+import { type Component, truncateToWidth, visibleWidth } from "@sf-run/pi-tui";
 import type { AgentSession } from "../../../core/agent-session.js";
 import type { ReadonlyFooterDataProvider } from "../../../core/footer-data-provider.js";
 import { theme } from "../theme/theme.js";
@@ -109,6 +109,13 @@ export class FooterComponent implements Component {
 		const sessionName = this.session.sessionManager.getSessionName();
 		if (sessionName) {
 			pwd = `${pwd} • ${sessionName}`;
+		}
+
+		// Add short session ID so users can correlate the TUI to the
+		// on-disk jsonl when debugging crashes or locating prior runs.
+		const rawSessionId = this.session.sessionManager.getSessionId?.() ?? "";
+		if (rawSessionId) {
+			pwd = `${pwd} [sess:${rawSessionId.slice(0, 8)}]`;
 		}
 
 		// Build stats line as separate groups joined by a dim middle-dot separator

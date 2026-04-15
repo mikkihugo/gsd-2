@@ -5,7 +5,7 @@
  * but never passed through to subagent dispatch instruction strings, so the
  * executing agent autonomously chose "sonnet" instead of the configured model.
  *
- * Issue: gsd-build/gsd-2#4078
+ * Issue: singularity-forge/sf-run#4078
  */
 
 import test from "node:test";

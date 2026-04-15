@@ -1,5 +1,5 @@
 {
-  "name": "@gsd-build/engine-win32-x64-msvc",
+  "name": "@singularity-forge/engine-win32-x64-msvc",
   "version": "2.74.0",
   "description": "GSD native engine binary for Windows x64 (MSVC)",
   "os": [
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsd-build/gsd-2.git"
+    "url": "git+https://github.com/singularity-forge/sf-run.git"
   }
 }

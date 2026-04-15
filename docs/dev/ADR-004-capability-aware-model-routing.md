@@ -4,7 +4,7 @@
 **Date:** 2026-03-26
 **Revised:** 2026-04-03
 **Deciders:** Jeremy McSpadden
-**Related:** ADR-003 (pipeline simplification), [Issue #2655](https://github.com/gsd-build/gsd-2/issues/2655), `docs/dynamic-model-routing.md`
+**Related:** ADR-003 (pipeline simplification), [Issue #2655](https://github.com/singularity-forge/sf-run/issues/2655), `docs/dynamic-model-routing.md`
 
 ## Context
 

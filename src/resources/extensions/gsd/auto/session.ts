@@ -16,8 +16,8 @@
  * `let` or `var` declarations.
  */
 
-import type { Api, Model } from "@gsd/pi-ai";
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { Api, Model } from "@sf-run/pi-ai";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 import type { GitServiceImpl } from "../git-service.js";
 import type { CaptureEntry } from "../captures.js";
 import type { BudgetAlertLevel } from "../auto-budget.js";

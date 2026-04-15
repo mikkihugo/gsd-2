@@ -107,7 +107,7 @@ Policy:
 |---------|--------|----------|
 | Dev publish succeeds, smoke test fails | Broken version on `@dev` tag | Next successful merge overwrites `@dev`. Manual fix: `npm dist-tag add gsd-pi@<last-good> dev` |
 | Test stage fails after promoting to `@next` | Broken version on `@next` tag | Manual: `npm dist-tag add gsd-pi@<last-good> next`. `@latest` is never affected. |
-| Prod promotion publishes `@latest` then found broken | Broken production release | Manual: `npm dist-tag add gsd-pi@<previous-stable> latest` and `docker tag ghcr.io/gsd-build/gsd-pi:<previous> latest && docker push`. Post-mortem required. |
+| Prod promotion publishes `@latest` then found broken | Broken production release | Manual: `npm dist-tag add gsd-pi@<previous-stable> latest` and `docker tag ghcr.io/singularity-forge/sf-run:<previous> latest && docker push`. Post-mortem required. |
 | Docker push succeeds, npm dist-tag fails | Images and npm out of sync | Re-run the failed job (GitHub Actions retry). Images are tagged by version so stale tags are harmless. |
 | GHCR push fails | No Docker image for this version | Non-blocking — npm publish is the primary distribution. Docker image can be rebuilt manually. |
 
@@ -131,7 +131,7 @@ Two images from a single `Dockerfile` at the repo root.
 
 #### CI Builder Image
 
-- **Name:** `ghcr.io/gsd-build/gsd-ci-builder`
+- **Name:** `ghcr.io/singularity-forge/sf-ci-builder`
 - **Base:** `node:22-bookworm`
 - **Contains:** Node 22, Rust stable toolchain, `aarch64-linux-gnu` cross-compiler
 - **Size:** ~2 GB
@@ -148,13 +148,13 @@ Builder images are tagged with both `:latest` and a date stamp (e.g., `:2026-03-
 
 #### Runtime Image
 
-- **Name:** `ghcr.io/gsd-build/gsd-pi`
+- **Name:** `ghcr.io/singularity-forge/sf-run`
 - **Base:** `node:22-slim`
 - **Contains:** Node 22, git, `gsd-pi` installed globally
 - **Size:** ~250 MB
 - **Tags:** `:latest`, `:next`, `:v2.27.0`
 - **Published:** On every Prod promotion
-- **Purpose:** `docker run ghcr.io/gsd-build/gsd-pi` as alternative to `npx`
+- **Purpose:** `docker run ghcr.io/singularity-forge/sf-run` as alternative to `npx`
 
 ### Why These Base Images
 
@@ -329,8 +329,8 @@ All test files use `.ts` with `--experimental-strip-types` for consistency with 
   "test:fixtures:record": "GSD_FIXTURE_MODE=record node --experimental-strip-types tests/fixtures/record.ts",
   "test:live": "GSD_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts",
   "pipeline:version-stamp": "node scripts/version-stamp.mjs",
-  "docker:build-runtime": "docker build --target runtime -t ghcr.io/gsd-build/gsd-pi .",
-  "docker:build-builder": "docker build --target builder -t ghcr.io/gsd-build/gsd-ci-builder ."
+  "docker:build-runtime": "docker build --target runtime -t ghcr.io/singularity-forge/sf-run .",
+  "docker:build-builder": "docker build --target builder -t ghcr.io/singularity-forge/sf-ci-builder ."
 }
 ```
 
@@ -352,6 +352,6 @@ All test files use `.ts` with `--experimental-strip-types` for consistency with 
 2. Fixture replay tests complete in under 60 seconds with zero API calls
 3. The full Dev → Test promotion completes without human intervention
 4. Prod promotion is blocked until a maintainer explicitly approves
-5. `docker run ghcr.io/gsd-build/gsd-pi --version` returns the correct version
+5. `docker run ghcr.io/singularity-forge/sf-run --version` returns the correct version
 6. Existing `ci.yml` and `build-native.yml` workflows continue to work unchanged
 7. CI builder image reduces toolchain setup from ~3-5 min to ~30s pull

@@ -2,15 +2,15 @@
 /**
  * link-workspace-packages.cjs
  *
- * Creates node_modules/@gsd/* and node_modules/@gsd-build/* symlinks pointing
+ * Creates node_modules/@sf-run/* and node_modules/@singularity-forge/* symlinks pointing
  * to shipped packages/* directories.
  *
  * During development, npm workspaces creates these automatically. But in the
  * published tarball, workspace packages are shipped under packages/ (via the
- * "files" field) and the @gsd/* imports in compiled code need node_modules/@gsd/*
+ * "files" field) and the @sf-run/* imports in compiled code need node_modules/@sf-run/*
  * to resolve. This script bridges the gap.
  *
- * Runs as part of postinstall (before any ESM code that imports @gsd/*).
+ * Runs as part of postinstall (before any ESM code that imports @sf-run/*).
  *
  * On Windows without Developer Mode or administrator rights, creating symlinks
  * (even NTFS junctions) can fail with EPERM. In that case we fall back to

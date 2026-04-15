@@ -777,8 +777,8 @@ Use expensive models where quality matters (planning, complex execution) and che
 
 ## Star History
 
-<a href="https://star-history.com/#gsd-build/gsd-2&Date">
-  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=gsd-build/gsd-2&type=Date" />
+<a href="https://star-history.com/#singularity-forge/sf-run&Date">
+  <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=singularity-forge/sf-run&type=Date" />
 </a>
 
 ---

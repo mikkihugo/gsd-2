@@ -118,8 +118,8 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
   //     @sinclair/       ← external scoped dep
   //     gsd-pi/          ← package root
   //       node_modules/
-  //         @gsd/        ← workspace scope (NOT hoisted)
-  //         @gsd-build/  ← workspace scope (NOT hoisted)
+  //         @sf-run/        ← workspace scope (NOT hoisted)
+  //         @singularity-forge/  ← workspace scope (NOT hoisted)
   const tmp = mkdtempSync(join(tmpdir(), "gsd-pnpm-merge-"));
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
 
@@ -163,7 +163,7 @@ test("pnpm layout: merged node_modules contains entries from both hoisted and in
 
   // Verify: workspace packages resolve through internal symlinks
   assert.ok(existsSync(join(agentNodeModules, "@gsd")), "@gsd should resolve");
-  assert.ok(existsSync(join(agentNodeModules, "@gsd", "pi-ai")), "@gsd/pi-ai should resolve");
+  assert.ok(existsSync(join(agentNodeModules, "@gsd", "pi-ai")), "@sf-run/pi-ai should resolve");
   assert.ok(existsSync(join(agentNodeModules, "@gsd-build")), "@gsd-build should resolve");
 
   // Verify: gsd-pi itself is NOT symlinked (it's the package root, not a dep)

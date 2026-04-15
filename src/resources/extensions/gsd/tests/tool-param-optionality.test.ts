@@ -8,7 +8,7 @@
  * are required, while enrichment arrays (patterns, requirements, files, etc.)
  * are optional — so any model can call the tool successfully.
  *
- * See: https://github.com/gsd-build/gsd-2/issues/2771
+ * See: https://github.com/singularity-forge/sf-run/issues/2771
  */
 
 import { test } from "node:test";

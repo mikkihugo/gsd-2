@@ -6,13 +6,13 @@
  * start in that scenario — otherwise it runs at ~4,600 renders/second
  * consuming 500%+ CPU doing nothing useful.
  *
- * Regression test for: https://github.com/gsd-build/gsd-2/issues/3095
+ * Regression test for: https://github.com/singularity-forge/sf-run/issues/3095
  */
 import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
-import { ProcessTerminal } from "@gsd/pi-tui";
-import { TUI } from "@gsd/pi-tui";
-import type { Terminal } from "@gsd/pi-tui";
+import { ProcessTerminal } from "@sf-run/pi-tui";
+import { TUI } from "@sf-run/pi-tui";
+import type { Terminal } from "@sf-run/pi-tui";
 
 /**
  * A mock terminal that tracks writes and render activity.

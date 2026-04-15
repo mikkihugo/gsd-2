@@ -61,7 +61,7 @@ repository point to a known GitHub host.
 **RULE: Pass `-R` (or `--repo`) on EVERY `gh` command:**
 
 ```bash
-gh <command> -R gsd-build/gsd-2
+gh <command> -R singularity-forge/sf-run
 ```
 
 This applies to ALL `gh` subcommands: `pr`, `issue`, `run`, `api`, `release`, `project`, etc.
@@ -78,47 +78,47 @@ This applies to ALL `gh` subcommands: `pr`, `issue`, `run`, `api`, `release`, `p
 
 ```bash
 # List open PRs
-gh pr list -R gsd-build/gsd-2
+gh pr list -R singularity-forge/sf-run
 
 # View PR details
-gh pr view <number> -R gsd-build/gsd-2
+gh pr view <number> -R singularity-forge/sf-run
 
 # Check PR CI status
-gh pr checks <number> -R gsd-build/gsd-2
+gh pr checks <number> -R singularity-forge/sf-run
 
 # Create PR
-gh pr create -R gsd-build/gsd-2 --title "title" --body "body"
+gh pr create -R singularity-forge/sf-run --title "title" --body "body"
 
 # View PR comments
-gh api repos/gsd-build/gsd-2/pulls/<number>/comments
+gh api repos/singularity-forge/sf-run/pulls/<number>/comments
 ```
 
 ### Issues
 
 ```bash
 # List issues
-gh issue list -R gsd-build/gsd-2
+gh issue list -R singularity-forge/sf-run
 
 # List by label
-gh issue list -R gsd-build/gsd-2 --label "priority:p1" --state open
+gh issue list -R singularity-forge/sf-run --label "priority:p1" --state open
 
 # Create issue with labels and milestone
 # NOTE: Do NOT use labels for issue classification (bug, feature, etc.)
 # Use labels for metadata (priority, status, auto-generated) only.
 # Issue classification uses GitHub Issue Types, set via GraphQL after creation.
-gh issue create -R gsd-build/gsd-2 \
+gh issue create -R singularity-forge/sf-run \
   --title "feat: add feature X" \
   --label "priority:p1" \
   --milestone "v1.0"
 
 # View issue
-gh issue view <number> -R gsd-build/gsd-2
+gh issue view <number> -R singularity-forge/sf-run
 
 # Close issue with comment
-gh issue close <number> -R gsd-build/gsd-2 --comment "Implemented in PR #N"
+gh issue close <number> -R singularity-forge/sf-run --comment "Implemented in PR #N"
 
 # Edit labels on issue
-gh issue edit <number> -R gsd-build/gsd-2 \
+gh issue edit <number> -R singularity-forge/sf-run \
   --add-label "status:in-progress" \
   --remove-label "status:needs-grooming"
 ```
@@ -129,7 +129,7 @@ gh issue edit <number> -R gsd-build/gsd-2 \
 
 ```bash
 # Step 1: Create the issue (returns URL)
-ISSUE_URL=$(gh issue create -R gsd-build/gsd-2 \
+ISSUE_URL=$(gh issue create -R singularity-forge/sf-run \
   --title "..." --body "...")
 
 # Step 2: Set the issue type via GraphQL
@@ -145,11 +145,11 @@ Replace `"Bug"` with the appropriate type name (`"Feature Request"`, `"Task"`, e
 
 ```bash
 # List all labels
-gh label list -R gsd-build/gsd-2
+gh label list -R singularity-forge/sf-run
 
 # Create label
 gh label create "priority:p1" --color "E99695" \
-  --description "High priority" -R gsd-build/gsd-2
+  --description "High priority" -R singularity-forge/sf-run
 ```
 
 See [labels.md](./references/labels.md) for the full taxonomy and color codes.
@@ -165,7 +165,7 @@ gh project create --owner gsd-build --title "gsd-2 Backlog"
 
 # Add issue to project
 gh project item-add 1 --owner gsd-build \
-  --url https://github.com/gsd-build/gsd-2/issues/42
+  --url https://github.com/singularity-forge/sf-run/issues/42
 ```
 
 See [projects-v2.md](./references/projects-v2.md) for field creation and item editing commands.
@@ -176,14 +176,14 @@ See [projects-v2.md](./references/projects-v2.md) for field creation and item ed
 
 ```bash
 # List milestones
-gh api repos/gsd-build/gsd-2/milestones
+gh api repos/singularity-forge/sf-run/milestones
 
 # Create milestone
-gh api repos/gsd-build/gsd-2/milestones \
+gh api repos/singularity-forge/sf-run/milestones \
   -X POST -f title="v1.0" -f due_on="2026-03-31T00:00:00Z"
 
 # Assign milestone to issue
-gh api repos/gsd-build/gsd-2/issues/42 \
+gh api repos/singularity-forge/sf-run/issues/42 \
   -X PATCH -F milestone=1
 ```
 
@@ -193,49 +193,49 @@ See [milestones.md](./references/milestones.md) for full CRUD reference.
 
 ```bash
 # List recent runs
-gh run list -R gsd-build/gsd-2 --limit 5
+gh run list -R singularity-forge/sf-run --limit 5
 
 # View specific run
-gh run view <run-id> -R gsd-build/gsd-2
+gh run view <run-id> -R singularity-forge/sf-run
 
 # View failed job logs
-gh run view <run-id> -R gsd-build/gsd-2 --log-failed
+gh run view <run-id> -R singularity-forge/sf-run --log-failed
 ```
 
 ### Releases
 
 ```bash
 # List releases
-gh release list -R gsd-build/gsd-2
+gh release list -R singularity-forge/sf-run
 
 # View latest release
-gh release view --repo gsd-build/gsd-2
+gh release view --repo singularity-forge/sf-run
 ```
 
 ### API (Direct)
 
 ```bash
 # GET request
-gh api repos/gsd-build/gsd-2
+gh api repos/singularity-forge/sf-run
 
 # POST with fields
-gh api repos/gsd-build/gsd-2/issues -f title="Bug" -f body="Details"
+gh api repos/singularity-forge/sf-run/issues -f title="Bug" -f body="Details"
 
 # GraphQL
 gh api graphql -f query='{ viewer { login } }'
 
 # Paginated results
-gh api repos/gsd-build/gsd-2/contributors --paginate
+gh api repos/singularity-forge/sf-run/contributors --paginate
 ```
 
 ### Repository
 
 ```bash
 # Clone
-gh repo clone gsd-build/gsd-2
+gh repo clone singularity-forge/sf-run
 
 # View repo info
-gh repo view -R gsd-build/gsd-2
+gh repo view -R singularity-forge/sf-run
 ```
 
 </gh_commands>
@@ -246,13 +246,13 @@ gh repo view -R gsd-build/gsd-2
 
 ```bash
 # JSON output
-gh pr list -R gsd-build/gsd-2 --json number,title,state
+gh pr list -R singularity-forge/sf-run --json number,title,state
 
 # JQ filtering
-gh pr list -R gsd-build/gsd-2 --json number,title --jq '.[].title'
+gh pr list -R singularity-forge/sf-run --json number,title --jq '.[].title'
 
 # Template formatting
-gh pr list -R gsd-build/gsd-2 --json number,title \
+gh pr list -R singularity-forge/sf-run --json number,title \
   --template '{{range .}}#{{.number}} {{.title}}{{"\n"}}{{end}}'
 ```
 

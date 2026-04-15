@@ -8,7 +8,7 @@ import {
   getAllToolCompatibility,
   registerMcpToolCompatibility,
   resetToolCompatibilityRegistry,
-} from "@gsd/pi-coding-agent";
+} from "@sf-run/pi-coding-agent";
 
 import {
   isToolCompatibleWithProvider,
@@ -18,7 +18,7 @@ import {
 
 import {
   getProviderCapabilities,
-} from "@gsd/pi-ai";
+} from "@sf-run/pi-ai";
 
 // ─── Tool Compatibility Registry ────────────────────────────────────────────
 

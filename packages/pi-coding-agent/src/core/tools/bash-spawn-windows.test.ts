@@ -13,7 +13,7 @@
  *   with `detached: process.platform !== "win32"` (process-manager.ts);
  *   this test ensures all other spawn sites are aligned.
  *
- * See: gsd-build/gsd-2#XXXX
+ * See: singularity-forge/sf-run#XXXX
  */
 
 import test from "node:test";

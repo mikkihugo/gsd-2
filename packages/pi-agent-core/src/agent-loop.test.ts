@@ -9,8 +9,8 @@ import { fileURLToPath } from "node:url";
 import { Type } from "@sinclair/typebox";
 import { agentLoop, MAX_CONSECUTIVE_VALIDATION_FAILURES } from "./agent-loop.js";
 import type { AgentContext, AgentLoopConfig, AgentTool, AgentEvent, AgentMessage } from "./types.js";
-import { AssistantMessageEventStream, EventStream } from "@gsd/pi-ai";
-import type { AssistantMessage, AssistantMessageEvent, Model } from "@gsd/pi-ai";
+import { AssistantMessageEventStream, EventStream } from "@sf-run/pi-ai";
+import type { AssistantMessage, AssistantMessageEvent, Model } from "@sf-run/pi-ai";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

@@ -10,7 +10,7 @@
  *   /gsd mcp init [dir]  — Write project-local GSD workflow MCP config
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";

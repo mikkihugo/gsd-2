@@ -5,7 +5,7 @@
  * worktree lifecycle is handled: old worktree merged, new worktree created.
  *
  * Uses source-level checks since the full auto-mode dispatch loop
- * requires the @gsd/pi-coding-agent runtime.
+ * requires the @sf-run/pi-coding-agent runtime.
  */
 
 import test from "node:test";

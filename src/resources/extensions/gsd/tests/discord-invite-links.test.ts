@@ -7,7 +7,7 @@ import { join } from "node:path";
  * Validates that all Discord invite links in user-facing files point to valid,
  * consistent invite URLs — not expired vanity links.
  *
- * Regression test for https://github.com/gsd-build/gsd-2/issues/2699
+ * Regression test for https://github.com/singularity-forge/sf-run/issues/2699
  */
 
 const ROOT = process.cwd();

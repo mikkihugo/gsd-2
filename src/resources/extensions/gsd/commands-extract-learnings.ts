@@ -6,7 +6,7 @@
  *   Decisions · Lessons · Patterns · Surprises
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { existsSync, readFileSync } from "node:fs";
 import { join, basename } from "node:path";

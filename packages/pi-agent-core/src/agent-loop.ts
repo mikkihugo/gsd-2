@@ -10,7 +10,7 @@ import {
 	streamSimple,
 	type ToolResultMessage,
 	validateToolArguments,
-} from "@gsd/pi-ai";
+} from "@sf-run/pi-ai";
 import type {
 	AgentContext,
 	AgentEvent,
@@ -27,7 +27,7 @@ import type {
  * schema validation before the loop terminates. This prevents unbounded retry
  * loops when the LLM repeatedly emits tool calls with arguments that cannot
  * pass validation (e.g., schema overload, truncated JSON, missing required
- * fields). See: https://github.com/gsd-build/gsd-2/issues/2783
+ * fields). See: https://github.com/singularity-forge/sf-run/issues/2783
  */
 export const MAX_CONSECUTIVE_VALIDATION_FAILURES = 3;
 

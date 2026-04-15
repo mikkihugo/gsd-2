@@ -68,6 +68,7 @@ export const KNOWN_PREFERENCE_KEYS = new Set<string>([
   "skill_rules",
   "custom_instructions",
   "models",
+  "persist_model_changes",
   "skill_discovery",
   "skill_staleness_days",
   "auto_supervisor",
@@ -271,6 +272,8 @@ export interface GSDPreferences {
   skill_rules?: GSDSkillRule[];
   custom_instructions?: string[];
   models?: GSDModelConfig | GSDModelConfigV2;
+  /** Persist model changes to default provider/model. Default: true. */
+  persist_model_changes?: boolean;
   skill_discovery?: SkillDiscoveryMode;
   skill_staleness_days?: number;  // Skills unused for N days get deprioritized (#599). 0 = disabled. Default: 60.
   auto_supervisor?: AutoSupervisorConfig;
@@ -300,8 +303,8 @@ export interface GSDPreferences {
   verification_commands?: string[];
   verification_auto_fix?: boolean;
   verification_max_retries?: number;
-  /** Search provider preference. "brave"/"tavily"/"ollama" force that backend and disable native Anthropic search. "native" forces native only. "auto" = current default behavior. */
-  search_provider?: "brave" | "tavily" | "ollama" | "native" | "auto";
+  /** Search provider preference. "brave"/"tavily"/"ollama"/"combosearch" force that backend and disable native Anthropic search. "native" forces native only. "auto" = current default behavior. */
+  search_provider?: "brave" | "tavily" | "ollama" | "combosearch" | "native" | "auto";
   /** Context selection mode for file inlining. "full" inlines entire files, "smart" uses semantic chunking. Default derived from token profile. */
   context_selection?: ContextSelectionMode;
   /** Default widget display mode for auto-mode dashboard. "full" | "small" | "min" | "off". Default: "full". */

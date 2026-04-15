@@ -1,9 +1,9 @@
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import { logWarning } from "../workflow-logger.js";
 import { checkAutoStartAfterDiscuss } from "../guided-flow.js";
 import { getAutoDashboardData, getAutoModeStartModel, isAutoActive, pauseAuto } from "../auto.js";
-import { getNextFallbackModel, resolveModelWithFallbacksForUnit } from "../preferences.js";
+import { getNextFallbackModel, resolveModelWithFallbacksForUnit, resolvePersistModelChanges } from "../preferences.js";
 import { pauseAutoForProviderError } from "../provider-error-pause.js";
 import { isSessionSwitchInFlight, resolveAgentEnd } from "../auto-loop.js";
 import { resolveModelId } from "../auto-model-selection.js";
@@ -70,6 +70,7 @@ export async function handleAgentEnd(
   event: { messages: any[] },
   ctx: ExtensionContext,
 ): Promise<void> {
+  const persistModelChanges = resolvePersistModelChanges();
   if (checkAutoStartAfterDiscuss()) {
     clearDiscussionFlowState();
     return;
@@ -200,7 +201,7 @@ export async function handleAgentEnd(
             retryState.currentRetryModelId = undefined;
             const modelToSet = resolveModelId(nextModelId, availableModels, ctx.model?.provider);
             if (modelToSet) {
-              const ok = await pi.setModel(modelToSet, { persist: false });
+              const ok = await pi.setModel(modelToSet, { persist: persistModelChanges });
               if (ok) {
                 ctx.ui.notify(`Model error${errorDetail}. Switched to fallback: ${nextModelId} and resuming.`, "warning");
                 pi.sendMessage({ customType: "gsd-auto-timeout-recovery", content: "Continue execution.", display: false }, { triggerTurn: true });
@@ -217,7 +218,7 @@ export async function handleAgentEnd(
         if (ctx.model?.id !== sessionModel.id || ctx.model?.provider !== sessionModel.provider) {
           const startModel = ctx.modelRegistry.getAvailable().find((m) => m.provider === sessionModel.provider && m.id === sessionModel.id);
           if (startModel) {
-            const ok = await pi.setModel(startModel, { persist: false });
+            const ok = await pi.setModel(startModel, { persist: persistModelChanges });
             if (ok) {
               retryState.networkRetryCount = 0;
               retryState.currentRetryModelId = undefined;

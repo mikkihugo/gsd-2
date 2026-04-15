@@ -1,4 +1,4 @@
-import { Container, Markdown, type MarkdownTheme, Spacer, Text } from "@gsd/pi-tui";
+import { Container, Markdown, type MarkdownTheme, Spacer, Text } from "@sf-run/pi-tui";
 import { getMarkdownTheme, theme } from "../theme/theme.js";
 import { formatTimestamp, type TimestampFormat } from "./timestamp.js";
 

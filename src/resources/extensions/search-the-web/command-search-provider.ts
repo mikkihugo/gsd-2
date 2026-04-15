@@ -1,15 +1,15 @@
 /**
  * /search-provider slash command.
  *
- * Lets users switch between tavily, brave, and auto search backends.
+ * Lets users switch between tavily, brave, ollama, combosearch, and auto search backends.
  * Supports direct arg (`/search-provider tavily`) or interactive select UI.
  * Tab completion provides the three valid options with key status.
  *
  * All provider logic lives in provider.ts (S01) — this is pure UI wiring.
  */
 
-import type { ExtensionAPI } from '@gsd/pi-coding-agent'
-import type { AutocompleteItem } from '@gsd/pi-tui'
+import type { ExtensionAPI } from '@sf-run/pi-coding-agent'
+import type { AutocompleteItem } from '@sf-run/pi-tui'
 import {
   getTavilyApiKey,
   getBraveApiKey,
@@ -20,7 +20,7 @@ import {
   type SearchProviderPreference,
 } from './provider.js'
 
-const VALID_PREFERENCES: SearchProviderPreference[] = ['tavily', 'brave', 'ollama', 'auto']
+const VALID_PREFERENCES: SearchProviderPreference[] = ['tavily', 'brave', 'ollama', 'combosearch', 'auto']
 
 function keyStatus(provider: 'tavily' | 'brave' | 'ollama'): string {
   if (provider === 'tavily') return getTavilyApiKey() ? '✓' : '✗'
@@ -28,11 +28,21 @@ function keyStatus(provider: 'tavily' | 'brave' | 'ollama'): string {
   return getBraveApiKey() ? '✓' : '✗'
 }
 
+function comboStatus(): string {
+  const available = [
+    getTavilyApiKey() ? 'tavily' : null,
+    getBraveApiKey() ? 'brave' : null,
+    getOllamaApiKey() ? 'ollama' : null,
+  ].filter(Boolean) as string[]
+  return available.length > 0 ? `${available.length} source${available.length === 1 ? '' : 's'}` : '✗'
+}
+
 function buildSelectOptions(): string[] {
   return [
     `tavily (key: ${keyStatus('tavily')})`,
     `brave (key: ${keyStatus('brave')})`,
     `ollama (key: ${keyStatus('ollama')})`,
+    `combosearch (${comboStatus()})`,
     `auto`,
   ]
 }
@@ -41,12 +51,13 @@ function parseSelectChoice(choice: string): SearchProviderPreference {
   if (choice.startsWith('tavily')) return 'tavily'
   if (choice.startsWith('brave')) return 'brave'
   if (choice.startsWith('ollama')) return 'ollama'
+  if (choice.startsWith('combosearch')) return 'combosearch'
   return 'auto'
 }
 
 export function registerSearchProviderCommand(pi: ExtensionAPI): void {
   pi.registerCommand('search-provider', {
-    description: 'Switch search provider (tavily, brave, ollama, auto)',
+    description: 'Switch search provider (tavily, brave, ollama, combosearch, auto)',
 
     getArgumentCompletions(prefix: string): AutocompleteItem[] | null {
       const trimmed = prefix.trim().toLowerCase()
@@ -56,6 +67,8 @@ export function registerSearchProviderCommand(pi: ExtensionAPI): void {
           let description: string
           if (p === 'auto') {
             description = `Auto-select (tavily: ${keyStatus('tavily')}, brave: ${keyStatus('brave')}, ollama: ${keyStatus('ollama')})`
+          } else if (p === 'combosearch') {
+            description = `fan-out aggregator (${comboStatus()})`
           } else {
             description = `key: ${keyStatus(p)}`
           }

@@ -1,4 +1,4 @@
-// @gsd-build/mcp-server — Tests for env-writer utilities
+// @singularity-forge/mcp-server — Tests for env-writer utilities
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 
 import { describe, it, afterEach } from 'node:test';

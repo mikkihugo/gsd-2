@@ -1,4 +1,4 @@
-import { DefaultResourceLoader, sortExtensionPaths } from '@gsd/pi-coding-agent'
+import { DefaultResourceLoader, sortExtensionPaths } from '@sf-run/pi-coding-agent'
 if (process.env.GSD_DEBUG_EXTENSIONS) process.stderr.write("[gsd-debug] resource-loader.ts loaded\n")
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
@@ -286,13 +286,13 @@ function copyDirRecursive(src: string, dest: string): void {
  * Native ESM `import()` ignores NODE_PATH — it resolves packages by walking
  * up the directory tree from the importing file. Extension files synced to
  * ~/.gsd/agent/extensions/ have no ancestor node_modules, so imports of
- * @gsd/* packages fail. The symlink makes Node's standard resolution find
+ * @sf-run/* packages fail. The symlink makes Node's standard resolution find
  * them without requiring every call site to use jiti.
  *
  * Layout differences by install method:
  * - Source/monorepo: packageRoot/node_modules has everything → simple symlink
- * - npm/bun global: deps hoisted to dirname(packageRoot), including @gsd/* → simple symlink
- * - pnpm global: external deps hoisted, but @gsd/* stays in packageRoot/node_modules
+ * - npm/bun global: deps hoisted to dirname(packageRoot), including @sf-run/* → simple symlink
+ * - pnpm global: external deps hoisted, but @sf-run/* stays in packageRoot/node_modules
  *   → merged directory with symlinks from both roots (#3529, #3564)
  */
 function ensureNodeModulesSymlink(agentDir: string): void {
@@ -307,7 +307,7 @@ function ensureNodeModulesSymlink(agentDir: string): void {
     return
   }
 
-  // Global install: check if workspace scopes (@gsd/*) are hoisted.
+  // Global install: check if workspace scopes (@sf-run/*) are hoisted.
   // npm/bun hoist everything; pnpm keeps workspace packages internal.
   if (!hasMissingWorkspaceScopes(hoistedNodeModules, internalNodeModules)) {
     // Everything is hoisted — simple symlink to parent node_modules
@@ -319,7 +319,7 @@ function ensureNodeModulesSymlink(agentDir: string): void {
   reconcileMergedNodeModules(agentNodeModules, hoistedNodeModules, internalNodeModules)
 }
 
-/** Check if any @gsd* scopes exist in internal but not in hoisted node_modules */
+/** Check if any @sf-run* scopes exist in internal but not in hoisted node_modules */
 function hasMissingWorkspaceScopes(hoisted: string, internal: string): boolean {
   if (!existsSync(internal)) return false
   try {
@@ -358,8 +358,8 @@ function reconcileSymlink(link: string, target: string): void {
 
 /**
  * Create a real node_modules directory containing symlinks from both the
- * hoisted root (external deps) and internal root (@gsd/* workspace packages).
- * Used for pnpm global installs where @gsd/* isn't hoisted.
+ * hoisted root (external deps) and internal root (@sf-run/* workspace packages).
+ * Used for pnpm global installs where @sf-run/* isn't hoisted.
  */
 function reconcileMergedNodeModules(
   agentNodeModules: string,
@@ -401,7 +401,7 @@ function reconcileMergedNodeModules(
   }
 
   // Overlay internal node_modules entries that weren't hoisted.
-  // This covers @gsd/* workspace packages AND optional deps like
+  // This covers @sf-run/* workspace packages AND optional deps like
   // @anthropic-ai/claude-agent-sdk that npm keeps internal.
   try {
     for (const entry of readdirSync(internal, { withFileTypes: true })) {
@@ -539,7 +539,7 @@ export function initResources(agentDir: string): void {
 
   // Ensure ~/.gsd/agent/node_modules symlinks to GSD's node_modules on EVERY
   // launch, not just during resource syncs. A stale/broken symlink makes ALL
-  // extensions fail to resolve @gsd/* packages, rendering GSD non-functional.
+  // extensions fail to resolve @sf-run/* packages, rendering GSD non-functional.
   ensureNodeModulesSymlink(agentDir)
 
   // Migrate legacy skills on every launch (not gated by manifest) so that

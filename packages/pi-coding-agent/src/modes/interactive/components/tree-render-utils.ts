@@ -1,4 +1,4 @@
-import { truncateToWidth } from "@gsd/pi-tui";
+import { truncateToWidth } from "@sf-run/pi-tui";
 import { theme } from "../theme/theme.js";
 
 // ── Tree connector characters ────────────────────────────────────────

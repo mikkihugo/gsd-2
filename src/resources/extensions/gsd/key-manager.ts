@@ -5,14 +5,14 @@
  * Works with AuthStorage from pi-coding-agent — no core package changes needed.
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 import {
   AuthStorage,
   type AuthCredential,
   type ApiKeyCredential,
   type OAuthCredential,
-} from "@gsd/pi-coding-agent";
-import { getEnvApiKey } from "@gsd/pi-ai";
+} from "@sf-run/pi-coding-agent";
+import { getEnvApiKey } from "@sf-run/pi-ai";
 import { existsSync, statSync, chmodSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { mkdirSync } from "node:fs";

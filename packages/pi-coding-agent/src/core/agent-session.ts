@@ -22,9 +22,9 @@ import type {
 	AgentState,
 	AgentTool,
 	ThinkingLevel,
-} from "@gsd/pi-agent-core";
-import type { AssistantMessage, ImageContent, Message, Model, TextContent } from "@gsd/pi-ai";
-import { modelsAreEqual, resetApiProviders, supportsXhigh } from "@gsd/pi-ai";
+} from "@sf-run/pi-agent-core";
+import type { AssistantMessage, ImageContent, Message, Model, TextContent } from "@sf-run/pi-ai";
+import { modelsAreEqual, resetApiProviders, supportsXhigh } from "@sf-run/pi-ai";
 import { Type } from "@sinclair/typebox";
 import { getDocsPath } from "../config.js";
 import { getErrorMessage } from "../utils/error.js";
@@ -305,7 +305,7 @@ export class AgentSession {
 
 	// Whether model changes should write defaultProvider/defaultModel to settings.json.
 	// Defaults to false — callers must explicitly opt into persistence. This is the
-	// safe default for SDK consumers: a third party building on @gsd/pi-coding-agent
+	// safe default for SDK consumers: a third party building on @sf-run/pi-coding-agent
 	// should not silently mutate the user's global settings just by switching models.
 	// Interactive CLI entry points (gsd wrapper's interactive branch and pi main's
 	// isInteractive branch) explicitly set this to true so user model picks still

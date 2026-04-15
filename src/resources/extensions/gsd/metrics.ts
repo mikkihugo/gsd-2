@@ -14,18 +14,71 @@
  */
 
 import { join } from "node:path";
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 import { gsdRoot } from "./paths.js";
 import { getAndClearSkills } from "./skill-telemetry.js";
 import { loadJsonFile, loadJsonFileOrNull, saveJsonFile } from "./json-persistence.js";
 import { parseUnitId } from "./unit-id.js";
 import { buildAuditEnvelope, emitUokAuditEvent } from "./uok/audit.js";
 import { isUnifiedAuditEnabled } from "./uok/audit-toggle.js";
+import { getDatabase } from "./gsd-db.js";
 
 // Re-export from shared — import directly from format-utils to avoid pulling
-// in the full barrel (mod.js → ui.js → @gsd/pi-tui) which breaks when loaded
+// in the full barrel (mod.js → ui.js → @sf-run/pi-tui) which breaks when loaded
 // outside jiti's alias resolution (e.g. dynamic import in auto-loop reports).
 export { formatTokenCount } from "../shared/format-utils.js";
+
+// ─── Learning Integration ─────────────────────────────────────────────────────
+
+/**
+ * Infer provider from a model ID when not explicitly prefixed with "provider/".
+ */
+function inferProviderFromBareModelId(modelId: string): string {
+  const lower = modelId.toLowerCase();
+  if (lower === "k2p5" || lower === "kimi-k2-thinking") return "kimi-coding";
+  if (lower.startsWith("minimax-m")) return "ollama-cloud";
+  if (lower.startsWith("minimax-") || modelId.startsWith("MiniMax-")) return "minimax";
+  if (lower.startsWith("glm-")) return "zai";
+  if (lower.startsWith("mimo-")) return "xiaomi-token-plan-ams";
+  if (lower.startsWith("gemini-")) return "google-gemini-cli";
+  if (lower.startsWith("magistral-") || lower.startsWith("mistral-") || lower.startsWith("devstral-") || lower.startsWith("codestral-") || lower.startsWith("ministral-") || lower.startsWith("pixtral-")) return "mistral";
+  return "unknown";
+}
+
+/**
+ * Record a unit outcome to the llm_task_outcomes table for Bayesian learning.
+ */
+async function recordUnitOutcome(unit: UnitMetrics): Promise<void> {
+  const db = getDatabase();
+  if (!db) return;
+
+  try {
+    const { recordOutcome } = await import("./learning/outcome-recorder.mjs");
+    let provider: string;
+    let modelId = unit.model;
+    if (modelId.includes("/")) {
+      [provider] = modelId.split("/");
+    } else {
+      provider = inferProviderFromBareModelId(modelId);
+    }
+
+    recordOutcome(db, {
+      modelId,
+      provider,
+      unitType: unit.type,
+      unitId: unit.id,
+      succeeded: true, // metrics.json entry implies completion
+      retries: 0,      // TODO: extract from session entries if possible
+      escalated: !!unit.modelDowngraded,
+      verification_passed: null,
+      blocker_discovered: false,
+      duration_ms: unit.finishedAt - unit.startedAt,
+      tokens_total: unit.tokens.total,
+      cost_usd: unit.cost,
+      recorded_at: unit.startedAt,
+    });
+  } catch { /* fire-and-forget */ }
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -239,6 +292,9 @@ export function snapshotUnitMetrics(
     ledger.units.push(unit);
   }
   saveLedger(basePath, ledger);
+
+  // Background outcome recording for Bayesian learning
+  recordUnitOutcome(unit).catch(() => { /* fire-and-forget */ });
 
   if (isUnifiedAuditEnabled()) {
     emitUokAuditEvent(

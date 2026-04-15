@@ -4,7 +4,7 @@
  * Leaf node in the import DAG — no imports from auto/.
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
 import type { GSDPreferences } from "../preferences.js";

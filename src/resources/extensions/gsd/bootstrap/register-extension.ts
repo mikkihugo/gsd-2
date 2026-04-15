@@ -1,6 +1,6 @@
 // GSD2 — Extension registration: wires all GSD tools, commands, and hooks into pi
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { registerExitCommand } from "../exit-command.js";
 import { registerWorktreeCommand } from "../worktree-command.js";

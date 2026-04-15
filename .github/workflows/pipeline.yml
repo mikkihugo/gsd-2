@@ -20,7 +20,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: blacksmith-4vcpu-ubuntu-2404
     container:
-      image: ghcr.io/gsd-build/gsd-ci-builder:latest
+      image: ghcr.io/singularity-forge/sf-ci-builder:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -146,11 +146,11 @@ jobs:
           DEV_VERSION: ${{ needs.dev-publish.outputs.dev-version }}
         run: |
           docker build --target runtime \
-            -t "ghcr.io/gsd-build/gsd-pi:next" \
-            -t "ghcr.io/gsd-build/gsd-pi:${DEV_VERSION}" \
+            -t "ghcr.io/singularity-forge/sf-run:next" \
+            -t "ghcr.io/singularity-forge/sf-run:${DEV_VERSION}" \
             .
-          docker push ghcr.io/gsd-build/gsd-pi:next
-          docker push "ghcr.io/gsd-build/gsd-pi:${DEV_VERSION}"
+          docker push ghcr.io/singularity-forge/sf-run:next
+          docker push "ghcr.io/singularity-forge/sf-run:${DEV_VERSION}"
 
   prod-release:
     name: Production Release
@@ -281,9 +281,9 @@ jobs:
         env:
           DEV_VERSION: ${{ needs.dev-publish.outputs.dev-version }}
         run: |
-          docker pull "ghcr.io/gsd-build/gsd-pi:${DEV_VERSION}"
-          docker tag "ghcr.io/gsd-build/gsd-pi:${DEV_VERSION}" ghcr.io/gsd-build/gsd-pi:latest
-          docker push ghcr.io/gsd-build/gsd-pi:latest
+          docker pull "ghcr.io/singularity-forge/sf-run:${DEV_VERSION}"
+          docker tag "ghcr.io/singularity-forge/sf-run:${DEV_VERSION}" ghcr.io/singularity-forge/sf-run:latest
+          docker push ghcr.io/singularity-forge/sf-run:latest
 
   update-builder:
     name: Update CI Builder Image
@@ -314,6 +314,6 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: |
           docker build --target builder \
-            -t ghcr.io/gsd-build/gsd-ci-builder:latest \
+            -t ghcr.io/singularity-forge/sf-ci-builder:latest \
             .
-          docker push ghcr.io/gsd-build/gsd-ci-builder:latest
+          docker push ghcr.io/singularity-forge/sf-ci-builder:latest

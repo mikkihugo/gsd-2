@@ -14,7 +14,7 @@
  *
  * This module detects and repairs such patterns before JSON.parse is called.
  *
- * @see https://github.com/gsd-build/gsd-2/issues/2660
+ * @see https://github.com/singularity-forge/sf-run/issues/2660
  */
 
 /**
@@ -34,7 +34,7 @@ export function hasYamlBulletLists(json: string): boolean {
  * Some models mix XML tool-call syntax into JSON string values,
  * producing hybrid output that fails JSON.parse.
  *
- * @see https://github.com/gsd-build/gsd-2/issues/3403
+ * @see https://github.com/singularity-forge/sf-run/issues/3403
  */
 export function hasXmlParameterTags(json: string): boolean {
 	return /<\/?parameter[\s>]/.test(json);
@@ -47,7 +47,7 @@ export function hasXmlParameterTags(json: string): boolean {
  * Smaller models sometimes emit incomplete numbers when the value
  * is cut off mid-generation.
  *
- * @see https://github.com/gsd-build/gsd-2/issues/3464
+ * @see https://github.com/singularity-forge/sf-run/issues/3464
  */
 export function hasTruncatedNumbers(json: string): boolean {
 	// Match: colon, optional whitespace, then a comma or } without a value

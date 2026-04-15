@@ -430,7 +430,7 @@ export async function handleCompleteSlice(
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   (async () => {
     try {
-      const graphMod = await import("@gsd-build/mcp-server") as unknown as Partial<{
+      const graphMod = await import("@singularity-forge/mcp-server") as unknown as Partial<{
         buildGraph: (dir: string) => Promise<{ nodes: unknown[]; edges: unknown[]; builtAt: string }>;
         writeGraph: (gsdRoot: string, graph: unknown) => Promise<void>;
         resolveGsdRoot: (basePath: string) => string;
@@ -440,7 +440,7 @@ export async function handleCompleteSlice(
         || typeof graphMod.writeGraph !== "function"
         || typeof graphMod.resolveGsdRoot !== "function"
       ) {
-        throw new Error("graph helpers unavailable from @gsd-build/mcp-server");
+        throw new Error("graph helpers unavailable from @singularity-forge/mcp-server");
       }
       const g = await graphMod.buildGraph(basePath);
       await graphMod.writeGraph(graphMod.resolveGsdRoot(basePath), g);

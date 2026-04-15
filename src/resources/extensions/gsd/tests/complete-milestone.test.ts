@@ -250,7 +250,7 @@ describe("complete-milestone", () => {
 
     // Step 11 must explicitly name the `write` tool so the LLM doesn't
     // confuse it with `edit` (which requires path + oldText + newText).
-    // See: https://github.com/gsd-build/gsd-2/issues/2946
+    // See: https://github.com/singularity-forge/sf-run/issues/2946
     assert.ok(
       /PROJECT\.md.*\bwrite\b/i.test(prompt) || /\bwrite\b.*PROJECT\.md/i.test(prompt),
       "step 11 must name the `write` tool when updating PROJECT.md",

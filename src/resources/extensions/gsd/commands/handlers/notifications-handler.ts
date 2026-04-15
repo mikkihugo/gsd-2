@@ -1,7 +1,7 @@
 // GSD Extension — /gsd notifications Command Handler
 // View, filter, and clear the persistent notification history.
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import {
   readNotifications,

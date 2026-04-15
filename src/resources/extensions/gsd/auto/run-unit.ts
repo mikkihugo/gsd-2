@@ -4,7 +4,7 @@
  * Imports from: auto/types, auto/resolve
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import type { AutoSession } from "./session.js";
 import { NEW_SESSION_TIMEOUT_MS } from "./session.js";
@@ -12,7 +12,7 @@ import type { UnitResult } from "./types.js";
 import { _setCurrentResolve, _setSessionSwitchInFlight } from "./resolve.js";
 import { debugLog } from "../debug-logger.js";
 import { logWarning, logError } from "../workflow-logger.js";
-import { resolveAutoSupervisorConfig } from "../preferences.js";
+import { resolveAutoSupervisorConfig, resolvePersistModelChanges } from "../preferences.js";
 
 // Tracks the latest session-switch attempt so a late timeout settlement from an
 // older runUnit() call cannot clear the guard for a newer one.
@@ -80,7 +80,7 @@ export async function runUnit(
   }
 
   if (s.currentUnitModel && typeof pi.setModel === "function") {
-    const restored = await pi.setModel(s.currentUnitModel, { persist: false });
+    const restored = await pi.setModel(s.currentUnitModel, { persist: resolvePersistModelChanges() });
     if (!restored) {
       ctx.ui.notify(
         `Failed to restore ${s.currentUnitModel.provider}/${s.currentUnitModel.id} after session creation. Using session default.`,

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { loadSkills } from "@gsd/pi-coding-agent";
+import { loadSkills } from "@sf-run/pi-coding-agent";
 import { buildSkillActivationBlock } from "../auto-prompts.js";
 import type { GSDPreferences } from "../preferences.js";
 

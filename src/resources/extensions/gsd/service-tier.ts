@@ -8,7 +8,7 @@
  * use a single source of truth.
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { existsSync, readFileSync } from "node:fs";
 import { saveFile } from "./files.js";
@@ -35,7 +35,7 @@ const SERVICE_TIER_SCOPE_NOTE = "Only affects gpt-5.4 models, regardless of prov
  * (set via CAPABILITY_PATCHES in packages/pi-ai/src/models.ts). When callers
  * have access to the full Model object, prefer reading capabilities directly.
  *
- * See: https://github.com/gsd-build/gsd-2/issues/2546
+ * See: https://github.com/singularity-forge/sf-run/issues/2546
  */
 const SERVICE_TIER_MODEL_PREFIXES = ["gpt-5.4"] as const;
 

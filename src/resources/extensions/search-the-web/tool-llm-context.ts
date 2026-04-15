@@ -15,11 +15,11 @@
  * Use search-the-web when you want links/URLs to browse selectively.
  */
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { truncateHead, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import type { ExtensionAPI } from "@sf-run/pi-coding-agent";
+import { truncateHead, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@sf-run/pi-coding-agent";
+import { Text } from "@sf-run/pi-tui";
 import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@sf-run/pi-ai";
 
 import { LRUTTLCache } from "./cache.js";
 import { fetchWithRetryTimed, HttpError, classifyError, type RateLimitInfo } from "./http.js";
@@ -79,7 +79,7 @@ interface LLMContextDetails {
   errorKind?: string;
   error?: string;
   retryAfterMs?: number;
-  provider?: 'tavily' | 'brave' | 'ollama';
+  provider?: 'tavily' | 'brave' | 'ollama' | 'combosearch';
 }
 
 // =============================================================================
@@ -269,6 +269,161 @@ async function executeOllamaLLMContext(
   return { cached, latencyMs: timed.latencyMs, rateLimit: timed.rateLimit };
 }
 
+async function executeBraveLLMContext(
+  params: { query: string; maxTokens: number; maxUrls: number; threshold: string; count: number },
+  signal?: AbortSignal,
+): Promise<{ cached: CachedLLMContext; latencyMs: number; rateLimit?: RateLimitInfo }> {
+  const url = new URL("https://api.search.brave.com/res/v1/llm/context");
+  url.searchParams.append("q", params.query);
+  url.searchParams.append("count", String(params.count));
+  url.searchParams.append("maximum_number_of_tokens", String(params.maxTokens));
+  url.searchParams.append("maximum_number_of_urls", String(params.maxUrls));
+  url.searchParams.append("context_threshold_mode", params.threshold);
+
+  const timed = await fetchWithRetryTimed(url.toString(), {
+    method: "GET",
+    headers: braveHeaders(),
+    signal,
+  }, 2);
+
+  const data: BraveLLMContextResponse = await timed.response.json();
+  const grounding: LLMContextSnippet[] = [];
+
+  if (data.grounding?.generic) {
+    for (const item of data.grounding.generic) {
+      if (item.snippets && item.snippets.length > 0) {
+        grounding.push({
+          url: item.url,
+          title: item.title,
+          snippets: item.snippets,
+        });
+      }
+    }
+  }
+
+  if (data.grounding?.poi && data.grounding.poi.snippets?.length) {
+    grounding.push({
+      url: data.grounding.poi.url,
+      title: data.grounding.poi.title || data.grounding.poi.name,
+      snippets: data.grounding.poi.snippets,
+    });
+  }
+
+  if (data.grounding?.map) {
+    for (const item of data.grounding.map) {
+      if (item.snippets?.length) {
+        grounding.push({
+          url: item.url,
+          title: item.title || item.name,
+          snippets: item.snippets,
+        });
+      }
+    }
+  }
+
+  const sources: Record<string, LLMContextSource> = {};
+  if (data.sources) {
+    for (const [sourceUrl, sourceInfo] of Object.entries(data.sources)) {
+      sources[sourceUrl] = {
+        title: sourceInfo.title,
+        hostname: sourceInfo.hostname,
+        age: sourceInfo.age,
+      };
+    }
+  }
+
+  const allText = grounding.map(g => g.snippets.join(" ")).join(" ");
+  const estimatedTokens = estimateTokens(allText);
+  return { cached: { grounding, sources, estimatedTokens }, latencyMs: timed.latencyMs, rateLimit: timed.rateLimit };
+}
+
+function availableComboProviders(): Array<'tavily' | 'brave' | 'ollama'> {
+  const providers: Array<'tavily' | 'brave' | 'ollama'> = [];
+  if (getTavilyApiKey()) providers.push('tavily');
+  if (getBraveApiKey()) providers.push('brave');
+  if (getOllamaApiKey()) providers.push('ollama');
+  return providers;
+}
+
+function trimMergedContext(
+  grounding: LLMContextSnippet[],
+  sources: Record<string, LLMContextSource>,
+  maxTokens: number,
+): CachedLLMContext {
+  const effectiveBudget = Math.max(1, Math.floor(maxTokens * 0.8));
+  const trimmed: LLMContextSnippet[] = [];
+  let totalTokens = 0;
+
+  for (const item of grounding) {
+    if (totalTokens >= effectiveBudget) break;
+    const remainingTokens = effectiveBudget - totalTokens;
+    const maxChars = remainingTokens * 4;
+    const joined = item.snippets.join("\n\n");
+    let text = joined;
+    if (text.length > maxChars) {
+      text = text.slice(0, maxChars);
+    }
+    const tokens = estimateTokens(text);
+    if (tokens <= 0) continue;
+    trimmed.push({
+      url: item.url,
+      title: item.title,
+      snippets: [text],
+    });
+    totalTokens += tokens;
+  }
+
+  return { grounding: trimmed, sources, estimatedTokens: totalTokens };
+}
+
+async function executeComboLLMContext(
+  params: { query: string; maxTokens: number; maxUrls: number; threshold: string; count: number },
+  signal?: AbortSignal,
+): Promise<{ cached: CachedLLMContext; latencyMs: number; rateLimit?: RateLimitInfo }> {
+  const providers = availableComboProviders();
+  const tasks = providers.map(async (provider) => {
+    if (provider === 'tavily') {
+      return executeTavilyLLMContext(params, signal);
+    }
+    if (provider === 'ollama') {
+      return executeOllamaLLMContext(
+        { query: params.query, maxTokens: params.maxTokens, count: params.count, threshold: params.threshold },
+        signal,
+      );
+    }
+    return executeBraveLLMContext(params, signal);
+  });
+
+  const settled = await Promise.allSettled(tasks);
+  const fulfilled = settled.filter((entry): entry is PromiseFulfilledResult<{ cached: CachedLLMContext; latencyMs: number; rateLimit?: RateLimitInfo }> => entry.status === 'fulfilled');
+  if (fulfilled.length === 0) {
+    const firstRejected = settled.find((entry): entry is PromiseRejectedResult => entry.status === 'rejected');
+    throw firstRejected?.reason ?? new Error("combosearch llm context failed");
+  }
+
+  const byUrl = new Map<string, LLMContextSnippet>();
+  const sources: Record<string, LLMContextSource> = {};
+
+  for (const entry of fulfilled) {
+    for (const item of entry.value.cached.grounding) {
+      const existing = byUrl.get(item.url);
+      if (existing) {
+        const snippets = Array.from(new Set([...existing.snippets, ...item.snippets]));
+        byUrl.set(item.url, { ...existing, snippets });
+      } else {
+        byUrl.set(item.url, { ...item, snippets: [...item.snippets] });
+      }
+    }
+    Object.assign(sources, entry.value.cached.sources);
+  }
+
+  const mergedGrounding = Array.from(byUrl.values()).slice(0, params.maxUrls);
+  const cached = trimMergedContext(mergedGrounding, sources, params.maxTokens);
+  const latencyMs = Math.max(...fulfilled.map((entry) => entry.value.latencyMs));
+  const rateLimit = fulfilled.find((entry) => entry.value.rateLimit)?.value.rateLimit;
+  return { cached, latencyMs, rateLimit };
+}
+
 // =============================================================================
 // Tool Registration
 // =============================================================================
@@ -389,7 +544,15 @@ export function registerLLMContextTool(pi: ExtensionAPI) {
         let latencyMs: number | undefined;
         let rateLimit: RateLimitInfo | undefined;
 
-        if (provider === "tavily") {
+        if (provider === "combosearch") {
+          const comboResult = await executeComboLLMContext(
+            { query: params.query, maxTokens, maxUrls, threshold, count },
+            signal,
+          );
+          result = comboResult.cached;
+          latencyMs = comboResult.latencyMs;
+          rateLimit = comboResult.rateLimit;
+        } else if (provider === "tavily") {
           const tavilyResult = await executeTavilyLLMContext(
             { query: params.query, maxTokens, maxUrls, threshold, count },
             signal,
@@ -406,24 +569,12 @@ export function registerLLMContextTool(pi: ExtensionAPI) {
           latencyMs = ollamaResult.latencyMs;
           rateLimit = ollamaResult.rateLimit;
         } else {
-          // ================================================================
-          // BRAVE PATH (unchanged API logic)
-          // ================================================================
-          const url = new URL("https://api.search.brave.com/res/v1/llm/context");
-          url.searchParams.append("q", params.query);
-          url.searchParams.append("count", String(count));
-          url.searchParams.append("maximum_number_of_tokens", String(maxTokens));
-          url.searchParams.append("maximum_number_of_urls", String(maxUrls));
-          url.searchParams.append("context_threshold_mode", threshold);
-
-          // Use a custom fetch flow to read error bodies from the Brave API
-          let timed;
+          let braveResult;
           try {
-            timed = await fetchWithRetryTimed(url.toString(), {
-              method: "GET",
-              headers: braveHeaders(),
+            braveResult = await executeBraveLLMContext(
+              { query: params.query, maxTokens, maxUrls, threshold, count },
               signal,
-            }, 2);
+            );
           } catch (fetchErr) {
             // Try to extract Brave's structured error detail from the response body.
             // This is especially useful for plan/subscription errors (OPTION_NOT_IN_PLAN).
@@ -455,66 +606,9 @@ export function registerLLMContextTool(pi: ExtensionAPI) {
               isError: true,
             };
           }
-
-          const data: BraveLLMContextResponse = await timed.response.json();
-
-          // ------------------------------------------------------------------
-          // Normalize Brave response
-          // ------------------------------------------------------------------
-          const grounding: LLMContextSnippet[] = [];
-
-          if (data.grounding?.generic) {
-            for (const item of data.grounding.generic) {
-              if (item.snippets && item.snippets.length > 0) {
-                grounding.push({
-                  url: item.url,
-                  title: item.title,
-                  snippets: item.snippets,
-                });
-              }
-            }
-          }
-
-          // Include POI data if present
-          if (data.grounding?.poi && data.grounding.poi.snippets?.length) {
-            grounding.push({
-              url: data.grounding.poi.url,
-              title: data.grounding.poi.title || data.grounding.poi.name,
-              snippets: data.grounding.poi.snippets,
-            });
-          }
-
-          // Include map data if present
-          if (data.grounding?.map) {
-            for (const item of data.grounding.map) {
-              if (item.snippets?.length) {
-                grounding.push({
-                  url: item.url,
-                  title: item.title || item.name,
-                  snippets: item.snippets,
-                });
-              }
-            }
-          }
-
-          const sources: Record<string, LLMContextSource> = {};
-          if (data.sources) {
-            for (const [sourceUrl, sourceInfo] of Object.entries(data.sources)) {
-              sources[sourceUrl] = {
-                title: sourceInfo.title,
-                hostname: sourceInfo.hostname,
-                age: sourceInfo.age,
-              };
-            }
-          }
-
-          // Estimate total token count from all snippets
-          const allText = grounding.map(g => g.snippets.join(" ")).join(" ");
-          const estimatedTokens = estimateTokens(allText);
-
-          result = { grounding, sources, estimatedTokens };
-          latencyMs = timed.latencyMs;
-          rateLimit = timed.rateLimit;
+          result = braveResult.cached;
+          latencyMs = braveResult.latencyMs;
+          rateLimit = braveResult.rateLimit;
         }
 
         // ------------------------------------------------------------------

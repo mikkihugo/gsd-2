@@ -15,18 +15,18 @@ import { join } from 'node:path';
 // dist-test root — everything compiled lands here
 const DIST_TEST = new URL('../dist-test/', import.meta.url).href;
 
-// Absolute paths to compiled @gsd/* entry points
+// Absolute paths to compiled @sf-run/* entry points
 const GSD_ALIASES = {
-  '@gsd/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
-  '@gsd/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
-  '@gsd/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
-  '@gsd/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
-  '@gsd/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
-  '@gsd/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
+  '@sf-run/pi-coding-agent': new URL('../dist-test/packages/pi-coding-agent/src/index.js', import.meta.url).href,
+  '@sf-run/pi-ai/oauth':     new URL('../dist-test/packages/pi-ai/src/utils/oauth/index.js', import.meta.url).href,
+  '@sf-run/pi-ai':           new URL('../dist-test/packages/pi-ai/src/index.js', import.meta.url).href,
+  '@sf-run/pi-agent-core':   new URL('../dist-test/packages/pi-agent-core/src/index.js', import.meta.url).href,
+  '@sf-run/pi-tui':          new URL('../dist-test/packages/pi-tui/src/index.js', import.meta.url).href,
+  '@sf-run/native':          new URL('../dist-test/packages/native/src/index.js', import.meta.url).href,
 };
 
 export function resolve(specifier, context, nextResolve) {
-  // 1. @gsd/* bare imports → compiled dist-test counterpart
+  // 1. @sf-run/* bare imports → compiled dist-test counterpart
   if (specifier in GSD_ALIASES) {
     return nextResolve(GSD_ALIASES[specifier], context);
   }

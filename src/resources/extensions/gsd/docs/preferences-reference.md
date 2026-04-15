@@ -111,6 +111,8 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
   - `discuss` — used for milestone/slice discussion (interactive context gathering). Falls back to `planning` if unset.
   - `validation` — used for gate evaluation, roadmap reassessment, milestone validation, and doc rewrites. Falls back to `planning` if unset.
 
+- `persist_model_changes`: boolean — controls whether `setModel()` updates also persist to the default provider/model settings. Default: `true`. Set `false` to keep auto-mode and recovery model switches session-local.
+
 - `skill_staleness_days`: number — skills unused for this many days get deprioritized during discovery. Set to `0` to disable staleness tracking. Default: `60`.
 
 - `skill_discovery`: controls how GSD discovers and applies skills during auto-mode. Valid values:
@@ -214,7 +216,7 @@ Setting `prefer_skills: []` does **not** disable skill discovery — it just mea
 
 - `auto_report`: boolean — generate an HTML report snapshot after each milestone completion. Default: `true`.
 
-- `search_provider`: `"brave"`, `"tavily"`, `"ollama"`, `"native"`, or `"auto"` — selects the search backend for research phases. `"native"` forces Anthropic's built-in web search only; provider values force that backend and disable native search; `"auto"` uses the default heuristic. Default: `"auto"`.
+- `search_provider`: `"brave"`, `"tavily"`, `"ollama"`, `"combosearch"`, `"native"`, or `"auto"` — selects the search backend for research phases. `"combosearch"` fans out across all configured custom search backends and merges the results. `"native"` forces Anthropic's built-in web search only; provider values force that backend and disable native search; `"auto"` uses the default heuristic. Default: `"auto"`.
 
 - `context_selection`: `"full"` or `"smart"` — controls how files are inlined into context. `"full"` inlines entire files; `"smart"` uses semantic chunking to include only the most relevant sections. Default is derived from `token_profile`.
 

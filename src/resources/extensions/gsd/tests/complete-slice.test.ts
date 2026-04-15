@@ -125,9 +125,9 @@ console.log('\n=== complete-slice: schema v6 migration ===');
 
   const adapter = _getAdapter()!;
 
-  // Verify schema version is current (v15 with UOK projection tables)
+  // Verify schema version is current (v16 with UOK projection tables)
   const versionRow = adapter.prepare('SELECT MAX(version) as v FROM schema_version').get();
-  assertEq(versionRow?.['v'], 15, 'schema version should be 15');
+  assertEq(versionRow?.['v'], 16, 'schema version should be 16');
 
   // Verify slices table has full_summary_md and full_uat_md columns
   const cols = adapter.prepare("PRAGMA table_info(slices)").all();
@@ -420,7 +420,7 @@ console.log('\n=== complete-slice: step 13 specifies write tool for PROJECT.md (
 
   // Step 13 must explicitly name the `write` tool so the LLM doesn't
   // confuse it with `edit` (which requires path + oldText + newText).
-  // See: https://github.com/gsd-build/gsd-2/issues/2946
+  // See: https://github.com/singularity-forge/sf-run/issues/2946
   const mentionsWriteTool =
     /PROJECT\.md.*\bwrite\b/i.test(prompt) ||
     /\bwrite\b.*PROJECT\.md/i.test(prompt);

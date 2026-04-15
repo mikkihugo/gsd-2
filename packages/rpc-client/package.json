@@ -1,11 +1,11 @@
 {
-  "name": "@gsd-build/rpc-client",
+  "name": "@singularity-forge/rpc-client",
   "version": "2.74.0",
-  "description": "Standalone RPC client SDK for GSD — zero internal dependencies",
+  "description": "Standalone RPC client SDK for sf-run — zero internal dependencies",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2.git",
+    "url": "https://github.com/singularity-forge/sf-run.git",
     "directory": "packages/rpc-client"
   },
   "publishConfig": {

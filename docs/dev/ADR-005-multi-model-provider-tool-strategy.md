@@ -3,7 +3,7 @@
 **Status:** Accepted
 **Date:** 2026-03-27
 **Deciders:** Jeremy McSpadden
-**Related:** ADR-004 (capability-aware model routing), ADR-003 (pipeline simplification), [Issue #2790](https://github.com/gsd-build/gsd-2/issues/2790)
+**Related:** ADR-004 (capability-aware model routing), ADR-003 (pipeline simplification), [Issue #2790](https://github.com/singularity-forge/sf-run/issues/2790)
 
 ## Context
 

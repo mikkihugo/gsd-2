@@ -1,6 +1,6 @@
 # GSD-2 — VS Code Extension
 
-Control the [GSD-2 coding agent](https://github.com/gsd-build/gsd-2) directly from VS Code. Run autonomous coding sessions, chat with `@gsd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
+Control the [GSD-2 coding agent](https://github.com/singularity-forge/sf-run) directly from VS Code. Run autonomous coding sessions, chat with `@gsd`, monitor agent activity in real-time, review and accept/reject changes, and manage your workflow — all without leaving the editor.
 
 ![GSD Extension Overview](docs/images/overview.png)
 
@@ -191,6 +191,6 @@ The extension spawns `gsd --mode rpc` and communicates over JSON-RPC via stdin/s
 
 ## Links
 
-- [GSD Documentation](https://github.com/gsd-build/gsd-2/tree/main/docs)
-- [Getting Started](https://github.com/gsd-build/gsd-2/blob/main/docs/getting-started.md)
-- [Issue Tracker](https://github.com/gsd-build/gsd-2/issues)
+- [GSD Documentation](https://github.com/singularity-forge/sf-run/tree/main/docs)
+- [Getting Started](https://github.com/singularity-forge/sf-run/blob/main/docs/getting-started.md)
+- [Issue Tracker](https://github.com/singularity-forge/sf-run/issues)

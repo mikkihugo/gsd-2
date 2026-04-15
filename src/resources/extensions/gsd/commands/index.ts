@@ -1,4 +1,4 @@
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { GSD_COMMAND_DESCRIPTION, getGsdArgumentCompletions } from "./catalog.js";
 

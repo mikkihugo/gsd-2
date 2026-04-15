@@ -10,11 +10,11 @@
  * - Rate limit info in details
  */
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { truncateHead, formatSize, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import type { ExtensionAPI } from "@sf-run/pi-coding-agent";
+import { truncateHead, formatSize, DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES } from "@sf-run/pi-coding-agent";
+import { Text } from "@sf-run/pi-tui";
 import { Type } from "@sinclair/typebox";
-import { StringEnum } from "@gsd/pi-ai";
+import { StringEnum } from "@sf-run/pi-ai";
 
 import { LRUTTLCache } from "./cache.js";
 import { fetchWithRetryTimed, fetchWithRetry, classifyError, type RateLimitInfo } from "./http.js";
@@ -93,7 +93,7 @@ interface SearchDetails {
   errorKind?: string;
   error?: string;
   retryAfterMs?: number;
-  provider?: 'tavily' | 'brave' | 'ollama';
+  provider?: 'tavily' | 'brave' | 'ollama' | 'combosearch';
 }
 
 // =============================================================================
@@ -302,6 +302,122 @@ async function executeOllamaSearch(
   };
 }
 
+async function executeBraveSearch(
+  params: { query: string; effectiveQuery: string; freshness: string | null; wantSummary: boolean },
+  signal?: AbortSignal,
+): Promise<{ results: CachedSearchResult; latencyMs: number; rateLimit?: RateLimitInfo }> {
+  const url = new URL("https://api.search.brave.com/res/v1/web/search");
+  url.searchParams.append("q", params.effectiveQuery);
+  url.searchParams.append("count", "10");
+  url.searchParams.append("extra_snippets", "true");
+  url.searchParams.append("text_decorations", "false");
+
+  if (params.freshness) {
+    url.searchParams.append("freshness", params.freshness);
+  }
+  if (params.wantSummary) {
+    url.searchParams.append("summary", "1");
+  }
+
+  const timed = await fetchWithRetryTimed(url.toString(), {
+    method: "GET",
+    headers: braveHeaders(),
+    signal,
+  }, 2);
+
+  const data: BraveSearchResponse = await timed.response.json();
+  const rawResults: BraveWebResult[] = data.web?.results ?? [];
+  const summarizerKey: string | undefined = data.summarizer?.key;
+
+  const queryInfo = data.query;
+  const queryCorrected = !!(queryInfo?.altered && queryInfo.altered !== queryInfo.original);
+  const originalQuery = queryCorrected ? (queryInfo?.original ?? params.query) : undefined;
+  const correctedQuery = queryCorrected ? queryInfo?.altered : undefined;
+  const moreResultsAvailable = queryInfo?.more_results_available ?? false;
+
+  const normalized = rawResults.map(normalizeBraveResult);
+  const deduplicated = deduplicateResults(normalized);
+
+  return {
+    results: {
+      results: deduplicated,
+      summarizerKey,
+      queryCorrected,
+      originalQuery,
+      correctedQuery,
+      moreResultsAvailable,
+    },
+    latencyMs: timed.latencyMs,
+    rateLimit: timed.rateLimit,
+  };
+}
+
+function availableComboProviders(): Array<'tavily' | 'brave' | 'ollama'> {
+  const providers: Array<'tavily' | 'brave' | 'ollama'> = [];
+  if (getTavilyApiKey()) providers.push('tavily');
+  if (getBraveApiKey()) providers.push('brave');
+  if (getOllamaApiKey()) providers.push('ollama');
+  return providers;
+}
+
+async function executeComboSearch(
+  params: { query: string; freshness: string | null; domain?: string; wantSummary: boolean; count: number },
+  signal?: AbortSignal,
+): Promise<{ results: CachedSearchResult; latencyMs: number; rateLimit?: RateLimitInfo }> {
+  const providers = availableComboProviders();
+  const tasks = providers.map(async (provider) => {
+    if (provider === 'tavily') {
+      return executeTavilySearch(
+        { query: params.query, freshness: params.freshness, domain: params.domain, wantSummary: params.wantSummary },
+        signal,
+      );
+    }
+    if (provider === 'ollama') {
+      return executeOllamaSearch({ query: params.query, count: Math.max(10, params.count) }, signal);
+    }
+    let effectiveQuery = params.query;
+    if (params.domain && !effectiveQuery.toLowerCase().includes("site:")) {
+      effectiveQuery = `site:${params.domain} ${effectiveQuery}`;
+    }
+    return executeBraveSearch(
+      { query: params.query, effectiveQuery, freshness: params.freshness, wantSummary: params.wantSummary },
+      signal,
+    );
+  });
+
+  const settled = await Promise.allSettled(tasks);
+  const fulfilled = settled.filter((entry): entry is PromiseFulfilledResult<{ results: CachedSearchResult; latencyMs: number; rateLimit?: RateLimitInfo }> => entry.status === 'fulfilled');
+
+  if (fulfilled.length === 0) {
+    const firstRejected = settled.find((entry): entry is PromiseRejectedResult => entry.status === 'rejected');
+    throw firstRejected?.reason ?? new Error("combosearch failed");
+  }
+
+  const merged = deduplicateResults(
+    fulfilled.flatMap((entry) => entry.value.results.results),
+  );
+  const summaryParts = fulfilled
+    .map((entry) => entry.value.results.summaryText)
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0);
+  const summarizerKey = fulfilled.find((entry) => entry.value.results.summarizerKey)?.value.results.summarizerKey;
+  const latencyMs = Math.max(...fulfilled.map((entry) => entry.value.latencyMs));
+  const rateLimit = fulfilled.find((entry) => entry.value.rateLimit)?.value.rateLimit;
+
+  return {
+    results: {
+      results: merged,
+      summaryText: summaryParts.length > 0 ? summaryParts.join("\n\n") : undefined,
+      summarizerKey,
+      queryCorrected: fulfilled.some((entry) => entry.value.results.queryCorrected),
+      originalQuery: fulfilled.find((entry) => entry.value.results.originalQuery)?.value.results.originalQuery,
+      correctedQuery: fulfilled.find((entry) => entry.value.results.correctedQuery)?.value.results.correctedQuery,
+      moreResultsAvailable: fulfilled.some((entry) => entry.value.results.moreResultsAvailable),
+    },
+    latencyMs,
+    rateLimit,
+  };
+}
+
 // =============================================================================
 // Tool Registration
 // =============================================================================
@@ -404,7 +520,7 @@ export function registerSearchTool(pi: ExtensionAPI) {
       // ------------------------------------------------------------------
       // Cache lookup (provider-prefixed key)
       // ------------------------------------------------------------------
-      const cacheKey = normalizeQuery(effectiveQuery) + `|f:${freshness || ""}|s:${wantSummary}|p:${provider}`;
+      const cacheKey = normalizeQuery(effectiveQuery) + `|d:${params.domain || ""}|f:${freshness || ""}|s:${wantSummary}|p:${provider}`;
 
       // ── Consecutive duplicate search guard (#949, #1671) ─────────────────
       // If the LLM keeps calling the same search query, break the loop
@@ -490,7 +606,15 @@ export function registerSearchTool(pi: ExtensionAPI) {
         let latencyMs: number | undefined;
         let rateLimit: RateLimitInfo | undefined;
 
-        if (provider === "tavily") {
+        if (provider === "combosearch") {
+          const comboResult = await executeComboSearch(
+            { query: params.query, freshness, domain: params.domain, wantSummary, count },
+            signal,
+          );
+          searchResult = comboResult.results;
+          latencyMs = comboResult.latencyMs;
+          rateLimit = comboResult.rateLimit;
+        } else if (provider === "tavily") {
           const tavilyResult = await executeTavilySearch(
             { query: params.query, freshness, domain: params.domain, wantSummary },
             signal
@@ -507,53 +631,13 @@ export function registerSearchTool(pi: ExtensionAPI) {
           latencyMs = ollamaResult.latencyMs;
           rateLimit = ollamaResult.rateLimit;
         } else {
-          // ================================================================
-          // BRAVE PATH (unchanged API logic)
-          // ================================================================
-          const url = new URL("https://api.search.brave.com/res/v1/web/search");
-          url.searchParams.append("q", effectiveQuery);
-          url.searchParams.append("count", "10"); // Extra for dedup headroom
-          url.searchParams.append("extra_snippets", "true");
-          url.searchParams.append("text_decorations", "false");
-
-          if (freshness) {
-            url.searchParams.append("freshness", freshness);
-          }
-          if (wantSummary) {
-            url.searchParams.append("summary", "1");
-          }
-
-          const timed = await fetchWithRetryTimed(url.toString(), {
-            method: "GET",
-            headers: braveHeaders(),
+          const braveResult = await executeBraveSearch(
+            { query: params.query, effectiveQuery, freshness, wantSummary },
             signal,
-          }, 2);
-
-          const data: BraveSearchResponse = await timed.response.json();
-          const rawResults: BraveWebResult[] = data.web?.results ?? [];
-          const summarizerKey: string | undefined = data.summarizer?.key;
-
-          // Extract spellcheck/correction info
-          const queryInfo = data.query;
-          const queryCorrected = !!(queryInfo?.altered && queryInfo.altered !== queryInfo.original);
-          const originalQuery = queryCorrected ? (queryInfo?.original ?? params.query) : undefined;
-          const correctedQuery = queryCorrected ? queryInfo?.altered : undefined;
-          const moreResultsAvailable = queryInfo?.more_results_available ?? false;
-
-          // Normalize, deduplicate
-          const normalized = rawResults.map(normalizeBraveResult);
-          const deduplicated = deduplicateResults(normalized);
-
-          searchResult = {
-            results: deduplicated,
-            summarizerKey,
-            queryCorrected,
-            originalQuery,
-            correctedQuery,
-            moreResultsAvailable,
-          };
-          latencyMs = timed.latencyMs;
-          rateLimit = timed.rateLimit;
+          );
+          searchResult = braveResult.results;
+          latencyMs = braveResult.latencyMs;
+          rateLimit = braveResult.rateLimit;
         }
 
         // ------------------------------------------------------------------

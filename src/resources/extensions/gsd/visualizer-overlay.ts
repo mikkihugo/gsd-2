@@ -1,5 +1,5 @@
-import type { Theme } from "@gsd/pi-coding-agent";
-import { truncateToWidth, visibleWidth, matchesKey, Key } from "@gsd/pi-tui";
+import type { Theme } from "@sf-run/pi-coding-agent";
+import { truncateToWidth, visibleWidth, matchesKey, Key } from "@sf-run/pi-tui";
 import { loadVisualizerData, type VisualizerData } from "./visualizer-data.js";
 import {
   renderProgressView,

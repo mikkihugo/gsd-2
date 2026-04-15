@@ -13,8 +13,8 @@
 
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { AuthStorage } from "@gsd/pi-coding-agent";
-import { getEnvApiKey } from "@gsd/pi-ai";
+import { AuthStorage } from "@sf-run/pi-coding-agent";
+import { getEnvApiKey } from "@sf-run/pi-ai";
 import { loadEffectiveGSDPreferences } from "./preferences.js";
 import { getAuthPath, PROVIDER_REGISTRY, type ProviderCategory } from "./key-manager.js";
 

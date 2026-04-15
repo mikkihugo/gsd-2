@@ -30,7 +30,7 @@ export const MAX_NATIVE_SEARCHES_PER_SESSION = 15;
 export function preferBraveSearch(): boolean {
   // PREFERENCES.md takes priority over env var
   const prefsPref = resolveSearchProviderFromPreferences();
-  if (prefsPref === "brave" || prefsPref === "tavily" || prefsPref === "ollama") return true;
+  if (prefsPref === "brave" || prefsPref === "tavily" || prefsPref === "ollama" || prefsPref === "combosearch") return true;
   if (prefsPref === "native") return false;
   // Fall back to env var
   return process.env.PREFER_BRAVE_SEARCH === "1" || process.env.PREFER_BRAVE_SEARCH === "true";

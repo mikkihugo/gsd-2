@@ -106,6 +106,16 @@ test('resolveSearchProvider returns brave when both keys set and preference is b
   })
 })
 
+test('resolveSearchProvider returns combosearch when preference is combosearch and any source is available', async () => {
+  const { resolveSearchProvider } = await import(
+    '../resources/extensions/search-the-web/provider.ts'
+  )
+  withEnv({ TAVILY_API_KEY: 'tvly-test', BRAVE_API_KEY: undefined, OLLAMA_API_KEY: undefined }, () => {
+    const result = resolveSearchProvider('combosearch')
+    assert.equal(result, 'combosearch')
+  })
+})
+
 test('resolveSearchProvider returns null when neither key is set', async () => {
   const { resolveSearchProvider } = await import(
     '../resources/extensions/search-the-web/provider.ts'
@@ -184,6 +194,9 @@ test('setSearchProviderPreference writes to auth.json via AuthStorage', async (t
   // Round-trip: change to tavily
   setSearchProviderPreference('tavily', authPath)
   assert.equal(getSearchProviderPreference(authPath), 'tavily')
+
+  setSearchProviderPreference('combosearch', authPath)
+  assert.equal(getSearchProviderPreference(authPath), 'combosearch')
 
   // Round-trip: change to auto
   setSearchProviderPreference('auto', authPath)

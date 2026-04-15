@@ -4,7 +4,7 @@
  * that appears 6+ times in auto.ts.
  */
 
-import type { ExtensionContext } from "@gsd/pi-coding-agent";
+import type { ExtensionContext } from "@sf-run/pi-coding-agent";
 import { snapshotUnitMetrics } from "./metrics.js";
 import { saveActivityLog } from "./activity-log.js";
 import { logWarning } from "./workflow-logger.js";

@@ -17,8 +17,8 @@ import { join } from 'node:path'
 import { resolve } from 'node:path'
 import { ChildProcess } from 'node:child_process'
 
-import { RpcClient, SessionManager } from '@gsd/pi-coding-agent'
-import type { SessionInfo } from '@gsd/pi-coding-agent'
+import { RpcClient, SessionManager } from '@sf-run/pi-coding-agent'
+import type { SessionInfo } from '@sf-run/pi-coding-agent'
 import { getProjectSessionsDir } from './project-sessions.js'
 import { loadAndValidateAnswerFile, AnswerInjector } from './headless-answers.js'
 

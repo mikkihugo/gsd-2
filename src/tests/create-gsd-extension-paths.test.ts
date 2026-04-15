@@ -3,7 +3,7 @@
  * community extension install path (~/.pi/agent/extensions/) instead of the
  * bundled-only path (~/.gsd/agent/extensions/).
  *
- * Bug: https://github.com/gsd-build/gsd-2/issues/3131
+ * Bug: https://github.com/singularity-forge/sf-run/issues/3131
  *
  * ~/.gsd/agent/extensions/ is reserved for bundled extensions synced from
  * the gsd-pi package. Community/user extensions must use ~/.pi/agent/extensions/.

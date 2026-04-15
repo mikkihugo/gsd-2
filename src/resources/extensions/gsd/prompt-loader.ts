@@ -150,7 +150,7 @@ export function loadPrompt(name: string, vars: Record<string, string> = {}): str
 
     // Use split/join instead of replaceAll to avoid JavaScript's special
     // replacement patterns ($', $`, $&) being interpreted in the value.
-    // See: https://github.com/gsd-build/gsd-2/issues/2968
+    // See: https://github.com/singularity-forge/sf-run/issues/2968
     content = content.split(`{{${key}}}`).join(safeValue);
   }
 

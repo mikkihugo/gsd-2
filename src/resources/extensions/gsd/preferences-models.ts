@@ -341,6 +341,11 @@ export function resolveDynamicRoutingConfig(): DynamicRoutingConfig {
   };
 }
 
+export function resolvePersistModelChanges(): boolean {
+  const prefs = loadEffectiveGSDPreferences();
+  return prefs?.preferences.persist_model_changes !== false;
+}
+
 export function resolveAutoSupervisorConfig(): AutoSupervisorConfig {
   const prefs = loadEffectiveGSDPreferences();
   const configured = prefs?.preferences.auto_supervisor ?? {};

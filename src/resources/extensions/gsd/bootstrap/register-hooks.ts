@@ -1,7 +1,7 @@
 import { join } from "node:path";
 
-import type { ExtensionAPI, ExtensionContext } from "@gsd/pi-coding-agent";
-import { isToolCallEventType } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@sf-run/pi-coding-agent";
+import { isToolCallEventType } from "@sf-run/pi-coding-agent";
 
 import { buildMilestoneFileName, resolveMilestonePath, resolveSliceFile, resolveSlicePath } from "../paths.js";
 import { buildBeforeAgentStartResult } from "./system-context.js";
@@ -19,12 +19,14 @@ import { checkToolCallLoop, resetToolCallLoopGuard } from "./tool-call-loop-guar
 import { saveActivityLog } from "../activity-log.js";
 import { resetAskUserQuestionsCache } from "../../ask-user-questions.js";
 import { recordToolCall as safetyRecordToolCall, recordToolResult as safetyRecordToolResult } from "../safety/evidence-collector.js";
+import { recordToolCallName } from "../auto-tool-tracking.js";
 import { classifyCommand } from "../safety/destructive-guard.js";
 import { logWarning as safetyLogWarning } from "../workflow-logger.js";
 import { installNotifyInterceptor } from "./notify-interceptor.js";
 import { initNotificationStore } from "../notification-store.js";
 import { initNotificationWidget } from "../notification-widget.js";
 import { initHealthWidget } from "../health-widget.js";
+import { initializeLearningRuntime, resetLearningRuntime, selectLearnedModel } from "../learning/runtime.js";
 
 // Skip the welcome screen on the very first session_start — cli.ts already
 // printed it before the TUI launched. Only re-print on /clear (subsequent sessions).
@@ -37,6 +39,16 @@ async function syncServiceTierStatus(ctx: ExtensionContext): Promise<void> {
 
 export function registerHooks(pi: ExtensionAPI): void {
   pi.on("session_start", async (_event, ctx) => {
+    resetLearningRuntime();
+    try {
+      const sid = ctx.sessionManager?.getSessionId?.() ?? "";
+      const sfile = ctx.sessionManager?.getSessionFile?.() ?? "";
+      if (sid) {
+        process.stderr.write(`[gsd] session ${sid.slice(0, 8)} · ${sfile}\n`);
+      }
+    } catch {
+      /* non-fatal */
+    }
     initNotificationStore(process.cwd());
     installNotifyInterceptor(ctx);
     initNotificationWidget(ctx);
@@ -47,6 +59,7 @@ export function registerHooks(pi: ExtensionAPI): void {
     await syncServiceTierStatus(ctx);
     const { prepareWorkflowMcpForProject } = await import("../workflow-mcp-auto-prep.js");
     prepareWorkflowMcpForProject(ctx, process.cwd());
+    await initializeLearningRuntime();
 
     // Apply show_token_cost preference (#1515)
     try {
@@ -80,6 +93,7 @@ export function registerHooks(pi: ExtensionAPI): void {
   });
 
   pi.on("session_switch", async (_event, ctx) => {
+    resetLearningRuntime();
     initNotificationStore(process.cwd());
     installNotifyInterceptor(ctx);
     resetWriteGateState();
@@ -89,6 +103,7 @@ export function registerHooks(pi: ExtensionAPI): void {
     await syncServiceTierStatus(ctx);
     const { prepareWorkflowMcpForProject } = await import("../workflow-mcp-auto-prep.js");
     prepareWorkflowMcpForProject(ctx, process.cwd());
+    await initializeLearningRuntime();
     loadToolApiKeys();
   });
 
@@ -155,6 +170,7 @@ export function registerHooks(pi: ExtensionAPI): void {
   });
 
   pi.on("session_shutdown", async (_event, ctx: ExtensionContext) => {
+    resetLearningRuntime();
     if (isParallelActive()) {
       try {
         await shutdownParallel(process.cwd());
@@ -360,6 +376,7 @@ export function registerHooks(pi: ExtensionAPI): void {
   pi.on("tool_execution_start", async (event) => {
     if (!isAutoActive()) return;
     markToolStart(event.toolCallId);
+    recordToolCallName(event.toolName);
   });
 
   pi.on("tool_execution_end", async (event) => {
@@ -446,9 +463,12 @@ export function registerHooks(pi: ExtensionAPI): void {
   // Capability-aware model routing hook (ADR-004)
   // Extensions can override model selection by returning { modelId: "..." }
   // Return undefined to let the built-in capability scoring proceed.
-  pi.on("before_model_select", async (_event) => {
-    // Default: no override — let capability scoring handle selection
-    return undefined;
+  pi.on("before_model_select", async (event) => {
+    return selectLearnedModel({
+      unitType: event.unitType,
+      eligibleModels: event.eligibleModels,
+      phaseConfig: event.phaseConfig,
+    });
   });
 
   // Tool set adaptation hook (ADR-005 Phase 4)

@@ -1,5 +1,5 @@
-import type { Component, TUI } from "@gsd/pi-tui";
-import { visibleWidth } from "@gsd/pi-tui";
+import type { Component, TUI } from "@sf-run/pi-tui";
+import { visibleWidth } from "@sf-run/pi-tui";
 import { theme } from "../theme/theme.js";
 
 /**

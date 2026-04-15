@@ -84,6 +84,29 @@ export function clearInFlightTools(): void {
   inFlightTools.clear();
 }
 
+const MAX_TOP_TOOLS_IN_SUMMARY = 5;
+const toolCallCountsByName = new Map<string, number>();
+
+export function resetToolCallCounts(): void {
+  toolCallCountsByName.clear();
+}
+
+export function recordToolCallName(toolName: string): void {
+  if (!toolName) return;
+  toolCallCountsByName.set(toolName, (toolCallCountsByName.get(toolName) ?? 0) + 1);
+}
+
+export function formatToolCallSummary(): string | null {
+  if (toolCallCountsByName.size === 0) return null;
+  let total = 0;
+  for (const count of toolCallCountsByName.values()) total += count;
+  const ranked = [...toolCallCountsByName.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, MAX_TOP_TOOLS_IN_SUMMARY)
+    .map(([name, count]) => `${name}×${count}`);
+  return `${total} calls (top-${ranked.length}: ${ranked.join(", ")})`;
+}
+
 // ─── Tool invocation error classification (#2883) ────────────────────────
 
 /**

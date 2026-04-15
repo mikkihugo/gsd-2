@@ -1,15 +1,15 @@
 {
-  "name": "gsd-pi",
+  "name": "sf-run",
   "version": "2.74.0",
-  "description": "GSD — Get Shit Done coding agent",
+  "description": "sf-run — Singularity Forge runtime core",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsd-build/gsd-2.git"
+    "url": "https://github.com/singularity-forge/sf-run.git"
   },
-  "homepage": "https://github.com/gsd-build/gsd-2#readme",
+  "homepage": "https://github.com/singularity-forge/sf-run#readme",
   "bugs": {
-    "url": "https://github.com/gsd-build/gsd-2/issues"
+    "url": "https://github.com/singularity-forge/sf-run/issues"
   },
   "type": "module",
   "workspaces": [
@@ -17,8 +17,8 @@
     "studio"
   ],
   "bin": {
-    "gsd": "dist/loader.js",
-    "gsd-cli": "dist/loader.js"
+    "sf": "dist/loader.js",
+    "sf-cli": "dist/loader.js"
   },
   "files": [
     "dist",
@@ -33,22 +33,22 @@
     "README.md"
   ],
   "piConfig": {
-    "name": "gsd",
-    "configDir": ".gsd"
+    "name": "sf",
+    "configDir": ".sf"
   },
   "engines": {
     "node": ">=22.0.0"
   },
   "packageManager": "npm@10.9.3",
   "scripts": {
-    "build:pi-tui": "npm run build -w @gsd/pi-tui",
-    "build:pi-ai": "npm run build -w @gsd/pi-ai",
-    "build:pi-agent-core": "npm run build -w @gsd/pi-agent-core",
-    "build:pi-coding-agent": "npm run build -w @gsd/pi-coding-agent",
-    "build:native-pkg": "npm run build -w @gsd/native",
-    "build:rpc-client": "npm run build -w @gsd-build/rpc-client",
+    "build:pi-tui": "npm run build -w @sf-run/pi-tui",
+    "build:pi-ai": "npm run build -w @sf-run/pi-ai",
+    "build:pi-agent-core": "npm run build -w @sf-run/pi-agent-core",
+    "build:pi-coding-agent": "npm run build -w @sf-run/pi-coding-agent",
+    "build:native-pkg": "npm run build -w @sf-run/native",
+    "build:rpc-client": "npm run build -w @singularity-forge/rpc-client",
     "build:pi": "npm run build:native-pkg && npm run build:pi-tui && npm run build:pi-ai && npm run build:pi-agent-core && npm run build:pi-coding-agent",
-    "build:mcp-server": "npm run build -w @gsd-build/mcp-server",
+    "build:mcp-server": "npm run build -w @singularity-forge/mcp-server",
     "build:core": "npm run build:pi && npm run build:rpc-client && npm run build:mcp-server && tsc && npm run copy-resources && npm run copy-themes && npm run copy-export-html",
     "build": "npm run build:core && node scripts/build-web-if-stale.cjs",
     "stage:web-host": "node scripts/stage-web-standalone.cjs",
@@ -76,10 +76,10 @@
     "build:native": "node native/scripts/build.js",
     "build:native:dev": "node native/scripts/build.js --dev",
     "dev": "node scripts/dev.js",
-    "gsd": "node scripts/dev-cli.js",
-    "gsd:web": "npm run build:pi && npm run copy-resources && node scripts/build-web-if-stale.cjs && node scripts/dev-cli.js --web",
-    "gsd:web:stop": "node scripts/dev-cli.js web stop",
-    "gsd:web:stop:all": "node scripts/dev-cli.js web stop all",
+    "sf": "node scripts/dev-cli.js",
+    "sf:web": "npm run build:pi && npm run copy-resources && node scripts/build-web-if-stale.cjs && node scripts/dev-cli.js --web",
+    "sf:web:stop": "node scripts/dev-cli.js web stop",
+    "sf:web:stop:all": "node scripts/dev-cli.js web stop all",
     "postinstall": "node scripts/link-workspace-packages.cjs && node scripts/ensure-workspace-builds.cjs && node scripts/postinstall.js",
     "pi:install-global": "node scripts/install-pi-global.js",
     "pi:uninstall-global": "node scripts/uninstall-pi-global.js",
@@ -91,8 +91,8 @@
     "release:changelog": "node scripts/generate-changelog.mjs",
     "release:bump": "node scripts/bump-version.mjs",
     "release:update-changelog": "node scripts/update-changelog.mjs",
-    "docker:build-runtime": "docker build --target runtime -t ghcr.io/gsd-build/gsd-pi .",
-    "docker:build-builder": "docker build --target builder -t ghcr.io/gsd-build/gsd-ci-builder .",
+    "docker:build-runtime": "docker build --target runtime -t ghcr.io/singularity-forge/sf-run .",
+    "docker:build-builder": "docker build --target builder -t ghcr.io/singularity-forge/sf-ci-builder .",
     "prepublishOnly": "npm run sync-pkg-version && npm run sync-platform-versions && node scripts/prepublish-check.mjs && npm run build && npm run typecheck:extensions && npm run validate-pack",
     "test:live-regression": "node --experimental-strip-types tests/live-regression/run.ts"
   },
@@ -145,11 +145,11 @@
   },
   "optionalDependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.83",
-    "@gsd-build/engine-darwin-arm64": ">=2.10.2",
-    "@gsd-build/engine-darwin-x64": ">=2.10.2",
-    "@gsd-build/engine-linux-arm64-gnu": ">=2.10.2",
-    "@gsd-build/engine-linux-x64-gnu": ">=2.10.2",
-    "@gsd-build/engine-win32-x64-msvc": ">=2.10.2",
+    "@singularity-forge/engine-darwin-arm64": ">=2.10.2",
+    "@singularity-forge/engine-darwin-x64": ">=2.10.2",
+    "@singularity-forge/engine-linux-arm64-gnu": ">=2.10.2",
+    "@singularity-forge/engine-linux-x64-gnu": ">=2.10.2",
+    "@singularity-forge/engine-win32-x64-msvc": ">=2.10.2",
     "fsevents": "~2.3.3",
     "koffi": "^2.9.0"
   },

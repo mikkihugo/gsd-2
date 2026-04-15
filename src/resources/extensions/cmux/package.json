@@ -1,5 +1,5 @@
 {
-  "name": "@gsd/cmux",
+  "name": "@sf-run/cmux",
   "private": true,
   "type": "module",
   "description": "cmux integration library — used by other extensions, not an extension itself",

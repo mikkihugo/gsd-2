@@ -279,7 +279,7 @@ gsd --version     # 输出已安装版本
 **第 2 步：克隆 GSD 仓库：**
 
 ```bash
-git clone https://github.com/gsd-build/gsd-2.git
+git clone https://github.com/singularity-forge/sf-run.git
 cd gsd-2/docker
 ```
 

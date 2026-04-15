@@ -1,7 +1,7 @@
 // Agent activeInferenceModel regression tests
 // Verifies that activeInferenceModel is set/cleared correctly in _runLoop,
 // and that the footer reads activeInferenceModel instead of state.model.
-// Regression test for https://github.com/gsd-build/gsd-2/issues/1844 Bug 2
+// Regression test for https://github.com/singularity-forge/sf-run/issues/1844 Bug 2
 
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
@@ -9,7 +9,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Agent } from "./agent.ts";
-import { getModel, type AssistantMessageEventStream } from "@gsd/pi-ai";
+import { getModel, type AssistantMessageEventStream } from "@sf-run/pi-ai";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

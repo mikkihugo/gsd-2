@@ -21,7 +21,7 @@ import {
 	parseClaudeLookupOutput,
 	roundResultToElicitationContent,
 } from "../stream-adapter.ts";
-import type { AssistantMessage, Context, Message } from "@gsd/pi-ai";
+import type { AssistantMessage, Context, Message } from "@sf-run/pi-ai";
 import type { SDKUserMessage } from "../sdk-types.ts";
 
 // ---------------------------------------------------------------------------

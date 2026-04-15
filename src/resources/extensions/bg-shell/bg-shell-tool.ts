@@ -2,9 +2,9 @@
  * bg_shell tool registration — the core tool that agents use to manage background processes.
  */
 
-import { StringEnum } from "@gsd/pi-ai";
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { Text } from "@gsd/pi-tui";
+import { StringEnum } from "@sf-run/pi-ai";
+import type { ExtensionAPI } from "@sf-run/pi-coding-agent";
+import { Text } from "@sf-run/pi-tui";
 import { Type } from "@sinclair/typebox";
 
 import type { BgProcessInfo, ProcessType } from "./types.js";

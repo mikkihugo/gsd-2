@@ -1,4 +1,4 @@
-import type { RpcClient, SdkAgentEvent, RpcExtensionUIRequest } from '@gsd-build/rpc-client';
+import type { RpcClient, SdkAgentEvent, RpcExtensionUIRequest } from '@singularity-forge/rpc-client';
 
 /**
  * Log severity levels, ordered from most to least verbose.

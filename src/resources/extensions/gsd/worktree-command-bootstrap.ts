@@ -1,4 +1,4 @@
-import { importExtensionModule, type ExtensionAPI, type ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import { importExtensionModule, type ExtensionAPI, type ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 const WORKTREE_SUBCOMMANDS = [
   { cmd: "list", desc: "List existing worktrees" },

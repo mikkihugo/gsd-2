@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// GSD Startup Loader
-// Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
+// SF Startup Loader
+// Copyright (c) 2026 Singularity Forge
 import { fileURLToPath } from 'url'
 import { dirname, resolve, join, relative, delimiter } from 'path'
 import { existsSync, readFileSync, mkdirSync, symlinkSync, cpSync } from 'fs'
@@ -46,7 +46,7 @@ if (firstArg === '--help' || firstArg === '-h') {
   const nodeMajor = parseInt(process.versions.node.split('.')[0], 10)
   if (nodeMajor < MIN_NODE_MAJOR) {
     process.stderr.write(
-      `\n${red}${bold}Error:${reset} GSD requires Node.js >= ${MIN_NODE_MAJOR}.0.0\n` +
+      `\n${red}${bold}Error:${reset} SF requires Node.js >= ${MIN_NODE_MAJOR}.0.0\n` +
       `       You are running Node.js ${process.versions.node}\n\n` +
       `${dim}Install a supported version:${reset}\n` +
       `  nvm install ${MIN_NODE_MAJOR}   ${dim}# if using nvm${reset}\n` +
@@ -62,7 +62,7 @@ if (firstArg === '--help' || firstArg === '-h') {
     execFileSync('git', ['--version'], { stdio: 'ignore' })
   } catch {
     process.stderr.write(
-      `\n${red}${bold}Error:${reset} GSD requires git but it was not found on PATH.\n\n` +
+      `\n${red}${bold}Error:${reset} SF requires git but it was not found on PATH.\n\n` +
       `${dim}Install git:${reset}\n` +
       `  https://git-scm.com/downloads\n\n`
     )
@@ -80,15 +80,15 @@ import { renderLogo } from './logo.js'
 // pkg/ is a shim directory: contains gsd's piConfig (package.json) and pi's
 // theme assets (dist/modes/interactive/theme/) without a src/ directory.
 // This allows config.js to:
-//   1. Read piConfig.name → "gsd" (branding)
+//   1. Read piConfig.name → "sf" (branding)
 //   2. Resolve themes via dist/ (no src/ present → uses dist path)
 const pkgDir = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'pkg')
 
 // MUST be set before any dynamic import of pi SDK fires — this is what config.js
 // reads to determine APP_NAME and CONFIG_DIR_NAME
 process.env.PI_PACKAGE_DIR = pkgDir
-process.env.PI_SKIP_VERSION_CHECK = '1'  // GSD runs its own update check in cli.ts — suppress pi's
-process.title = 'gsd'
+process.env.PI_SKIP_VERSION_CHECK = '1'  // SF runs its own update check in cli.ts — suppress pi's
+process.title = 'sf'
 
 // Print branded banner on first launch (before ~/.gsd/ exists).
 // Set GSD_FIRST_RUN_BANNER so cli.ts skips the duplicate welcome screen.
@@ -101,7 +101,7 @@ if (!existsSync(appRoot)) {
   process.stderr.write(
     renderLogo(colorCyan) +
     '\n' +
-    `  Get Shit Done ${dim}v${gsdVersion}${reset}\n` +
+    `  Singularity Forge ${dim}v${gsdVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
   process.env.GSD_FIRST_RUN_BANNER = '1'
@@ -177,7 +177,7 @@ if (process.env.HTTP_PROXY || process.env.HTTPS_PROXY || process.env.http_proxy 
 }
 
 // Ensure workspace packages are linked (or copied on Windows) before importing
-// cli.js (which imports @gsd/*).
+// cli.js (which imports @sf-run/*).
 // npm postinstall handles this normally, but npx --ignore-scripts skips postinstall.
 // On Windows without Developer Mode or admin rights, symlinkSync will throw even for
 // 'junction' type — so we fall back to cpSync (a full directory copy) which works
@@ -207,7 +207,7 @@ try {
 const criticalPackages = ['pi-coding-agent']
 const missingPackages = criticalPackages.filter(pkg => !existsSync(join(gsdScopeDir, pkg)))
 if (missingPackages.length > 0) {
-  const missing = missingPackages.map(p => `@gsd/${p}`).join(', ')
+  const missing = missingPackages.map(p => `@sf-run/${p}`).join(', ')
   process.stderr.write(
     `\nError: GSD installation is broken — missing packages: ${missing}\n\n` +
     `This is usually caused by one of:\n` +
@@ -217,7 +217,7 @@ if (missingPackages.length > 0) {
     `Fix it by reinstalling:\n\n` +
     `  npm install -g gsd-pi@latest\n\n` +
     `If the issue persists, please open an issue at:\n` +
-    `  https://github.com/gsd-build/gsd-2/issues\n`
+    `  https://github.com/singularity-forge/sf-run/issues\n`
   )
   process.exit(1)
 }

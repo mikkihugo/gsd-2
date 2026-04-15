@@ -81,7 +81,7 @@ function discoverDbCompletedMilestones(basePath: string): Set<string> {
  * When basePath is provided, also checks worktree SQLite DBs as the
  * source of truth — workers with stale orchestrator state (e.g. "error")
  * are included if their worktree DB shows status='complete'.
- * See: https://github.com/gsd-build/gsd-2/issues/2812
+ * See: https://github.com/singularity-forge/sf-run/issues/2812
  */
 export function determineMergeOrder(
   workers: WorkerInfo[],

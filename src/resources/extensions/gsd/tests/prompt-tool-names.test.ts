@@ -3,7 +3,7 @@
 // The registered GSD tool is `search-the-web`, not `web_search`.
 // `web_search` is an Anthropic API implementation detail that should
 // never appear in GSD prompts or agent frontmatter.
-// See: https://github.com/gsd-build/gsd-2/issues/2920
+// See: https://github.com/singularity-forge/sf-run/issues/2920
 
 import test from "node:test";
 import assert from "node:assert/strict";

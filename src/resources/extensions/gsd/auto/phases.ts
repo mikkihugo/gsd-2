@@ -7,7 +7,7 @@
  * Imports from: auto/types, auto/detect-stuck, auto/run-unit, auto/loop-deps
  */
 
-import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@gsd/pi-coding-agent";
+import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from "@sf-run/pi-coding-agent";
 
 import type { AutoSession, SidecarItem } from "./session.js";
 import type { LoopDeps } from "./loop-deps.js";
@@ -52,12 +52,15 @@ import { ensurePlanV2Graph } from "../uok/plan-v2.js";
 import { resolveUokFlags } from "../uok/flags.js";
 import { UokGateRunner } from "../uok/gate-runner.js";
 import { resetEvidence } from "../safety/evidence-collector.js";
+import { resetToolCallCounts, formatToolCallSummary } from "../auto-tool-tracking.js";
 import { createCheckpoint, cleanupCheckpoint, rollbackToCheckpoint } from "../safety/git-checkpoint.js";
 import { resolveSafetyHarnessConfig } from "../safety/safety-harness.js";
 import {
   getWorkflowTransportSupportError,
   getRequiredWorkflowToolsForAutoUnit,
 } from "../workflow-mcp.js";
+import { resolvePersistModelChanges } from "../preferences.js";
+import { recordLearnedOutcome } from "../learning/runtime.js";
 
 // ─── generateMilestoneReport ──────────────────────────────────────────────────
 
@@ -90,6 +93,70 @@ const PLAN_V2_GATE_PHASES: ReadonlySet<Phase> = new Set([
 
 function shouldRunPlanV2Gate(phase: Phase): boolean {
   return PLAN_V2_GATE_PHASES.has(phase);
+}
+
+function shouldSkipArtifactVerification(unitType: string): boolean {
+  return unitType.startsWith("hook/") || unitType === "custom-step";
+}
+
+function recordLearningOutcomeForUnit(
+  ic: IterationContext,
+  unitType: string,
+  unitId: string,
+  startedAt: number | undefined,
+  outcome: {
+    succeeded: boolean;
+    verificationPassed: boolean | null;
+    blockerDiscovered?: boolean;
+    retries?: number;
+    escalated?: boolean;
+  },
+): void {
+  if (!startedAt) return;
+  const unitModel = ic.s.currentUnitModel;
+  const unitEntry = (ic.deps.getLedger() as {
+    units?: Array<{
+      type: string;
+      id: string;
+      startedAt: number;
+      finishedAt: number;
+      model: string;
+      cost: number;
+      tokens: { total: number };
+    }>;
+  } | null)?.units
+    ? [...((ic.deps.getLedger() as {
+        units?: Array<{
+          type: string;
+          id: string;
+          startedAt: number;
+          finishedAt: number;
+          model: string;
+          cost: number;
+          tokens: { total: number };
+        }>;
+      } | null)?.units ?? [])].reverse().find(
+        (u) => u.type === unitType && u.id === unitId && u.startedAt === startedAt,
+      )
+    : undefined;
+  const provider = unitModel?.provider ?? null;
+  const modelId = unitModel?.id ?? unitEntry?.model ?? null;
+  if (!provider || !modelId || !unitEntry) return;
+  recordLearnedOutcome({
+    modelId,
+    provider,
+    unitType,
+    unitId,
+    succeeded: outcome.succeeded,
+    retries: outcome.retries ?? 0,
+    escalated: outcome.escalated ?? false,
+    verification_passed: outcome.verificationPassed,
+    blocker_discovered: outcome.blockerDiscovered ?? false,
+    duration_ms: Math.max(0, unitEntry.finishedAt - unitEntry.startedAt),
+    tokens_total: unitEntry.tokens.total,
+    cost_usd: unitEntry.cost,
+    recorded_at: unitEntry.startedAt,
+  });
 }
 
 /**
@@ -787,7 +854,7 @@ export async function runDispatch(
     // gate) — pause instead of hard-stopping so the session is resumable with
     // `/gsd auto`. Error/info-level stops remain hard stops for infrastructure
     // failures and terminal conditions respectively.
-    // See: https://github.com/gsd-build/gsd-2/issues/2474
+    // See: https://github.com/singularity-forge/sf-run/issues/2474
     if (dispatchResult.level === "warning") {
       ctx.ui.notify(dispatchResult.reason, "warning");
       await deps.pauseAuto(ctx, pi);
@@ -1235,8 +1302,10 @@ export async function runUnitPhase(
   s.lastGitActionStatus = null;
   setCurrentPhase(unitType);
   s.lastToolInvocationError = null; // #2883: clear stale error from previous unit
+  resetToolCallCounts();
   const unitStartSeq = ic.nextSeq();
   deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: unitStartSeq, eventType: "unit-start", data: { unitType, unitId } });
+  ctx.ui.notify(`[unit] ${unitType} ${unitId} starting`, "info");
   deps.captureAvailableSkills();
   writeUnitRuntimeRecord(
     s.basePath,
@@ -1363,7 +1432,7 @@ export async function runUnitPhase(
     const availableModels = ctx.modelRegistry.getAvailable();
     const match = deps.resolveModelId(hookModelOverride, availableModels, ctx.model?.provider);
     if (match) {
-      const ok = await pi.setModel(match, { persist: false });
+      const ok = await pi.setModel(match, { persist: resolvePersistModelChanges() });
       if (ok) {
         s.currentUnitModel = match as AutoSession["currentUnitModel"];
         ctx.ui.notify(`Hook model override: ${match.provider}/${match.id}`, "info");
@@ -1582,6 +1651,10 @@ export async function runUnitPhase(
           `${unitType} ${unitId} completed with 0 tool calls — context exhaustion, will retry`,
           "warning",
         );
+        recordLearningOutcomeForUnit(ic, unitType, unitId, s.currentUnit?.startedAt, {
+          succeeded: false,
+          verificationPassed: null,
+        });
         // Fall through to next iteration where dispatch will re-derive
         // and re-dispatch this unit.
         return { action: "next", data: { unitStartedAt: s.currentUnit?.startedAt } };
@@ -1597,7 +1670,7 @@ export async function runUnitPhase(
     );
   }
 
-  const skipArtifactVerification = unitType.startsWith("hook/") || unitType === "custom-step";
+  const skipArtifactVerification = shouldSkipArtifactVerification(unitType);
   const artifactVerified =
     skipArtifactVerification ||
     verifyExpectedArtifact(unitType, unitId, s.basePath);
@@ -1625,7 +1698,43 @@ export async function runUnitPhase(
     }
   }
 
+  if (unitResult.status !== "completed" || !artifactVerified) {
+    recordLearningOutcomeForUnit(ic, unitType, unitId, s.currentUnit?.startedAt, {
+      succeeded: false,
+      verificationPassed: null,
+    });
+  }
+
   deps.emitJournalEvent({ ts: new Date().toISOString(), flowId: ic.flowId, seq: ic.nextSeq(), eventType: "unit-end", data: { unitType, unitId, status: unitResult.status, artifactVerified, ...(unitResult.errorContext ? { errorContext: unitResult.errorContext } : {}) }, causedBy: { flowId: ic.flowId, seq: unitStartSeq } });
+
+  {
+    const verdict = unitResult.status === "completed"
+      ? (artifactVerified ? "success" : "blocked")
+      : unitResult.status === "error"
+        ? "fail"
+        : unitResult.status;
+    const ledger = deps.getLedger() as {
+      units?: Array<{ type: string; id: string; startedAt: number; cost: number; tokens: { total: number }; toolCalls: number }>;
+    } | null;
+    const unitEntry = ledger?.units
+      ? [...ledger.units].reverse().find(
+          (u) => u.type === unitType && u.id === unitId && u.startedAt === s.currentUnit?.startedAt,
+        )
+      : undefined;
+    if (unitEntry) {
+      const costStr = deps.formatCost(unitEntry.cost);
+      ctx.ui.notify(
+        `[unit] ${unitType} ${unitId} ended -> ${verdict} (${costStr}, ${unitEntry.tokens.total} tokens, ${unitEntry.toolCalls} tool calls)`,
+        "info",
+      );
+    } else {
+      ctx.ui.notify(`[unit] ${unitType} ${unitId} ended -> ${verdict}`, "info");
+    }
+    const toolSummary = formatToolCallSummary();
+    if (toolSummary) {
+      ctx.ui.notify(`[mcp] ${toolSummary}`, "info");
+    }
+  }
 
   // ── Safety harness: checkpoint cleanup or rollback ──
   if (s.checkpointSha) {
@@ -1784,11 +1893,19 @@ export async function runFinalize(
     );
 
     if (verificationResult === "pause") {
+      recordLearningOutcomeForUnit(ic, iterData.unitType, iterData.unitId, s.currentUnit?.startedAt, {
+        succeeded: false,
+        verificationPassed: false,
+      });
       debugLog("autoLoop", { phase: "exit", reason: "verification-pause" });
       return { action: "break", reason: "verification-pause" };
     }
 
     if (verificationResult === "retry") {
+      recordLearningOutcomeForUnit(ic, iterData.unitType, iterData.unitId, s.currentUnit?.startedAt, {
+        succeeded: false,
+        verificationPassed: false,
+      });
       if (sidecarItem) {
         // Sidecar verification retries are skipped — just continue
         debugLog("autoLoop", { phase: "sidecar-verification-retry-skipped", iteration: ic.iteration });
@@ -1866,6 +1983,16 @@ export async function runFinalize(
   // Surface accumulated workflow-logger issues for this unit to the user.
   // Warnings/errors logged during the unit are buffered in the logger and
   // drained here so the user sees a single consolidated post-unit alert.
+  const finalizedArtifactVerified =
+    shouldSkipArtifactVerification(iterData.unitType) ||
+    verifyExpectedArtifact(iterData.unitType, iterData.unitId, s.basePath);
+  if (finalizedArtifactVerified) {
+    recordLearningOutcomeForUnit(ic, iterData.unitType, iterData.unitId, s.currentUnit?.startedAt, {
+      succeeded: true,
+      verificationPassed: iterData.unitType === "execute-task" ? true : null,
+    });
+  }
+
   if (hasAnyIssues()) {
     const { logs } = drainAndSummarize();
     if (logs.length > 0) {

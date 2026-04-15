@@ -103,7 +103,7 @@ git commit -m "feat(ci): add version stamp script for dev publishes"
 ```dockerfile
 # ──────────────────────────────────────────────
 # Stage 1: CI Builder
-# Image: ghcr.io/gsd-build/gsd-ci-builder
+# Image: ghcr.io/singularity-forge/sf-ci-builder
 # Used by: pipeline.yml Dev stage
 # ──────────────────────────────────────────────
 FROM node:22-bookworm AS builder
@@ -124,7 +124,7 @@ RUN node --version && rustc --version && cargo --version
 
 # ──────────────────────────────────────────────
 # Stage 2: Runtime
-# Image: ghcr.io/gsd-build/gsd-pi
+# Image: ghcr.io/singularity-forge/sf-run
 # Used by: end users via docker run
 # ──────────────────────────────────────────────
 FROM node:22-slim AS runtime
@@ -947,8 +947,8 @@ Add to `package.json` `scripts`:
 "test:fixtures:record": "GSD_FIXTURE_MODE=record node --experimental-strip-types tests/fixtures/record.ts",
 "test:live": "GSD_LIVE_TESTS=1 node --experimental-strip-types tests/live/run.ts",
 "pipeline:version-stamp": "node scripts/version-stamp.mjs",
-"docker:build-runtime": "docker build --target runtime -t ghcr.io/gsd-build/gsd-pi .",
-"docker:build-builder": "docker build --target builder -t ghcr.io/gsd-build/gsd-ci-builder ."
+"docker:build-runtime": "docker build --target runtime -t ghcr.io/singularity-forge/sf-run .",
+"docker:build-builder": "docker build --target builder -t ghcr.io/singularity-forge/sf-ci-builder ."
 ```
 
 - [ ] **Step 5: Verify live tests skip without env var**
@@ -997,7 +997,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/gsd-build/gsd-ci-builder:latest  # Pin to date tag after first build
+      image: ghcr.io/singularity-forge/sf-ci-builder:latest  # Pin to date tag after first build
     environment: dev
     outputs:
       dev-version: ${{ steps.stamp.outputs.version }}
@@ -1082,11 +1082,11 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker build --target runtime \
             --build-arg GSD_VERSION=${{ needs.dev-publish.outputs.dev-version }} \
-            -t ghcr.io/gsd-build/gsd-pi:next \
-            -t ghcr.io/gsd-build/gsd-pi:${{ needs.dev-publish.outputs.dev-version }} \
+            -t ghcr.io/singularity-forge/sf-run:next \
+            -t ghcr.io/singularity-forge/sf-run:${{ needs.dev-publish.outputs.dev-version }} \
             .
-          docker push ghcr.io/gsd-build/gsd-pi:next
-          docker push ghcr.io/gsd-build/gsd-pi:${{ needs.dev-publish.outputs.dev-version }}
+          docker push ghcr.io/singularity-forge/sf-run:next
+          docker push ghcr.io/singularity-forge/sf-run:${{ needs.dev-publish.outputs.dev-version }}
 
   # ─── PROD STAGE ────────────────────────────────────────────
   prod-release:
@@ -1124,9 +1124,9 @@ jobs:
       - name: Tag and push Docker images
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-          docker pull ghcr.io/gsd-build/gsd-pi:${{ needs.dev-publish.outputs.dev-version }}
-          docker tag ghcr.io/gsd-build/gsd-pi:${{ needs.dev-publish.outputs.dev-version }} ghcr.io/gsd-build/gsd-pi:latest
-          docker push ghcr.io/gsd-build/gsd-pi:latest
+          docker pull ghcr.io/singularity-forge/sf-run:${{ needs.dev-publish.outputs.dev-version }}
+          docker tag ghcr.io/singularity-forge/sf-run:${{ needs.dev-publish.outputs.dev-version }} ghcr.io/singularity-forge/sf-run:latest
+          docker push ghcr.io/singularity-forge/sf-run:latest
 
       - name: Create GitHub Release
         run: |
@@ -1164,16 +1164,16 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker build --target builder \
-            -t ghcr.io/gsd-build/gsd-ci-builder:latest \
-            -t ghcr.io/gsd-build/gsd-ci-builder:${{ steps.tag.outputs.date }} \
+            -t ghcr.io/singularity-forge/sf-ci-builder:latest \
+            -t ghcr.io/singularity-forge/sf-ci-builder:${{ steps.tag.outputs.date }} \
             .
-          docker push ghcr.io/gsd-build/gsd-ci-builder:latest
-          docker push ghcr.io/gsd-build/gsd-ci-builder:${{ steps.tag.outputs.date }}
+          docker push ghcr.io/singularity-forge/sf-ci-builder:latest
+          docker push ghcr.io/singularity-forge/sf-ci-builder:${{ steps.tag.outputs.date }}
 
       - name: Verify builder image
         run: |
-          docker run --rm ghcr.io/gsd-build/gsd-ci-builder:latest node --version
-          docker run --rm ghcr.io/gsd-build/gsd-ci-builder:latest rustc --version
+          docker run --rm ghcr.io/singularity-forge/sf-ci-builder:latest node --version
+          docker run --rm ghcr.io/singularity-forge/sf-ci-builder:latest rustc --version
 ```
 
 - [ ] **Step 2: Validate YAML syntax**

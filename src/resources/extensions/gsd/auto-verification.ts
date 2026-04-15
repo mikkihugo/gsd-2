@@ -10,7 +10,7 @@
  * checks the result and handles control flow.
  */
 
-import type { ExtensionContext, ExtensionAPI } from "@gsd/pi-coding-agent";
+import type { ExtensionContext, ExtensionAPI } from "@sf-run/pi-coding-agent";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { resolveSliceFile, resolveSlicePath, resolveMilestoneFile } from "./paths.js";
 import { parseUnitId } from "./unit-id.js";
@@ -296,12 +296,19 @@ export async function runPostUnitVerification(
     if (result.checks.length > 0) {
       const passCount = result.checks.filter((c) => c.exitCode === 0).length;
       const total = result.checks.length;
+      const commandList = result.checks.map((c) => c.command).join(" | ");
+      ctx.ui.notify(`[verify] running: ${commandList}`, "info");
+      const attemptSoFar = s.verificationRetryCount.get(s.currentUnit.id) ?? 0;
       if (result.passed) {
-        ctx.ui.notify(`Verification gate: ${passCount}/${total} checks passed`);
+        ctx.ui.notify(`[verify] PASS - ${passCount}/${total} checks`, "info");
       } else {
         const failures = result.checks.filter((c) => c.exitCode !== 0);
         const failNames = failures.map((f) => f.command).join(", ");
-        ctx.ui.notify(`Verification gate: FAILED — ${failNames}`);
+        const nextAttempt = attemptSoFar + 1;
+        ctx.ui.notify(
+          `[verify] FAIL - ${failNames} (auto-fix attempt ${nextAttempt}/${maxRetries})`,
+          "info",
+        );
         process.stderr.write(
           `verification-gate: ${total - passCount}/${total} checks failed\n`,
         );

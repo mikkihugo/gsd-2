@@ -180,7 +180,7 @@ function openRawDb(path: string): unknown {
   return new Database(path);
 }
 
-const SCHEMA_VERSION = 15;
+const SCHEMA_VERSION = 16;
 
 function indexExists(db: DbAdapter, name: string): boolean {
   return !!db.prepare(
@@ -507,6 +507,24 @@ function initSchema(db: DbAdapter, fileBacked: boolean): void {
       )
     `);
 
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS llm_task_outcomes (
+        model_id TEXT NOT NULL,
+        provider TEXT NOT NULL,
+        unit_type TEXT NOT NULL,
+        unit_id TEXT NOT NULL,
+        succeeded INTEGER NOT NULL DEFAULT 0,
+        retries INTEGER NOT NULL DEFAULT 0,
+        escalated INTEGER NOT NULL DEFAULT 0,
+        verification_passed INTEGER DEFAULT NULL,
+        blocker_discovered INTEGER NOT NULL DEFAULT 0,
+        duration_ms INTEGER DEFAULT NULL,
+        tokens_total INTEGER DEFAULT NULL,
+        cost_usd REAL DEFAULT NULL,
+        recorded_at INTEGER NOT NULL
+      )
+    `);
+
     db.exec("CREATE INDEX IF NOT EXISTS idx_memories_active ON memories(superseded_by)");
     db.exec("CREATE INDEX IF NOT EXISTS idx_replan_history_milestone ON replan_history(milestone_id, created_at)");
 
@@ -525,6 +543,10 @@ function initSchema(db: DbAdapter, fileBacked: boolean): void {
     db.exec("CREATE INDEX IF NOT EXISTS idx_turn_git_tx_turn ON turn_git_transactions(trace_id, turn_id)");
     db.exec("CREATE INDEX IF NOT EXISTS idx_audit_events_trace ON audit_events(trace_id, ts)");
     db.exec("CREATE INDEX IF NOT EXISTS idx_audit_events_turn ON audit_events(trace_id, turn_id, ts)");
+    db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_llm_task_outcomes_identity ON llm_task_outcomes(unit_type, unit_id, recorded_at)");
+    db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_model_unit ON llm_task_outcomes(model_id, unit_type, recorded_at DESC)");
+    db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_unit ON llm_task_outcomes(unit_type, recorded_at DESC)");
+    db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_provider ON llm_task_outcomes(provider, recorded_at DESC)");
 
     db.exec(`CREATE VIEW IF NOT EXISTS active_decisions AS SELECT * FROM decisions WHERE superseded_by IS NULL`);
     db.exec(`CREATE VIEW IF NOT EXISTS active_requirements AS SELECT * FROM requirements WHERE superseded_by IS NULL`);
@@ -951,6 +973,34 @@ function migrateSchema(db: DbAdapter): void {
       });
     }
 
+    if (currentVersion < 16) {
+      db.exec(`
+        CREATE TABLE IF NOT EXISTS llm_task_outcomes (
+          model_id TEXT NOT NULL,
+          provider TEXT NOT NULL,
+          unit_type TEXT NOT NULL,
+          unit_id TEXT NOT NULL,
+          succeeded INTEGER NOT NULL DEFAULT 0,
+          retries INTEGER NOT NULL DEFAULT 0,
+          escalated INTEGER NOT NULL DEFAULT 0,
+          verification_passed INTEGER DEFAULT NULL,
+          blocker_discovered INTEGER NOT NULL DEFAULT 0,
+          duration_ms INTEGER DEFAULT NULL,
+          tokens_total INTEGER DEFAULT NULL,
+          cost_usd REAL DEFAULT NULL,
+          recorded_at INTEGER NOT NULL
+        )
+      `);
+      db.exec("CREATE UNIQUE INDEX IF NOT EXISTS idx_llm_task_outcomes_identity ON llm_task_outcomes(unit_type, unit_id, recorded_at)");
+      db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_model_unit ON llm_task_outcomes(model_id, unit_type, recorded_at DESC)");
+      db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_unit ON llm_task_outcomes(unit_type, recorded_at DESC)");
+      db.exec("CREATE INDEX IF NOT EXISTS idx_llm_task_outcomes_provider ON llm_task_outcomes(provider, recorded_at DESC)");
+      db.prepare("INSERT INTO schema_version (version, applied_at) VALUES (:version, :applied_at)").run({
+        ":version": 16,
+        ":applied_at": new Date().toISOString(),
+      });
+    }
+
     db.exec("COMMIT");
   } catch (err) {
     db.exec("ROLLBACK");
@@ -981,6 +1031,10 @@ export function isDbAvailable(): boolean {
  */
 export function wasDbOpenAttempted(): boolean {
   return _dbOpenAttempted;
+}
+
+export function getDatabase(): DbAdapter | null {
+  return currentDb;
 }
 
 export function openDatabase(path: string): boolean {
@@ -1979,7 +2033,7 @@ export function getMilestone(id: string): MilestoneRow | null {
 /**
  * Update a milestone's status in the database.
  * Used by park/unpark to keep the DB in sync with the filesystem marker.
- * See: https://github.com/gsd-build/gsd-2/issues/2694
+ * See: https://github.com/singularity-forge/sf-run/issues/2694
  */
 export function updateMilestoneStatus(milestoneId: string, status: string, completedAt?: string | null): void {
   if (!currentDb) throw new GSDError(GSD_STALE_STATE, "gsd-db: No database open");
@@ -2927,6 +2981,92 @@ export function setSliceReplanTriggeredAt(milestoneId: string, sliceId: string, 
   currentDb.prepare(
     "UPDATE slices SET replan_triggered_at = :ts WHERE milestone_id = :mid AND id = :sid",
   ).run({ ":ts": ts, ":mid": milestoneId, ":sid": sliceId });
+}
+
+export interface LlmTaskOutcomeInput {
+  modelId: string;
+  provider: string;
+  unitType: string;
+  unitId: string;
+  succeeded: boolean;
+  retries?: number;
+  escalated?: boolean;
+  verification_passed?: boolean | null;
+  blocker_discovered?: boolean;
+  duration_ms?: number | null;
+  tokens_total?: number | null;
+  cost_usd?: number | null;
+  recorded_at: number;
+}
+
+function boolToInt(value: boolean | null | undefined): 0 | 1 | null {
+  if (value === null || value === undefined) return null;
+  return value ? 1 : 0;
+}
+
+export function insertLlmTaskOutcome(input: LlmTaskOutcomeInput): boolean {
+  if (!currentDb) throw new GSDError(GSD_STALE_STATE, "gsd-db: No database open");
+  try {
+    currentDb.prepare(
+      `INSERT INTO llm_task_outcomes (
+         model_id,
+         provider,
+         unit_type,
+         unit_id,
+         succeeded,
+         retries,
+         escalated,
+         verification_passed,
+         blocker_discovered,
+         duration_ms,
+         tokens_total,
+         cost_usd,
+         recorded_at
+       ) VALUES (
+         :model_id,
+         :provider,
+         :unit_type,
+         :unit_id,
+         :succeeded,
+         :retries,
+         :escalated,
+         :verification_passed,
+         :blocker_discovered,
+         :duration_ms,
+         :tokens_total,
+         :cost_usd,
+         :recorded_at
+       )
+       ON CONFLICT(unit_type, unit_id, recorded_at) DO UPDATE SET
+         model_id = excluded.model_id,
+         provider = excluded.provider,
+         succeeded = excluded.succeeded,
+         retries = excluded.retries,
+         escalated = excluded.escalated,
+         verification_passed = excluded.verification_passed,
+         blocker_discovered = excluded.blocker_discovered,
+         duration_ms = excluded.duration_ms,
+         tokens_total = excluded.tokens_total,
+         cost_usd = excluded.cost_usd`,
+    ).run({
+      ":model_id": input.modelId,
+      ":provider": input.provider,
+      ":unit_type": input.unitType,
+      ":unit_id": input.unitId,
+      ":succeeded": boolToInt(input.succeeded),
+      ":retries": input.retries ?? 0,
+      ":escalated": boolToInt(input.escalated ?? false),
+      ":verification_passed": boolToInt(input.verification_passed ?? null),
+      ":blocker_discovered": boolToInt(input.blocker_discovered ?? false),
+      ":duration_ms": input.duration_ms ?? null,
+      ":tokens_total": input.tokens_total ?? null,
+      ":cost_usd": input.cost_usd ?? null,
+      ":recorded_at": input.recorded_at,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /**

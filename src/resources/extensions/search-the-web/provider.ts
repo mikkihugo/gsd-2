@@ -4,12 +4,13 @@
  * Single source of truth for which search backend (Tavily vs Brave) to use.
  * Reads API keys from process.env at call time (not module load time) so
  * hot-reloaded keys work. Preference is stored in auth.json under the
- * synthetic provider key `search_provider` as { type: "api_key", key: "tavily" | "brave" | "auto" }.
+ * synthetic provider key `search_provider` as
+ * { type: "api_key", key: "tavily" | "brave" | "ollama" | "combosearch" | "auto" }.
  *
  * @see S01-RESEARCH.md for the storage decision rationale (D002).
  */
 
-import { AuthStorage } from '@gsd/pi-coding-agent'
+import { AuthStorage } from '@sf-run/pi-coding-agent'
 import { homedir } from 'os'
 import { join } from 'path'
 import { resolveSearchProviderFromPreferences } from '../gsd/preferences.js'
@@ -20,10 +21,10 @@ import { resolveSearchProviderFromPreferences } from '../gsd/preferences.js'
 const gsdHome = process.env.GSD_HOME || join(homedir(), '.gsd')
 const authFilePath = join(gsdHome, 'agent', 'auth.json')
 
-export type SearchProvider = 'tavily' | 'brave' | 'ollama'
+export type SearchProvider = 'tavily' | 'brave' | 'ollama' | 'combosearch'
 export type SearchProviderPreference = SearchProvider | 'auto'
 
-const VALID_PREFERENCES = new Set<string>(['tavily', 'brave', 'ollama', 'auto'])
+const VALID_PREFERENCES = new Set<string>(['tavily', 'brave', 'ollama', 'combosearch', 'auto'])
 const PREFERENCE_KEY = 'search_provider'
 
 /** Returns the Tavily API key from the environment, or empty string if not set. */
@@ -99,6 +100,7 @@ export function resolveSearchProvider(overridePreference?: string): SearchProvid
   const hasTavily = tavilyKey.length > 0
   const hasBrave = braveKey.length > 0
   const hasOllama = ollamaKey.length > 0
+  const hasAny = hasTavily || hasBrave || hasOllama
 
   // Determine effective preference
   let pref: SearchProviderPreference
@@ -122,6 +124,10 @@ export function resolveSearchProvider(overridePreference?: string): SearchProvid
     if (hasBrave) return 'brave'
     if (hasOllama) return 'ollama'
     return null
+  }
+
+  if (pref === 'combosearch') {
+    return hasAny ? 'combosearch' : null
   }
 
   if (pref === 'tavily') {

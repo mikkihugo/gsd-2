@@ -1,5 +1,5 @@
 {
-  "name": "@gsd-build/engine-linux-arm64-gnu",
+  "name": "@singularity-forge/engine-linux-arm64-gnu",
   "version": "2.74.0",
   "description": "GSD native engine binary for Linux ARM64 (glibc)",
   "os": [
@@ -15,6 +15,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gsd-build/gsd-2.git"
+    "url": "git+https://github.com/singularity-forge/sf-run.git"
   }
 }

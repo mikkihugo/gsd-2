@@ -6,7 +6,7 @@
  * upstream PRs where planning artifacts should not be included.
  */
 
-import type { ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 import { execFileSync } from "node:child_process";
 

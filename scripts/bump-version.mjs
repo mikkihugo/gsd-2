@@ -45,11 +45,11 @@ for (const name of workspacePackages) {
   const ws = JSON.parse(readFileSync(wsPath, "utf-8"));
   const wsOld = ws.version;
   ws.version = newVersion;
-  // Bump any internal @gsd-build/* or @gsd/* dep references to match.
+  // Bump any internal @singularity-forge/* or @sf-run/* dep references to match.
   for (const field of ["dependencies", "devDependencies", "peerDependencies"]) {
     if (!ws[field]) continue;
     for (const dep of Object.keys(ws[field])) {
-      if (workspacePackages.some((n) => dep === `@gsd-build/${n}` || dep === `@gsd/${n}`)) {
+      if (workspacePackages.some((n) => dep === `@singularity-forge/${n}` || dep === `@sf-run/${n}`)) {
         ws[field][dep] = `^${newVersion}`;
       }
     }

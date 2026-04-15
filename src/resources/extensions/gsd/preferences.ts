@@ -82,6 +82,7 @@ export function resolveSkillStalenessDays(): number {
 export {
   resolveModelForUnit,
   resolveModelWithFallbacksForUnit,
+  resolvePersistModelChanges,
   getNextFallbackModel,
   isTransientNetworkError,
   validateModelId,
@@ -244,7 +245,7 @@ export function parsePreferencesMarkdown(content: string): GSDPreferences | null
     _warnedUnrecognizedFormat = true;
     console.warn(
       "[GSD] Warning: preferences file has unrecognized format — content does not use YAML frontmatter delimiters (---). " +
-      "Wrap your preferences in --- fences. See https://github.com/gsd-build/gsd-2/issues/2036",
+      "Wrap your preferences in --- fences. See https://github.com/singularity-forge/sf-run/issues/2036",
     );
   }
   return null;
@@ -355,6 +356,7 @@ function mergePreferences(base: GSDPreferences, override: GSDPreferences): GSDPr
     skill_rules: [...(base.skill_rules ?? []), ...(override.skill_rules ?? [])],
     custom_instructions: mergeStringLists(base.custom_instructions, override.custom_instructions),
     models: { ...(base.models ?? {}), ...(override.models ?? {}) },
+    persist_model_changes: override.persist_model_changes ?? base.persist_model_changes,
     skill_discovery: override.skill_discovery ?? base.skill_discovery,
     skill_staleness_days: override.skill_staleness_days ?? base.skill_staleness_days,
     auto_supervisor: { ...(base.auto_supervisor ?? {}), ...(override.auto_supervisor ?? {}) },

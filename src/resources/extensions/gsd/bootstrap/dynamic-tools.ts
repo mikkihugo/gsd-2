@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { join, sep } from "node:path";
 
-import type { ExtensionAPI } from "@gsd/pi-coding-agent";
-import { createBashTool, createEditTool, createReadTool, createWriteTool } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI } from "@sf-run/pi-coding-agent";
+import { createBashTool, createEditTool, createReadTool, createWriteTool } from "@sf-run/pi-coding-agent";
 
 import { DEFAULT_BASH_TIMEOUT_SECS } from "../constants.js";
 import { setLogBasePath, logWarning } from "../workflow-logger.js";

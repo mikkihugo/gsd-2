@@ -1,11 +1,11 @@
 /**
- * Re-export native clipboard utilities from @gsd/native.
+ * Re-export native clipboard utilities from "@sf-run/native.
  *
  * This module exists for backward compatibility. Prefer importing
- * directly from "@gsd/native/clipboard" in new code.
+ * directly from "@sf-run/native/clipboard" in new code.
  */
 export {
 	copyToClipboard,
 	readTextFromClipboard,
 	readImageFromClipboard,
-} from "@gsd/native/clipboard";
+} from "@sf-run/native/clipboard";

@@ -9,7 +9,7 @@ import {
   InteractiveMode,
   runPrintMode,
   runRpcMode,
-} from '@gsd/pi-coding-agent'
+} from '@sf-run/pi-coding-agent'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { agentDir, sessionsDir, authFilePath } from './app-paths.js'
@@ -51,9 +51,9 @@ function exitIfManagedResourcesAreNewer(currentAgentDir: string): void {
   }
 
   process.stderr.write(
-    `[gsd] ${chalk.yellow('Version mismatch detected')}\n` +
-    `[gsd] Synced resources are from ${chalk.bold(`v${managedVersion}`)}, but this \`gsd\` binary is ${chalk.dim(`v${currentVersion}`)}.\n` +
-    `[gsd] Run ${chalk.bold('npm install -g gsd-pi@latest')} or ${chalk.bold('gsd update')}, then try again.\n`,
+    `[sf] ${chalk.yellow('Version mismatch detected')}\n` +
+    `[sf] Synced resources are from ${chalk.bold(`v${managedVersion}`)}, but this \`sf\` binary is ${chalk.dim(`v${currentVersion}`)}.\n` +
+    `[sf] Run ${chalk.bold('npm install -g gsd-pi@latest')} or ${chalk.bold('sf update')}, then try again.\n`,
   )
   process.exit(1)
 }
@@ -70,18 +70,18 @@ function exitIfManagedResourcesAreNewer(currentAgentDir: string): void {
  */
 function printNonTtyErrorAndExit(missing: string | undefined, includeWebHint: boolean): never {
   const suffix = missing ? ` but ${missing} not a TTY` : ''
-  process.stderr.write(`[gsd] Error: Interactive mode requires a terminal (TTY)${suffix}.\n`)
-  process.stderr.write('[gsd] Non-interactive alternatives:\n')
-  process.stderr.write('[gsd]   gsd auto                       Auto-mode (pipeable, no TUI)\n')
-  process.stderr.write('[gsd]   gsd --print "your message"     Single-shot prompt\n')
+  process.stderr.write(`[sf] Error: Interactive mode requires a terminal (TTY)${suffix}.\n`)
+  process.stderr.write('[sf] Non-interactive alternatives:\n')
+  process.stderr.write('[sf]   sf auto                       Auto-mode (pipeable, no TUI)\n')
+  process.stderr.write('[sf]   sf --print "your message"     Single-shot prompt\n')
   if (includeWebHint) {
-    process.stderr.write('[gsd]   gsd --web [path]               Browser-only web mode\n')
+    process.stderr.write('[sf]   sf --web [path]               Browser-only web mode\n')
   }
-  process.stderr.write('[gsd]   gsd --mode rpc                 JSON-RPC over stdin/stdout\n')
-  process.stderr.write('[gsd]   gsd --mode mcp                 MCP server over stdin/stdout\n')
-  process.stderr.write('[gsd]   gsd --mode text "message"      Text output mode\n')
+  process.stderr.write('[sf]   sf --mode rpc                 JSON-RPC over stdin/stdout\n')
+  process.stderr.write('[sf]   sf --mode mcp                 MCP server over stdin/stdout\n')
+  process.stderr.write('[sf]   sf --mode text "message"      Text output mode\n')
   if (includeWebHint) {
-    process.stderr.write('[gsd]   gsd headless                   Auto-mode without TUI\n')
+    process.stderr.write('[sf]   sf headless                   Auto-mode without TUI\n')
   }
   process.exit(1)
 }
@@ -94,7 +94,7 @@ function printExtensionErrors(errors: ReadonlyArray<{ error: string }>): void {
   for (const err of errors) {
     const isConflict = err.error.includes('supersedes') || err.error.includes('conflicts with')
     const prefix = isConflict ? 'Extension conflict' : 'Extension load error'
-    process.stderr.write(`[gsd] ${prefix}: ${err.error}\n`)
+    process.stderr.write(`[sf] ${prefix}: ${err.error}\n`)
   }
 }
 
@@ -126,9 +126,9 @@ async function reapplyValidatedModelOnFallback(
 const cliFlags = parseCliArgs(process.argv)
 const isPrintMode = cliFlags.print || cliFlags.mode !== undefined
 
-// `gsd [subcommand] --help` / `-h` — print help before any subcommand runs.
+// `sf [subcommand] --help` / `-h` — print help before any subcommand runs.
 // loader.ts only catches --help/-h as the *first* arg; here we handle the
-// case where it appears later (e.g. `gsd update --help`, `gsd --foo --help`).
+// case where it appears later (e.g. `sf update --help`, `sf --foo --help`).
 // Prefer subcommand-specific help when the first positional is a known
 // subcommand, otherwise fall back to general help.
 if (process.argv.includes('--help') || process.argv.includes('-h')) {
@@ -158,14 +158,14 @@ async function doRtkBootstrap(): Promise<void> {
   const rtkStatus = await bootstrapRtk()
   markStartup('bootstrapRtk')
   if (!rtkStatus.available && rtkStatus.supported && rtkStatus.enabled && rtkStatus.reason) {
-    process.stderr.write(`[gsd] Warning: RTK unavailable — continuing without shell-command compression (${rtkStatus.reason}).\n`)
+    process.stderr.write(`[sf] Warning: RTK unavailable — continuing without shell-command compression (${rtkStatus.reason}).\n`)
   }
 }
 function ensureRtkBootstrap(): Promise<void> {
   return (rtkBootstrapPromise ??= doRtkBootstrap())
 }
 
-// `gsd update` — update to the latest version via npm
+// `sf update` — update to the latest version via npm
 if (cliFlags.messages[0] === 'update') {
   const { runUpdate } = await import('./update-cmd.js')
   await runUpdate()
@@ -173,11 +173,11 @@ if (cliFlags.messages[0] === 'update') {
 }
 
 // ---------------------------------------------------------------------------
-// Graph subcommand — `gsd graph build|status|query|diff`
+// Graph subcommand — `sf graph build|status|query|diff`
 // ---------------------------------------------------------------------------
 if (cliFlags.messages[0] === 'graph') {
   const sub = cliFlags.messages[1]
-  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@gsd-build/mcp-server')
+  const { buildGraph, writeGraph, graphStatus, graphQuery, graphDiff, resolveGsdRoot } = await import('@singularity-forge/mcp-server')
 
   const projectDir = process.cwd()
   const gsdRoot = resolveGsdRoot(projectDir)
@@ -188,14 +188,14 @@ if (cliFlags.messages[0] === 'graph') {
       await writeGraph(gsdRoot, graph)
       process.stdout.write(`Graph built: ${graph.nodes.length} nodes, ${graph.edges.length} edges\n`)
     } catch (err) {
-      process.stderr.write(`[gsd] graph build failed: ${err instanceof Error ? err.message : String(err)}\n`)
+      process.stderr.write(`[sf] graph build failed: ${err instanceof Error ? err.message : String(err)}\n`)
       process.exit(1)
     }
   } else if (sub === 'status') {
     try {
       const result = await graphStatus(projectDir)
       if (!result.exists) {
-        process.stdout.write('Graph: not built yet. Run: gsd graph build\n')
+        process.stdout.write('Graph: not built yet. Run: sf graph build\n')
       } else {
         process.stdout.write(`Graph status:\n`)
         process.stdout.write(`  exists:    ${result.exists}\n`)
@@ -206,13 +206,13 @@ if (cliFlags.messages[0] === 'graph') {
         process.stdout.write(`  lastBuild: ${result.lastBuild ?? 'n/a'}\n`)
       }
     } catch (err) {
-      process.stderr.write(`[gsd] graph status failed: ${err instanceof Error ? err.message : String(err)}\n`)
+      process.stderr.write(`[sf] graph status failed: ${err instanceof Error ? err.message : String(err)}\n`)
       process.exit(1)
     }
   } else if (sub === 'query') {
     const term = cliFlags.messages[2]
     if (!term) {
-      process.stderr.write('Usage: gsd graph query <term>\n')
+      process.stderr.write('Usage: sf graph query <term>\n')
       process.exit(1)
     }
     try {
@@ -226,7 +226,7 @@ if (cliFlags.messages[0] === 'graph') {
         }
       }
     } catch (err) {
-      process.stderr.write(`[gsd] graph query failed: ${err instanceof Error ? err.message : String(err)}\n`)
+      process.stderr.write(`[sf] graph query failed: ${err instanceof Error ? err.message : String(err)}\n`)
       process.exit(1)
     }
   } else if (sub === 'diff') {
@@ -239,7 +239,7 @@ if (cliFlags.messages[0] === 'graph') {
       process.stdout.write(`  edges added:    ${result.edges.added.length}\n`)
       process.stdout.write(`  edges removed:  ${result.edges.removed.length}\n`)
     } catch (err) {
-      process.stderr.write(`[gsd] graph diff failed: ${err instanceof Error ? err.message : String(err)}\n`)
+      process.stderr.write(`[sf] graph diff failed: ${err instanceof Error ? err.message : String(err)}\n`)
       process.exit(1)
     }
   } else {
@@ -260,7 +260,7 @@ if (!process.stdin.isTTY && !isPrintMode && !hasSubcommand && !cliFlags.listMode
 }
 
 const packageCommand = await runPackageCommand({
-  appName: 'gsd',
+  appName: 'sf',
   args: process.argv.slice(2),
   cwd: process.cwd(),
   agentDir,
@@ -272,7 +272,7 @@ if (packageCommand.handled) {
   process.exit(packageCommand.exitCode)
 }
 
-// `gsd config` — replay the setup wizard and exit
+// `sf config` — replay the setup wizard and exit
 if (cliFlags.messages[0] === 'config') {
   const authStorage = AuthStorage.create(authFilePath)
   loadStoredEnvKeys(authStorage)
@@ -280,7 +280,7 @@ if (cliFlags.messages[0] === 'config') {
   process.exit(0)
 }
 
-// `gsd web stop [path|all]` — stop web server before anything else
+// `sf web stop [path|all]` — stop web server before anything else
 if (cliFlags.messages[0] === 'web' && cliFlags.messages[1] === 'stop') {
   const webBranch = await runWebCliBranch(cliFlags, {
     stopWebMode,
@@ -293,7 +293,7 @@ if (cliFlags.messages[0] === 'web' && cliFlags.messages[1] === 'stop') {
   }
 }
 
-// `gsd --web [path]` or `gsd web [start] [path]` — launch browser-only web mode
+// `sf --web [path]` or `sf web [start] [path]` — launch browser-only web mode
 if (cliFlags.web || (cliFlags.messages[0] === 'web' && cliFlags.messages[1] !== 'stop')) {
   await ensureRtkBootstrap()
   const webBranch = await runWebCliBranch(cliFlags, {
@@ -307,7 +307,7 @@ if (cliFlags.web || (cliFlags.messages[0] === 'web' && cliFlags.messages[1] !== 
 }
 
 
-// `gsd sessions` — list past sessions and pick one to resume
+// `sf sessions` — list past sessions and pick one to resume
 if (cliFlags.messages[0] === 'sessions') {
   const cwd = process.cwd()
   const safePath = `--${cwd.replace(/^[/\\]/, '').replace(/[/\\:]/g, '-')}--`
@@ -372,7 +372,7 @@ if (cliFlags.messages[0] === 'sessions') {
   cliFlags._selectedSessionPath = selected.path
 }
 
-// `gsd headless` — run auto-mode without TUI
+// `sf headless` — run auto-mode without TUI
 if (cliFlags.messages[0] === 'headless') {
   await ensureRtkBootstrap()
   // Sync bundled resources before headless runs (#3471). Without this,
@@ -397,8 +397,8 @@ async function runHeadlessFromAuto(headlessArgs: string[]): Promise<never> {
   process.exit(0)
 }
 
-// `gsd auto [args...]` — shorthand for `gsd headless auto [args...]` (#2732)
-// Without this, `gsd auto` falls through to the interactive TUI which hangs
+// `sf auto [args...]` — shorthand for `sf headless auto [args...]` (#2732)
+// Without this, `sf auto` falls through to the interactive TUI which hangs
 // when stdin/stdout are piped (non-TTY environments).
 if (cliFlags.messages[0] === 'auto') {
   await runHeadlessFromAuto(cliFlags.messages)
@@ -449,7 +449,7 @@ if (!isPrintMode) {
 // Warn if terminal is too narrow for readable output
 if (!isPrintMode && process.stdout.columns && process.stdout.columns < 40) {
   process.stderr.write(
-    chalk.yellow(`[gsd] Terminal width is ${process.stdout.columns} columns (minimum recommended: 40). Output may be unreadable.\n`),
+    chalk.yellow(`[sf] Terminal width is ${process.stdout.columns} columns (minimum recommended: 40). Output may be unreadable.\n`),
   )
 }
 
@@ -511,7 +511,7 @@ if (cliFlags.listModels !== undefined) {
   process.exit(0)
 }
 
-// GSD always uses quiet startup — the gsd extension renders its own branded header
+// SF always uses quiet startup — the sf extension renders its own branded header
 if (!settingsManager.getQuietStartup()) {
   settingsManager.setQuietStartup(true)
 }

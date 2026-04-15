@@ -1,4 +1,4 @@
-// @gsd-build/mcp-server — Tests for secure_env_collect MCP tool
+// @singularity-forge/mcp-server — Tests for secure_env_collect MCP tool
 // Copyright (c) 2026 Jeremy McSpadden <jeremy@fluxlabs.net>
 //
 // Tests the secure_env_collect tool registered in createMcpServer.

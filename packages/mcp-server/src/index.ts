@@ -1,5 +1,5 @@
 /**
- * @gsd-build/mcp-server — MCP server for GSD orchestration and project state.
+ * @singularity-forge/mcp-server — MCP server for GSD orchestration and project state.
  */
 
 export { SessionManager } from './session-manager.js';

@@ -12,7 +12,7 @@
 import type {
   ExtensionAPI,
   ExtensionCommandContext,
-} from "@gsd/pi-coding-agent";
+} from "@sf-run/pi-coding-agent";
 import { deriveState } from "./state.js";
 import { loadFile, getManifestStatus } from "./files.js";
 import type { InterruptedSessionAssessment } from "./interrupted-session.js";
@@ -20,6 +20,7 @@ import {
   loadEffectiveGSDPreferences,
   resolveSkillDiscoveryMode,
   getIsolationMode,
+  resolvePersistModelChanges,
 } from "./preferences.js";
 import { ensureGsdSymlink, isInheritedRepo, validateProjectId } from "./repo-identity.js";
 import { migrateToExternalState, recoverFailedMigration } from "./migrate-external.js";
@@ -790,7 +791,7 @@ export async function bootstrapAutoSession(
       const { resolveModelId } = await import("./auto-model-selection.js");
       const overrideModel = resolveModelId(workerModelOverride, availableModels, ctx.model?.provider);
       if (overrideModel) {
-        const ok = await pi.setModel(overrideModel, { persist: false });
+        const ok = await pi.setModel(overrideModel, { persist: resolvePersistModelChanges() });
         if (ok) {
           // Update start model so all subsequent units use this as the baseline
           s.autoModeStartModel = { provider: overrideModel.provider, id: overrideModel.id };

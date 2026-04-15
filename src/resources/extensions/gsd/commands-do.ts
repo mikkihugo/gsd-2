@@ -5,7 +5,7 @@
  * using keyword matching. Falls back to /gsd quick for task-like input.
  */
 
-import type { ExtensionAPI, ExtensionCommandContext } from "@gsd/pi-coding-agent";
+import type { ExtensionAPI, ExtensionCommandContext } from "@sf-run/pi-coding-agent";
 
 interface Route {
   keywords: string[];

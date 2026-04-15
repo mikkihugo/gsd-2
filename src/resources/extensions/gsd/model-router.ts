@@ -5,9 +5,9 @@
 import type { ComplexityTier, ClassificationResult, TaskMetadata } from "./complexity-classifier.js";
 import { tierOrdinal } from "./complexity-classifier.js";
 import type { ResolvedModelConfig } from "./preferences.js";
-import { getProviderCapabilities, type ProviderCapabilities } from "@gsd/pi-ai";
-import { getToolCompatibility, getAllToolCompatibility } from "@gsd/pi-coding-agent";
-import type { ToolCompatibility } from "@gsd/pi-coding-agent";
+import { getProviderCapabilities, type ProviderCapabilities } from "@sf-run/pi-ai";
+import { getToolCompatibility, getAllToolCompatibility } from "@sf-run/pi-coding-agent";
+import type { ToolCompatibility } from "@sf-run/pi-coding-agent";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
