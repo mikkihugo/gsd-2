@@ -865,7 +865,7 @@
 | native/crates/engine/src/ps.rs | Native/Rust Tools | Cross-platform process tree management |
 | native/crates/engine/src/clipboard.rs | Native/Rust Tools | Clipboard read/write for text and images |
 | native/crates/engine/src/json_parse.rs | Text Processing, Native/Rust Tools | Streaming JSON parser with partial recovery |
-| native/crates/engine/src/gsd_parser.rs | SF Workflow, Native/Rust Tools | .sf/ directory file parser (markdown, frontmatter) |
+| native/crates/engine/src/sf_parser.rs | SF Workflow, Native/Rust Tools | .sf/ directory file parser (markdown, frontmatter) |
 | native/crates/engine/src/ttsr.rs | TTSR, Native/Rust Tools | TTSR regex engine with compiled RegexSet |
 | native/crates/engine/src/stream_process.rs | Text Processing, Native/Rust Tools | Bash stream processor (UTF-8, ANSI strip, binary) |
 | native/crates/engine/src/xxhash.rs | Native/Rust Tools | xxHash32 for hashline edit tool |

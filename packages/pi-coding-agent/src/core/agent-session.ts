@@ -1601,7 +1601,7 @@ export class AgentSession {
 			// Extensions (e.g., discuss flows) may narrow the active tool list
 			// via setActiveTools() during a session. Without this refresh, the
 			// narrowed set persists into the next session — causing tools like
-			// gsd_plan_slice to be missing from auto-mode subagent sessions.
+			// sf_plan_slice to be missing from auto-mode subagent sessions.
 			this._refreshToolRegistry({
 				activeToolNames: this.getActiveToolNames(),
 				includeAllExtensionTools: true,

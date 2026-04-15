@@ -76,12 +76,12 @@ describe("workflow MCP tools", () => {
     assert.deepEqual(server.tools.map((t) => t.name), [...WORKFLOW_TOOL_NAMES]);
   });
 
-  it("gsd_summary_save writes artifact through the shared executor", async () => {
+  it("sf_summary_save writes artifact through the shared executor", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "sf_summary_save");
       assert.ok(tool, "summary tool should be registered");
       const originalCwd = process.cwd();
 
@@ -113,7 +113,7 @@ describe("workflow MCP tools", () => {
       process.env.SF_WORKFLOW_PROJECT_ROOT = base;
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "sf_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       await assert.rejects(
@@ -147,7 +147,7 @@ describe("workflow MCP tools", () => {
       const { registerWorkflowTools: freshRegisterWorkflowTools } = await import(`./workflow-tools.ts?bad-module=${randomUUID()}`);
       const server = makeMockServer();
       freshRegisterWorkflowTools(server as any);
-      const tool = server.tools.find((t) => t.name === "gsd_summary_save");
+      const tool = server.tools.find((t) => t.name === "sf_summary_save");
       assert.ok(tool, "summary tool should be registered");
 
       await assert.rejects(
@@ -187,7 +187,7 @@ describe("workflow MCP tools", () => {
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
       assert.ok(taskTool, "task tool should be registered");
 
       await assert.rejects(
@@ -220,7 +220,7 @@ describe("workflow MCP tools", () => {
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
       assert.ok(taskTool, "task tool should be registered");
 
       await assert.rejects(
@@ -234,14 +234,14 @@ describe("workflow MCP tools", () => {
             narrative: "Did the work",
             verification: "npm test",
           }),
-        /planning tool .* not executes work|Cannot gsd_task_complete|Unknown tools are not permitted during queue mode/,
+        /planning tool .* not executes work|Cannot sf_task_complete|Unknown tools are not permitted during queue mode/,
       );
     } finally {
       cleanup(base);
     }
   });
 
-  it("gsd_task_complete and gsd_milestone_status work end-to-end", async () => {
+  it("sf_task_complete and sf_milestone_status work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       mkdirSync(join(base, ".sf", "milestones", "M001", "slices", "S01"), { recursive: true });
@@ -252,8 +252,8 @@ describe("workflow MCP tools", () => {
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const statusTool = server.tools.find((t) => t.name === "gsd_milestone_status");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
+      const statusTool = server.tools.find((t) => t.name === "sf_milestone_status");
       assert.ok(taskTool, "task tool should be registered");
       assert.ok(statusTool, "status tool should be registered");
 
@@ -286,7 +286,7 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_complete_task alias delegates to gsd_task_complete behavior", async () => {
+  it("sf_complete_task alias delegates to sf_task_complete behavior", async () => {
     const base = makeTmpBase();
     try {
       mkdirSync(join(base, ".sf", "milestones", "M002", "slices", "S02"), { recursive: true });
@@ -297,7 +297,7 @@ describe("workflow MCP tools", () => {
 
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const aliasTool = server.tools.find((t) => t.name === "gsd_complete_task");
+      const aliasTool = server.tools.find((t) => t.name === "sf_complete_task");
       assert.ok(aliasTool, "task completion alias should be registered");
 
       const result = await aliasTool!.handler({
@@ -320,13 +320,13 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_plan_milestone and gsd_plan_slice work end-to-end", async () => {
+  it("sf_plan_milestone and sf_plan_slice work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
 
@@ -384,12 +384,12 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_requirement_save opens the DB before inline requirement writes", async () => {
+  it("sf_requirement_save opens the DB before inline requirement writes", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const requirementTool = server.tools.find((t) => t.name === "gsd_requirement_save");
+      const requirementTool = server.tools.find((t) => t.name === "sf_requirement_save");
       assert.ok(requirementTool, "requirement tool should be registered");
 
       closeDatabase();
@@ -417,14 +417,14 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_plan_task reopens the DB before inline task planning writes", async () => {
+  it("sf_plan_task reopens the DB before inline task planning writes", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_plan_task");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "sf_plan_task");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task planning tool should be registered");
@@ -440,7 +440,7 @@ describe("workflow MCP tools", () => {
             title: "Inline task planning",
             risk: "medium",
             depends: [],
-            demo: "Inline gsd_plan_task reopens the DB after it was closed.",
+            demo: "Inline sf_plan_task reopens the DB after it was closed.",
             goal: "Preserve MCP task planning after the DB adapter is closed.",
             successCriteria: "The second task plan persists after a closed DB is reopened.",
             proofLevel: "integration",
@@ -494,16 +494,16 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_replan_slice and gsd_slice_replan work end-to-end", async () => {
+  it("sf_replan_slice and sf_slice_replan work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const canonicalTool = server.tools.find((t) => t.name === "gsd_replan_slice");
-      const aliasTool = server.tools.find((t) => t.name === "gsd_slice_replan");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
+      const canonicalTool = server.tools.find((t) => t.name === "sf_replan_slice");
+      const aliasTool = server.tools.find((t) => t.name === "sf_slice_replan");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -640,16 +640,16 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_slice_complete and gsd_complete_slice work end-to-end", async () => {
+  it("sf_slice_complete and sf_complete_slice work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const canonicalTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const aliasTool = server.tools.find((t) => t.name === "gsd_complete_slice");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
+      const canonicalTool = server.tools.find((t) => t.name === "sf_slice_complete");
+      const aliasTool = server.tools.find((t) => t.name === "sf_complete_slice");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -788,17 +788,17 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_validate_milestone and gsd_milestone_complete work end-to-end", async () => {
+  it("sf_validate_milestone and sf_milestone_complete work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const validateTool = server.tools.find((t) => t.name === "gsd_validate_milestone");
-      const completeMilestoneAlias = server.tools.find((t) => t.name === "gsd_milestone_complete");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
+      const completeSliceTool = server.tools.find((t) => t.name === "sf_slice_complete");
+      const validateTool = server.tools.find((t) => t.name === "sf_validate_milestone");
+      const completeMilestoneAlias = server.tools.find((t) => t.name === "sf_milestone_complete");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");
@@ -899,18 +899,18 @@ describe("workflow MCP tools", () => {
     }
   });
 
-  it("gsd_reassess_roadmap, gsd_roadmap_reassess, and gsd_save_gate_result work end-to-end", async () => {
+  it("sf_reassess_roadmap, sf_roadmap_reassess, and sf_save_gate_result work end-to-end", async () => {
     const base = makeTmpBase();
     try {
       const server = makeMockServer();
       registerWorkflowTools(server as any);
-      const milestoneTool = server.tools.find((t) => t.name === "gsd_plan_milestone");
-      const sliceTool = server.tools.find((t) => t.name === "gsd_plan_slice");
-      const taskTool = server.tools.find((t) => t.name === "gsd_task_complete");
-      const completeSliceTool = server.tools.find((t) => t.name === "gsd_slice_complete");
-      const reassessTool = server.tools.find((t) => t.name === "gsd_reassess_roadmap");
-      const reassessAlias = server.tools.find((t) => t.name === "gsd_roadmap_reassess");
-      const gateTool = server.tools.find((t) => t.name === "gsd_save_gate_result");
+      const milestoneTool = server.tools.find((t) => t.name === "sf_plan_milestone");
+      const sliceTool = server.tools.find((t) => t.name === "sf_plan_slice");
+      const taskTool = server.tools.find((t) => t.name === "sf_task_complete");
+      const completeSliceTool = server.tools.find((t) => t.name === "sf_slice_complete");
+      const reassessTool = server.tools.find((t) => t.name === "sf_reassess_roadmap");
+      const reassessAlias = server.tools.find((t) => t.name === "sf_roadmap_reassess");
+      const gateTool = server.tools.find((t) => t.name === "sf_save_gate_result");
       assert.ok(milestoneTool, "milestone planning tool should be registered");
       assert.ok(sliceTool, "slice planning tool should be registered");
       assert.ok(taskTool, "task completion tool should be registered");

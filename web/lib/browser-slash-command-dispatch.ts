@@ -35,7 +35,7 @@ export type BrowserSlashCommandSurface =
   | "sf-cleanup"
   | "sf-queue"
 
-export type BrowserSlashCommandLocalAction = "clear_terminal" | "refresh_workspace" | "gsd_help"
+export type BrowserSlashCommandLocalAction = "clear_terminal" | "refresh_workspace" | "sf_help"
 
 export type BrowserSlashPromptCommandType = "prompt" | "follow_up"
 
@@ -188,7 +188,7 @@ function dispatchGSDSubcommand(
       kind: "local",
       input,
       commandName: "sf",
-      action: "gsd_help",
+      action: "sf_help",
     }
   }
 

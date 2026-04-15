@@ -19,7 +19,7 @@ export default function createExtension(pi: ExtensionAPI) {
 								options: [
 									{
 										label: "Add a custom tool",
-										description: "Register a new tool the LLM can call (like gsd_plan, plan_clarify).",
+										description: "Register a new tool the LLM can call (like sf_plan, plan_clarify).",
 									},
 									{
 										label: "Add a slash command",

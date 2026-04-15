@@ -30,7 +30,7 @@ const bundledExtensionsDir = join(resourcesDir, 'extensions')
 const resourceVersionManifestName = 'managed-resources.json'
 
 interface ManagedResourceManifest {
-  gsdVersion: string
+  sfVersion: string
   syncedAt?: number
   /** Content fingerprint of bundled resources — detects same-version content changes. */
   contentHash?: string
@@ -101,7 +101,7 @@ function writeManagedResourceManifest(agentDir: string): void {
   } catch { /* non-fatal */ }
 
   const manifest: ManagedResourceManifest = {
-    gsdVersion: getBundledGsdVersion(),
+    sfVersion: getBundledGsdVersion(),
     syncedAt: Date.now(),
     contentHash: computeResourceFingerprint(),
     installedExtensionRootFiles,
@@ -113,7 +113,7 @@ function writeManagedResourceManifest(agentDir: string): void {
 export function readManagedResourceVersion(agentDir: string): string | null {
   try {
     const manifest = JSON.parse(readFileSync(getManagedResourceManifestPath(agentDir), 'utf-8')) as ManagedResourceManifest
-    return typeof manifest?.gsdVersion === 'string' ? manifest.gsdVersion : null
+    return typeof manifest?.sfVersion === 'string' ? manifest.sfVersion : null
   } catch {
     return null
   }
@@ -549,7 +549,7 @@ export function initResources(agentDir: string): void {
   // Skip the full copy when both version AND content fingerprint match.
   // Version-only checks miss same-version content changes (npm link dev workflow,
   // hotfixes within a release). The content hash catches those at ~1ms cost.
-  if (manifest && manifest.gsdVersion === currentVersion) {
+  if (manifest && manifest.sfVersion === currentVersion) {
     // Version matches — check content fingerprint for same-version staleness.
     const currentHash = computeResourceFingerprint()
     const hasStaleExtensionFiles = hasStaleCompiledExtensionSiblings(extensionsDir, bundledExtensionsDir)

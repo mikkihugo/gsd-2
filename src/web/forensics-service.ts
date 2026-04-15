@@ -57,7 +57,7 @@ export async function collectForensicsData(projectCwdOverride?: string): Promise
     '  metrics = { totalUnits: units.length, totalCost, totalDuration };',
     '}',
     'const result = {',
-    '  gsdVersion: report.gsdVersion,',
+    '  sfVersion: report.sfVersion,',
     '  timestamp: report.timestamp,',
     '  basePath: report.basePath,',
     '  activeMilestone: report.activeMilestone,',

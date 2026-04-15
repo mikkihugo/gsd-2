@@ -78,7 +78,7 @@ export interface ForensicJournalSummary {
 }
 
 export interface ForensicReport {
-  gsdVersion: string
+  sfVersion: string
   timestamp: string
   basePath: string
   activeMilestone: string | null

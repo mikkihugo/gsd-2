@@ -703,7 +703,7 @@ export function buildSdkOptions(
 	// Pre-authorize the safe built-ins and every registered workflow MCP
 	// server's tools. `acceptEdits` mode (the interactive default) only
 	// auto-approves file edits — Read/Glob/Grep, basic shell inspection, and
-	// every `mcp__gsd-workflow__*` call still surface as "This command
+	// every `mcp__sf-workflow__*` call still surface as "This command
 	// requires approval" and block SF actions (#4099).
 	const allowedTools = [
 		"Read",

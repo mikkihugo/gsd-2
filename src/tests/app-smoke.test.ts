@@ -253,7 +253,7 @@ test("initResources skips copy when managed version matches current version", as
 
   // Simulate version mismatch by writing older version to manifest
   const manifestPath = join(fakeAgentDir, "managed-resources.json");
-  writeFileSync(manifestPath, JSON.stringify({ gsdVersion: "0.0.1", syncedAt: Date.now() }));
+  writeFileSync(manifestPath, JSON.stringify({ sfVersion: "0.0.1", syncedAt: Date.now() }));
 
   // Third run: version mismatch — full sync, marker removed
   initResources(fakeAgentDir);
@@ -369,7 +369,7 @@ test("deriveState returns pre-planning phase for empty .sf/ directory", async (t
 test("deriveState returns pre-planning phase when no .sf/ directory exists", async (t) => {
   const { deriveState } = await import("../resources/extensions/sf/state.ts");
   // Use a temp dir with no .sf/ subdirectory at all
-  const tmp = mkdtempSync(join(tmpdir(), "sf-state-nogsd-"));
+  const tmp = mkdtempSync(join(tmpdir(), "sf-state-nosf-"));
 
   t.after(() => rmSync(tmp, { recursive: true, force: true }));
   // Should not throw — missing .sf/ is a valid "no project" state

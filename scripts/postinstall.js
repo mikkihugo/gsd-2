@@ -20,15 +20,15 @@ const RTK_SKIP =
   process.env.SF_SKIP_RTK_INSTALL === 'true' ||
   process.env.SF_RTK_DISABLED === '1' ||
   process.env.SF_RTK_DISABLED === 'true' ||
-  process.env.GSD_SKIP_RTK_INSTALL === '1' ||
-  process.env.GSD_SKIP_RTK_INSTALL === 'true' ||
-  process.env.GSD_RTK_DISABLED === '1' ||
-  process.env.GSD_RTK_DISABLED === 'true'
+  process.env.SF_SKIP_RTK_INSTALL === '1' ||
+  process.env.SF_SKIP_RTK_INSTALL === 'true' ||
+  process.env.SF_RTK_DISABLED === '1' ||
+  process.env.SF_RTK_DISABLED === 'true'
 
 const RTK_VERSION = '0.33.1'
 const RTK_REPO = 'rtk-ai/rtk'
 const RTK_ENV = { ...process.env, RTK_TELEMETRY_DISABLED: '1' }
-const managedBinDir = join(process.env.SF_HOME || process.env.GSD_HOME || join(homedir(), '.sf'), 'agent', 'bin')
+const managedBinDir = join(process.env.SF_HOME || process.env.SF_HOME || join(homedir(), '.sf'), 'agent', 'bin')
 const managedBinaryPath = join(managedBinDir, platform() === 'win32' ? 'rtk.exe' : 'rtk')
 
 function run(cmd) {

@@ -462,35 +462,35 @@ interface McpToolServer {
 }
 
 export const WORKFLOW_TOOL_NAMES = [
-  "gsd_decision_save",
-  "gsd_save_decision",
-  "gsd_requirement_update",
-  "gsd_update_requirement",
-  "gsd_requirement_save",
-  "gsd_save_requirement",
-  "gsd_milestone_generate_id",
-  "gsd_generate_milestone_id",
-  "gsd_plan_milestone",
-  "gsd_plan_slice",
-  "gsd_plan_task",
-  "gsd_task_plan",
-  "gsd_replan_slice",
-  "gsd_slice_replan",
-  "gsd_slice_complete",
-  "gsd_complete_slice",
-  "gsd_skip_slice",
-  "gsd_complete_milestone",
-  "gsd_milestone_complete",
-  "gsd_validate_milestone",
-  "gsd_milestone_validate",
-  "gsd_reassess_roadmap",
-  "gsd_roadmap_reassess",
-  "gsd_save_gate_result",
-  "gsd_summary_save",
-  "gsd_task_complete",
-  "gsd_complete_task",
-  "gsd_milestone_status",
-  "gsd_journal_query",
+  "sf_decision_save",
+  "sf_save_decision",
+  "sf_requirement_update",
+  "sf_update_requirement",
+  "sf_requirement_save",
+  "sf_save_requirement",
+  "sf_milestone_generate_id",
+  "sf_generate_milestone_id",
+  "sf_plan_milestone",
+  "sf_plan_slice",
+  "sf_plan_task",
+  "sf_task_plan",
+  "sf_replan_slice",
+  "sf_slice_replan",
+  "sf_slice_complete",
+  "sf_complete_slice",
+  "sf_skip_slice",
+  "sf_complete_milestone",
+  "sf_milestone_complete",
+  "sf_validate_milestone",
+  "sf_milestone_validate",
+  "sf_reassess_roadmap",
+  "sf_roadmap_reassess",
+  "sf_save_gate_result",
+  "sf_summary_save",
+  "sf_task_complete",
+  "sf_complete_task",
+  "sf_milestone_status",
+  "sf_journal_query",
 ] as const;
 
 async function runSerializedWorkflowOperation<T>(fn: () => Promise<T>): Promise<T> {
@@ -558,7 +558,7 @@ async function handleTaskComplete(
   projectDir: string,
   args: Omit<z.infer<typeof taskCompleteSchema>, "projectDir">,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_task_complete", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_task_complete", projectDir, args.milestoneId);
   const {
     taskId,
     sliceId,
@@ -599,7 +599,7 @@ async function handleSliceComplete(
   projectDir: string,
   args: z.infer<typeof sliceCompleteSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_slice_complete", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_slice_complete", projectDir, args.milestoneId);
   const { executeSliceComplete } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeSliceComplete(params, projectDir));
@@ -609,7 +609,7 @@ async function handleReplanSlice(
   projectDir: string,
   args: z.infer<typeof replanSliceSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_replan_slice", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_replan_slice", projectDir, args.milestoneId);
   const { executeReplanSlice } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeReplanSlice(params, projectDir));
@@ -619,7 +619,7 @@ async function handleCompleteMilestone(
   projectDir: string,
   args: z.infer<typeof completeMilestoneSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_complete_milestone", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_complete_milestone", projectDir, args.milestoneId);
   const { executeCompleteMilestone } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeCompleteMilestone(params, projectDir));
@@ -629,7 +629,7 @@ async function handleValidateMilestone(
   projectDir: string,
   args: z.infer<typeof validateMilestoneSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_validate_milestone", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_validate_milestone", projectDir, args.milestoneId);
   const { executeValidateMilestone } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeValidateMilestone(params, projectDir));
@@ -639,7 +639,7 @@ async function handleReassessRoadmap(
   projectDir: string,
   args: z.infer<typeof reassessRoadmapSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_reassess_roadmap", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_reassess_roadmap", projectDir, args.milestoneId);
   const { executeReassessRoadmap } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeReassessRoadmap(params, projectDir));
@@ -649,7 +649,7 @@ async function handleSaveGateResult(
   projectDir: string,
   args: z.infer<typeof saveGateResultSchema>,
 ): Promise<unknown> {
-  await enforceWorkflowWriteGate("gsd_save_gate_result", projectDir, args.milestoneId);
+  await enforceWorkflowWriteGate("sf_save_gate_result", projectDir, args.milestoneId);
   const { executeSaveGateResult } = await getWorkflowToolExecutors();
   const { projectDir: _projectDir, ...params } = args;
   return runSerializedWorkflowOperation(() => executeSaveGateResult(params, projectDir));
@@ -982,13 +982,13 @@ const journalQuerySchema = z.object(journalQueryParams);
 
 export function registerWorkflowTools(server: McpToolServer): void {
   server.tool(
-    "gsd_decision_save",
+    "sf_decision_save",
     "Record a project decision to the SF database and regenerate DECISIONS.md.",
     decisionSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(decisionSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_decision_save", projectDir);
+      await enforceWorkflowWriteGate("sf_decision_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveDecisionToDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return saveDecisionToDb(params, projectDir);
@@ -998,13 +998,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_save_decision",
-    "Alias for gsd_decision_save. Record a project decision to the SF database and regenerate DECISIONS.md.",
+    "sf_save_decision",
+    "Alias for sf_decision_save. Record a project decision to the SF database and regenerate DECISIONS.md.",
     decisionSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(decisionSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_decision_save", projectDir);
+      await enforceWorkflowWriteGate("sf_decision_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveDecisionToDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return saveDecisionToDb(params, projectDir);
@@ -1014,13 +1014,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_requirement_update",
+    "sf_requirement_update",
     "Update an existing requirement in the SF database and regenerate REQUIREMENTS.md.",
     requirementUpdateParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementUpdateSchema, args);
       const { projectDir, id, ...updates } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_update", projectDir);
+      await enforceWorkflowWriteGate("sf_requirement_update", projectDir);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { updateRequirementInDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return updateRequirementInDb(id, updates, projectDir);
@@ -1030,13 +1030,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_update_requirement",
-    "Alias for gsd_requirement_update. Update an existing requirement in the SF database and regenerate REQUIREMENTS.md.",
+    "sf_update_requirement",
+    "Alias for sf_requirement_update. Update an existing requirement in the SF database and regenerate REQUIREMENTS.md.",
     requirementUpdateParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementUpdateSchema, args);
       const { projectDir, id, ...updates } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_update", projectDir);
+      await enforceWorkflowWriteGate("sf_requirement_update", projectDir);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { updateRequirementInDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return updateRequirementInDb(id, updates, projectDir);
@@ -1046,13 +1046,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_requirement_save",
+    "sf_requirement_save",
     "Record a new requirement to the SF database and regenerate REQUIREMENTS.md.",
     requirementSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_save", projectDir);
+      await enforceWorkflowWriteGate("sf_requirement_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveRequirementToDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return saveRequirementToDb(params, projectDir);
@@ -1062,13 +1062,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_save_requirement",
-    "Alias for gsd_requirement_save. Record a new requirement to the SF database and regenerate REQUIREMENTS.md.",
+    "sf_save_requirement",
+    "Alias for sf_requirement_save. Record a new requirement to the SF database and regenerate REQUIREMENTS.md.",
     requirementSaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(requirementSaveSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_requirement_save", projectDir);
+      await enforceWorkflowWriteGate("sf_requirement_save", projectDir);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { saveRequirementToDb } = await importLocalModule<any>("../../../src/resources/extensions/sf/db-writer.js");
         return saveRequirementToDb(params, projectDir);
@@ -1078,12 +1078,12 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_generate_id",
+    "sf_milestone_generate_id",
     "Generate the next milestone ID for a new SF milestone.",
     milestoneGenerateIdParams,
     async (args: Record<string, unknown>) => {
       const { projectDir } = parseWorkflowArgs(milestoneGenerateIdSchema, args);
-      await enforceWorkflowWriteGate("gsd_milestone_generate_id", projectDir);
+      await enforceWorkflowWriteGate("sf_milestone_generate_id", projectDir);
       const id = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const {
           claimReservedId,
@@ -1106,12 +1106,12 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_generate_milestone_id",
-    "Alias for gsd_milestone_generate_id. Generate the next milestone ID for a new SF milestone.",
+    "sf_generate_milestone_id",
+    "Alias for sf_milestone_generate_id. Generate the next milestone ID for a new SF milestone.",
     milestoneGenerateIdParams,
     async (args: Record<string, unknown>) => {
       const { projectDir } = parseWorkflowArgs(milestoneGenerateIdSchema, args);
-      await enforceWorkflowWriteGate("gsd_milestone_generate_id", projectDir);
+      await enforceWorkflowWriteGate("sf_milestone_generate_id", projectDir);
       const id = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const {
           claimReservedId,
@@ -1134,39 +1134,39 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_plan_milestone",
+    "sf_plan_milestone",
     "Write milestone planning state to the SF database and render ROADMAP.md from DB.",
     planMilestoneParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planMilestoneSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_milestone", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("sf_plan_milestone", projectDir, params.milestoneId);
       const { executePlanMilestone } = await getWorkflowToolExecutors();
       return runSerializedWorkflowOperation(() => executePlanMilestone(params, projectDir));
     },
   );
 
   server.tool(
-    "gsd_plan_slice",
+    "sf_plan_slice",
     "Write slice/task planning state to the SF database and render plan artifacts from DB.",
     planSliceParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planSliceSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_slice", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("sf_plan_slice", projectDir, params.milestoneId);
       const { executePlanSlice } = await getWorkflowToolExecutors();
       return runSerializedWorkflowOperation(() => executePlanSlice(params, projectDir));
     },
   );
 
   server.tool(
-    "gsd_plan_task",
+    "sf_plan_task",
     "Write task planning state to the SF database and render tasks/T##-PLAN.md from DB.",
     planTaskParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planTaskSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_task", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("sf_plan_task", projectDir, params.milestoneId);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { handlePlanTask } = await importLocalModule<any>("../../../src/resources/extensions/sf/tools/plan-task.js");
         return handlePlanTask(params, projectDir);
@@ -1181,13 +1181,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_task_plan",
-    "Alias for gsd_plan_task. Write task planning state to the SF database and render tasks/T##-PLAN.md from DB.",
+    "sf_task_plan",
+    "Alias for sf_plan_task. Write task planning state to the SF database and render tasks/T##-PLAN.md from DB.",
     planTaskParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(planTaskSchema, args);
       const { projectDir, ...params } = parsed;
-      await enforceWorkflowWriteGate("gsd_plan_task", projectDir, params.milestoneId);
+      await enforceWorkflowWriteGate("sf_plan_task", projectDir, params.milestoneId);
       const result = await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { handlePlanTask } = await importLocalModule<any>("../../../src/resources/extensions/sf/tools/plan-task.js");
         return handlePlanTask(params, projectDir);
@@ -1202,7 +1202,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_replan_slice",
+    "sf_replan_slice",
     "Replan a slice after a blocker is discovered, preserving completed tasks and re-rendering PLAN.md + REPLAN.md.",
     replanSliceParams,
     async (args: Record<string, unknown>) => {
@@ -1212,8 +1212,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_slice_replan",
-    "Alias for gsd_replan_slice. Replan a slice after a blocker is discovered.",
+    "sf_slice_replan",
+    "Alias for sf_replan_slice. Replan a slice after a blocker is discovered.",
     replanSliceParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(replanSliceSchema, args);
@@ -1222,7 +1222,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_slice_complete",
+    "sf_slice_complete",
     "Record a completed slice to the SF database, render SUMMARY.md + UAT.md, and update roadmap projection.",
     sliceCompleteParams,
     async (args: Record<string, unknown>) => {
@@ -1232,8 +1232,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_complete_slice",
-    "Alias for gsd_slice_complete. Record a completed slice to the SF database and render summary/UAT artifacts.",
+    "sf_complete_slice",
+    "Alias for sf_slice_complete. Record a completed slice to the SF database and render summary/UAT artifacts.",
     sliceCompleteParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(sliceCompleteSchema, args);
@@ -1242,12 +1242,12 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_skip_slice",
+    "sf_skip_slice",
     "Mark a slice as skipped so auto-mode advances past it without executing.",
     skipSliceParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, milestoneId, sliceId, reason } = parseWorkflowArgs(skipSliceSchema, args);
-      await enforceWorkflowWriteGate("gsd_skip_slice", projectDir, milestoneId);
+      await enforceWorkflowWriteGate("sf_skip_slice", projectDir, milestoneId);
       await runSerializedWorkflowDbOperation(projectDir, async () => {
         const { getSlice, updateSliceStatus } = await importLocalModule<any>("../../../src/resources/extensions/sf/sf-db.js");
         const { invalidateStateCache } = await importLocalModule<any>("../../../src/resources/extensions/sf/state.js");
@@ -1272,7 +1272,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_complete_milestone",
+    "sf_complete_milestone",
     "Record a completed milestone to the SF database and render its SUMMARY.md.",
     completeMilestoneParams,
     async (args: Record<string, unknown>) => {
@@ -1282,8 +1282,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_complete",
-    "Alias for gsd_complete_milestone. Record a completed milestone to the SF database and render its SUMMARY.md.",
+    "sf_milestone_complete",
+    "Alias for sf_complete_milestone. Record a completed milestone to the SF database and render its SUMMARY.md.",
     completeMilestoneParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(completeMilestoneSchema, args);
@@ -1292,7 +1292,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_validate_milestone",
+    "sf_validate_milestone",
     "Validate a milestone, persist validation results to the SF database, and render VALIDATION.md.",
     validateMilestoneParams,
     async (args: Record<string, unknown>) => {
@@ -1302,8 +1302,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_validate",
-    "Alias for gsd_validate_milestone. Validate a milestone and render VALIDATION.md.",
+    "sf_milestone_validate",
+    "Alias for sf_validate_milestone. Validate a milestone and render VALIDATION.md.",
     validateMilestoneParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(validateMilestoneSchema, args);
@@ -1312,7 +1312,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_reassess_roadmap",
+    "sf_reassess_roadmap",
     "Reassess a milestone roadmap after a slice completes, writing ASSESSMENT.md and re-rendering ROADMAP.md.",
     reassessRoadmapParams,
     async (args: Record<string, unknown>) => {
@@ -1322,8 +1322,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_roadmap_reassess",
-    "Alias for gsd_reassess_roadmap. Reassess a roadmap after slice completion.",
+    "sf_roadmap_reassess",
+    "Alias for sf_reassess_roadmap. Reassess a roadmap after slice completion.",
     reassessRoadmapParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(reassessRoadmapSchema, args);
@@ -1332,7 +1332,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_save_gate_result",
+    "sf_save_gate_result",
     "Save a quality gate result to the SF database.",
     saveGateResultParams,
     async (args: Record<string, unknown>) => {
@@ -1342,13 +1342,13 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_summary_save",
+    "sf_summary_save",
     "Save a SF summary/research/context/assessment artifact to the database and disk.",
     summarySaveParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(summarySaveSchema, args);
       const { projectDir, milestone_id, slice_id, task_id, artifact_type, content } = parsed;
-      await enforceWorkflowWriteGate("gsd_summary_save", projectDir, milestone_id);
+      await enforceWorkflowWriteGate("sf_summary_save", projectDir, milestone_id);
       const executors = await getWorkflowToolExecutors();
       const supportedArtifactTypes = getSupportedSummaryArtifactTypes(executors);
       if (!supportedArtifactTypes.includes(artifact_type)) {
@@ -1363,7 +1363,7 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_task_complete",
+    "sf_task_complete",
     "Record a completed task to the SF database and render its SUMMARY.md.",
     taskCompleteParams,
     async (args: Record<string, unknown>) => {
@@ -1374,8 +1374,8 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_complete_task",
-    "Alias for gsd_task_complete. Record a completed task to the SF database and render its SUMMARY.md.",
+    "sf_complete_task",
+    "Alias for sf_task_complete. Record a completed task to the SF database and render its SUMMARY.md.",
     taskCompleteParams,
     async (args: Record<string, unknown>) => {
       const parsed = parseWorkflowArgs(taskCompleteSchema, args);
@@ -1385,19 +1385,19 @@ export function registerWorkflowTools(server: McpToolServer): void {
   );
 
   server.tool(
-    "gsd_milestone_status",
+    "sf_milestone_status",
     "Read the current status of a milestone and all its slices from the SF database.",
     milestoneStatusParams,
     async (args: Record<string, unknown>) => {
       const { projectDir, milestoneId } = parseWorkflowArgs(milestoneStatusSchema, args);
-      await enforceWorkflowWriteGate("gsd_milestone_status", projectDir, milestoneId);
+      await enforceWorkflowWriteGate("sf_milestone_status", projectDir, milestoneId);
       const { executeMilestoneStatus } = await getWorkflowToolExecutors();
       return runSerializedWorkflowOperation(() => executeMilestoneStatus({ milestoneId }, projectDir));
     },
   );
 
   server.tool(
-    "gsd_journal_query",
+    "sf_journal_query",
     "Query the structured event journal for auto-mode iterations.",
     journalQueryParams,
     async (args: Record<string, unknown>) => {

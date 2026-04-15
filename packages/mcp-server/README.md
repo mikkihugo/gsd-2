@@ -79,35 +79,35 @@ Add to `.cursor/mcp.json`:
 
 The workflow MCP surface includes:
 
-- `gsd_decision_save`
-- `gsd_save_decision`
-- `gsd_requirement_update`
-- `gsd_update_requirement`
-- `gsd_requirement_save`
-- `gsd_save_requirement`
-- `gsd_milestone_generate_id`
-- `gsd_generate_milestone_id`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_task_plan`
-- `gsd_replan_slice`
-- `gsd_slice_replan`
-- `gsd_task_complete`
-- `gsd_complete_task`
-- `gsd_slice_complete`
-- `gsd_complete_slice`
-- `gsd_skip_slice`
-- `gsd_validate_milestone`
-- `gsd_milestone_validate`
-- `gsd_complete_milestone`
-- `gsd_milestone_complete`
-- `gsd_reassess_roadmap`
-- `gsd_roadmap_reassess`
-- `gsd_save_gate_result`
-- `gsd_summary_save`
-- `gsd_milestone_status`
-- `gsd_journal_query`
+- `sf_decision_save`
+- `sf_save_decision`
+- `sf_requirement_update`
+- `sf_update_requirement`
+- `sf_requirement_save`
+- `sf_save_requirement`
+- `sf_milestone_generate_id`
+- `sf_generate_milestone_id`
+- `sf_plan_milestone`
+- `sf_plan_slice`
+- `sf_plan_task`
+- `sf_task_plan`
+- `sf_replan_slice`
+- `sf_slice_replan`
+- `sf_task_complete`
+- `sf_complete_task`
+- `sf_slice_complete`
+- `sf_complete_slice`
+- `sf_skip_slice`
+- `sf_validate_milestone`
+- `sf_milestone_validate`
+- `sf_complete_milestone`
+- `sf_milestone_complete`
+- `sf_reassess_roadmap`
+- `sf_roadmap_reassess`
+- `sf_save_gate_result`
+- `sf_summary_save`
+- `sf_milestone_status`
+- `sf_journal_query`
 
 These tools use the same SF workflow handlers as the native in-process tool path wherever a shared handler exists.
 
@@ -126,7 +126,7 @@ Current support boundary:
 
 If the executor bridge cannot be loaded, workflow mutation calls will fail with a precise configuration error instead of silently degrading.
 
-### `gsd_execute`
+### `sf_execute`
 
 Start a SF auto-mode session for a project directory.
 
@@ -139,13 +139,13 @@ Start a SF auto-mode session for a project directory.
 
 **Returns:** `{ sessionId, status: "started" }`
 
-### `gsd_status`
+### `sf_status`
 
 Poll the current status of a running SF session.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `sf_execute` |
 
 **Returns:**
 
@@ -160,13 +160,13 @@ Poll the current status of a running SF session.
 }
 ```
 
-### `gsd_result`
+### `sf_result`
 
 Get the accumulated result of a session. Works for both running (partial) and completed sessions.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `sf_execute` |
 
 **Returns:**
 
@@ -183,17 +183,17 @@ Get the accumulated result of a session. Works for both running (partial) and co
 }
 ```
 
-### `gsd_cancel`
+### `sf_cancel`
 
 Cancel a running session. Aborts the current operation and stops the agent process.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `sf_execute` |
 
 **Returns:** `{ cancelled: true }`
 
-### `gsd_query`
+### `sf_query`
 
 Query SF project state from the filesystem without an active session. Returns STATE.md, PROJECT.md, requirements, and milestone listing.
 
@@ -216,13 +216,13 @@ Query SF project state from the filesystem without an active session. Returns ST
 }
 ```
 
-### `gsd_resolve_blocker`
+### `sf_resolve_blocker`
 
 Resolve a pending blocker in a session by sending a response to the blocked UI request.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sessionId` | `string` | ✅ | Session ID from `gsd_execute` |
+| `sessionId` | `string` | ✅ | Session ID from `sf_execute` |
 | `response` | `string` | ✅ | Response to send for the pending blocker |
 
 **Returns:** `{ resolved: true }`

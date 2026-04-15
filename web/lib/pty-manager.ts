@@ -29,8 +29,8 @@ interface LoadedNodePty {
 }
 
 // Use globalThis to persist across Turbopack/HMR module re-evaluations in dev
-const GLOBAL_KEY = "__gsd_pty_sessions__" as const;
-const CLEANUP_GUARD_KEY = "__gsd_pty_cleanup_installed__" as const;
+const GLOBAL_KEY = "__sf_pty_sessions__" as const;
+const CLEANUP_GUARD_KEY = "__sf_pty_cleanup_installed__" as const;
 const MAX_SESSION_BUFFER_BYTES = 1024 * 1024;
 
 function getSessions(): Map<string, PtySession> {

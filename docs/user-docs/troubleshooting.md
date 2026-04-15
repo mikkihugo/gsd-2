@@ -344,7 +344,7 @@ Doctor rebuilds `STATE.md` from plan and roadmap files on disk and fixes detecte
 
 ### "SF database is not available"
 
-**Symptoms:** `gsd_decision_save` (or its alias `gsd_save_decision`), `gsd_requirement_update` (or `gsd_update_requirement`), or `gsd_summary_save` (or `gsd_save_summary`) fail with this error.
+**Symptoms:** `sf_decision_save` (or its alias `sf_save_decision`), `sf_requirement_update` (or `sf_update_requirement`), or `sf_summary_save` (or `sf_save_summary`) fail with this error.
 
 **Cause:** The SQLite database wasn't initialized. This happens in manual `/sf` sessions (non-auto mode) on versions before v2.29.
 

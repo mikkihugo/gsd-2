@@ -133,7 +133,7 @@ SF 会检测你本地的 Claude Code 安装，并把它作为已认证的 Anthro
 
 **暴露了什么**
 
-MCP server 会暴露 SF 的完整 workflow 工具面：milestone planning、task completion、slice 管理、roadmap reassessment、journal 查询等。会话管理工具（`gsd_execute`、`gsd_status`、`gsd_result`、`gsd_cancel`）允许 Claude Code 启动并监控 SF 自动模式会话。完整工具列表见 [命令 → MCP Server 模式](./commands.md#mcp-server-mode)。
+MCP server 会暴露 SF 的完整 workflow 工具面：milestone planning、task completion、slice 管理、roadmap reassessment、journal 查询等。会话管理工具（`sf_execute`、`sf_status`、`sf_result`、`sf_cancel`）允许 Claude Code 启动并监控 SF 自动模式会话。完整工具列表见 [命令 → MCP Server 模式](./commands.md#mcp-server-mode)。
 
 **验证连接**
 

@@ -485,7 +485,7 @@ describe("stream-adapter — session persistence (#2859)", () => {
 				"Grep",
 				"Bash(ls:*)",
 				"Bash(pwd)",
-				"mcp__gsd-workflow__*",
+				"mcp__sf-workflow__*",
 			]);
 		} finally {
 			process.env.SF_WORKFLOW_MCP_COMMAND = prev.SF_WORKFLOW_MCP_COMMAND;

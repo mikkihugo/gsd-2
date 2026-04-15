@@ -189,7 +189,7 @@ export function runDoctorLite(projectDir: string, scope?: string): DoctorResult 
       ok: true,
       issues: [{
         severity: 'info',
-        code: 'no_gsd_directory',
+        code: 'no_sf_directory',
         scope: 'project',
         unitId: '',
         message: 'No .sf/ directory found — project not initialized',

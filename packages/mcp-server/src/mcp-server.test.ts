@@ -584,13 +584,13 @@ describe('createMcpServer tool registration', () => {
     assert.ok(typeof server.close === 'function');
   });
 
-  it('gsd_execute flow returns sessionId on success', async () => {
+  it('sf_execute flow returns sessionId on success', async () => {
     const sessionId = await sm.startSession('/tmp/tool-exec', { cliPath: '/usr/bin/sf' });
     assert.equal(typeof sessionId, 'string');
     assert.ok(sessionId.length > 0);
   });
 
-  it('gsd_status flow returns correct shape', async () => {
+  it('sf_status flow returns correct shape', async () => {
     const sessionId = await sm.startSession('/tmp/tool-status', { cliPath: '/usr/bin/sf' });
     const session = sm.getSession(sessionId)!;
 
@@ -600,7 +600,7 @@ describe('createMcpServer tool registration', () => {
     assert.equal(typeof session.startTime, 'number');
   });
 
-  it('gsd_resolve_blocker flow returns error when no blocker', async () => {
+  it('sf_resolve_blocker flow returns error when no blocker', async () => {
     const sessionId = await sm.startSession('/tmp/tool-resolve', { cliPath: '/usr/bin/sf' });
     await assert.rejects(
       () => sm.resolveBlocker(sessionId, 'fix'),
@@ -611,7 +611,7 @@ describe('createMcpServer tool registration', () => {
     );
   });
 
-  it('gsd_result flow returns HeadlessJsonResult shape', async () => {
+  it('sf_result flow returns HeadlessJsonResult shape', async () => {
     const sessionId = await sm.startSession('/tmp/tool-result', { cliPath: '/usr/bin/sf' });
     const result = sm.getResult(sessionId);
 
@@ -625,7 +625,7 @@ describe('createMcpServer tool registration', () => {
     assert.ok('error' in result);
   });
 
-  it('gsd_cancel flow marks session as cancelled', async () => {
+  it('sf_cancel flow marks session as cancelled', async () => {
     const sessionId = await sm.startSession('/tmp/tool-cancel', { cliPath: '/usr/bin/sf' });
     await sm.cancelSession(sessionId);
     const session = sm.getSession(sessionId)!;

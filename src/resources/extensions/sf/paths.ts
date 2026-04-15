@@ -267,7 +267,7 @@ export const SF_ROOT_FILES = {
   CODEBASE: "CODEBASE.md",
 } as const;
 
-export const GSD_ROOT_FILES = SF_ROOT_FILES;
+export const SF_ROOT_FILES = SF_ROOT_FILES;
 
 export type SFRootFileKey = keyof typeof SF_ROOT_FILES;
 

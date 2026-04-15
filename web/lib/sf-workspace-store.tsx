@@ -4074,7 +4074,7 @@ export class SFWorkspaceStore {
           await this.refreshBoot()
           return outcome
         }
-        if (outcome.action === "gsd_help") {
+        if (outcome.action === "sf_help") {
           this.patchState({
             terminalLines: withTerminalLine(
               withTerminalLine(this.state.terminalLines, createTerminalLine("input", trimmed)),

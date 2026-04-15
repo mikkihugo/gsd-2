@@ -191,7 +191,7 @@ test("current SF command family samples dispatch to correct outcomes after S02",
   })
 })
 
-const EXPECTED_GSD_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "view-navigate">([
+const EXPECTED_SF_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "view-navigate">([
   // Surface commands (19)
   ["status", "surface"],
   ["visualize", "view-navigate"],
@@ -229,12 +229,12 @@ const EXPECTED_GSD_OUTCOMES = new Map<string, "surface" | "prompt" | "local" | "
 
 test("every registered /sf subcommand has an explicit browser dispatch outcome", async (t) => {
   assert.equal(
-    EXPECTED_GSD_OUTCOMES.size,
+    EXPECTED_SF_OUTCOMES.size,
     30,
-    "EXPECTED_GSD_OUTCOMES must cover all 30 SF subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
+    "EXPECTED_SF_OUTCOMES must cover all 30 SF subcommands (19 surface + 1 view-navigate + 9 passthrough + 1 help)",
   )
 
-  for (const [subcommand, expectedKind] of EXPECTED_GSD_OUTCOMES) {
+  for (const [subcommand, expectedKind] of EXPECTED_SF_OUTCOMES) {
     await t.test(`/sf ${subcommand} -> ${expectedKind}`, () => {
       const outcome = dispatchBrowserSlashCommand(`/sf ${subcommand}`)
       assert.equal(
@@ -259,9 +259,9 @@ test("every registered /sf subcommand has an explicit browser dispatch outcome",
     }
 
     if (expectedKind === "local") {
-      await t.test(`/sf ${subcommand} dispatches to gsd_help action`, () => {
+      await t.test(`/sf ${subcommand} dispatches to sf_help action`, () => {
         const outcome = dispatchBrowserSlashCommand(`/sf ${subcommand}`) as any
-        assert.equal(outcome.action, "gsd_help", `/sf ${subcommand} should dispatch to gsd_help action`)
+        assert.equal(outcome.action, "sf_help", `/sf ${subcommand} should dispatch to sf_help action`)
       })
     }
 
@@ -281,10 +281,10 @@ test("SF dispatch edge cases", async (t) => {
     assert.equal(outcome.command.message, "/sf")
   })
 
-  await t.test("/sf help dispatches to local gsd_help action", () => {
+  await t.test("/sf help dispatches to local sf_help action", () => {
     const outcome = dispatchBrowserSlashCommand("/sf help")
     assert.equal(outcome.kind, "local")
-    assert.equal(outcome.action, "gsd_help")
+    assert.equal(outcome.action, "sf_help")
   })
 
   await t.test("/sf unknown-xyz passes through to bridge", () => {
@@ -328,7 +328,7 @@ test("SF dispatch edge cases", async (t) => {
 })
 
 test("every SF surface dispatches through the contract wiring end-to-end", async (t) => {
-  const gsdSurfaces = [...EXPECTED_GSD_OUTCOMES.entries()].filter(([, kind]) => kind === "surface")
+  const gsdSurfaces = [...EXPECTED_SF_OUTCOMES.entries()].filter(([, kind]) => kind === "surface")
 
   assert.equal(gsdSurfaces.length, 19, "should have exactly 19 SF surface subcommands")
 

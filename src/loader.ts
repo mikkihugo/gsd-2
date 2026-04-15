@@ -13,20 +13,20 @@ const args = process.argv.slice(2)
 const firstArg = args[0]
 
 // Read package.json once — reused for version, banner, and SF_VERSION below
-let gsdVersion = '0.0.0'
+let sfVersion = '0.0.0'
 try {
   const pkg = JSON.parse(readFileSync(join(gsdRoot, 'package.json'), 'utf-8'))
-  gsdVersion = pkg.version || '0.0.0'
+  sfVersion = pkg.version || '0.0.0'
 } catch { /* ignore */ }
 
 if (firstArg === '--version' || firstArg === '-v') {
-  process.stdout.write(gsdVersion + '\n')
+  process.stdout.write(sfVersion + '\n')
   process.exit(0)
 }
 
 if (firstArg === '--help' || firstArg === '-h') {
   const { printHelp } = await import('./help-text.js')
-  printHelp(gsdVersion)
+  printHelp(sfVersion)
   process.exit(0)
 }
 
@@ -101,7 +101,7 @@ if (!existsSync(appRoot)) {
   process.stderr.write(
     renderLogo(colorCyan) +
     '\n' +
-    `  Singularity Forge ${dim}v${gsdVersion}${reset}\n` +
+    `  Singularity Forge ${dim}v${sfVersion}${reset}\n` +
     `  ${green}Welcome.${reset} Setting up your environment...\n\n`
   )
   process.env.SF_FIRST_RUN_BANNER = '1'
@@ -134,7 +134,7 @@ const { Module } = await import('module');
 (Module as any)._initPaths?.()
 
 // SF_VERSION — expose package version so extensions can display it
-process.env.SF_VERSION = gsdVersion
+process.env.SF_VERSION = sfVersion
 
 // SF_BIN_PATH — absolute path to this loader (dist/loader.js), used by patched subagent
 // to spawn sf instead of pi when dispatching workflow tasks.

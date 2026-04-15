@@ -210,7 +210,7 @@ test("pruneRemovedBundledExtensions removes stale subdirectory extensions not in
     );
 
     // Bump the manifest version to force a re-sync (simulates upgrading SF).
-    manifest.gsdVersion = "0.0.0-force-resync";
+    manifest.sfVersion = "0.0.0-force-resync";
     manifest.contentHash = "0000000000000000";
     writeFileSync(manifestPath, JSON.stringify(manifest));
 

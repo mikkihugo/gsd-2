@@ -179,7 +179,7 @@ test("chat-controller renders serverToolUse before trailing text matching conten
 	const serverToolUse = {
 		type: "serverToolUse",
 		id: toolId,
-		name: "mcp__gsd-workflow__secure_env_collect",
+		name: "mcp__sf-workflow__secure_env_collect",
 		input: { projectDir: "/tmp/project", keys: [{ key: "SECURE_PASSWORD" }], destination: "dotenv" },
 	};
 

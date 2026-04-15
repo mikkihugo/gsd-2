@@ -130,7 +130,7 @@ You can also add this to `~/.claude/settings.json` under `mcpServers` to make SF
 
 **What's exposed:**
 
-The MCP server provides SF's full workflow tool surface — milestone planning, task completion, slice management, roadmap reassessment, journal queries, and more. Session management tools (`gsd_execute`, `gsd_status`, `gsd_result`, `gsd_cancel`) let Claude Code start and monitor SF auto-mode sessions. See [Commands → MCP Server Mode](./commands.md#mcp-server-mode) for the full tool list.
+The MCP server provides SF's full workflow tool surface — milestone planning, task completion, slice management, roadmap reassessment, journal queries, and more. Session management tools (`sf_execute`, `sf_status`, `sf_result`, `sf_cancel`) let Claude Code start and monitor SF auto-mode sessions. See [Commands → MCP Server Mode](./commands.md#mcp-server-mode) for the full tool list.
 
 **Verify the connection:**
 

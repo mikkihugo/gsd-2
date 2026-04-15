@@ -18,23 +18,23 @@ This split is now creating a real provider compatibility problem.
 
 The core SF workflow tools are internal extension tools. Examples include:
 
-- `gsd_summary_save`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_task_complete` / `gsd_complete_task`
-- `gsd_slice_complete`
-- `gsd_complete_milestone`
-- `gsd_validate_milestone`
-- `gsd_replan_slice`
-- `gsd_reassess_roadmap`
+- `sf_summary_save`
+- `sf_plan_milestone`
+- `sf_plan_slice`
+- `sf_plan_task`
+- `sf_task_complete` / `sf_complete_task`
+- `sf_slice_complete`
+- `sf_complete_milestone`
+- `sf_validate_milestone`
+- `sf_replan_slice`
+- `sf_reassess_roadmap`
 
 These are registered in `src/resources/extensions/sf/bootstrap/db-tools.ts` and related bootstrap files. SF prompts assume these tools are available during discuss, plan, and execute flows.
 
 Separately, `packages/mcp-server/src/server.ts` exposes a different tool surface:
 
-- session control: `gsd_execute`, `gsd_status`, `gsd_result`, `gsd_cancel`, `gsd_query`, `gsd_resolve_blocker`
-- read-only inspection: `gsd_progress`, `gsd_roadmap`, `gsd_history`, `gsd_doctor`, `gsd_captures`, `gsd_knowledge`
+- session control: `sf_execute`, `sf_status`, `sf_result`, `sf_cancel`, `sf_query`, `sf_resolve_blocker`
+- read-only inspection: `sf_progress`, `sf_roadmap`, `sf_history`, `sf_doctor`, `sf_captures`, `sf_knowledge`
 
 That MCP server is useful, but it is **not** a transport for the internal workflow/mutation tools.
 
@@ -44,7 +44,7 @@ The Claude Code CLI provider uses the Anthropic Agent SDK through `src/resources
 
 As a result:
 
-- prompts tell the model to call tools like `gsd_complete_task`
+- prompts tell the model to call tools like `sf_complete_task`
 - the tools exist in SF
 - but Claude Code sessions do not actually receive those tools
 
@@ -92,19 +92,19 @@ SF will expose the workflow tools required for discuss, planning, execution, and
 
 Initial minimum set:
 
-- `gsd_summary_save`
-- `gsd_decision_save`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_task_complete`
-- `gsd_slice_complete`
-- `gsd_complete_milestone`
-- `gsd_validate_milestone`
-- `gsd_replan_slice`
-- `gsd_reassess_roadmap`
-- `gsd_save_gate_result`
-- selected read/query tools such as `gsd_milestone_status`
+- `sf_summary_save`
+- `sf_decision_save`
+- `sf_plan_milestone`
+- `sf_plan_slice`
+- `sf_plan_task`
+- `sf_task_complete`
+- `sf_slice_complete`
+- `sf_complete_milestone`
+- `sf_validate_milestone`
+- `sf_replan_slice`
+- `sf_reassess_roadmap`
+- `sf_save_gate_result`
+- selected read/query tools such as `sf_milestone_status`
 
 Aliases should be treated conservatively. MCP should prefer canonical names unless compatibility requires exposing aliases.
 
@@ -197,11 +197,11 @@ Refactor workflow tools so MCP and native registration can call the same transpo
 
 Priority targets:
 
-- `gsd_summary_save`
-- `gsd_task_complete`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
+- `sf_summary_save`
+- `sf_task_complete`
+- `sf_plan_milestone`
+- `sf_plan_slice`
+- `sf_plan_task`
 
 ### Phase 2: Stand up the workflow-tool MCP server
 

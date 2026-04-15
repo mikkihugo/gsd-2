@@ -58,19 +58,19 @@ Goal: add an MCP server surface for real SF workflow tools, distinct from the cu
 
 Preferred first-cut tool set:
 
-- `gsd_summary_save`
-- `gsd_decision_save`
-- `gsd_plan_milestone`
-- `gsd_plan_slice`
-- `gsd_plan_task`
-- `gsd_task_complete`
-- `gsd_slice_complete`
-- `gsd_complete_milestone`
-- `gsd_validate_milestone`
-- `gsd_replan_slice`
-- `gsd_reassess_roadmap`
-- `gsd_save_gate_result`
-- `gsd_milestone_status`
+- `sf_summary_save`
+- `sf_decision_save`
+- `sf_plan_milestone`
+- `sf_plan_slice`
+- `sf_plan_task`
+- `sf_task_complete`
+- `sf_slice_complete`
+- `sf_complete_milestone`
+- `sf_validate_milestone`
+- `sf_replan_slice`
+- `sf_reassess_roadmap`
+- `sf_save_gate_result`
+- `sf_milestone_status`
 
 Likely files:
 
@@ -129,7 +129,7 @@ Expected work:
 Exit criteria:
 
 - Claude Code session can discover the SF workflow MCP tools
-- task execution path can call `gsd_task_complete` successfully
+- task execution path can call `sf_task_complete` successfully
 
 ### 5. Capability Detection and Failure Path
 
@@ -179,7 +179,7 @@ Exit criteria:
 
 Scope:
 
-- extract shared logic for `gsd_summary_save`, `gsd_task_complete`, and `gsd_milestone_status`
+- extract shared logic for `sf_summary_save`, `sf_task_complete`, and `sf_milestone_status`
 - prove native wrappers still work
 
 Why first:
@@ -212,7 +212,7 @@ Scope:
 
 Verification:
 
-- Claude Code can call `gsd_task_complete`
+- Claude Code can call `sf_task_complete`
 - summary file, DB state, and plan checkbox update correctly
 
 ## Phase 4: Expand to Full Minimum Workflow Set
@@ -329,7 +329,7 @@ ADR-008 is considered implemented when:
 
 Start with a narrow spike:
 
-1. Extract shared handlers for `gsd_summary_save`, `gsd_task_complete`, and `gsd_milestone_status`.
+1. Extract shared handlers for `sf_summary_save`, `sf_task_complete`, and `sf_milestone_status`.
 2. Expose those tools through a minimal workflow MCP server.
 3. Attach that MCP server to Claude Code sessions.
 4. Prove end-to-end task completion on a fixture project.

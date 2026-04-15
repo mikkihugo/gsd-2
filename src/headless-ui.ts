@@ -146,7 +146,7 @@ export function summarizeToolArgs(toolName: unknown, toolInput: unknown): string
       return String(input.url ?? '')
     default: {
       // SF tools: show milestone/slice/task IDs when present
-      if (name.startsWith('gsd_')) {
+      if (name.startsWith('sf_')) {
         return summarizeGsdTool(name, input)
       }
       // Fallback: show first string-valued key up to 60 chars
@@ -175,7 +175,7 @@ function summarizeGsdTool(name: string, input: Record<string, unknown>): string 
     }
     return id
   }
-  // Fallback for SF tools without IDs (e.g. gsd_decision_save)
+  // Fallback for SF tools without IDs (e.g. sf_decision_save)
   if (input.decision) {
     const d = String(input.decision)
     return d.length > 60 ? d.slice(0, 57) + '...' : d

@@ -16,19 +16,19 @@ import { createFakeRtk } from "./rtk-test-utils.ts";
 let originalRtkDisabled: string | undefined;
 
 beforeEach(() => {
-  // Save and clear SF_RTK_DISABLED (and GSD_RTK_DISABLED) so tests can use fake RTK binaries
-  originalRtkDisabled = process.env.SF_RTK_DISABLED ?? process.env.GSD_RTK_DISABLED;
+  // Save and clear SF_RTK_DISABLED (and SF_RTK_DISABLED) so tests can use fake RTK binaries
+  originalRtkDisabled = process.env.SF_RTK_DISABLED ?? process.env.SF_RTK_DISABLED;
   delete process.env.SF_RTK_DISABLED;
-  delete process.env.GSD_RTK_DISABLED;
+  delete process.env.SF_RTK_DISABLED;
 });
 
 afterEach(() => {
   // Restore original env
   delete process.env.SF_RTK_DISABLED;
   if (originalRtkDisabled !== undefined) {
-    process.env.GSD_RTK_DISABLED = originalRtkDisabled;
+    process.env.SF_RTK_DISABLED = originalRtkDisabled;
   } else {
-    delete process.env.GSD_RTK_DISABLED;
+    delete process.env.SF_RTK_DISABLED;
   }
 });
 

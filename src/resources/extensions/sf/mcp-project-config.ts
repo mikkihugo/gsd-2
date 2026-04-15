@@ -6,7 +6,7 @@ import { assertSafeDirectory } from "./validate-directory.js";
 import { detectWorkflowMcpLaunchConfig } from "./workflow-mcp.js";
 
 export const SF_WORKFLOW_MCP_SERVER_NAME = "sf-workflow";
-export const GSD_WORKFLOW_MCP_SERVER_NAME = SF_WORKFLOW_MCP_SERVER_NAME;
+export const SF_WORKFLOW_MCP_SERVER_NAME = SF_WORKFLOW_MCP_SERVER_NAME;
 
 export interface ProjectMcpServerConfig {
   command?: string;

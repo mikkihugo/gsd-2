@@ -595,7 +595,7 @@ export async function launchWebMode(
     SF_WEB_PROJECT_SESSIONS_DIR: options.projectSessionsDir,
     SF_WEB_PACKAGE_ROOT: resolution.packageRoot,
     SF_WEB_HOST_KIND: resolution.kind,
-    ...(resolution.kind === 'source-dev' ? { NEXT_PUBLIC_GSD_DEV: '1' } : {}),
+    ...(resolution.kind === 'source-dev' ? { NEXT_PUBLIC_SF_DEV: '1' } : {}),
     ...(options.allowedOrigins?.length ? { SF_WEB_ALLOWED_ORIGINS: options.allowedOrigins.join(',') } : {}),
   }
 
