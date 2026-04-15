@@ -169,6 +169,10 @@ export interface AgentSessionConfig {
 	/** Optional: check if the claude-code CLI provider is ready (installed + authed).
 	 * Passed through to RetryHandler for third-party block recovery (#3772). */
 	isClaudeCodeReady?: () => boolean;
+	/** When false, model changes (via setModel/cycleModel/extension setModel) do NOT
+	 * write defaultProvider/defaultModel back to settings.json. Used by print/one-shot
+	 * mode so that `gsd -p --model X "msg"` never mutates the persisted default (#4251). */
+	persistModelChanges?: boolean;
 }
 
 export interface ExtensionBindings {
@@ -299,10 +303,16 @@ export class AgentSession {
 	// Base system prompt (without extension appends) - used to apply fresh appends each turn
 	private _baseSystemPrompt = "";
 
+	// Whether model changes should write defaultProvider/defaultModel to settings.json.
+	// Set to false for one-shot/print mode so `gsd -p --model X` never mutates the
+	// persisted default (#4251). Default true preserves interactive behavior.
+	private _persistModelChanges: boolean;
+
 	constructor(config: AgentSessionConfig) {
 		this.agent = config.agent;
 		this.sessionManager = config.sessionManager;
 		this.settingsManager = config.settingsManager;
+		this._persistModelChanges = config.persistModelChanges ?? true;
 		this._scopedModels = config.scopedModels ?? [];
 		this._resourceLoader = config.resourceLoader;
 		this._customTools = config.customTools ?? [];
@@ -1654,7 +1664,7 @@ export class AgentSession {
 		this._retryHandler.abortRetry();
 		this.agent.setModel(model);
 		this.sessionManager.appendModelChange(model.provider, model.id);
-		if (options?.persist !== false) {
+		if (options?.persist !== false && this._persistModelChanges) {
 			this.settingsManager.setDefaultModelAndProvider(model.provider, model.id);
 		}
 		this.setThinkingLevel(thinkingLevel);

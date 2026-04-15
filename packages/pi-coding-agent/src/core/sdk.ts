@@ -99,6 +99,10 @@ export interface CreateAgentSessionOptions {
 	/** Optional: check if the claude-code CLI provider is ready (installed + authed).
 	 * Passed to RetryHandler for third-party block recovery (#3772). */
 	isClaudeCodeReady?: () => boolean;
+	/** When false, model changes do NOT write defaultProvider/defaultModel back to
+	 * settings.json. main.ts sets this to false for print/one-shot mode so
+	 * `gsd -p --model X "msg"` cannot mutate the persisted default (#4251). */
+	persistModelChanges?: boolean;
 }
 
 /** Result from createAgentSession */
@@ -491,6 +495,7 @@ export async function createAgentSession(options: CreateAgentSessionOptions = {}
 		initialActiveToolNames,
 		extensionRunnerRef,
 		isClaudeCodeReady: options.isClaudeCodeReady,
+		persistModelChanges: options.persistModelChanges,
 	});
 	const extensionsResult = resourceLoader.getExtensions();
 

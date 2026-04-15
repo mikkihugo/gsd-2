@@ -552,6 +552,11 @@ if (isPrintMode) {
   await resourceLoader.reload()
   markStartup('resourceLoader.reload')
 
+  // Print mode is a one-shot invocation. The --model flag is a transient
+  // override (e.g. verification smoke tests like `gsd -p --model longcat/X "reply ok"`)
+  // and MUST NOT mutate the persisted defaultProvider/defaultModel in settings.json (#4251).
+  // We disable persistence at session construction so every downstream path
+  // (setModel override, fallback reapply, validation repair) is gated in one place.
   const { session, extensionsResult, modelFallbackMessage } = await createAgentSession({
     authStorage,
     modelRegistry,
@@ -559,24 +564,30 @@ if (isPrintMode) {
     sessionManager,
     resourceLoader,
     isClaudeCodeReady: () => modelRegistry.isProviderRequestReady('claude-code'),
+    persistModelChanges: false,
   })
   markStartup('createAgentSession')
 
-  // Validate configured model AFTER extensions have registered their models (#2626).
-  // Before this, extension-provided models (e.g. claude-code/*) were not yet in the
-  // registry, causing the user's valid choice to be silently overwritten.
-  validateConfiguredModel(modelRegistry, settingsManager)
-  await reapplyValidatedModelOnFallback(session, modelRegistry, settingsManager, modelFallbackMessage)
+  // In print mode we still repair a genuinely stale default so the session has a
+  // usable model, BUT when the caller explicitly passed --model we skip validation
+  // entirely — the CLI already said which model to use, and repairing the default
+  // would overwrite settings.json with a fallback the user didn't ask for (#4251).
+  if (!cliFlags.model) {
+    validateConfiguredModel(modelRegistry, settingsManager)
+    await reapplyValidatedModelOnFallback(session, modelRegistry, settingsManager, modelFallbackMessage)
+  }
   printExtensionErrors(extensionsResult.errors)
 
-  // Apply --model override if specified
+  // Apply --model override if specified. persist: false is redundant given
+  // persistModelChanges above, but we pass it explicitly so the intent is
+  // visible at the call site and survives future refactors.
   if (cliFlags.model) {
     const available = modelRegistry.getAvailable()
     const match =
       available.find((m) => m.id === cliFlags.model) ||
       available.find((m) => `${m.provider}/${m.id}` === cliFlags.model)
     if (match) {
-      session.setModel(match)
+      session.setModel(match, { persist: false })
     }
   }
 

@@ -569,6 +569,12 @@ export async function main(args: string[]) {
 	sessionOptions.authStorage = authStorage;
 	sessionOptions.modelRegistry = modelRegistry;
 	sessionOptions.resourceLoader = resourceLoader;
+	// One-shot/print mode must never mutate the persisted defaultProvider/defaultModel:
+	// a verification run like `gsd -p --model longcat/X "reply ok"` should use model X
+	// for that invocation only, not silently change the global default (#4251).
+	if (!isInteractive) {
+		sessionOptions.persistModelChanges = false;
+	}
 
 	// Handle CLI --api-key as runtime override (not persisted)
 	if (parsed.apiKey) {
