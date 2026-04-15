@@ -53,6 +53,8 @@ import {
   checkNeedsRunUat,
 } from "./auto-prompts.js";
 import { resolveModelWithFallbacksForUnit } from "./preferences-models.js";
+import { resolveUokFlags } from "./uok/flags.js";
+import { selectReactiveDispatchBatch } from "./uok/execution-graph.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────
 
@@ -584,12 +586,20 @@ export const DISPATCH_RULES: DispatchRule[] = [
         // Only activate reactive dispatch when >1 task is ready
         if (readyIds.length <= 1) return null;
 
-        const selected = chooseNonConflictingSubset(
-          readyIds,
-          graph,
-          maxParallel,
-          new Set(),
-        );
+        const uokFlags = resolveUokFlags(prefs);
+        const selected = uokFlags.executionGraph
+          ? selectReactiveDispatchBatch({
+              graph,
+              readyIds,
+              maxParallel,
+              inFlightOutputs: new Set(),
+            }).selected
+          : chooseNonConflictingSubset(
+              readyIds,
+              graph,
+              maxParallel,
+              new Set(),
+            );
         if (selected.length <= 1) return null;
 
         // Log graph metrics for observability

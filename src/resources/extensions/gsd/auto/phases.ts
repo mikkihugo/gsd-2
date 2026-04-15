@@ -12,6 +12,7 @@ import { importExtensionModule, type ExtensionAPI, type ExtensionContext } from 
 import type { AutoSession, SidecarItem } from "./session.js";
 import type { LoopDeps } from "./loop-deps.js";
 import type { PostUnitContext, PreVerificationOpts } from "../auto-post-unit.js";
+import type { Phase } from "../types.js";
 import {
   MAX_RECOVERY_CHARS,
   BUDGET_THRESHOLDS,
@@ -47,6 +48,9 @@ import { withTimeout, FINALIZE_PRE_TIMEOUT_MS, FINALIZE_POST_TIMEOUT_MS } from "
 import { getEligibleSlices } from "../slice-parallel-eligibility.js";
 import { startSliceParallel } from "../slice-parallel-orchestrator.js";
 import { isDbAvailable, getMilestoneSlices } from "../gsd-db.js";
+import { ensurePlanV2Graph } from "../uok/plan-v2.js";
+import { resolveUokFlags } from "../uok/flags.js";
+import { UokGateRunner } from "../uok/gate-runner.js";
 import { resetEvidence } from "../safety/evidence-collector.js";
 import { createCheckpoint, cleanupCheckpoint, rollbackToCheckpoint } from "../safety/git-checkpoint.js";
 import { resolveSafetyHarnessConfig } from "../safety/safety-harness.js";
@@ -75,6 +79,17 @@ export function _resolveDispatchGuardBasePath(
   s: Pick<AutoSession, "originalBasePath" | "basePath">,
 ): string {
   return s.originalBasePath || s.basePath;
+}
+
+const PLAN_V2_GATE_PHASES: ReadonlySet<Phase> = new Set([
+  "executing",
+  "summarizing",
+  "validating-milestone",
+  "completing-milestone",
+]);
+
+function shouldRunPlanV2Gate(phase: Phase): boolean {
+  return PLAN_V2_GATE_PHASES.has(phase);
 }
 
 /**
@@ -202,14 +217,60 @@ export async function runPreDispatch(
   loopState: LoopState,
 ): Promise<PhaseResult<PreDispatchData>> {
   const { ctx, pi, s, deps, prefs } = ic;
+  const uokFlags = resolveUokFlags(prefs);
+  const runPreDispatchGate = async (input: {
+    gateId: string;
+    gateType: string;
+    outcome: "pass" | "fail" | "retry" | "manual-attention";
+    failureClass: "none" | "policy" | "input" | "execution" | "artifact" | "verification" | "closeout" | "git" | "timeout" | "manual-attention" | "unknown";
+    rationale: string;
+    findings?: string;
+    milestoneId?: string;
+  }): Promise<void> => {
+    if (!uokFlags.gates) return;
+    const gateRunner = new UokGateRunner();
+    gateRunner.register({
+      id: input.gateId,
+      type: input.gateType,
+      execute: async () => ({
+        outcome: input.outcome,
+        failureClass: input.failureClass,
+        rationale: input.rationale,
+        findings: input.findings ?? "",
+      }),
+    });
+    await gateRunner.run(input.gateId, {
+      basePath: s.basePath,
+      traceId: `pre-dispatch:${ic.flowId}`,
+      turnId: `iter-${ic.iteration}`,
+      milestoneId: input.milestoneId ?? s.currentMilestoneId ?? undefined,
+      unitType: "pre-dispatch",
+      unitId: `iter-${ic.iteration}`,
+    });
+  };
 
   // Resource version guard
   const staleMsg = deps.checkResourcesStale(s.resourceVersionOnStart);
   if (staleMsg) {
+    await runPreDispatchGate({
+      gateId: "resource-version-guard",
+      gateType: "policy",
+      outcome: "fail",
+      failureClass: "policy",
+      rationale: "resource version guard blocked dispatch",
+      findings: staleMsg,
+    });
     await deps.stopAuto(ctx, pi, staleMsg);
     debugLog("autoLoop", { phase: "exit", reason: "resources-stale" });
     return { action: "break", reason: "resources-stale" };
   }
+  await runPreDispatchGate({
+    gateId: "resource-version-guard",
+    gateType: "policy",
+    outcome: "pass",
+    failureClass: "none",
+    rationale: "resource version guard passed",
+  });
 
   deps.invalidateAllCaches();
   s.lastPromptCharCount = undefined;
@@ -225,6 +286,14 @@ export async function runPreDispatch(
       );
     }
     if (!healthGate.proceed) {
+      await runPreDispatchGate({
+        gateId: "pre-dispatch-health-gate",
+        gateType: "execution",
+        outcome: "manual-attention",
+        failureClass: "manual-attention",
+        rationale: "pre-dispatch health gate blocked dispatch",
+        findings: healthGate.reason,
+      });
       ctx.ui.notify(
         healthGate.reason || "Pre-dispatch health check failed — run /gsd doctor for details.",
         "error",
@@ -233,7 +302,23 @@ export async function runPreDispatch(
       debugLog("autoLoop", { phase: "exit", reason: "health-gate-failed" });
       return { action: "break", reason: "health-gate-failed" };
     }
+    await runPreDispatchGate({
+      gateId: "pre-dispatch-health-gate",
+      gateType: "execution",
+      outcome: "pass",
+      failureClass: "none",
+      rationale: "pre-dispatch health gate passed",
+      findings: healthGate.fixesApplied.length > 0 ? healthGate.fixesApplied.join(", ") : "",
+    });
   } catch (e) {
+    await runPreDispatchGate({
+      gateId: "pre-dispatch-health-gate",
+      gateType: "execution",
+      outcome: "manual-attention",
+      failureClass: "manual-attention",
+      rationale: "pre-dispatch health gate threw unexpectedly",
+      findings: String(e),
+    });
     logWarning("engine", "Pre-dispatch health gate threw unexpectedly", { error: String(e) });
   }
 
@@ -252,6 +337,32 @@ export async function runPreDispatch(
 
   // Derive state
   let state = await deps.deriveState(s.basePath);
+  if (prefs?.uok?.plan_v2?.enabled && shouldRunPlanV2Gate(state.phase)) {
+    const compiled = ensurePlanV2Graph(s.basePath, state);
+    if (!compiled.ok) {
+      const reason = compiled.reason ?? "Plan v2 compilation failed";
+      await runPreDispatchGate({
+        gateId: "plan-v2-gate",
+        gateType: "policy",
+        outcome: "manual-attention",
+        failureClass: "manual-attention",
+        rationale: "plan v2 compile gate failed",
+        findings: reason,
+        milestoneId: state.activeMilestone?.id ?? undefined,
+      });
+      ctx.ui.notify(`Plan gate failed-closed: ${reason}`, "error");
+      await deps.pauseAuto(ctx, pi);
+      return { action: "break", reason: "plan-v2-gate-failed" };
+    }
+    await runPreDispatchGate({
+      gateId: "plan-v2-gate",
+      gateType: "policy",
+      outcome: "pass",
+      failureClass: "none",
+      rationale: "plan v2 compile gate passed",
+      milestoneId: state.activeMilestone?.id ?? undefined,
+    });
+  }
   deps.syncCmuxSidebar(prefs, state);
   let mid = state.activeMilestone?.id;
   let midTitle = state.activeMilestone?.title;
@@ -297,7 +408,10 @@ export async function runPreDispatch(
             s.basePath,
             mid,
             eligible,
-            { maxWorkers: prefs.slice_parallel.max_workers ?? 2 },
+            {
+              maxWorkers: prefs.slice_parallel.max_workers ?? 2,
+              useExecutionGraph: uokFlags.executionGraph,
+            },
           );
           if (result.started.length > 0) {
             ctx.ui.notify(
@@ -1117,6 +1231,8 @@ export async function runUnitPhase(
   // unit in the same Node process (see workflow-logger.ts module header).
   _resetLogs();
   s.currentUnit = { type: unitType, id: unitId, startedAt: Date.now() };
+  s.lastGitActionFailure = null;
+  s.lastGitActionStatus = null;
   setCurrentPhase(unitType);
   s.lastToolInvocationError = null; // #2883: clear stale error from previous unit
   const unitStartSeq = ic.nextSeq();
@@ -1625,11 +1741,15 @@ export async function runFinalize(
 
   const preResult = preResultGuard.value;
   if (preResult === "dispatched") {
+    const dispatchedReason = s.lastGitActionFailure
+      ? "git-closeout-failure"
+      : "pre-verification-dispatched";
     debugLog("autoLoop", {
       phase: "exit",
-      reason: "pre-verification-dispatched",
+      reason: dispatchedReason,
+      gitError: s.lastGitActionFailure ?? undefined,
     });
-    return { action: "break", reason: "pre-verification-dispatched" };
+    return { action: "break", reason: dispatchedReason };
   }
   if (preResult === "retry") {
     if (sidecarItem) {
