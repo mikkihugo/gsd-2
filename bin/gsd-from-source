@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# gsd-from-source — run GSD directly from this source checkout via bun.
+#
+# Purpose: every local commit in this repo (e.g. the #4251 fix) is live
+# immediately without reinstalling the bun-packaged gsd-pi. Subagents can
+# spawn gsd by pointing GSD_BIN_PATH at this script instead of dist/loader.js.
+#
+# Contract:
+#   - Executable shim spawn() / exec() can launch directly.
+#   - Exports GSD_BIN_PATH before handing off to loader.ts so loader.ts's
+#     `GSD_BIN_PATH ||= process.argv[1]` branch preserves the shim path
+#     instead of clobbering it with the .ts loader path (which is not
+#     directly executable by child_process.spawn).
+#
+# Requirements: bun on PATH, node_modules populated (`bun install` once).
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
+GSD_SOURCE_ROOT=$(cd -- "$SCRIPT_DIR/.." &>/dev/null && pwd)
+
+export GSD_BIN_PATH="$SCRIPT_DIR/gsd-from-source"
+
+exec bun run "$GSD_SOURCE_ROOT/src/loader.ts" "$@"
