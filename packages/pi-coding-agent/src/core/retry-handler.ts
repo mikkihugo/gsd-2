@@ -420,7 +420,7 @@ export class RetryHandler {
 		if (/requires more credits|can only afford|insufficient credits|not enough credits|credit balance/i.test(err))
 			return "quota_exhausted";
 		if (/quota|billing|exceeded.*limit|usage.*limit/i.test(err)) return "quota_exhausted";
-		if (/rate.?limit|too many requests|429/i.test(err)) return "rate_limit";
+		if (/rate.?limit|too many requests|429|529|overloaded/i.test(err)) return "rate_limit";
 		if (/500|502|503|504|server.?error|internal.?error|service.?unavailable/i.test(err)) return "server_error";
 		return "unknown";
 	}

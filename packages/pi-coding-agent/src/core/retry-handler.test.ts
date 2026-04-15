@@ -172,6 +172,38 @@ describe("RetryHandler — long-context entitlement 429 (#2803)", () => {
 			assert.ok(retryStart, "Regular 429 should enter backoff retry");
 		});
 
+		it("classifies 529 overloaded_error as rate_limit, not quota_exhausted", async () => {
+			// Minimax and other Anthropic-protocol providers return HTTP 529 with
+			// `overloaded_error` bodies under heavy load. These must route through the
+			// rate_limit path so credential rotation and cross-provider fallback fire.
+			const { deps, emittedEvents } = createMockDeps({
+				model: createMockModel("anthropic", "claude-opus-4-6"),
+				markUsageLimitReachedResult: false,
+				fallbackResult: null,
+			});
+
+			const handler = new RetryHandler(deps);
+			const msg = errorMessage(
+				'529 {"type":"error","error":{"type":"overloaded_error","message":"The server cluster is currently under high load. Please retry after a short wait and thank you for your patience. (2064) (529)"},"request_id":"062e76f8f25cd919caa3af4baaa49203"}'
+			);
+
+			const result = await handler.handleRetryableError(msg);
+
+			// Should enter the backoff loop (rate_limit path, not quota_exhausted)
+			assert.equal(result, true);
+
+			const retryStart = emittedEvents.find((e) => e.type === "auto_retry_start");
+			assert.ok(retryStart, "529 overloaded_error should enter backoff retry as rate_limit");
+
+			// Must NOT be treated as quota_exhausted (would emit fallback_chain_exhausted)
+			const chainExhausted = emittedEvents.find((e) => e.type === "fallback_chain_exhausted");
+			assert.equal(
+				chainExhausted,
+				undefined,
+				"529 overloaded_error must NOT be classified as quota_exhausted",
+			);
+		});
+
 		it("classifies OpenRouter credit affordability errors as quota_exhausted", async () => {
 			const { deps, emittedEvents } = createMockDeps({
 				model: createMockModel("openrouter", "openai/gpt-5-pro"),
