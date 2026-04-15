@@ -544,8 +544,12 @@ if (isPrintMode) {
   exitIfManagedResourcesAreNewer(agentDir)
   initResources(agentDir)
   markStartup('initResources')
-  const resourceLoader = new DefaultResourceLoader({
-    agentDir,
+  // Route print mode through buildResourceLoader so the GSD extension registry
+  // filter (extensionPathsTransform) is applied consistently with TUI mode.
+  // Constructing DefaultResourceLoader directly bypassed the filter and let
+  // disabled bundled extensions (e.g. `ollama` superseded by `@0xkobold/pi-ollama`)
+  // leak through and emit `/ollama` command conflicts on every print invocation.
+  const resourceLoader = buildResourceLoader(agentDir, {
     additionalExtensionPaths: cliFlags.extensions.length > 0 ? cliFlags.extensions : undefined,
     appendSystemPrompt,
   })

@@ -1,4 +1,5 @@
 import { DefaultResourceLoader, sortExtensionPaths } from '@gsd/pi-coding-agent'
+if (process.env.GSD_DEBUG_EXTENSIONS) process.stderr.write("[gsd-debug] resource-loader.ts loaded\n")
 import { createHash } from 'node:crypto'
 import { homedir } from 'node:os'
 import { chmodSync, copyFileSync, cpSync, existsSync, lstatSync, mkdirSync, openSync, closeSync, readFileSync, readlinkSync, readdirSync, rmSync, statSync, symlinkSync, unlinkSync, writeFileSync } from 'node:fs'
@@ -730,7 +731,22 @@ function getBundledExtensionKeys(): Set<string> {
   return _bundledExtensionKeys
 }
 
-export function buildResourceLoader(agentDir: string): DefaultResourceLoader {
+/**
+ * Optional overrides passed through to DefaultResourceLoader. Print mode
+ * needs these — it used to construct DefaultResourceLoader directly, which
+ * bypassed buildResourceLoader's extensionPathsTransform (= the GSD registry
+ * filter) and let disabled bundled extensions like `ollama` leak through and
+ * conflict with community replacements such as `@0xkobold/pi-ollama`.
+ */
+export interface BuildResourceLoaderOptions {
+  additionalExtensionPaths?: string[]
+  appendSystemPrompt?: string
+}
+
+export function buildResourceLoader(
+  agentDir: string,
+  options: BuildResourceLoaderOptions = {},
+): DefaultResourceLoader {
   const registry = loadRegistry()
   const piAgentDir = join(homedir(), '.pi', 'agent')
   const piExtensionsDir = join(piAgentDir, 'extensions')
@@ -743,19 +759,30 @@ export function buildResourceLoader(agentDir: string): DefaultResourceLoader {
       return isExtensionEnabled(registry, manifest.id)
     })
 
+  // Print-mode callers pass their own additional extension paths (e.g. --extension
+  // flags). Non-print mode uses the implicit pi-extensions discovery above.
+  const additionalExtensionPaths =
+    options.additionalExtensionPaths && options.additionalExtensionPaths.length > 0
+      ? options.additionalExtensionPaths
+      : piExtensionPaths
+
   return new DefaultResourceLoader({
     agentDir,
-    additionalExtensionPaths: piExtensionPaths,
+    additionalExtensionPaths,
+    appendSystemPrompt: options.appendSystemPrompt,
     bundledExtensionKeys: bundledKeys,
     extensionPathsTransform: (paths: string[]) => {
-      // 1. Filter community extensions through the GSD registry
+      // Filter community + bundled extensions through the GSD registry so
+      // explicitly-disabled entries (e.g. bundled `ollama` superseded by
+      // `@0xkobold/pi-ollama`) never reach the runtime and trigger command
+      // conflicts.
       const filteredPaths = paths.filter((entryPath) => {
         const manifest = readManifestFromEntryPath(entryPath)
         if (!manifest) return true // no manifest = always load
         return isExtensionEnabled(registry, manifest.id)
       })
 
-      // 2. Sort in topological dependency order
+      // Sort in topological dependency order
       const { sortedPaths, warnings } = sortExtensionPaths(filteredPaths)
 
       return {

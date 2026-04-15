@@ -1,0 +1,11 @@
+{
+  "id": "ollama",
+  "name": "Ollama",
+  "version": "1.0.0",
+  "description": "Local Ollama model discovery and /ollama command",
+  "tier": "bundled",
+  "requires": { "platform": ">=2.29.0" },
+  "provides": {
+    "commands": ["ollama"]
+  }
+}
